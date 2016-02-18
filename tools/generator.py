@@ -1,11 +1,10 @@
 #!/usr/bin/env python
+# coding=ascii
 ###############################################################################
 # Copyright 2015-2016 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
-
-# coding=ascii
 
 import csv
 import os
