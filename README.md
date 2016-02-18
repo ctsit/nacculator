@@ -1,6 +1,6 @@
                                    NACCulator
 
-<a href="http://dx.doi.org/10.5281/zenodo.46253"><img src="https://zenodo.org/badge/doi/10.5281/zenodo.46253.svg" alt="10.5281/zenodo.46253"></a>
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.46253.svg)](http://dx.doi.org/10.5281/zenodo.46253)
 
 Converts a CSV data file exported from REDCap into the NACC's UDS3 fixed-width
 format.
