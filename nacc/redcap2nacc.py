@@ -10,14 +10,14 @@ import csv
 import re
 import sys
 
-from nacc.uds3 import ivp
-from nacc.uds3.ivp import forms as ivp_forms
 from nacc.uds3 import blanks
+from nacc.uds3.ivp import forms as ivp_forms
+from nacc.uds3.ivp import packet as ivp_packet
 
 
 def udsv3_ivp_from_redcap_csv(record):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
-    packet = ivp.Packet()
+    packet = ivp_packet.Packet()
 
     # Set up us the forms
     a1 = ivp_forms.FormA1()
