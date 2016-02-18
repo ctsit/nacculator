@@ -1,0 +1,11 @@
+Item #,Data Order,Data Element,Form Version,Packet,Form ID,UDS Question,Data Type,Data Length,Column 1,Column 2,RANGE1,RANGE2,MISS1,MISS2,MISS3,MISS4,MISS5,MISS6,VAL1,VAL2,VAL3,VAL4,VAL5,VAL6,VAL7,VAL8,VAL9,VAL10,VAL11,VAL12,VAL1D,VAL2D,VAL3D,VAL4D,VAL5D,VAL6D,VAL7D,VAL8D,VAL9D,VAL10D,VAL11D,VAL12D,BLANKS1,BLANKS2,BLANKS3,BLANKS4,BLANKS5,SKIPS1,SKIPS2
+1,1,MEMORY,3,I,B4,MEMORY,Num,3,45,47,0,3,.,.,.,.,.,.,0.0,0.5,1.0,2.0,3.0,.,.,.,.,.,.,.,None,Questionable,Mild,Moderate,Severe,,,,,,,,,,,,,,
+2,2,ORIENT,3,I,B4,ORIENTATION,Num,3,49,51,0,3,.,.,.,.,.,.,0.0,0.5,1.0,2.0,3.0,.,.,.,.,.,.,.,None,Questionable,Mild,Moderate,Severe,,,,,,,,,,,,,,
+3,3,JUDGMENT,3,I,B4,JUDGMENT AND PROBLEM-SOLVING,Num,3,53,55,0,3,.,.,.,.,.,.,0.0,0.5,1.0,2.0,3.0,.,.,.,.,.,.,.,None,Questionable,Mild,Moderate,Severe,,,,,,,,,,,,,,
+4,4,COMMUN,3,I,B4,COMMUNITY AFFAIRS,Num,3,57,59,0,3,.,.,.,.,.,.,0.0,0.5,1.0,2.0,3.0,.,.,.,.,.,.,.,None,Questionable,Mild,Moderate,Severe,,,,,,,,,,,,,,
+5,5,HOMEHOBB,3,I,B4,HOME AND HOBBIES,Num,3,61,63,0,3,.,.,.,.,.,.,0.0,0.5,1.0,2.0,3.0,.,.,.,.,.,.,.,None,Questionable,Mild,Moderate,Severe,,,,,,,,,,,,,,
+6,6,PERSCARE,3,I,B4,PERSONAL CARE,Num,3,65,67,0,3,.,.,.,.,.,.,0.0,1.0,2.0,3.0,.,.,.,.,.,.,.,.,None,Mild,Moderate,Severe,,,,,,,,,,,,,,,
+7,7,CDRSUM,3,I,B4,CDR SUM OF BOXES,Num,4,69,72,0,18,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,,,,,,,,,,,,,,,,,,,
+8,8,CDRGLOB,3,I,B4,GLOBAL CDR,Num,3,74,76,0,3,.,.,.,.,.,.,0.0,0.5,1.0,2.0,3.0,.,.,.,.,.,.,.,None,Questionable,Mild,Moderate,Severe,,,,,,,,,,,,,,
+9,9,COMPORT,3,I,B4,"Behavior, comportment, and personality",Num,3,78,80,0,3,.,.,.,.,.,.,0.0,0.5,1.0,2.0,3.0,.,.,.,.,.,.,.,None,Questionable,Mild,Moderate,Severe,,,,,,,,,,,,,,
+10,10,CDRLANG,3,I,B4,Language,Num,3,82,84,0,3,.,.,.,.,.,.,0.0,0.5,1.0,2.0,3.0,.,.,.,.,.,.,.,None,Questionable,Mild,Moderate,Severe,,,,,,,,,,,,,,

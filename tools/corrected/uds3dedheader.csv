@@ -1,0 +1,11 @@
+Item #,Data Order,Data Element,Form Version,Packet,Form ID,UDS Question,Data Type,Data Length,Column 1,Column 2,RANGE1,RANGE2,MISS1,MISS2,MISS3,MISS4,MISS5,MISS6,VAL1,VAL2,VAL3,VAL4,VAL5,VAL6,VAL7,VAL8,VAL9,VAL10,VAL11,VAL12,VAL1D,VAL2D,VAL3D,VAL4D,VAL5D,VAL6D,VAL7D,VAL8D,VAL9D,VAL10D,VAL11D,VAL12D,BLANKS1,BLANKS2,BLANKS3,BLANKS4,BLANKS5,SKIPS1,SKIPS2
+0A,1,PACKET,3,,,Packet code,Char,2,1,2,,,,,,,,,,,.,.,.,.,.,.,.,.,.,.,,,,,,,,,,,,,,,,,,,
+0B,2,FORMID,3,,,Form ID,Char,3,4,6,,,,,,,,,,,.,.,.,.,.,.,.,.,.,.,,,,,,,,,,,,,,,,,,,
+0C,3,FORMVER,3,,,Form version number,Num,3,8,10,1,3,,,,,,,,,.,.,.,.,.,.,.,.,.,.,,,,,,,,,,,,,,,,,,,
+0D,4,ADCID,3,,,Center ID,Num,2,12,13,2,41,,,,,,,,,.,.,.,.,.,.,.,.,.,.,,,,,,,,,,,,,,,,,,,
+0E,5,PTID,3,,,ADC subject ID,Char,10,15,24,,,,,,,,,,,.,.,.,.,.,.,.,.,.,.,,,,,,,,,,,,,,,,,,,
+0F,6,VISITMO,3,,,Form date - month,Num,2,26,27,1,12,,,,,,,,,.,.,.,.,.,.,.,.,.,.,,,,,,,,,,,,,,,,,,,
+0G,7,VISITDAY,3,,,Form date - day,Num,2,29,30,1,31,,,,,,,,,,.,.,.,.,.,.,.,.,.,,,,,,,,,,,,,,,,,,,
+0H,8,VISITYR,3,,,Form date - year,Num,4,32,35,2005,2014,,,,,,,,,,.,.,.,.,.,.,.,.,.,,,,,,,,,,,,,,,,,,,
+0I,9,VISITNUM,3,,,ADC visit ID,Char,3,37,39,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+0J,10,INITIALS,3,,,Examiner's intials,Char,3,41,43,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
