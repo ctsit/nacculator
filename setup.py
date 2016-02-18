@@ -6,21 +6,25 @@
 
 from setuptools import setup
 
+VERSION="0.1.1"
+
 setup(
-    name="NACCulator",
-    version="0.1.0",
+    name="nacculator",
+    version=VERSION,
+    author="Taeber Rapczak",
+    author_email="taeber@ufl.edu",
+    maintainer="UF CTS-IT",
+    maintainer_email="ctsit@ctsi.ufl.edu",
+    url="https://github.com/ctsit/nacculator",
+    license=open('LICENSE').read(),
+    description="CSV to NACC's UDS3 format converter",
+    keywords=["REDCap", "NACC", "UDS", "Clinical data"],
+    download_url="https://github.com/ctsit/nacculator/releases/tag/" + VERSION,
+
     packages=["nacc"],
     entry_points={
         "console_scripts": [
             "redcap2nacc = nacc.redcap2nacc:main"
         ]
-    },
-    author="Taeber Rapczak",
-    author_email="taeber@ufl.edu",
-    description="CSV to NACC's UDS3 format converter",
-    license="BSD 2-Clause",
-
-    url='https://github.com/ctsit/nacculator',
-    download_url='https://github.com/ctsit/nacculator/releases/tag/0.1.0',
-    keywords=['REDCap', 'NACC', 'UDS', 'Clinical data'],
+    }
 )
