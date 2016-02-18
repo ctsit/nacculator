@@ -4,3 +4,4 @@ egg:
 
 clean:
 	rm -rf dist/ build/ nacculator.egg-info/
+	find . -name '*.pyc' | xargs rm
