@@ -4,9 +4,9 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
-VERSION="0.1.3"
+VERSION="0.1.4"
 
 setup(
     name="nacculator",
@@ -16,12 +16,14 @@ setup(
     maintainer="UF CTS-IT",
     maintainer_email="ctsit@ctsi.ufl.edu",
     url="https://github.com/ctsit/nacculator",
-    license=open('LICENSE').read(),
+    license="BSD 2-Clause",
     description="CSV to NACC's UDS3 format converter",
     keywords=["REDCap", "NACC", "UDS", "Clinical data"],
     download_url="https://github.com/ctsit/nacculator/releases/tag/" + VERSION,
 
-    packages=["nacc"],
+    package_dir = {'nacc': 'nacc'},
+    packages = find_packages(),
+
     entry_points={
         "console_scripts": [
             "redcap2nacc = nacc.redcap2nacc:main"
