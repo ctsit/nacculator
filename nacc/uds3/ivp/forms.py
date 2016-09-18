@@ -663,7 +663,42 @@ class FormB9(nacc.uds3.FieldBag):
         self.fields['LBDEVAL'] = nacc.uds3.Field(name='LBDEVAL', typename='Num', position=(590, 590), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
         self.fields['FTLDEVAL'] = nacc.uds3.Field(name='FTLDEVAL', typename='Num', position=(592, 592), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
 
-
+class FormC1S(nacc.uds3.FieldBag):
+    def __init__(self):
+        self.fields = header_fields()
+        self.fields['MMSELOC'] = nacc.uds3.Field(name='MMSELOC', typename='Num', position=(45, 45), length=1, inclusive_range=(1,3), allowable_values=['1', '2', '3'], blanks=[])
+        self.fields['MMSELAN'] = nacc.uds3.Field(name='MMSELAN', typename='Num', position=(47, 47), length=1, inclusive_range=(1,3), allowable_values=['1', '2', '3'], blanks=[])
+        self.fields['MMSELANX'] = nacc.uds3.Field(name='MMSELANX', typename='Char', position=(49, 108), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 1A1 MMSELAN ne 3 (Other)'])
+        self.fields['MMSEORDA'] = nacc.uds3.Field(name='MMSEORDA', typename='Num', position=(110, 111), length=2, inclusive_range=(0, 5), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['MMSEORLO'] = nacc.uds3.Field(name='MMSEORLO', typename='Num', position=(113, 114), length=2, inclusive_range=(0, 5), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['PENTAGON'] = nacc.uds3.Field(name='PENTAGON', typename='Num', position=(116, 117), length=2, inclusive_range=(0, 1), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['MMSE'] = nacc.uds3.Field(name='MMSE', typename='Num', position=(119, 120), length=2, inclusive_range=(0, 30), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['NPSYCLOC'] = nacc.uds3.Field(name='NPSYCLOC', typename='Num', position=(122, 122), length=1, inclusive_range=(1, 3), allowable_values=[], blanks=[])
+        self.fields['NPSYLAN'] = nacc.uds3.Field(name='NPSYLAN', typename='Num', position=(123, 124), length=1, inclusive_range=(1, 3), allowable_values=[], blanks=[])
+        self.fields['NPSYLANX'] = nacc.uds3.Field(name='NPSYLANX', typename='Char', position=(126, 185), length=60, inclusive_range=(), allowable_values=[], blanks=["Blank if Question 2A NPSYLAN ne 3 (Other)"])         # How to account for comment date restriction?
+        self.fields['LOGIMO'] = nacc.uds3.Field(name='LOGIMO', typename='Num', position=(187, 188), length=2, inclusive_range=(1, 12), allowable_values=['88'], blanks=[])
+        self.fields['LOGIDAY'] = nacc.uds3.Field(name='LOGIDAY', typename='Num', position=(190, 191), length=2, inclusive_range=(1, 31), allowable_values=['88'], blanks=[])
+        self.fields['LOGIYR'] = nacc.uds3.Field(name='LOGIYR', typename='Num', position=(193, 196), length=4, inclusive_range=(CURRENT_YEAR-1, CURRENT_YEAR), allowable_values=['8888'], blanks=[])
+        self.fields['LOGIPREV'] = nacc.uds3.Field(name='LOGIPREV', typename='Num', position=(198, 199), length=2, inclusive_range=(0, 25), allowable_values=['88'], blanks=[])
+        self.fields['LOGIMEM'] = nacc.uds3.Field(name='LOGIMEM', typename='Num', position=(201, 202), length=2, inclusive_range=(0, 25), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['DIGIF'] = nacc.uds3.Field(name='DIGIF', typename='Num', position=(204, 205), length=2, inclusive_range=(0, 12), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['DIGIFLEN'] = nacc.uds3.Field(name='DIGIFLEN', typename='Num', position=(207, 208), length=2, inclusive_range=(0, 8), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['DIGIB'] = nacc.uds3.Field(name='DIGIB', typename='Num', position=(210, 211), length=2, inclusive_range=(0, 12), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['DIGIBLEN'] = nacc.uds3.Field(name='DIGIBLEN', typename='Num', position=(213, 214), length=2, inclusive_range=(0, 7), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['ANIMALS'] = nacc.uds3.Field(name='ANIMALS', typename='Num', position=(216, 217), length=2, inclusive_range=(0, 77), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['VEG'] = nacc.uds3.Field(name='VEG', typename='Num', position=(219, 220), length=2, inclusive_range=(0, 77), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['TRAILA'] = nacc.uds3.Field(name='TRAILA', typename='Num', position=(222, 224), length=3, inclusive_range=(0, 150), allowable_values=['995', '996', '997', '998'], blanks=[])
+        self.fields['TRAILARR'] = nacc.uds3.Field(name='TRAILARR', typename='Num', position=(226, 227), length=2, inclusive_range=(0, 40), allowable_values=['88'], blanks=['Blank if Question 7a TRAILA = 995-998'])
+        self.fields['TRAILALI'] = nacc.uds3.Field(name='TRAILALI', typename='Num', position=(229, 230), length=2, inclusive_range=(0, 24), allowable_values=['88'], blanks=['Blank if Question 7a TRAILA = 995-998'])
+        self.fields['TRAILB'] = nacc.uds3.Field(name='TRAILB', typename='Num', position=(232, 234), length=3, inclusive_range=(0, 300), allowable_values=['995', '996', '997', '998'], blanks=[])
+        self.fields['TRAILBRR'] = nacc.uds3.Field(name='TRAILBRR', typename='Num', position=(236, 237), length=2, inclusive_range=(0, 40), allowable_values=['88'], blanks=['Blank if Question 7b TRAILB = 995-998'])
+        self.fields['TRAILBLI'] = nacc.uds3.Field(name='TRAILBLI', typename='Num', position=(239, 240), length=2, inclusive_range=(0, 24), allowable_values=['88'], blanks=['Blank if Question 7b TRAILB = 995-998'])
+        self.fields['WAIS'] = nacc.uds3.Field(name='WAIS', typename='Num', position=(242, 243), length=2, inclusive_range=(0, 93), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['MEMUNITS'] = nacc.uds3.Field(name='MEMUNITS', typename='Num', position=(245, 246), length=2, inclusive_range=(0, 25), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['MEMTIME'] = nacc.uds3.Field(name='MEMTIME', typename='Num', position=(248, 249), length=2, inclusive_range=(0, 85), allowable_values=['88', '99'], blanks=[])
+        self.fields['BOSTON'] = nacc.uds3.Field(name='BOSTON', typename='Num', position=(251, 252), length=2, inclusive_range=(0, 30), allowable_values=['95', '96', '97', '98'], blanks=[])
+        self.fields['COGSTAT'] = nacc.uds3.Field(name='COGSTAT', typename='Num', position=(254, 254), length=1, inclusive_range=(0, 5), allowable_values=[], blanks=[])
+        
 class FormC2(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
