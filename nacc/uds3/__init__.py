@@ -153,7 +153,7 @@ class FieldBag(object):
             start -= 1
             end -= 1
             assert len(value) == end-start+1, \
-                "{}: {} != {}".format(field.name, len(value), end-start+1)
+                "Length of field {} with value {} is not valid. {} != {}".format(field.name, field.value, len(value), end-start+1)
             buf[start:start+len(value)] = value
 
         assert len(buf) == orig_buf_size, field.name + ": buffer changed size!"
