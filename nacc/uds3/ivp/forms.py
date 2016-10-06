@@ -92,8 +92,8 @@ class FormA2(nacc.uds3.FieldBag):
         self.fields['INRELTO'] = nacc.uds3.Field(name='INRELTO', typename='Num', position=(316, 316), length=1, inclusive_range=(1, 6), allowable_values=['3', '2', '1', '6', '5', '4'], blanks=[])
         self.fields['INKNOWN'] = nacc.uds3.Field(name='INKNOWN', typename='Num', position=(318, 320), length=3, inclusive_range=(0, 120), allowable_values=['999'], blanks=[])
         self.fields['INLIVWTH'] = nacc.uds3.Field(name='INLIVWTH', typename='Num', position=(322, 322), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
-        self.fields['INVISITS'] = nacc.uds3.Field(name='INVISITS', typename='Num', position=(324, 324), length=1, inclusive_range=(1, 6), allowable_values=['3', '2', '1', '6', '5', '4'], blanks=['Blank if Question 9 INLIVWTH ne 1 (Yes)'])
-        self.fields['INCALLS'] = nacc.uds3.Field(name='INCALLS', typename='Num', position=(326, 326), length=1, inclusive_range=(1, 6), allowable_values=['3', '2', '1', '6', '5', '5'], blanks=['Blank if Question 9 INLIVWTH ne 1 (Yes)'])
+        self.fields['INVISITS'] = nacc.uds3.Field(name='INVISITS', typename='Num', position=(324, 324), length=1, inclusive_range=(1, 6), allowable_values=['3', '2', '1', '6', '5', '4'], blanks=['Blank if Question 9 INLIVWTH = 1 (Yes)'])
+        self.fields['INCALLS'] = nacc.uds3.Field(name='INCALLS', typename='Num', position=(326, 326), length=1, inclusive_range=(1, 6), allowable_values=['3', '2', '1', '6', '5', '5'], blanks=['Blank if Question 9 INLIVWTH = 1 (Yes)'])
         self.fields['INRELY'] = nacc.uds3.Field(name='INRELY', typename='Num', position=(328, 328), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
 
 class FormA3(nacc.uds3.FieldBag):
