@@ -632,9 +632,16 @@ def udsv3_ivp_from_redcap_csv(record):
     b9.FTLDEVAL = record['ftldeval']
     packet.append(b9)
 
-    addC1SForm = False if not record['c1s_1a_mmseloc'] else True;
+    # Check two fields to make sure c1s is not blank
+    isC1SNotBlank = (record['c1s_1a_mmseloc'] and record['c1s_1a_mmseloc'].strip()) \
+                or (record['c1s_11a_cogstat'] and record['c1s_11a_cogstat'].strip())
+    isC2NotBlank = (record['mocacomp'] and record['mocacomp'].strip()) \
+                or (record['cogstat_c2'] and record['cogstat_c2'].strip())
 
-    if(addC1SForm is True):
+    if(isC1SNotBlank and isC2NotBlank):
+        raise Exception("Could not parse packet: " + record[ptid] + " as both c1s and c2 form data is present")
+
+    if(isC1SNotBlank):
         addC1S(record, packet)
     else:
         addC2(record, packet)
@@ -860,7 +867,7 @@ def update_header(record, packet):
 
 def addC1S(record, packet):
     c1s = ivp_forms.FormC1S()
-    c1s.MMSELOC = record['c1s_1a_mmseloc']
+    c1s.MMSELOC = record['c1s_1a_mmseloc'] #check for blank
     c1s.MMSELAN = record['c1s_1a1_mmselan']
     c1s.MMSELANX = record['c1s_1a2_mmselanx']
     c1s.MMSEORDA = record['c1s_1b1_mmseorda']
@@ -891,7 +898,7 @@ def addC1S(record, packet):
     c1s.MEMUNITS = record['c1s_9a_memunits']
     c1s.MEMTIME = record['c1s_9b_memtime']
     c1s.BOSTON = record['c1s_10a_boston']
-    c1s.COGSTAT = record['c1s_11a_cogstat']
+    c1s.COGSTAT = record['c1s_11a_cogstat'] #check for blank
     packet.append(c1s)
 
 def addC2(record, packet):
