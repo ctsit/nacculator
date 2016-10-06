@@ -40,6 +40,10 @@ Once the project data is exported from REDCap to the CSV file `data.csv`, run:
 Or, if you're using the source code:
 
     $ PYTHONPATH=. ./nacc/redcap2nacc.py < data.csv > data.nacc
+   
+Or, if you need the output of only neuropathology form:
+ 
+    $ PYTHONPATH=. ./nacc/redcap2nacc.py -nponly < data.csv > data.nacc
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input can
 be `STDIN` or the first argument passed to `redcap2nacc`._
