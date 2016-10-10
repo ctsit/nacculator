@@ -1258,8 +1258,8 @@ def main():
     Reads a REDCap exported CSV, data file, then prints it out in NACC's format
     """
     parser = argparse.ArgumentParser(description='Process redcap form output to nacculator.')
-    parser.add_argument('-file', action='store', dest='file', help='the csv file to be processed')
-    parser.add_argument('-nponly', action='store_true', default=False, dest='isNpOnly', help='Set to process only np data')
+    parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed')
+    parser.add_argument('-nponly', action='store_true', default=False, dest='isNpOnly', help='Set this flag to process only np form data')
     options = parser.parse_args()
 
     fp = sys.stdin if options.file == None else open(options.file, 'r')
