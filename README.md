@@ -35,15 +35,15 @@ HOWTO Convert from REDCap to NACC
 Once the project data is exported from REDCap to the CSV file `data.csv`, run:
 
     $ pip install nacculator
-    $ redcap2nacc < data.csv > data.nacc
+    $ redcap2nacc < data.csv > data.txt
 
 Or, if you're using the source code:
 
-    $ PYTHONPATH=. ./nacc/redcap2nacc.py < data.csv > data.nacc
+    $ PYTHONPATH=. ./nacc/redcap2nacc.py < data.csv > data.txt
    
 Or, if you need the output of only neuropathology form:
  
-    $ PYTHONPATH=. ./nacc/redcap2nacc.py -nponly < data.csv > data.nacc
+    $ PYTHONPATH=. ./nacc/redcap2nacc.py -nponly < data.csv > data.txt
     
 The program accepts two arguments -file and -nponly. Both the arguments are optional. 
 
@@ -59,12 +59,12 @@ The program accepts two arguments -file and -nponly. Both the arguments are opti
 
 Example Usage
 
-    PYTHONPATH=. ./nacc/redcap2nacc.py  -nponly -file data.csv > data.nacc
+    PYTHONPATH=. ./nacc/redcap2nacc.py  -nponly -file data.csv > data.txt
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input can
 be `STDIN` or the first argument passed to `redcap2nacc`._
 
-If there are no errors, then submit the `data.nacc` file to NACC.
+If there are no errors, then submit the `data.txt` file to NACC.
 
 
 HOWTO Generate New Forms
