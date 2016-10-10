@@ -1,0 +1,13 @@
+ ## [0.1.5] - 2016-10-10
+ ### Changed
+
+ * Changed README file to reflect that output from NACCulator should be in .txt format (Tarun Gupta Akirala)
+ * Changed form version value for form C1S to be version 2 (Tarun Gupta Akirala)
+
+
+ ### Added
+ * Added the Neuropathology form definitions and rules (Tarun Gupta Akirala) 
+ * Created error messages where data does not meet form definitions (Tarun Gupta Akirala)
+ * Added the C1S temporary Spanish form definitions and rules (Tarun Gupta Akirala)
+ * Added flag to have NACCulator output only the Neuropathology form (Tarun Gupta Akirala)
+ * Added ability to check for data in C2 or C1S form and make determination on which form to use based on data present or not present (Tarun Gupta Akirala)
