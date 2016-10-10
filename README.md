@@ -44,6 +44,10 @@ Or, if you're using the source code:
 Or, if you need the output of only neuropathology form:
  
     $ PYTHONPATH=. ./nacc/redcap2nacc.py -nponly < data.csv > data.nacc
+    
+The program accepts two arguments -file and -nponly. Both are optional and can be used as below:
+
+    $ PYTHONPATH=. ./nacc/redcap2nacc.py  -nponly -file data.csv > data.nacc
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input can
 be `STDIN` or the first argument passed to `redcap2nacc`._
