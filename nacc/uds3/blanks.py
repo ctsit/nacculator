@@ -33,7 +33,27 @@ def convert_rule_to_python(name, rule):
         'LEARNED': _blanking_rule_learned,
         'ZIP': _blanking_rule_dummy,
         'DECCLMOT': _blanking_rule_dummy,
-        'CRAFTDRE': _blanking_rule_dummy
+        'CRAFTDRE': _blanking_rule_dummy,
+        # Neuropath skip rules
+        'NPINF': _blanking_rule_dummy,
+        'NPHEMO': _blanking_rule_dummy,
+        'NPOLD': _blanking_rule_dummy,
+        'NPOLDD': _blanking_rule_dummy,
+        'NPFTDTAU': _blanking_rule_dummy,
+        'NPOFTD': _blanking_rule_dummy,
+        'NPNEC': _blanking_rule_dummy,
+        'NPPATH': _blanking_rule_dummy,
+        'NPPATHO': _blanking_rule_dummy,
+        'NPPATH2': _blanking_rule_dummy,
+        'NPPATH3': _blanking_rule_dummy,
+        'NPPATH6': _blanking_rule_dummy,
+        'NPPATH7': _blanking_rule_dummy,
+        'NPPATH4': _blanking_rule_dummy,
+        'NPPATH5': _blanking_rule_dummy,
+        'NPPATH8': _blanking_rule_dummy,
+        'NPPATH9': _blanking_rule_dummy,
+        'NPPATH10': _blanking_rule_dummy,
+        'NPPATH11': _blanking_rule_dummy,
     }
 
     single_value = re.compile(
