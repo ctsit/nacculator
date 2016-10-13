@@ -16,12 +16,6 @@ from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.fvp import builder as fvp_builder
 
 
-def udsv3_ivp_from_redcap_csv(record):
-    return ivp_builder.build_uds3_ivp_form(record)
-
-def get_np_form(record):
-    return ivp_builder.build_np_form(record)
-
 def check_blanks(packet):
     """
     Parses rules for when each field should be blank and then checks them
@@ -152,22 +146,31 @@ def main():
     parser.add_argument('-nponly', action='store_true', dest='isNpOnly', help='Set this flag to process only np form data')
     ivp_fvp_group = parser.add_mutually_exclusive_group()
     ivp_fvp_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
-    ivp_fvp_group.add_argument('-ivp', action='store_false', dest='ivp', help='Set this flag to process as ivp data')
+    ivp_fvp_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data') 
 
     options = parser.parse_args()
+    if (not options.ivp) and (not options.fvp):
+        options.ivp = True
 
     fp = sys.stdin if options.file == None else open(options.file, 'r')
 
     reader = csv.DictReader(fp)
     for record in reader:
-        packet = udsv3_ivp_from_redcap_csv(record) if options.isNpOnly == False else get_np_form(record)
-        if options.isNpOnly == False:
+        if options.fvp:
+            packet = fvp_builder.build_uds3_fvp_form(record)
+        else:
+            if options.isNpOnly:
+                packet = ivp_builder.build_np_form(record)
+            else:
+                packet = ivp_builder.build_uds3_ivp_form(record)
+
+        if not options.isNpOnly:
             set_blanks_to_zero(packet) 
         
         warnings = []
         warnings += check_blanks(packet)
 
-        if options.isNpOnly == False:
+        if not options.isNpOnly:
             warnings += check_single_select(packet)
         
         if warnings:

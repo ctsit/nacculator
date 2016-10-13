@@ -856,3 +856,22 @@ def build_uds3_fvp_form(record):
     z1.B7NOT     = record['fu_b7not']
     z1.B7COMM    = record['fu_b7comm']
     packet.append(z1)
+
+    update_header(record, packet)
+    return packet
+
+def update_header(record, packet):
+    for header in packet:
+        header.PACKET = "F"
+        header.FORMID = header.form_name
+        if header.FORMID.value == "B5 ":
+            header.FORMVER = "3.1"
+        else:
+            header.FORMVER = 3
+        header.ADCID = record['adcid']
+        header.PTID = record['ptid']
+        header.VISITMO = record['visitmo']
+        header.VISITDAY = record['visitday']
+        header.VISITYR = record['visityr']
+        header.VISITNUM = record['visitnum']
+        header.INITIALS = record['initials']
