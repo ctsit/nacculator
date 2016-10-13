@@ -31,8 +31,8 @@ class MethodField(str):
         return l
 
 
-def form_to_string(form):
-    return ("class Form{id}(nacc.uds3.FieldBag):\n".format(id=form.id) +
+def form_to_string(form, class_prefix=''):
+    return ("class " + class_prefix + "Form{id}(nacc.uds3.FieldBag):\n".format(id=form.id) +
             indent("def __init__(self):\n" + indent(
                     "self.fields = header_fields()")))
 
@@ -111,7 +111,7 @@ def retab(text, newtab='    ', oldtab='\t'):
 
 
 def main():
-    data_dict_path = './ded_ivp'
+    data_dict_path = './ded_fvp'
     corrected_dict_path = './corrected'
     header_file = 'uds3dedheader.csv'
 
@@ -146,7 +146,7 @@ def main():
 
         print ""
         form = generate(dedpath)
-        print form_to_string(form)
+        print form_to_string(form, 'FVP_')
         for field in fields_to_strings(sorted(form.fields, key=lambda fld: fld.position[1])):
             print indent(field, 2)
         print ""

@@ -80,3 +80,4 @@ working directory called `corrected`._
     $ PYTHONPATH=.. ./generator.py uds3/ded/csv/ > ../nacc/uds3/ivp/forms.py
     $ edit ../nacc/uds3/ivp/forms
 
+* Resources for uds3 fvp forms are available [here](https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/).

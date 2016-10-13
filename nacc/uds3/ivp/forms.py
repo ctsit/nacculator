@@ -96,6 +96,7 @@ class FormA2(nacc.uds3.FieldBag):
         self.fields['INCALLS'] = nacc.uds3.Field(name='INCALLS', typename='Num', position=(326, 326), length=1, inclusive_range=(1, 6), allowable_values=['3', '2', '1', '6', '5', '5'], blanks=['Blank if Question 9 INLIVWTH = 1 (Yes)'])
         self.fields['INRELY'] = nacc.uds3.Field(name='INRELY', typename='Num', position=(328, 328), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
 
+
 class FormA3(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
@@ -662,6 +663,7 @@ class FormB9(nacc.uds3.FieldBag):
         self.fields['LBDEVAL'] = nacc.uds3.Field(name='LBDEVAL', typename='Num', position=(590, 590), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
         self.fields['FTLDEVAL'] = nacc.uds3.Field(name='FTLDEVAL', typename='Num', position=(592, 592), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
 
+
 class FormC1S(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
@@ -698,6 +700,7 @@ class FormC1S(nacc.uds3.FieldBag):
         self.fields['BOSTON'] = nacc.uds3.Field(name='BOSTON', typename='Num', position=(251, 252), length=2, inclusive_range=(0, 30), allowable_values=['95', '96', '97', '98'], blanks=[])
         self.fields['COGSTAT'] = nacc.uds3.Field(name='COGSTAT', typename='Num', position=(254, 254), length=1, inclusive_range=(0, 5), allowable_values=[], blanks=[])
        
+
 class FormC2(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
@@ -771,6 +774,7 @@ class FormC2(nacc.uds3.FieldBag):
         self.fields['UDSVERTE'] = nacc.uds3.Field(name='UDSVERTE', typename='Num', position=(355, 356), length=2, inclusive_range=(0, 30), allowable_values=[], blanks=['Blank if Question 12d UDSVERLC = 95-98'])
         self.fields['UDSVERTI'] = nacc.uds3.Field(name='UDSVERTI', typename='Num', position=(358, 359), length=2, inclusive_range=(0, 30), allowable_values=[], blanks=['Blank if Question 12d UDSVERLC = 95-98'])
         self.fields['COGSTAT'] = nacc.uds3.Field(name='COGSTAT', typename='Num', position=(361, 361), length=1, inclusive_range=(0, 4), allowable_values=['3', '2', '1', '0', '4'], blanks=[])
+
 
 class FormD1(nacc.uds3.FieldBag):
     def __init__(self):
@@ -944,6 +948,7 @@ class FormD2(nacc.uds3.FieldBag):
         self.fields['OTHCOND'] = nacc.uds3.Field(name='OTHCOND', typename='Num', position=(343, 343), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
         self.fields['OTHCONDX'] = nacc.uds3.Field(name='OTHCONDX', typename='Char', position=(345, 404), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 23 OTHCOND ne 1 (Yes)'])
 
+
 class FormNP(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
@@ -1097,6 +1102,7 @@ class FormNP(nacc.uds3.FieldBag):
         self.fields['NPFAUT3'] = nacc.uds3.Field(name='NPFAUT3', typename='Char', position=(784, 843), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 19h NPFAUT ne 1 (Yes)'])
         self.fields['NPFAUT4'] = nacc.uds3.Field(name='NPFAUT4', typename='Char', position=(845, 904), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 19h NPFAUT ne 1 (Yes)'])
  
+
 class FormZ1(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
@@ -1121,4 +1127,8 @@ class FormZ1(nacc.uds3.FieldBag):
         self.fields['B7SUB'] = nacc.uds3.Field(name='B7SUB', typename='Num', position=(441, 441), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
         self.fields['B7NOT'] = nacc.uds3.Field(name='B7NOT', typename='Num', position=(443, 444), length=2, inclusive_range=(95, 98), allowable_values=['97', '96', '95', '98'], blanks=['Blank if Question 7 B7SUB = 1 (Yes)'])
         self.fields['B7COMM'] = nacc.uds3.Field(name='B7COMM', typename='Char', position=(446, 505), length=60, inclusive_range=None, allowable_values=[], blanks=[])
+
+
+############ FVP FORMS #############
+
 
