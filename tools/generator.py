@@ -109,6 +109,12 @@ def retab(text, newtab='    ', oldtab='\t'):
     """ Replaces all occurrences of oldtab with newtab """
     return text.replace(oldtab, newtab)
 
+def fields_for_records(form, fields):
+    formId = form.id.lower()
+    print >> sys.stderr, indent("\n\n"+formId+" = fvp_forms.Form"+form.id+"()", 1)
+    for field in fields:
+        print >> sys.stderr, indent(formId+'{0: <10}'.format("." + field.name) + " = record['fu_"+field.name.lower()+"']", 1)
+    print >> sys.stderr, indent("packet.append("+formId+")", 1)
 
 def main():
     data_dict_path = './ded_fvp'
@@ -146,6 +152,11 @@ def main():
 
         print ""
         form = generate(dedpath)
+        # Uncomment this method if you want to print the templates to read records. Keys have
+        # to be filled manually as per your csv header names. To seperate this from the normal
+        # output, this prints to standard error
+        # fields_for_records(form, sorted(form.fields, key=lambda fld: fld.position[1]))
+    
         print form_to_string(form, 'FVP_')
         for field in fields_to_strings(sorted(form.fields, key=lambda fld: fld.position[1])):
             print indent(field, 2)

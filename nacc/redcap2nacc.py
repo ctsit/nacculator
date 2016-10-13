@@ -149,7 +149,11 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Process redcap form output to nacculator.')
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed')
-    parser.add_argument('-nponly', action='store_true', default=False, dest='isNpOnly', help='Set this flag to process only np form data')
+    parser.add_argument('-nponly', action='store_true', dest='isNpOnly', help='Set this flag to process only np form data')
+    ivp_fvp_group = parser.add_mutually_exclusive_group()
+    ivp_fvp_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
+    ivp_fvp_group.add_argument('-ivp', action='store_false', dest='ivp', help='Set this flag to process as ivp data')
+
     options = parser.parse_args()
 
     fp = sys.stdin if options.file == None else open(options.file, 'r')
