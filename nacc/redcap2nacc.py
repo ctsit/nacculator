@@ -632,14 +632,19 @@ def udsv3_ivp_from_redcap_csv(record):
     b9.FTLDEVAL = record['ftldeval']
     packet.append(b9)
 
-    # Check two fields to make sure c1s is not blank
-    isC1SNotBlank = (record['c1s_1a_mmseloc'] and record['c1s_1a_mmseloc'].strip()) \
+    # Among C1S and C2 forms, one must be filled, one must be empty.
+    isC1SNotBlank = '0' + (record['c1s_1a_mmseloc'] and record['c1s_1a_mmseloc'].strip()) \
                 or (record['c1s_11a_cogstat'] and record['c1s_11a_cogstat'].strip())
-    isC2NotBlank = (record['mocacomp'] and record['mocacomp'].strip()) \
+    isC2NotBlank = '0' + (record['mocacomp'] and record['mocacomp'].strip()) \
                 or (record['cogstat_c2'] and record['cogstat_c2'].strip())
 
-    if(isC1SNotBlank and isC2NotBlank):
-        raise Exception("Could not parse packet: " + record[ptid] + " as both c1s and c2 form data is present")
+    condition = int(isC1SNotBlank) + int(isC2NotBlank)
+
+    if(condition != 1):
+        ptid = record['ptid']
+        message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " c1s/c2 forms has data";
+        message = message + " PTID : " + ("unknown" if not ptid else ptid)
+        raise Exception(message)
 
     if(isC1SNotBlank):
         addC1S(record, packet)
