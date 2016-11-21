@@ -13,6 +13,7 @@ import argparse
 
 from nacc.uds3 import blanks
 from nacc.uds3.ivp import builder as ivp_builder
+from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
 
 
@@ -143,34 +144,37 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Process redcap form output to nacculator.')
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed')
-    parser.add_argument('-nponly', action='store_true', dest='isNpOnly', help='Set this flag to process only np form data')
-    ivp_fvp_group = parser.add_mutually_exclusive_group()
-    ivp_fvp_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
-    ivp_fvp_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data') 
+    
+    ivp_fvp_np_group = parser.add_mutually_exclusive_group()
+    ivp_fvp_np_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
+    ivp_fvp_np_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data') 
+    ivp_fvp_np_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data') 
 
     options = parser.parse_args()
-    if (not options.ivp) and (not options.fvp):
+    
+    if not (options.ivp or options.fvp or options.np):
         options.ivp = True
 
     fp = sys.stdin if options.file == None else open(options.file, 'r')
 
     reader = csv.DictReader(fp)
-    for record in reader:
-        if options.fvp:
-            packet = fvp_builder.build_uds3_fvp_form(record)
-        else:
-            if options.isNpOnly:
-                packet = ivp_builder.build_np_form(record)
-            else:
-                packet = ivp_builder.build_uds3_ivp_form(record)
 
-        if not options.isNpOnly:
-            set_blanks_to_zero(packet) 
+    for record in reader:
+
+        if options.ivp:
+            packet = ivp_builder.build_uds3_ivp_form(record)
+        elif options.np:
+            packet = np_builder.build_np_form(record)
+        elif options.fvp:
+            packet = fvp_builder.build_uds3_fvp_form(record)
+
+        if not options.np:
+            set_blanks_to_zero(packet)
         
         warnings = []
         warnings += check_blanks(packet)
 
-        if not options.isNpOnly:
+        if not options.np:
             warnings += check_single_select(packet)
         
         if warnings:

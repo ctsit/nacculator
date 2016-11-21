@@ -6,7 +6,7 @@
 
 from nacc.uds3 import blanks
 import forms as fvp_forms
-import packet as fvp_packet
+from nacc.uds3 import packet as fvp_packet
 
 def build_uds3_fvp_form(record):
     """ Converts REDCap CSV data into a packet (list of FVP Form objects) """
