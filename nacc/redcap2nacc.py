@@ -164,7 +164,7 @@ def main():
         if options.ivp:
             packet = ivp_builder.build_uds3_ivp_form(record)
         elif options.np:
-            packet = np_builder.build_np_form(record)
+            packet = np_builder.build_uds3_np_form(record)
         elif options.fvp:
             packet = fvp_builder.build_uds3_fvp_form(record)
 

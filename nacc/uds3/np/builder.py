@@ -8,21 +8,8 @@ from nacc.uds3 import blanks
 import forms as np_forms
 from nacc.uds3 import packet as np_packet
 
-def update_header(record, packet):
-    for header in packet:
-        header.PACKET = "I"
-        header.FORMID = header.form_name
-        header.FORMVER = 3
-        header.ADCID = record['adcid']
-        header.PTID = record['ptid']
-        header.VISITMO = record['visitmo']
-        header.VISITDAY = record['visitday']
-        header.VISITYR = record['visityr']
-        header.VISITNUM = record['visitnum']
-        header.INITIALS = record['initials']
 
-
-def build_np_form(record):
+def build_uds3_np_form(record):
     packet = np_packet.Packet()
     np = np_forms.FormNP()
     np.NPFORMMO = record['npformmo']
@@ -178,3 +165,18 @@ def build_np_form(record):
 
     update_header(record, packet)
     return packet
+
+def update_header(record, packet):
+    for header in packet:
+        #header.PACKET = "I"
+        #header.FORMID = header.form_name
+        header.FORMVER = 10
+        header.ADCID = record['adcid']
+        header.PTID = record['ptid']
+        '''
+        header.VISITMO = record['visitmo']
+        header.VISITDAY = record['visitday']
+        header.VISITYR = record['visityr']
+        header.VISITNUM = record['visitnum']
+        header.INITIALS = record['initials']
+        '''
