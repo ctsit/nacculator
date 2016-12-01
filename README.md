@@ -45,7 +45,7 @@ Or, if you need the output of only neuropathology form:
  
     $ PYTHONPATH=. ./nacc/redcap2nacc.py -nponly < data.csv > data.txt
     
-The program accepts two arguments -file and -(ivp|fvp|np). Both the arguments are optional. 
+The program accepts two arguments -file and -(ivp|fvp|np). Both the arguments are optional. See the python help as:
 
     PYTHONPATH=. ./nacc/redcap2nacc.py -h
     usage: redcap2nacc.py [-h] [-file FILE] [-fvp | -ivp | -np]
