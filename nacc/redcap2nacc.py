@@ -152,6 +152,8 @@ def main():
 
     options = parser.parse_args()
     
+    # Defaults to processing of ivp. 
+    # TODO this can be changed in future to process fvp by default.
     if not (options.ivp or options.fvp or options.np):
         options.ivp = True
 

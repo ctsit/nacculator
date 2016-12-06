@@ -168,15 +168,6 @@ def build_uds3_np_form(record):
 
 def update_header(record, packet):
     for header in packet:
-        #header.PACKET = "I"
-        #header.FORMID = header.form_name
         header.FORMVER = 10
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
-        '''
-        header.VISITMO = record['visitmo']
-        header.VISITDAY = record['visitday']
-        header.VISITYR = record['visityr']
-        header.VISITNUM = record['visitnum']
-        header.INITIALS = record['initials']
-        '''

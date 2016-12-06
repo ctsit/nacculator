@@ -18,16 +18,9 @@ CURRENT_YEAR = date.today().year
 
 def header_fields():
     fields = {}
-    #fields['PACKET'] = nacc.uds3.Field(name='PACKET', typename='Char', position=(1, 2), length=2, inclusive_range=None, allowable_values=[], blanks=[])
-    #fields['FORMID'] = nacc.uds3.Field(name='FORMID', typename='Char', position=(4, 6), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     fields['FORMVER'] = nacc.uds3.Field(name='FORMVER', typename='Num', position=(906, 907), length=2, inclusive_range=(10, 10), allowable_values=[], blanks=[])
     fields['ADCID'] = nacc.uds3.Field(name='ADCID', typename='Num', position=(1, 2), length=2, inclusive_range=(2, 38), allowable_values=[], blanks=[])
     fields['PTID'] = nacc.uds3.Field(name='PTID', typename='Char', position=(4, 13), length=10, inclusive_range=None, allowable_values=[], blanks=[])
-    #fields['VISITMO'] = nacc.uds3.Field(name='VISITMO', typename='Num', position=(26, 27), length=2, inclusive_range=(1, 12), allowable_values=[], blanks=[])
-    #fields['VISITDAY'] = nacc.uds3.Field(name='VISITDAY', typename='Num', position=(29, 30), length=2, inclusive_range=(1, 31), allowable_values=[], blanks=[])
-    #fields['VISITYR'] = nacc.uds3.Field(name='VISITYR', typename='Num', position=(32, 35), length=4, inclusive_range=(2005, CURRENT_YEAR), allowable_values=[], blanks=[])
-    #fields['VISITNUM'] = nacc.uds3.Field(name='VISITNUM', typename='Char', position=(37, 39), length=3, inclusive_range=None, allowable_values=[], blanks=[])
-    #fields['INITIALS'] = nacc.uds3.Field(name='INITIALS', typename='Char', position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     return fields
 
 class FormNP(nacc.uds3.FieldBag):
