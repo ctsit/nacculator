@@ -37,4 +37,3 @@ class Packet(list):
                 return self._cache[key]
 
         raise KeyError(key)
-
