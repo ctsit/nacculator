@@ -45,21 +45,23 @@ Or, if you need the output of only neuropathology form:
  
     $ PYTHONPATH=. ./nacc/redcap2nacc.py -nponly < data.csv > data.txt
     
-The program accepts two arguments -file and -nponly. Both the arguments are optional. 
+The program accepts two arguments -file and -(ivp|fvp|np). Both the arguments are optional. See the python help as:
 
     PYTHONPATH=. ./nacc/redcap2nacc.py -h
-    usage: redcap2nacc.py [-h] [-file FILE] [-nponly]
+    usage: redcap2nacc.py [-h] [-file FILE] [-fvp | -ivp | -np]
 
     Process redcap form output to nacculator.
 
     optional arguments:
       -h, --help  show this help message and exit
       -file FILE  Path of the csv file to be processed
-      -nponly     Set this flag to process only np form data
+      -fvp        Set this flag to process as fvp data
+      -ivp        Set this flag to process as ivp data
+      -np         Set this flag to process as np data
 
 Example Usage
 
-    PYTHONPATH=. ./nacc/redcap2nacc.py  -nponly -file data.csv > data.txt
+    PYTHONPATH=. ./nacc/redcap2nacc.py  -np -file data.csv > data.txt
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input can
 be `STDIN` or the first argument passed to `redcap2nacc`._
@@ -80,3 +82,4 @@ working directory called `corrected`._
     $ PYTHONPATH=.. ./generator.py uds3/ded/csv/ > ../nacc/uds3/ivp/forms.py
     $ edit ../nacc/uds3/ivp/forms
 
+* Resources for uds3 fvp forms are available [here](https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/).
