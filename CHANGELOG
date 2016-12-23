@@ -1,3 +1,17 @@
+ ## [0.2.0] - 2016-12-19
+ ### Changed
+ * Changed header fields for np forms
+ * Removed redundant fields for np forms.
+ * Added mutually exclusive flag for fvp vs ivp forms (Tarun Gupta Akirala)
+ * Restructured, working version for ivp forms. (Tarun Gupta Akirala)
+ * Adding blank checks to discard empty records (Tarun Gupta Akirala)
+
+ ### Added
+ * Added seperate classes for fvp and np forms (Tarun Gupta Akirala)
+ * Added new builder and class files for fvp, np and ivp forms.
+ * Added new forms (Tarun Gupta Akirala)
+
+
  ## [0.1.5] - 2016-10-10
  ### Changed
 
