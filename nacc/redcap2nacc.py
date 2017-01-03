@@ -15,7 +15,7 @@ from nacc.uds3 import blanks
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
-
+from nacc.uds3 import filters
 
 def check_blanks(packet):
     """
@@ -137,53 +137,67 @@ def set_blanks_to_zero(packet):
     if packet['ARTH'] == 1:
         set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
 
-
 def main():
     """
     Reads a REDCap exported CSV, data file, then prints it out in NACC's format
     """
     parser = argparse.ArgumentParser(description='Process redcap form output to nacculator.')
-    parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed')
-    
-    ivp_fvp_np_group = parser.add_mutually_exclusive_group()
-    ivp_fvp_np_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
-    ivp_fvp_np_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data') 
-    ivp_fvp_np_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data') 
+
+    filters_names = { 'cleanPtid' : 'clean_ptid',
+                'replaceDrugId' : 'replace_drug_id',
+                'fixC1S' : 'fix_c1s',
+                'fillDefault' : 'fill_default',
+                'updateField' : 'update_field'}
+
+    option_group = parser.add_mutually_exclusive_group()
+    option_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
+    option_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data')
+    option_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data')
+    option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
+
+    parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
+    parser.add_argument('-in', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
 
     options = parser.parse_args()
-    
-    # Defaults to processing of ivp. 
+
+    # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.np):
+    if not (options.ivp or options.fvp or options.np or options.filter):
         options.ivp = True
 
     fp = sys.stdin if options.file == None else open(options.file, 'r')
 
+    filter_meta = None if options.filter_meta == None else open(options.filter_meta, 'r')
+
     reader = csv.DictReader(fp)
 
-    for record in reader:
+    if options.filter:
+        filter_method = getattr(filters, 'filter_' + filters_names[options.filter])
+        filter_method(reader, filter_meta)
+    else:
 
-        if options.ivp:
-            packet = ivp_builder.build_uds3_ivp_form(record)
-        elif options.np:
-            packet = np_builder.build_uds3_np_form(record)
-        elif options.fvp:
-            packet = fvp_builder.build_uds3_fvp_form(record)
+        for record in reader:
+            if options.ivp:
+                packet = ivp_builder.build_uds3_ivp_form(record)
+            elif options.np:
+                packet = np_builder.build_uds3_np_form(record)
+            elif options.fvp:
+                packet = fvp_builder.build_uds3_fvp_form(record)
 
-        if not options.np:
-            set_blanks_to_zero(packet)
-        
-        warnings = []
-        warnings += check_blanks(packet)
+            if not options.np:
+                set_blanks_to_zero(packet)
 
-        if not options.np:
-            warnings += check_single_select(packet)
-        
-        if warnings:
-            print >> sys.stderr, "\n".join(warnings)
+            warnings = []
+            warnings += check_blanks(packet)
 
-        for form in packet:
-            print form
+            if not options.np:
+                warnings += check_single_select(packet)
+
+            if warnings:
+                print >> sys.stderr, "\n".join(warnings)
+
+            for form in packet:
+                print form
 
 if __name__ == '__main__':
     main()
