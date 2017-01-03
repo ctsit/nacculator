@@ -636,7 +636,7 @@ def build_uds3_ivp_form(record):
     if(condition != 1):
         ptid = record['ptid']
         message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " c1s/c2 forms has data";
-        message = message + " PTID : " + ("unknown" if not ptid else ptid)
+        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
         raise Exception(message)
 
     if(isC1SNotBlank):

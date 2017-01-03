@@ -156,7 +156,7 @@ def main():
     option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
 
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
-    parser.add_argument('-in', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
+    parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
 
     options = parser.parse_args()
 
@@ -167,18 +167,22 @@ def main():
 
     fp = sys.stdin if options.file == None else open(options.file, 'r')
 
-    filter_meta = None if options.filter_meta == None else open(options.filter_meta, 'r')
-
-    reader = csv.DictReader(fp)
+    # Place holder for future. May need to output to a specific file in future.
+    output = sys.stdout
 
     if options.filter:
         filter_method = getattr(filters, 'filter_' + filters_names[options.filter])
-        filter_method(reader, filter_meta)
+        filter_method(fp, options.filter_meta, output)
     else:
-
+        reader = csv.DictReader(fp)
         for record in reader:
+
             if options.ivp:
-                packet = ivp_builder.build_uds3_ivp_form(record)
+                try:
+                    packet = ivp_builder.build_uds3_ivp_form(record)
+                except Exception as exp:
+                    print >> sys.stderr, exp.message
+                    continue
             elif options.np:
                 packet = np_builder.build_uds3_np_form(record)
             elif options.fvp:
