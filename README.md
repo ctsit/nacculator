@@ -55,15 +55,20 @@ The program accepts two arguments -file and -(ivp|fvp|np). Both the arguments ar
       -fvp                  Set this flag to process as fvp data
       -ivp                  Set this flag to process as ivp data
       -np                   Set this flag to process as np data
-      -f {cleanPtid,updateField,replaceDrugId,fillDefault,fixC1S}, --filter {cleanPtid,updateField,replaceDrugId,fillDefault,fixC1S}
-                          Set this flag to process the filter
+      -f or --filter        Accepts one of {cleanPtid,updateField,replaceDrugId,fillDefault,fixC1S}
+                            Set this flag to process the filter
       -file FILE            Path of the csv file to be processed.
-      -meta FILTER_META     Input file for the filter metadata (in case -filter is
-                          used)
+      -meta FILTER_META     Input file for the filter metadata (in case cleanPtid is used)
 
 Example Usage
 
     PYTHONPATH=. ./nacc/redcap2nacc.py  -np -file data.csv > data.txt
+
+To use a filter,
+
+    PYTHONPATH=. ./nacc/redcap2nacc.py  -f cleanPtid -meta someFileName.csv < data.csv > data.txt
+
+Only cleanPtid filter requires a meta file to be passed to it. Other filters do not need a meta tag.    
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input can
 be `STDIN` or the first argument passed to `redcap2nacc`._
