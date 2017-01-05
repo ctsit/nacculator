@@ -11,7 +11,9 @@ fill_default_values = { 'nogds' : 0,
                         'arthupex' : 0,
                         'arthloex' : 0,
                         'arthspin' : 0,
-                        'arthunk' : 0 }
+                        'arthunk' : 0,
+                        'adcid' : 41,
+                        'formver' : 3 }
 
 fill_non_blank_values = { 'adcid' : '41' }
 
@@ -64,7 +66,7 @@ def filter_fix_c1s(input_ptr, filter_meta, output_ptr):
         if header:
             header = False
             for key in fix_c1s_headers.keys():
-                line.replace(key, fix_c1s_headers[key])
+                line=line.replace(key, fix_c1s_headers[key],1)
         print line
     return
 
