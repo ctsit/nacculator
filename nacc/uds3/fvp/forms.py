@@ -245,7 +245,7 @@ class FormA3(nacc.uds3.FieldBag):
         self.fields['NWINFKID'] = nacc.uds3.Field(name='NWINFKID', typename='Num', position=(963, 963), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
         self.fields['KID1MOB'] = nacc.uds3.Field(name='KID1MOB', typename='Num', position=(965, 966), length=2, inclusive_range=(1, 12), allowable_values=['99', '99'], blanks=['Blank if Question 7 KIDS = 0 (No)', 'Blank if Question 7a NWINFKID = 0 (No)'])
         self.fields['KID1YOB'] = nacc.uds3.Field(name='KID1YOB', typename='Num', position=(968, 971), length=4, inclusive_range=(1875, CURRENT_YEAR), allowable_values=['9999', '99'], blanks=['Blank if Question 7 KIDS = 0 (No)', 'Blank if Question 7a NWINFKID = 0 (No)'])
-        self.fields['KID1AGD'] = nacc.uds3.Field(name='KID1AGD', typename='Num', position=(971, 975), length=3, inclusive_range=(15, 110), allowable_values=['999', '888'], blanks=['Blank if Question 7 KIDS = 0 (No)', 'Blank if Question 7a NWINFKID = 0 (No)'])
+        self.fields['KID1AGD'] = nacc.uds3.Field(name='KID1AGD', typename='Num', position=(973, 975), length=3, inclusive_range=(15, 110), allowable_values=['999', '888'], blanks=['Blank if Question 7 KIDS = 0 (No)', 'Blank if Question 7a NWINFKID = 0 (No)'])
         self.fields['KID1NEU'] = nacc.uds3.Field(name='KID1NEU', typename='Num', position=(977, 977), length=1, inclusive_range=(1, 5), allowable_values=['9', '3', '2', '1', '8', '5', '4'], blanks=['Blank if Question 7 KIDS = 0 (No)', 'Blank if Question 7a NWINFKID = 0 (No)'])
         self.fields['KID1PDX'] = nacc.uds3.Field(name='KID1PDX', typename='Num', position=(979, 981), length=3, inclusive_range=(40, 490), allowable_values=['999'], blanks=['Blank if Question 7 KIDS = 0 (No)', 'Blank if Question 7a NWINFKID = 0 (No)', 'Blank if Question 7aa4 KID1NEU = 8 (N/A)', 'Blank if Question 7aa4 KID1NEU = 9 (Unknown)'])
         self.fields['KID1MOE'] = nacc.uds3.Field(name='KID1MOE', typename='Num', position=(983, 983), length=1, inclusive_range=(1, 7), allowable_values=['7', '3', '2', '1', '6', '5', '4'], blanks=['Blank if Question 7 KIDS = 0 (No)', 'Blank if Question 7a NWINFKID = 0 (No)', 'Blank if Question 7aa4 KID1NEU = 8 (N/A)', 'Blank if Question 7aa4 KID1NEU = 9 (Unknown)'])
@@ -390,7 +390,7 @@ class FormB4(nacc.uds3.FieldBag):
         self.fields['CDRSUM'] = nacc.uds3.Field(name='CDRSUM', typename='Num', position=(69, 72), length=4, inclusive_range=(0, 18), allowable_values=[], blanks=[])
         self.fields['CDRGLOB'] = nacc.uds3.Field(name='CDRGLOB', typename='Num', position=(74, 76), length=3, inclusive_range=(0, 3), allowable_values=['1', '0.5', '0', '3', '2'], blanks=[])
         self.fields['COMPORT'] = nacc.uds3.Field(name='COMPORT', typename='Num', position=(78, 80), length=3, inclusive_range=(0, 3), allowable_values=['1', '0.5', '0', '3', '2'], blanks=[])
-        self.fields['CDRLANG'] = nacc.uds3.Field(name='CDRLANG', typename='Num', position=(82, 84), length=4, inclusive_range=(0, 3), allowable_values=['1', '0.5', '0', '3', '2'], blanks=[])
+        self.fields['CDRLANG'] = nacc.uds3.Field(name='CDRLANG', typename='Num', position=(82, 84), length=3, inclusive_range=(0, 3), allowable_values=['1', '0.5', '0', '3', '2'], blanks=[])
 
 
 class FormB5(nacc.uds3.FieldBag):
@@ -618,7 +618,7 @@ class FormC1(nacc.uds3.FieldBag):
         self.fields['UDSVERTN'] = nacc.uds3.Field(name='UDSVERTN', typename='Num', position=(286, 287), length=2, inclusive_range=(0, 80), allowable_values=[], blanks=['Blank if Question 12d UDSVERLC = 95-\x9698'])
         self.fields['UDSVERTE'] = nacc.uds3.Field(name='UDSVERTE', typename='Num', position=(289, 290), length=2, inclusive_range=(0, 30), allowable_values=[], blanks=['Blank if Question 12d UDSVERLC = 95-\x9698'])
         self.fields['UDSVERTI'] = nacc.uds3.Field(name='UDSVERTI', typename='Num', position=(292, 293), length=2, inclusive_range=(0, 30), allowable_values=[], blanks=['Blank if Question 12d UDSVERLC = 95-\x9698'])
-        self.fields['COGSTAT'] = nacc.uds3.Field(name='COGSTAT', typename='Num', position=(295, 296), length=1, inclusive_range=(0, 4), allowable_values=['3', '2', '1', '0', '4'], blanks=[])
+        self.fields['COGSTAT'] = nacc.uds3.Field(name='COGSTAT', typename='Num', position=(295, 296), length=2, inclusive_range=(0, 4), allowable_values=['3', '2', '1', '0', '4'], blanks=[])
 
 
 class FormC2(nacc.uds3.FieldBag):
