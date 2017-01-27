@@ -175,18 +175,17 @@ def main():
         filter_method(fp, options.filter_meta, output)
     else:
         reader = csv.DictReader(fp)
-        for record in reader:
-
-            if options.ivp:
-                try:
-                    packet = ivp_builder.build_uds3_ivp_form(record)
-                except Exception as exp:
-                    print >> sys.stderr, exp.message
-                    continue
-            elif options.np:
-                packet = np_builder.build_uds3_np_form(record)
-            elif options.fvp:
-                packet = fvp_builder.build_uds3_fvp_form(record)
+        for record in reader:    
+            try:
+                if options.ivp:
+                    packet = ivp_builder.build_uds3_ivp_form(record)    
+                elif options.np:
+                    packet = np_builder.build_uds3_np_form(record)
+                elif options.fvp:
+                    packet = fvp_builder.build_uds3_fvp_form(record)
+            except Exception as exp:
+                print >> sys.stderr, exp.message
+                continue
 
             if not options.np:
                 set_blanks_to_zero(packet)
