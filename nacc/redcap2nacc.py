@@ -10,6 +10,7 @@ import csv
 import re
 import sys
 import argparse
+import traceback
 
 from nacc.uds3 import blanks
 from nacc.uds3.ivp import builder as ivp_builder
@@ -176,17 +177,18 @@ def main():
     else:
         reader = csv.DictReader(fp)
         for record in reader:    
-            #try:
-            if options.ivp:
-                packet = ivp_builder.build_uds3_ivp_form(record)    
-            elif options.np:
-                packet = np_builder.build_uds3_np_form(record)
-            elif options.fvp:
-                packet = fvp_builder.build_uds3_fvp_form(record)
-            #except Exception as exp:
-            #    print >> sys.stderr, "Skip record"
-            #    print >> sys.stderr, exp
-            #    continue
+            try:
+                if options.ivp:
+                    packet = ivp_builder.build_uds3_ivp_form(record)    
+                elif options.np:
+                    packet = np_builder.build_uds3_np_form(record)
+                elif options.fvp:
+                    packet = fvp_builder.build_uds3_fvp_form(record)
+            except Exception, exp:
+                if 'ptid' in record:
+                    print >> sys.stderr, "[SKIP] Error for ptid : " + str(record['ptid'])
+                traceback.print_exc()
+                continue
 
             if not options.np:
                 set_blanks_to_zero(packet)
