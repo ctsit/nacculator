@@ -1,3 +1,11 @@
+ ## [0.2.2] - 2017-02-02
+ ### Changed
+ * Header key names for fvp forms.
+ * Added few fixes for filters to correct fvp forms.
+
+ ### Added
+ * Added logic to skip corrupt forms entries and continue processing valid forms
+
  ## [0.2.1] - 2016-01-09
  ### Changed
  * While parsing a csv file record by record, if one of the record has both c1s and c2 forms, then that specific record will be discarded and the processing for remaining records will still be continued.
