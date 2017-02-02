@@ -47,13 +47,15 @@ def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
     write_headers(reader, output)
     for record in reader:
         count = 0
-        for i in range(1, 31):
-            col_name = 'drugid_' + str(i)
-            if col_name in record.keys():
-                col_value = record[col_name]
-                if len(col_value) > 0 :
-                    record[col_name] = 'd' + col_value[1:]
-                    count += 1
+        prefixes = ['','fu_']
+        for prefix in prefixes:
+            for i in range(1, 31):
+                col_name = prefix + 'drugid_' + str(i)
+                if col_name in record.keys():
+                    col_value = record[col_name]
+                    if len(col_value) > 0 :
+                        record[col_name] = 'd' + col_value[1:]
+                        count += 1
         output.writerow(record)
         print >> sys.stderr, 'Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) + ' fields.'
     return
