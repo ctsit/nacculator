@@ -194,7 +194,7 @@ def build_uds3_fvp_form(record):
     a3.SIB17YOB  = record['fu_sib17yob']
     a3.SIB17AGD  = record['fu_sib17agd']
     a3.SIB17NEU  = record['fu_sib17neu']
-    a3.SIB17PDX  = record['fu_sib17pdx'] #TODO - listed as fusib17pdx
+    a3.SIB17PDX  = record['fusib17pdx']
     a3.SIB17MOE  = record['fu_sib17moe']
     a3.SIB17AGO  = record['fu_sib17ago']
     a3.SIB18MOB  = record['fu_sib18mob']
@@ -278,7 +278,7 @@ def build_uds3_fvp_form(record):
     a3.KID8AGO   = record['fu_kid8ago']
     a3.KID9MOB   = record['fu_kid9mob']
     a3.KID9YOB   = record['fu_kid9yob']
-    a3.KID9AGD   = record['fu_kid9agd'] #TODO -> listed as fukid9agd in redcap
+    a3.KID9AGD   = record['fukid9agd']
     a3.KID9NEU   = record['fu_kid9neu']
     a3.KID9PDX   = record['fu_kid9pdx']
     a3.KID9MOE   = record['fu_kid9moe']
@@ -328,14 +328,20 @@ def build_uds3_fvp_form(record):
     packet.append(a3)
 
 
-    a4d = fvp_forms.FormA4D()
-    a4d.DRUGID    = record['fu_drugid'] #TODO fu_drugid_1 to fu_drugid_31 are listed but fu_drugid is not present.
-    packet.append(a4d)
-
-
+    # Form A4D and A4G are special in that our REDCap implementation (FVP A4)
+    # combines them by asking if the subject is taking any medications (which
+    # corresponds to A4G.ANYMEDS), then has 50 fields to specify each
+    # medication used, which we turn each one into a FormA4D object.
     a4g = fvp_forms.FormA4G()
-    a4g.ANYMEDS   = record['fu_anymeds']
+    a4g.ANYMEDS = record['fu_anymeds']
     packet.append(a4g)
+
+    for i in range(1, 51):
+            key = 'fu_drugid_' + str(i)
+            if record[key]:
+                a4d = fvp_forms.FormA4D()
+                a4d.DRUGID = record[key]
+                packet.append(a4d)
 
 
     b1 = fvp_forms.FormB1()
@@ -446,15 +452,13 @@ def build_uds3_fvp_form(record):
     b8.POSTINST  = record['fu_postinst']
     b8.CVDSIGNS  = record['fu_cvdsigns']
     b8.CORTDEF   = record['fu_cortdef']
-    b8.GAITAPRA  = record['fu_gaitapra'] #TODO is this fu_sivdfind (in the same position) ?
+    b8.SIVDFIND  = record['fu_sivdfind']
     b8.CVDMOTL   = record['fu_cvdmotl']
     b8.CVDMOTR   = record['fu_cvdmotr']
     b8.CORTVISL  = record['fu_cortvisl']
     b8.CORTVISR  = record['fu_cortvisr']
     b8.SOMATL    = record['fu_somatl']
     b8.SOMATR    = record['fu_somatr']
-    b8.CVDATAXL  = record['fu_cvdataxl'] #TODO not present
-    b8.CVDATAXR  = record['fu_cvdataxr'] #TODO not present
     b8.POSTCORT  = record['fu_postcort']
     b8.PSPCBS    = record['fu_pspcbs']
     b8.EYEPSP    = record['fu_eyepsp']
@@ -474,8 +478,8 @@ def build_uds3_fvp_form(record):
     b8.DYSTONR   = record['fu_dystonr']
     b8.ALSFIND   = record['fu_alsfind']
     b8.GAITNPH   = record['fu_gaitnph']
-    b8.OTHNEUR   = record['fu_othneur'] #TODO Typo? fu_otherneur
-    b8.OTHNEURX  = record['fu_othneurx'] #TODO Typo? fu_otherneur
+    b8.OTHNEUR   = record['fu_othneur']
+    b8.OTHNEURX  = record['fu_othneurx']
     packet.append(b8)
 
 
@@ -733,7 +737,7 @@ def build_uds3_fvp_form(record):
     d1.CVD       = record['fu_cvd']
     d1.CVDIF     = record['fu_cvdif']
     d1.PREVSTK   = record['fu_prevstk']
-    d1.STROKCOG  = record['fu_strokcog'] #TODO Are both same? fu_strokedec in same position
+    d1.STROKDEC  = record['fu_strokdec']
     d1.STKIMAG   = record['fu_stkimag']
     d1.INFNETW   = record['fu_infnetw']
     d1.INFWMH    = record['fu_infwmh']
@@ -800,7 +804,6 @@ def build_uds3_fvp_form(record):
     d2 = fvp_forms.FormD2()
     d2.CANCER    = record['fu_cancer']
     d2.CANCSITE  = record['fu_cancsite']
-    d2.CANCACT   = record['fu_cancact'] #TODO Not present in redcap form
     d2.DIABET    = record['fu_diabet']
     d2.MYOINF    = record['fu_myoinf']
     d2.CONGHRT   = record['fu_conghrt']
