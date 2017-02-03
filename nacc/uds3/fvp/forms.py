@@ -838,7 +838,6 @@ class FormD2(nacc.uds3.FieldBag):
         self.fields = header_fields()
         self.fields['CANCER'] = nacc.uds3.Field(name='CANCER', typename='Num', position=(45, 45), length=1, inclusive_range=(0, 2), allowable_values=['2', '1', '0', '8'], blanks=[])
         self.fields['CANCSITE'] = nacc.uds3.Field(name='CANCSITE', typename='Char', position=(47, 106), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 1 CANCER = 0 (No)', 'Blank if Question 1 CANCER = 8 (Not assessed)'])
-        
         self.fields['DIABET'] = nacc.uds3.Field(name='DIABET', typename='Num', position=(108, 108), length=1, inclusive_range=(0, 3), allowable_values=['2', '1', '0', '9', '3'], blanks=[])
         self.fields['MYOINF'] = nacc.uds3.Field(name='MYOINF', typename='Num', position=(110, 110), length=1, inclusive_range=(0, 1), allowable_values=['8', '1', '0'], blanks=[])
         self.fields['CONGHRT'] = nacc.uds3.Field(name='CONGHRT', typename='Num', position=(112, 112), length=1, inclusive_range=(0, 1), allowable_values=['8', '1', '0'], blanks=[])
