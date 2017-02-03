@@ -570,8 +570,8 @@ class FormB9(nacc.uds3.FieldBag):
         self.fields['LBDEVAL'] = nacc.uds3.Field(name='LBDEVAL', typename='Num', position=(590, 590), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
         self.fields['FTLDEVAL'] = nacc.uds3.Field(name='FTLDEVAL', typename='Num', position=(592, 592), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
 
-
-class FormC1(nacc.uds3.FieldBag):
+# This is the C1 form in the redcap and C1S form in the ALZ website.
+class FormC1S(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
         self.fields['MMSECOMP'] = nacc.uds3.Field(name='MMSECOMP', typename='Num', position=(45, 45), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
@@ -589,6 +589,8 @@ class FormC1(nacc.uds3.FieldBag):
         self.fields['NPSYLAN'] = nacc.uds3.Field(name='NPSYLAN', typename='Num', position=(133, 133), length=1, inclusive_range=(1, 3), allowable_values=['3', '2', '1'], blanks=[])
         self.fields['NPSYLANX'] = nacc.uds3.Field(name='NPSYLANX', typename='Char', position=(135, 194), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 2b NPSYLAN ne 3 (Other)'])
         self.fields['LOGIMO'] = nacc.uds3.Field(name='LOGIMO', typename='Num', position=(196, 197), length=2, inclusive_range=(0, 12), allowable_values=['88'], blanks=[])
+        self.fields['LOGIDAY'] = nacc.uds3.Field(name='LOGIDAY', typename='Num', position=(199, 200), length=2, inclusive_range=(1, 31), allowable_values=['88'], blanks=[])
+        self.fields['LOGIYR'] = nacc.uds3.Field(name='LOGIYR', typename='Num', position=(202, 205), length=4, inclusive_range=(2005, CURRENT_YEAR), allowable_values=['8888'], blanks=[])
         self.fields['LOGIPREV'] = nacc.uds3.Field(name='LOGIPREV', typename='Num', position=(207, 208), length=2, inclusive_range=(0, 25), allowable_values=['88'], blanks=[])
         self.fields['LOGIMEM'] = nacc.uds3.Field(name='LOGIMEM', typename='Num', position=(210, 211), length=2, inclusive_range=(0, 25), allowable_values=['96', '95', '98', '97'], blanks=[])
         self.fields['UDSBENTC'] = nacc.uds3.Field(name='UDSBENTC', typename='Num', position=(213, 214), length=2, inclusive_range=(0, 17), allowable_values=['96', '95', '98', '97'], blanks=[])
