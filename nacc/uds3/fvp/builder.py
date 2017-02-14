@@ -194,7 +194,7 @@ def build_uds3_fvp_form(record):
     a3.SIB17YOB  = record['fu_sib17yob']
     a3.SIB17AGD  = record['fu_sib17agd']
     a3.SIB17NEU  = record['fu_sib17neu']
-    a3.SIB17PDX  = record['fu_sib17pdx'] #TODO - listed as fusib17pdx
+    a3.SIB17PDX  = record['fusib17pdx']
     a3.SIB17MOE  = record['fu_sib17moe']
     a3.SIB17AGO  = record['fu_sib17ago']
     a3.SIB18MOB  = record['fu_sib18mob']
@@ -278,7 +278,7 @@ def build_uds3_fvp_form(record):
     a3.KID8AGO   = record['fu_kid8ago']
     a3.KID9MOB   = record['fu_kid9mob']
     a3.KID9YOB   = record['fu_kid9yob']
-    a3.KID9AGD   = record['fu_kid9agd'] #TODO -> listed as fukid9agd in redcap
+    a3.KID9AGD   = record['fukid9agd']
     a3.KID9NEU   = record['fu_kid9neu']
     a3.KID9PDX   = record['fu_kid9pdx']
     a3.KID9MOE   = record['fu_kid9moe']
@@ -328,14 +328,20 @@ def build_uds3_fvp_form(record):
     packet.append(a3)
 
 
-    a4d = fvp_forms.FormA4D()
-    a4d.DRUGID    = record['fu_drugid'] #TODO fu_drugid_1 to fu_drugid_31 are listed but fu_drugid is not present.
-    packet.append(a4d)
-
-
+    # Form A4D and A4G are special in that our REDCap implementation (FVP A4)
+    # combines them by asking if the subject is taking any medications (which
+    # corresponds to A4G.ANYMEDS), then has 50 fields to specify each
+    # medication used, which we turn each one into a FormA4D object.
     a4g = fvp_forms.FormA4G()
-    a4g.ANYMEDS   = record['fu_anymeds']
+    a4g.ANYMEDS = record['fu_anymeds']
     packet.append(a4g)
+
+    for i in range(1, 51):
+            key = 'fu_drugid_' + str(i)
+            if record[key]:
+                a4d = fvp_forms.FormA4D()
+                a4d.DRUGID = record[key]
+                packet.append(a4d)
 
 
     b1 = fvp_forms.FormB1()
@@ -446,15 +452,13 @@ def build_uds3_fvp_form(record):
     b8.POSTINST  = record['fu_postinst']
     b8.CVDSIGNS  = record['fu_cvdsigns']
     b8.CORTDEF   = record['fu_cortdef']
-    b8.GAITAPRA  = record['fu_gaitapra'] #TODO is this fu_sivdfind (in the same position) ?
+    b8.SIVDFIND  = record['fu_sivdfind']
     b8.CVDMOTL   = record['fu_cvdmotl']
     b8.CVDMOTR   = record['fu_cvdmotr']
     b8.CORTVISL  = record['fu_cortvisl']
     b8.CORTVISR  = record['fu_cortvisr']
     b8.SOMATL    = record['fu_somatl']
     b8.SOMATR    = record['fu_somatr']
-    b8.CVDATAXL  = record['fu_cvdataxl'] #TODO not present
-    b8.CVDATAXR  = record['fu_cvdataxr'] #TODO not present
     b8.POSTCORT  = record['fu_postcort']
     b8.PSPCBS    = record['fu_pspcbs']
     b8.EYEPSP    = record['fu_eyepsp']
@@ -474,8 +478,8 @@ def build_uds3_fvp_form(record):
     b8.DYSTONR   = record['fu_dystonr']
     b8.ALSFIND   = record['fu_alsfind']
     b8.GAITNPH   = record['fu_gaitnph']
-    b8.OTHNEUR   = record['fu_othneur'] #TODO Typo? fu_otherneur
-    b8.OTHNEURX  = record['fu_othneurx'] #TODO Typo? fu_otherneur
+    b8.OTHNEUR   = record['fu_othneur']
+    b8.OTHNEURX  = record['fu_othneurx']
     packet.append(b8)
 
 
@@ -540,127 +544,24 @@ def build_uds3_fvp_form(record):
     packet.append(b9)
 
 
-    c1 = fvp_forms.FormC1()
-    c1.MMSECOMP  = record['fu_mmsecomp']
-    c1.MMSEREAS  = record['fu_mmsereas']
-    c1.MMSELOC   = record['fu_mmseloc']
-    c1.MMSELAN   = record['fu_mmselan']
-    c1.MMSELANX  = record['fu_mmselanx']
-    c1.MMSEVIS   = record['fu_mmsevis']
-    c1.MMSEHEAR  = record['fu_mmsehear']
-    c1.MMSEORDA  = record['fu_mmseorda']
-    c1.MMSEORLO  = record['fu_mmseorlo']
-    c1.PENTAGON  = record['fu_pentagon']
-    c1.MMSE      = record['fu_mmse']
-    c1.NPSYCLOC  = record['fu_npsycloc']
-    c1.NPSYLAN   = record['fu_npsylan']
-    c1.NPSYLANX  = record['fu_npsylanx']
-    c1.LOGIMO    = record['fu_logimo']
-    c1.LOGIPREV  = record['fu_logiprev']
-    c1.LOGIMEM   = record['fu_logimem']
-    c1.UDSBENTC  = record['fu_udsbentc']
-    c1.DIGIF     = record['fu_digif']
-    c1.DIGIFLEN  = record['fu_digiflen']
-    c1.DIGIB     = record['fu_digib']
-    c1.DIGIBLEN  = record['fu_digiblen']
-    c1.ANIMALS   = record['fu_animals']
-    c1.VEG       = record['fu_veg']
-    c1.TRAILA    = record['fu_traila']
-    c1.TRAILARR  = record['fu_trailarr']
-    c1.TRAILALI  = record['fu_trailali']
-    c1.TRAILB    = record['fu_trailb']
-    c1.TRAILBRR  = record['fu_trailbrr']
-    c1.TRAILBLI  = record['fu_trailbli']
-    c1.MEMUNITS  = record['fu_memunits']
-    c1.MEMTIME   = record['fu_memtime']
-    c1.UDSBENTD  = record['fu_udsbentd']
-    c1.UDSBENRS  = record['fu_udsbenrs']
-    c1.BOSTON    = record['fu_boston']
-    c1.UDSVERFC  = record['fu_udsverfc']
-    c1.UDSVERFN  = record['fu_udsverfn']
-    c1.UDSVERNF  = record['fu_udsvernf']
-    c1.UDSVERLC  = record['fu_udsverlc']
-    c1.UDSVERLR  = record['fu_udsverlr']
-    c1.UDSVERLN  = record['fu_udsverln']
-    c1.UDSVERTN  = record['fu_udsvertn']
-    c1.UDSVERTE  = record['fu_udsverte']
-    c1.UDSVERTI  = record['fu_udsverti']
-    c1.COGSTAT   = record['fu_cogstat']
-    packet.append(c1)
+    # Among C1 and C2 forms, one must be filled, one must be empty.
+    isC1NotBlank = '0' + (record['fu_mmseloc'] and record['fu_mmseloc'].strip()) \
+                or (record['fu_cogstat'] and record['fu_cogstat'].strip())
+    isC2NotBlank = '0' + (record['fu_mocacomp'] and record['fu_mocacomp'].strip()) \
+                or (record['fu_cogstat_c2'] and record['fu_cogstat_c2'].strip())
 
+    condition = int(isC1NotBlank) + int(isC2NotBlank)
 
-    c2 = fvp_forms.FormC2()
-    c2.MOCACOMP  = record['fu_mocacomp']
-    c2.MOCAREAS  = record['fu_mocareas']
-    c2.MOCALOC   = record['fu_mocaloc']
-    c2.MOCALAN   = record['fu_mocalan']
-    c2.MOCALANX  = record['fu_mocalanx']
-    c2.MOCAVIS   = record['fu_mocavis']
-    c2.MOCAHEAR  = record['fu_mocahear']
-    c2.MOCATOTS  = record['fu_mocatots']
-    c2.MOCATRAI  = record['fu_mocatrai']
-    c2.MOCACUBE  = record['fu_mocacube']
-    c2.MOCACLOC  = record['fu_mocacloc']
-    c2.MOCACLON  = record['fu_mocaclon']
-    c2.MOCACLOH  = record['fu_mocacloh']
-    c2.MOCANAMI  = record['fu_mocanami']
-    c2.MOCAREGI  = record['fu_mocaregi']
-    c2.MOCADIGI  = record['fu_mocadigi']
-    c2.MOCALETT  = record['fu_mocalett']
-    c2.MOCASER7  = record['fu_mocaser7']
-    c2.MOCAREPE  = record['fu_mocarepe']
-    c2.MOCAFLUE  = record['fu_mocaflue']
-    c2.MOCAABST  = record['fu_mocaabst']
-    c2.MOCARECN  = record['fu_mocarecn']
-    c2.MOCARECC  = record['fu_mocarecc']
-    c2.MOCARECR  = record['fu_mocarecr']
-    c2.MOCAORDT  = record['fu_mocaordt']
-    c2.MOCAORMO  = record['fu_mocaormo']
-    c2.MOCAORYR  = record['fu_mocaoryr']
-    c2.MOCAORDY  = record['fu_mocaordy']
-    c2.MOCAORPL  = record['fu_mocaorpl']
-    c2.MOCAORCT  = record['fu_mocaorct']
-    c2.NPSYCLOC  = record['fu_npsycloc']
-    c2.NPSYLAN   = record['fu_npsylan']
-    c2.NPSYLANX  = record['fu_npsylanx']
-    c2.CRAFTVRS  = record['fu_craftvrs']
-    c2.CRAFTURS  = record['fu_crafturs']
-    c2.UDSBENTC  = record['fu_udsbentc']
-    c2.DIGFORCT  = record['fu_digforct']
-    c2.DIGFORSL  = record['fu_digforsl']
-    c2.DIGBACCT  = record['fu_digbacct']
-    c2.DIGBACLS  = record['fu_digbacls']
-    c2.ANIMALS   = record['fu_animals']
-    c2.VEG       = record['fu_veg']
-    c2.TRAILA    = record['fu_traila']
-    c2.TRAILARR  = record['fu_trailarr']
-    c2.TRAILALI  = record['fu_trailali']
-    c2.TRAILB    = record['fu_trailb']
-    c2.TRAILBRR  = record['fu_trailbrr']
-    c2.TRAILBLI  = record['fu_trailbli']
-    c2.CRAFTDVR  = record['fu_craftdvr']
-    c2.CRAFTDRE  = record['fu_craftdre']
-    c2.CRAFTDTI  = record['fu_craftdti']
-    c2.CRAFTCUE  = record['fu_craftcue']
-    c2.UDSBENTD  = record['fu_udsbentd']
-    c2.UDSBENRS  = record['fu_udsbenrs']
-    c2.MINTTOTS  = record['fu_minttots']
-    c2.MINTTOTW  = record['fu_minttotw']
-    c2.MINTSCNG  = record['fu_mintscng']
-    c2.MINTSCNC  = record['fu_mintscnc']
-    c2.MINTPCNG  = record['fu_mintpcng']
-    c2.MINTPCNC  = record['fu_mintpcnc']
-    c2.UDSVERFC  = record['fu_udsverfc']
-    c2.UDSVERFN  = record['fu_udsverfn']
-    c2.UDSVERNF  = record['fu_udsvernf']
-    c2.UDSVERLC  = record['fu_udsverlc']
-    c2.UDSVERLR  = record['fu_udsverlr']
-    c2.UDSVERLN  = record['fu_udsverln']
-    c2.UDSVERTN  = record['fu_udsvertn']
-    c2.UDSVERTE  = record['fu_udsverte']
-    c2.UDSVERTI  = record['fu_udsverti']
-    c2.COGSTAT   = record['fu_cogstat']
-    packet.append(c2)
+    if(condition != 1):
+        ptid = record['ptid']
+        message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " c1/c2 forms has data";
+        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+        raise Exception(message)
+
+    if(isC1NotBlank):
+        add_redcap_C1_alz_C1S(record, packet)
+    else:
+        addC2(record, packet)
 
 
     d1 = fvp_forms.FormD1()
@@ -733,7 +634,7 @@ def build_uds3_fvp_form(record):
     d1.CVD       = record['fu_cvd']
     d1.CVDIF     = record['fu_cvdif']
     d1.PREVSTK   = record['fu_prevstk']
-    d1.STROKCOG  = record['fu_strokcog'] #TODO Are both same? fu_strokedec in same position
+    d1.STROKDEC  = record['fu_strokdec']
     d1.STKIMAG   = record['fu_stkimag']
     d1.INFNETW   = record['fu_infnetw']
     d1.INFWMH    = record['fu_infwmh']
@@ -800,7 +701,6 @@ def build_uds3_fvp_form(record):
     d2 = fvp_forms.FormD2()
     d2.CANCER    = record['fu_cancer']
     d2.CANCSITE  = record['fu_cancsite']
-    d2.CANCACT   = record['fu_cancact'] #TODO Not present in redcap form
     d2.DIABET    = record['fu_diabet']
     d2.MYOINF    = record['fu_myoinf']
     d2.CONGHRT   = record['fu_conghrt']
@@ -828,6 +728,8 @@ def build_uds3_fvp_form(record):
     d2.ANGIOPCI  = record['fu_angiopci']
     d2.PACEMAKE  = record['fu_pacemake']
     d2.HVALVE    = record['fu_hvalve']
+    d2.ANTIENC   = record['fu_antienc']
+    d2.ANTIENCX  = record['fu_antiencx']
     d2.OTHCOND   = record['fu_othcond']
     d2.OTHCONDX  = record['fu_othcondx']
     packet.append(d2)
@@ -859,6 +761,131 @@ def build_uds3_fvp_form(record):
 
     update_header(record, packet)
     return packet
+
+def add_redcap_C1_alz_C1S(record, packet):
+    c1 = fvp_forms.FormC1S()
+    c1.MMSECOMP  = record['fu_mmsecomp']
+    c1.MMSEREAS  = record['fu_mmsereas']
+    c1.MMSELOC   = record['fu_mmseloc']
+    c1.MMSELAN   = record['fu_mmselan']
+    c1.MMSELANX  = record['fu_mmselanx']
+    c1.MMSEVIS   = record['fu_mmsevis']
+    c1.MMSEHEAR  = record['fu_mmsehear']
+    c1.MMSEORDA  = record['fu_mmseorda']
+    c1.MMSEORLO  = record['fu_mmseorlo']
+    c1.PENTAGON  = record['fu_pentagon']
+    c1.MMSE      = record['fu_mmse']
+    c1.NPSYCLOC  = record['fu_npsycloc']
+    c1.NPSYLAN   = record['fu_npsylan']
+    c1.NPSYLANX  = record['fu_npsylanx']
+    c1.LOGIMO    = record['fu_logimo']
+    c1.LOGIDAY   = record['fu_logiday'] #TODO
+    c1.LOGIYR    = record['fu_logiyr'] #TODO        
+    c1.LOGIPREV  = record['fu_logiprev']
+    c1.LOGIMEM   = record['fu_logimem']
+    c1.UDSBENTC  = record['fu_udsbentc_c1'] #TODO
+    c1.DIGIF     = record['fu_digif']
+    c1.DIGIFLEN  = record['fu_digiflen']
+    c1.DIGIB     = record['fu_digib']
+    c1.DIGIBLEN  = record['fu_digiblen']
+    c1.ANIMALS   = record['fu_animals']
+    c1.VEG       = record['fu_veg']
+    c1.TRAILA    = record['fu_traila']
+    c1.TRAILARR  = record['fu_trailarr']
+    c1.TRAILALI  = record['fu_trailali']
+    c1.TRAILB    = record['fu_trailb']
+    c1.TRAILBRR  = record['fu_trailbrr']
+    c1.TRAILBLI  = record['fu_trailbli']
+    c1.MEMUNITS  = record['fu_memunits']
+    c1.MEMTIME   = record['fu_memtime']
+    c1.UDSBENTD  = record['fu_udsbentd_c1'] #TODO
+    c1.UDSBENRS  = record['fu_udsbenrs_c1'] #TODO
+    c1.BOSTON    = record['fu_boston']
+    c1.UDSVERFC  = record['fu_udsverfc_c1'] #TODO 
+    c1.UDSVERFN  = record['fu_udsverfn_c1'] #TODO
+    c1.UDSVERNF  = record['fu_udsvernf_c1'] #TODO
+    c1.UDSVERLC  = record['fu_udsverlc_c1'] #TODO
+    c1.UDSVERLR  = record['fu_udsverlr_c1'] #TODO
+    c1.UDSVERLN  = record['fu_udsverln_c1'] #TODO
+    c1.UDSVERTN  = record['fu_udsvertn_c1'] #TODO
+    c1.UDSVERTE  = record['fu_udsverte_c1'] #TODO
+    c1.UDSVERTI  = record['fu_udsverti_c1'] #TODO
+    c1.COGSTAT   = record['fu_cogstat']
+    packet.append(c1)
+
+def addC2(record, packet):
+    c2 = fvp_forms.FormC2()
+    c2.MOCACOMP  = record['fu_mocacomp']
+    c2.MOCAREAS  = record['fu_mocareas']
+    c2.MOCALOC   = record['fu_mocaloc']
+    c2.MOCALAN   = record['fu_mocalan']
+    c2.MOCALANX  = record['fu_mocalanx']
+    c2.MOCAVIS   = record['fu_mocavis']
+    c2.MOCAHEAR  = record['fu_mocahear']
+    c2.MOCATOTS  = record['fu_mocatots']
+    c2.MOCATRAI  = record['fu_mocatrai']
+    c2.MOCACUBE  = record['fu_mocacube']
+    c2.MOCACLOC  = record['fu_mocacloc']
+    c2.MOCACLON  = record['fu_mocaclon']
+    c2.MOCACLOH  = record['fu_mocacloh']
+    c2.MOCANAMI  = record['fu_mocanami']
+    c2.MOCAREGI  = record['fu_mocaregi']
+    c2.MOCADIGI  = record['fu_mocadigi']
+    c2.MOCALETT  = record['fu_mocalett']
+    c2.MOCASER7  = record['fu_mocaser7']
+    c2.MOCAREPE  = record['fu_mocarepe']
+    c2.MOCAFLUE  = record['fu_mocaflue']
+    c2.MOCAABST  = record['fu_mocaabst']
+    c2.MOCARECN  = record['fu_mocarecn']
+    c2.MOCARECC  = record['fu_mocarecc']
+    c2.MOCARECR  = record['fu_mocarecr']
+    c2.MOCAORDT  = record['fu_mocaordt']
+    c2.MOCAORMO  = record['fu_mocaormo']
+    c2.MOCAORYR  = record['fu_mocaoryr']
+    c2.MOCAORDY  = record['fu_mocaordy']
+    c2.MOCAORPL  = record['fu_mocaorpl']
+    c2.MOCAORCT  = record['fu_mocaorct']
+    c2.NPSYCLOC  = record['fu_npsycloc_c2'] #TODO
+    c2.NPSYLAN   = record['fu_npsylan_c2'] #TODO
+    c2.NPSYLANX  = record['fu_npsylanx_c2'] #TODO
+    c2.CRAFTVRS  = record['fu_craftvrs']
+    c2.CRAFTURS  = record['fu_crafturs']
+    c2.UDSBENTC  = record['fu_udsbentc']
+    c2.DIGFORCT  = record['fu_digforct']
+    c2.DIGFORSL  = record['fu_digforsl']
+    c2.DIGBACCT  = record['fu_digbacct']
+    c2.DIGBACLS  = record['fu_digbacls']
+    c2.ANIMALS   = record['fu_animals_c2'] #TODO
+    c2.VEG       = record['fu_veg_c2'] #TODO
+    c2.TRAILA    = record['fu_traila_c2'] #TODO
+    c2.TRAILARR  = record['fu_trailarr_c2'] #TODO
+    c2.TRAILALI  = record['fu_trailali_c2'] #TODO
+    c2.TRAILB    = record['fu_trailb_c2'] #TODO
+    c2.TRAILBRR  = record['fu_trailbrr_c2'] #TODO
+    c2.TRAILBLI  = record['fu_trailbli_c2'] #TODO
+    c2.CRAFTDVR  = record['fu_craftdvr']
+    c2.CRAFTDRE  = record['fu_craftdre']
+    c2.CRAFTDTI  = record['fu_craftdti']
+    c2.CRAFTCUE  = record['fu_craftcue']
+    c2.UDSBENTD  = record['fu_udsbentd']
+    c2.UDSBENRS  = record['fu_udsbenrs']
+    c2.MINTTOTS  = record['fu_minttots']
+    c2.MINTTOTW  = record['fu_minttotw']
+    c2.MINTSCNG  = record['fu_mintscng']
+    c2.MINTSCNC  = record['fu_mintscnc']
+    c2.MINTPCNG  = record['fu_mintpcng']
+    c2.MINTPCNC  = record['fu_mintpcnc']
+    c2.UDSVERFC  = record['fu_udsverfc']
+    c2.UDSVERFN  = record['fu_udsverfn']
+    c2.UDSVERNF  = record['fu_udsvernf']
+    c2.UDSVERLC  = record['fu_udsverlc']
+    c2.UDSVERLR  = record['fu_udsverlr']
+    c2.UDSVERLN  = record['fu_udsverln']
+    c2.UDSVERTN  = record['fu_udsvertn']
+    c2.UDSVERTE  = record['fu_udsverte']
+    c2.UDSVERTI  = record['fu_udsverti']
+    c2.COGSTAT   = record['fu_cogstat_c2'] #TODO
+    packet.append(c2)
 
 def update_header(record, packet):
     for header in packet:
