@@ -728,6 +728,8 @@ def build_uds3_fvp_form(record):
     d2.ANGIOPCI  = record['fu_angiopci']
     d2.PACEMAKE  = record['fu_pacemake']
     d2.HVALVE    = record['fu_hvalve']
+    d2.ANTIENC   = record['fu_antienc']
+    d2.ANTIENCX  = record['fu_antiencx']
     d2.OTHCOND   = record['fu_othcond']
     d2.OTHCONDX  = record['fu_othcondx']
     packet.append(d2)

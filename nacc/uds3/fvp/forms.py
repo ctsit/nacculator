@@ -865,7 +865,7 @@ class FormD2(nacc.uds3.FieldBag):
         self.fields['ANGIOPCI'] = nacc.uds3.Field(name='ANGIOPCI', typename='Num', position=(274, 274), length=1, inclusive_range=(0, 1), allowable_values=['8', '1', '0'], blanks=[])
         self.fields['PACEMAKE'] = nacc.uds3.Field(name='PACEMAKE', typename='Num', position=(276, 276), length=1, inclusive_range=(0, 1), allowable_values=['8', '1', '0'], blanks=[])
         self.fields['HVALVE'] = nacc.uds3.Field(name='HVALVE', typename='Num', position=(278, 278), length=1, inclusive_range=(0, 1), allowable_values=['8', '1', '0'], blanks=[])
-        self.fields['ANTIENC'] = nacc.uds3.Field(name='HVALVE', typename='Num', position=(280, 280), length=1, inclusive_range=(0, 1), allowable_values=['8', '1', '0'], blanks=[])
+        self.fields['ANTIENC'] = nacc.uds3.Field(name='ANTIENC', typename='Num', position=(280, 280), length=1, inclusive_range=(0, 1), allowable_values=['8', '1', '0'], blanks=[])
         self.fields['ANTIENCX'] = nacc.uds3.Field(name='ANTIENCX', typename='Char', position=(282, 341), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 22 ANTIENC ne 1 (Yes)'])
         self.fields['OTHCOND'] = nacc.uds3.Field(name='OTHCOND', typename='Num', position=(343, 343), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
         self.fields['OTHCONDX'] = nacc.uds3.Field(name='OTHCONDX', typename='Num', position=(345, 404), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 23 OTHCOND ne 1 (Yes)'])
