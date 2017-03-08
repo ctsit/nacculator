@@ -1,0 +1,5 @@
+token="1234567890"
+content="record"
+format="csv"
+type="flat"
+redcap_server="https://my.redcap.server/redcap/api"
