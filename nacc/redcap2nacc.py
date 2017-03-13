@@ -177,6 +177,7 @@ def main():
     else:
         reader = csv.DictReader(fp)
         for record in reader:    
+            print >> sys.stderr, "[START] ptid : " + str(record['ptid'])
             try:
                 if options.ivp:
                     packet = ivp_builder.build_uds3_ivp_form(record)    
