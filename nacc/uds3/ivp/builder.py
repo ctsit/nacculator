@@ -639,7 +639,7 @@ def build_uds3_ivp_form(record):
         message = message + " for PTID : " + ("unknown" if not ptid else ptid)
         raise Exception(message)
 
-    if(isC1SNotBlank):
+    if(int(isC1SNotBlank)):
         addC1S(record, packet)
     else:
         addC2(record, packet)

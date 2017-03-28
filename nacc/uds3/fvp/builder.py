@@ -558,7 +558,7 @@ def build_uds3_fvp_form(record):
         message = message + " for PTID : " + ("unknown" if not ptid else ptid)
         raise Exception(message)
 
-    if(isC1NotBlank):
+    if(int(isC1NotBlank)):
         add_redcap_C1_alz_C1S(record, packet)
     else:
         addC2(record, packet)
