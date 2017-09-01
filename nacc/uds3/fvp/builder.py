@@ -46,7 +46,7 @@ def build_uds3_fvp_form(record):
     a2.INCALLS   = record['fu_incalls']
     a2.INRELY    = record['fu_inrely']
     packet.append(a2)
-    
+
     a3 = fvp_forms.FormA3()
     a3.NWINFMUT  = record['fu_nwinfmut']
     a3.FADMUT    = record['fu_fadmut']
@@ -543,6 +543,15 @@ def build_uds3_fvp_form(record):
     b9.FTLDEVAL  = record['fu_ftldeval']
     packet.append(b9)
 
+    # Checking if those records are filled with 0 and marking as incomplete to those forms
+    if(record['fu_mmseloc'].strip() == 0):
+        record['fu_mmseloc'] = ""
+    if(record['fu_cogstat'].strip() == 0):
+        record['fu_cogstat'] = ""
+    if(record['fu_mocacomp'].strip() == 0):
+        record['fu_mocacomp'] = ""
+    if(record['fu_cogstat_c2'] == 0):
+        record['fu_cogstat_c2'] = ""
 
     # Among C1 and C2 forms, one must be filled, one must be empty.
     isC1NotBlank = '0' + (record['fu_mmseloc'] and record['fu_mmseloc'].strip()) \
@@ -780,7 +789,7 @@ def add_redcap_C1_alz_C1S(record, packet):
     c1.NPSYLANX  = record['fu_npsylanx']
     c1.LOGIMO    = record['fu_logimo']
     c1.LOGIDAY   = record['fu_logiday'] #TODO
-    c1.LOGIYR    = record['fu_logiyr'] #TODO        
+    c1.LOGIYR    = record['fu_logiyr'] #TODO
     c1.LOGIPREV  = record['fu_logiprev']
     c1.LOGIMEM   = record['fu_logimem']
     c1.UDSBENTC  = record['fu_udsbentc_c1'] #TODO
@@ -801,7 +810,7 @@ def add_redcap_C1_alz_C1S(record, packet):
     c1.UDSBENTD  = record['fu_udsbentd_c1'] #TODO
     c1.UDSBENRS  = record['fu_udsbenrs_c1'] #TODO
     c1.BOSTON    = record['fu_boston']
-    c1.UDSVERFC  = record['fu_udsverfc_c1'] #TODO 
+    c1.UDSVERFC  = record['fu_udsverfc_c1'] #TODO
     c1.UDSVERFN  = record['fu_udsverfn_c1'] #TODO
     c1.UDSVERNF  = record['fu_udsvernf_c1'] #TODO
     c1.UDSVERLC  = record['fu_udsverlc_c1'] #TODO
