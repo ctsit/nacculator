@@ -626,8 +626,18 @@ def build_uds3_ivp_form(record):
     packet.append(b9)
 
     # Among C1S and C2 forms, one must be filled, one must be empty.
+    if(record['c1s_1a_mmseloc'].strip() == "0"):
+        record['c1s_1a_mmseloc'] = ""
+    if(record['c1s_11a_cogstat'].strip() == "0"):
+        record['c1s_11a_cogstat'] = ""
+    if(record['mocacomp'].strip() == "0"):
+        record['mocacomp'] = ""
+    if(record['cogstat_c2'] == "0"):
+        record['cogstat_c2'] = ""
+
     isC1SNotBlank = '0' + (record['c1s_1a_mmseloc'] and record['c1s_1a_mmseloc'].strip()) \
-                or (record['c1s_11a_cogstat'] and record['c1s_11a_cogstat'].strip())
+                    or (record['c1s_11a_cogstat'] and record['c1s_11a_cogstat'].strip())
+
     isC2NotBlank = '0' + (record['mocacomp'] and record['mocacomp'].strip()) \
                 or (record['cogstat_c2'] and record['cogstat_c2'].strip())
 
