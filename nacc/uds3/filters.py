@@ -1,6 +1,7 @@
 import os
 import sys
 import csv
+import re
 import fileinput
 
 fix_c1s_headers = { 'c1s_2a_npsylan' : 'c1s_2_npsycloc',
@@ -71,6 +72,27 @@ def filter_fix_c1s(input_ptr, filter_meta, output_ptr):
                 line=line.replace(key, fix_c1s_headers[key],1)
         print line
     return
+
+def filter_remove_ptid(input_ptr, filter_meta, output_ptr):
+    reader = csv.DictReader(input_ptr)
+    output = csv.DictWriter(output_ptr, None)
+    write_headers(reader, output)
+    for record in reader:
+        prog = re.compile("11\d+$")
+        if prog.match(record['ptid'])!=None:
+            output.writerow(record)
+        else:
+            print >> sys.stderr, 'Removed ptid : ' + record['ptid']
+
+def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
+    reader = csv.DictReader(input_ptr)
+    output = csv.DictWriter(output_ptr, None)
+    write_headers(reader, output)
+    for record in reader:
+        if record['visitmo']=='' and record['visitday']=='' and record['visityr']=='':
+            print >> sys.stderr, 'Removed ptid : ' + record['ptid']
+        else:
+            output.writerow(record)
 
 def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defaultCheck=False):
     reader = csv.DictReader(input_ptr)
