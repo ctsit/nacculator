@@ -78,7 +78,7 @@ def filter_remove_ptid(input_ptr, filter_meta, output_ptr):
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
     for record in reader:
-        prog = re.compile("11\d+$")
+        prog = re.compile("11\d.*")
         if prog.match(record['ptid'])!=None:
             output.writerow(record)
         else:
@@ -93,6 +93,22 @@ def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
             print >> sys.stderr, 'Removed ptid : ' + record['ptid']
         else:
             output.writerow(record)
+
+def filter_eliminate_redcapeventname(input_ptr, filter_meta, output_ptr):
+    reader = csv.DictReader(input_ptr)
+    output = csv.DictWriter(output_ptr, None)
+    write_headers(reader, output)
+    for record in reader:
+        prog_initial_visit = re.compile("initial.*")
+        prog_followup_visit = re.compile("followup.*")
+        if prog_initial_visit.match(record['redcap_event_name'])!=None \
+                or prog_followup_visit.match(record['redcap_event_name'])!=None:
+            output.writerow(record)
+        else:
+            print >> sys.stderr, 'Removed redcap_event_name : ' + record['redcap_event_name']
+
+
+
 
 def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defaultCheck=False):
     reader = csv.DictReader(input_ptr)

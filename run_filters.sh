@@ -19,7 +19,9 @@ echo "--------------Updating fields------------------------"
 PYTHONPATH=. $NACCPATH -f updateField < $RUNPATH/default.csv > $RUNPATH/Update.csv
 echo "--------------Removing Unnecessary Records------------------------"
 PYTHONPATH=. $NACCPATH -f removePtid < $RUNPATH/Update.csv > $RUNPATH/CleanedPtid_Update.csv
+echo "--------------Removing Unnecessary RedCap Events------------------------"
+PYTHONPATH=. $NACCPATH -f removeRedCapEvent < $RUNPATH/CleanedPtid_Update.csv > $RUNPATH/Cleaned_RedCapEvents.csv
 echo "--------------Removing Records without VisitDay------------------------"
-PYTHONPATH=. $NACCPATH -f removeDateRecord < $RUNPATH/CleanedPtid_Update.csv > $RUNPATH/final_Cleaned_Update.csv
+PYTHONPATH=. $NACCPATH -f removeDateRecord < $RUNPATH/Cleaned_RedCapEvents.csv > $RUNPATH/final_Cleaned_Update.csv
 # TODO Remove Gainesville People (excel) and NueroPath, IVP
 #TODO Put all follow ups in a directory, nueropath in a file, ivp in a file.

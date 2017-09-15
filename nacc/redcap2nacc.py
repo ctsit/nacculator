@@ -150,7 +150,8 @@ def main():
                 'fillDefault' : 'fill_default',
                 'updateField' : 'update_field',
                 'removePtid' : 'remove_ptid',
-                'removeDateRecord' : 'eliminate_empty_date'}
+                'removeDateRecord' : 'eliminate_empty_date',
+                'removeRedCapEvent':'eliminate_redcapeventname'}
 
     option_group = parser.add_mutually_exclusive_group()
     option_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
