@@ -147,6 +147,7 @@ def main():
     filters_names = { 'cleanPtid' : 'clean_ptid',
                 'replaceDrugId' : 'replace_drug_id',
                 'fixC1S' : 'fix_c1s',
+                'fixFVP' : 'fix_fvpheader',
                 'fillDefault' : 'fill_default',
                 'updateField' : 'update_field',
                 'removePtid' : 'remove_ptid',

@@ -13,8 +13,10 @@ echo "--------------Replacing drug IDs--------------------"
 PYTHONPATH=. $NACCPATH -f replaceDrugId < $RUNPATH/clean.csv > $RUNPATH/drugs.csv
 echo "--------------Fixing C1S in files--------------------"
 PYTHONPATH=. $NACCPATH -f fixC1S < $RUNPATH/drugs.csv > $RUNPATH/c1s.csv
+echo "--------------Fixing FVP in files--------------------"
+PYTHONPATH=. $NACCPATH -f fixFVP < $RUNPATH/c1s.csv > $RUNPATH/fixed_fvp.csv
 echo "--------------Filling in Defaults--------------------"
-PYTHONPATH=. $NACCPATH -f fillDefault < $RUNPATH/c1s.csv > $RUNPATH/default.csv
+PYTHONPATH=. $NACCPATH -f fillDefault < $RUNPATH/fixed_fvp.csv > $RUNPATH/default.csv
 echo "--------------Updating fields------------------------"
 PYTHONPATH=. $NACCPATH -f updateField < $RUNPATH/default.csv > $RUNPATH/Update.csv
 echo "--------------Removing Unnecessary Records------------------------"

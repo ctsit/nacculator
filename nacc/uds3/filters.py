@@ -8,6 +8,9 @@ fix_c1s_headers = { 'c1s_2a_npsylan' : 'c1s_2_npsycloc',
                     'c1s_2a_npsylanx' : 'c1s_2a_npsylan',
                     'b6s_2a1_npsylanx' : 'c1s_2a1_npsylanx'}
 
+fix_fvp_headers = { 'fu_otherneur' : 'fu_othneur',
+                    'fu_otherneurx' : 'fu_othneurx'}
+
 fill_default_values = { 'nogds' : 0,
                         'arthupex' : 0,
                         'arthloex' : 0,
@@ -73,7 +76,22 @@ def filter_fix_c1s(input_ptr, filter_meta, output_ptr):
         print line
     return
 
+def filter_fix_fvpheader(input_ptr, filter_meta, output_ptr):
+
+    lines = input_ptr.read().splitlines()
+    header = True
+    for line in lines:
+        if header:
+            header = False
+            for key in fix_fvp_headers.keys():
+                print >> sys.stderr, 'key : ' + key + ' Value : '+  fix_fvp_headers[key]
+                line=line.replace(key, fix_fvp_headers[key],1)
+        print line
+    return
+
+
 def filter_remove_ptid(input_ptr, filter_meta, output_ptr):
+
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -85,6 +103,7 @@ def filter_remove_ptid(input_ptr, filter_meta, output_ptr):
             print >> sys.stderr, 'Removed ptid : ' + record['ptid']
 
 def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
+
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -95,6 +114,7 @@ def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
             output.writerow(record)
 
 def filter_eliminate_redcapeventname(input_ptr, filter_meta, output_ptr):
+
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -107,10 +127,8 @@ def filter_eliminate_redcapeventname(input_ptr, filter_meta, output_ptr):
         else:
             print >> sys.stderr, 'Removed redcap_event_name : ' + record['redcap_event_name']
 
-
-
-
 def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defaultCheck=False):
+
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
