@@ -28,22 +28,6 @@ def write_headers(reader, output):
         output_header = dict((h,h) for h in reader.fieldnames)
         output.writerow(output_header)
 
-def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
-
-    reader = csv.DictReader(input_ptr)
-    output = csv.DictWriter(output_ptr, None)
-    write_headers(reader, output)
-
-    with open(filter_meta, 'r') as ptid_file:
-        ptids = ptid_file.read().splitlines()
-        for record in reader:
-            ptid = record['ptid']
-            if ptid not in ptids:
-                output.writerow(record)
-            else:
-                print >> sys.stderr, 'Eliminated ptid : ' + ptid
-    return
-
 def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
 
     reader = csv.DictReader(input_ptr)
@@ -112,20 +96,6 @@ def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
             print >> sys.stderr, 'Removed ptid : ' + record['ptid']
         else:
             output.writerow(record)
-
-def filter_eliminate_redcapeventname(input_ptr, filter_meta, output_ptr):
-
-    reader = csv.DictReader(input_ptr)
-    output = csv.DictWriter(output_ptr, None)
-    write_headers(reader, output)
-    for record in reader:
-        prog_initial_visit = re.compile("initial.*")
-        prog_followup_visit = re.compile("followup.*")
-        if prog_initial_visit.match(record['redcap_event_name'])!=None \
-                or prog_followup_visit.match(record['redcap_event_name'])!=None:
-            output.writerow(record)
-        else:
-            print >> sys.stderr, 'Removed redcap_event_name : ' + record['redcap_event_name']
 
 def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defaultCheck=False):
 
