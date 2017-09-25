@@ -30,7 +30,7 @@ PYTHONPATH=. $NACCPATH -f_ivp removeRedCapEvent < $RUNPATH/ivp_clean.csv > $RUNP
 # echo "--------------Removing subjects already in current Followup Visit--------------------"
 # PYTHONPATH=. $NACCPATH -f_fvp cleanPtid -meta current-db-subjects.csv < $RUNPATH/fixedDate_Update.csv > $RUNPATH/fvp_clean.csv
 echo "--------------Removing events other than Followup Visit--------------------"
-PYTHONPATH=. $NACCPATH -f_fvp removeRedCapEvent < $RUNPATH/fixedDate_Update.csv > $RUNPATH/Final_Update_fvp.csv
+PYTHONPATH=. $NACCPATH -f_fvp removeRedCapEvent < $RUNPATH/ivp_clean.csv > $RUNPATH/Final_Update_fvp.csv
 
 # TODO Remove Gainesville People (excel) and NueroPath, IVP
 #TODO Put all follow ups in a directory, nueropath in a file, ivp in a file.

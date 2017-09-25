@@ -9,7 +9,8 @@ fix_c1s_headers = { 'c1s_2a_npsylan' : 'c1s_2_npsycloc',
                     'b6s_2a1_npsylanx' : 'c1s_2a1_npsylanx'}
 
 fix_fvp_headers = { 'fu_otherneur' : 'fu_othneur',
-                    'fu_otherneurx' : 'fu_othneurx'}
+                    'fu_otherneurx' : 'fu_othneurx',
+                    'fu_strokedec' : 'fu_strokdec' }
 
 fill_default_values = { 'nogds' : 0,
                         'arthupex' : 0,
