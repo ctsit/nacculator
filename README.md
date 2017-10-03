@@ -145,3 +145,10 @@ working directory called `corrected`._
     $ edit ../nacc/uds3/ivp/forms
 
 * Resources for uds3 fvp forms are available [here](https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/).
+
+
+FAQ
+------------------------
+
+- This is developed and tested on Python 2.7
+- If there are key not found errors, then your dictionary may have the value with a different name. Make sure you the name of the keys is consistent while writing and reading.

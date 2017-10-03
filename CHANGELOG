@@ -1,3 +1,8 @@
+ ## [0.2.4] - 2017-03-27
+ ### Added
+ * Added few log statements as changes.
+ * Project handover from takirala to ctsit
+
  ## [0.2.3] - 2017-02-14
  ### Changed
  * Refactored c1s form - redcap C1 form to C1S in alz website
