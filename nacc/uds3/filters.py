@@ -23,54 +23,39 @@ fill_default_values = { 'nogds' : 0,
 
 fill_non_blank_values = { 'adcid' : '41' }
 
-# def connect_to_redcap(config_path):
-#     #Read in the config file. If the config file is missing or the wrong format, exit the program.
-#     print config_path
-#     try:
-#         with open(config_path, 'r') as config_file:
-#             config = yaml.load(config_file.read())
-#     except:
-#         print("Error: Check config file")
-#         exit()
-#     return config
+def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
+# TODO  To deal with M Flag in Current_db.csv
 
-# def control_filters():
-#     check_filters(input_ptr,filter_meta,output_ptr)
-#     return
+    reader = csv.DictReader(input_ptr)
+    output = csv.DictWriter(output_ptr, None)
+    write_headers(reader, output)
 
-# def get_data():
-#
-#     # config = connect_to_redcap(filters_config.yaml)
-#
-#     cmd = '''curl -v -d  '{"token": "10.0.0.1/32", "content": "", "format": "csv", "type": "flat"}' https://my.redcap.server/redcap/api'''
-#     args = cmd.split()
-#     process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#     stdout, stderr = process.communicate()
+    for record in reader:
+        ptid = record['ptid']
+        with open(filter_meta, 'r') as ptid_file:
 
-# def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
-# # TODO  To run anything on followup visit Packet in future
-#
-#     reader = csv.DictReader(input_ptr)
-#     output = csv.DictWriter(output_ptr, None)
-#     curr_ptid = csv.DictReader(ptid_file)
-#     write_headers(reader, output)
-#
-#     # with open(filter_meta, 'r') as ptid_file:
-#     for record in reader:
-#         ptid = record['ptid']
-#         for to_rem_ptid in curr_ptid:
-#             # Cases to remove the following Packets
-#             packet_type = to_rem_ptid['Packet type']
-#             if ptid == to_rem_ptid["Patient ID"]:
-#                 if packet_type == "I" and record['redcap_event_name']=="":
-#                     print >> sys.stderr, 'Eliminated ptid : ' + ptid
-#
-#             prog_initial_visit = re.compile("followup.*")
-#             if ptid in ptids and prog_initial_visit.match(record['redcap_event_name'])!=None:
-#                 print >> sys.stderr, 'Eliminated ptid : ' + ptid
-#             else:
-#                 output.writerow(record)
-#     return
+            curr_ptid = csv.DictReader(ptid_file)
+            repeat_flag = 0
+
+            for row in curr_ptid:
+                packet_type = row['Packet type']
+                if ptid == row['Patient ID']:
+                    prog_followup_visit = re.compile("followup.*")
+                    prog_initial_visit = re.compile("initial.*")
+                    if packet_type == "I" and prog_initial_visit.match(record['redcap_event_name']):
+                        repeat_flag = 1
+                        print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
+
+                    elif packet_type == "F" and prog_followup_visit.match(record['redcap_event_name']):
+                        repeat_flag = 1
+                        print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
+
+                    elif packet_type == "M":
+                        repeat_flag = 1
+                        print >> sys.stderr, 'Eliminated ptid : ' + ptid
+            if(repeat_flag == 0):
+                output.writerow(record)
+    return
 
 def write_headers(reader, output):
     if output.fieldnames is None:

@@ -147,7 +147,7 @@ def main():
     parser = argparse.ArgumentParser(description='Process redcap form output to nacculator.')
 
     filters_names = {
-                # 'cleanPtid' : 'clean_ptid',
+                'cleanPtid' : 'clean_ptid',
                 'replaceDrugId' : 'replace_drug_id',
                 'fixC1S' : 'fix_c1s',
                 'fixFVP' : 'fix_fvpheader',
@@ -167,9 +167,6 @@ def main():
     option_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data')
     option_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data')
     option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
-    option_group.add_argument('-f_ivp', '--filter_ivp', action='store', dest='filter_ivp', choices=filter_exclusive_names.keys(), help='Set this flag to process the filter for Intial Packets Exclusively')
-    option_group.add_argument('-f_fvp', '--filter_fvp', action='store', dest='filter_fvp', choices=filter_exclusive_names.keys(), help='Set this flag to process the filter for Followup Packets Exclusively')
-
 
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
     parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
@@ -189,15 +186,6 @@ def main():
     if options.filter:
         filter_method = getattr(filters, 'filter_' + filters_names[options.filter])
         filter_method(fp, options.filter_meta, output)
-
-    elif options.filter_ivp:
-        filter_method = getattr(filters_ivp, 'filter_' + filter_exclusive_names[options.filter_ivp])
-        filter_method(fp, options.filter_meta, output)
-
-    elif options.filter_fvp:
-        filter_method = getattr(filters_fvp, 'filter_' + filter_exclusive_names[options.filter_fvp])
-        filter_method(fp, options.filter_meta, output)
-
     else:
         reader = csv.DictReader(fp)
         for record in reader:
