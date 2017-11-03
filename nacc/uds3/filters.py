@@ -3,6 +3,7 @@ import sys
 import csv
 import re
 import fileinput
+import yaml
 
 fix_c1s_headers = { 'c1s_2a_npsylan' : 'c1s_2_npsycloc',
                     'c1s_2a_npsylanx' : 'c1s_2a_npsylan',
@@ -21,6 +22,55 @@ fill_default_values = { 'nogds' : 0,
                         'formver' : 3 }
 
 fill_non_blank_values = { 'adcid' : '41' }
+
+# def connect_to_redcap(config_path):
+#     #Read in the config file. If the config file is missing or the wrong format, exit the program.
+#     print config_path
+#     try:
+#         with open(config_path, 'r') as config_file:
+#             config = yaml.load(config_file.read())
+#     except:
+#         print("Error: Check config file")
+#         exit()
+#     return config
+
+# def control_filters():
+#     check_filters(input_ptr,filter_meta,output_ptr)
+#     return
+
+# def get_data():
+#
+#     # config = connect_to_redcap(filters_config.yaml)
+#
+#     cmd = '''curl -v -d  '{"token": "10.0.0.1/32", "content": "", "format": "csv", "type": "flat"}' https://my.redcap.server/redcap/api'''
+#     args = cmd.split()
+#     process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#     stdout, stderr = process.communicate()
+
+# def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
+# # TODO  To run anything on followup visit Packet in future
+#
+#     reader = csv.DictReader(input_ptr)
+#     output = csv.DictWriter(output_ptr, None)
+#     curr_ptid = csv.DictReader(ptid_file)
+#     write_headers(reader, output)
+#
+#     # with open(filter_meta, 'r') as ptid_file:
+#     for record in reader:
+#         ptid = record['ptid']
+#         for to_rem_ptid in curr_ptid:
+#             # Cases to remove the following Packets
+#             packet_type = to_rem_ptid['Packet type']
+#             if ptid == to_rem_ptid["Patient ID"]:
+#                 if packet_type == "I" and record['redcap_event_name']=="":
+#                     print >> sys.stderr, 'Eliminated ptid : ' + ptid
+#
+#             prog_initial_visit = re.compile("followup.*")
+#             if ptid in ptids and prog_initial_visit.match(record['redcap_event_name'])!=None:
+#                 print >> sys.stderr, 'Eliminated ptid : ' + ptid
+#             else:
+#                 output.writerow(record)
+#     return
 
 def write_headers(reader, output):
     if output.fieldnames is None:
