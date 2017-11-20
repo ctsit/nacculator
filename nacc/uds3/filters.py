@@ -55,7 +55,7 @@ def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
                         print >> sys.stderr, 'Eliminated ptid : ' + ptid
             if(repeat_flag == 0):
                 output.writerow(record)
-    return
+    return output
 
 def write_headers(reader, output):
     if output.fieldnames is None:
@@ -84,17 +84,39 @@ def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
         print >> sys.stderr, 'Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) + ' fields.'
     return
 
-def filter_fix_c1s(input_ptr, filter_meta, output_ptr):
 
-    lines = input_ptr.read().splitlines()
-    header = True
-    for line in lines:
-        if header:
-            header = False
-            for key in fix_c1s_headers.keys():
-                line=line.replace(key, fix_c1s_headers[key],1)
-        print line
-    return
+def filter_fix_c1s(input_ptr, filter_meta, output_ptr):
+    reader = csv.DictReader(input_ptr)
+    output = csv.DictWriter(output_ptr, None)
+    headers = reader.fieldnames
+    for header in headers:
+        for key in fix_c1s_headers.keys():
+            if header == key:
+                print header
+                header = fix_c1s_headers[key]
+                print "New Header is "+header
+
+
+    print "New Headers"
+    print reader.fieldnames
+
+# def filter_fix_c1s(input_ptr, filter_meta, output_ptr):
+#
+#     lines = input_ptr.read().splitlines()
+#     header = True
+#     count = 0
+#     for line in lines:
+#         if header:
+#             header = False
+#             for key in fix_c1s_headers.keys():
+#                 print >> sys.stderr, 'key : ' + key + ' Value : '+  fix_c1s_headers[key]
+#                 line=line.replace(key, fix_c1s_headers[key],1)
+#
+#         output_ptr.write(line)
+#
+#
+#
+#     return
 
 def filter_fix_fvpheader(input_ptr, filter_meta, output_ptr):
 
@@ -106,7 +128,8 @@ def filter_fix_fvpheader(input_ptr, filter_meta, output_ptr):
             for key in fix_fvp_headers.keys():
                 print >> sys.stderr, 'key : ' + key + ' Value : '+  fix_fvp_headers[key]
                 line=line.replace(key, fix_fvp_headers[key],1)
-        print line
+
+
     return
 
 
