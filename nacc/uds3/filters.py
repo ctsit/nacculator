@@ -32,6 +32,7 @@ def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
 
     for record in reader:
         ptid = record['ptid']
+        visit_num = record['visitnum']
         with open(filter_meta, 'r') as ptid_file:
 
             curr_ptid = csv.DictReader(ptid_file)
@@ -39,20 +40,24 @@ def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
 
             for row in curr_ptid:
                 packet_type = row['Packet type']
+                curr_visit = row['Visit Num']
+
                 if ptid == row['Patient ID']:
                     prog_followup_visit = re.compile("followup.*")
                     prog_initial_visit = re.compile("initial.*")
+                    prog_mile_visit = re.compile("milestone.*")
                     if packet_type == "I" and prog_initial_visit.match(record['redcap_event_name']):
                         repeat_flag = 1
                         print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
 
                     elif packet_type == "F" and prog_followup_visit.match(record['redcap_event_name']):
-                        repeat_flag = 1
-                        print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
+                        if (not visit_num and visit_num == curr_visit) or visit_num == '':
+                            repeat_flag = 1
+                            print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
 
-                    elif packet_type == "M":
+                    elif packet_type == "M" and prog_mile_visit.match(record['redcap_event_name']):
                         repeat_flag = 1
-                        print >> sys.stderr, 'Eliminated ptid : ' + ptid
+                        print >> sys.stderr, 'Eliminated ptid : ' + ptid+ " Event Name : " + record['redcap_event_name']
             if(repeat_flag == 0):
                 output.writerow(record)
     return output
@@ -84,39 +89,20 @@ def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
         print >> sys.stderr, 'Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) + ' fields.'
     return
 
-
 def filter_fix_c1s(input_ptr, filter_meta, output_ptr):
-    reader = csv.DictReader(input_ptr)
-    output = csv.DictWriter(output_ptr, None)
-    headers = reader.fieldnames
-    for header in headers:
-        for key in fix_c1s_headers.keys():
-            if header == key:
-                print header
-                header = fix_c1s_headers[key]
-                print "New Header is "+header
 
-
-    print "New Headers"
-    print reader.fieldnames
-
-# def filter_fix_c1s(input_ptr, filter_meta, output_ptr):
-#
-#     lines = input_ptr.read().splitlines()
-#     header = True
-#     count = 0
-#     for line in lines:
-#         if header:
-#             header = False
-#             for key in fix_c1s_headers.keys():
-#                 print >> sys.stderr, 'key : ' + key + ' Value : '+  fix_c1s_headers[key]
-#                 line=line.replace(key, fix_c1s_headers[key],1)
-#
-#         output_ptr.write(line)
-#
-#
-#
-#     return
+    lines = input_ptr.read().splitlines()
+    output = csv.writer(output_ptr, dialect=csv.excel)
+    header = True
+    for line in lines:
+        if header:
+            header = False
+            for key in fix_c1s_headers.keys():
+                print >> sys.stderr, 'key : ' + key + ' Value : '+  fix_c1s_headers[key]
+                line=line.replace(key, fix_c1s_headers[key],1)
+        output_ptr.write(line)
+        output_ptr.write("\n")
+    return
 
 def filter_fix_fvpheader(input_ptr, filter_meta, output_ptr):
 
@@ -128,7 +114,8 @@ def filter_fix_fvpheader(input_ptr, filter_meta, output_ptr):
             for key in fix_fvp_headers.keys():
                 print >> sys.stderr, 'key : ' + key + ' Value : '+  fix_fvp_headers[key]
                 line=line.replace(key, fix_fvp_headers[key],1)
-
+        output_ptr.write(line)
+        output_ptr.write("\n")
 
     return
 

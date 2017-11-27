@@ -22,20 +22,6 @@ def recent_run_folder(out_dir):
         except Exception as e:
             raise e
 
-def printcontent(filter_meta):
-    with open(filter_meta) as f:
-        reader = csv.reader(f)
-        for row in reader:
-            print(" ".join(row))
-    return
-
-def get_replaced_file(input_ptr, output_ptr):
-    reader = csv.reader(input_ptr)
-    for row in reader:
-        print >> sys.stderr, "New Row is "
-        print >> sys.stderr, row
-        # writer.writerow(row)
-
 def get_headers(input_ptr):
     reader = csv.DictReader(input_ptr)
     headers = reader.fieldnames
@@ -43,16 +29,12 @@ def get_headers(input_ptr):
 
 
 def run_all_filters(folder_name):
-
-
-
     filter_meta = "./current-db-subjects.csv"
 
     # Calling Filters
     try:
         print >> sys.stderr, "--------------Removing subjects already in current--------------------"
         input_path = os.path.join(folder_name, "redcap_intput.csv")
-        # printcontent(input_path)
         output_path = os.path.join(folder_name, "clean.csv")
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
             filter_clean_ptid(input_ptr, filter_meta, output_ptr)
@@ -69,37 +51,35 @@ def run_all_filters(folder_name):
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
             filter_fix_c1s(input_ptr, filter_meta, output_ptr)
 
-            # get_replaced_file(input_ptr,output_ptr)
+        print >> sys.stderr, "--------------Fixing FVP in files--------------------"
+        input_path = os.path.join(folder_name, "c1s.csv")
+        output_path = os.path.join(folder_name, "fixed_fvp.csv")
+        with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
+            filter_fix_fvpheader(input_ptr, filter_meta, output_ptr)
 
-        # print >> sys.stderr, "--------------Fixing FVP in files--------------------"
-        # input_path = os.path.join(folder_name, "c1s.csv")
-        # output_path = os.path.join(folder_name, "fixed_fvp.csv")
-        # with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-        #     filter_fix_fvpheader(input_ptr, filter_meta, output_ptr)
-        #
-        # print >> sys.stderr, "--------------Filling in Defaults--------------------"
-        # input_path = os.path.join(folder_name, "fixed_fvp.csv")
-        # output_path = os.path.join(folder_name, "default.csv")
-        # with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-        #     filter_fill_default(input_ptr, filter_meta, output_ptr)
-        #
-        # print >> sys.stderr, "--------------Updating fields--------------------"
-        # input_path = os.path.join(folder_name, "default.csv")
-        # output_path = os.path.join(folder_name, "Update_field.csv")
-        # with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-        #     filter_update_field(input_ptr, filter_meta, output_ptr)
-        #
-        # print >> sys.stderr, "--------------Removing Unnecessary Records--------------------"
-        # input_path = os.path.join(folder_name, "Update_field.csv")
-        # output_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
-        # with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-        #     filter_remove_ptid(input_ptr, filter_meta, output_ptr)
-        #
-        # print >> sys.stderr, "--------------Removing Records without VisitDate--------------------"
-        # input_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
-        # output_path = os.path.join(folder_name, "final_Update.csv")
-        # with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-        #     filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr)
+        print >> sys.stderr, "--------------Filling in Defaults--------------------"
+        input_path = os.path.join(folder_name, "fixed_fvp.csv")
+        output_path = os.path.join(folder_name, "default.csv")
+        with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
+            filter_fill_default(input_ptr, filter_meta, output_ptr)
+
+        print >> sys.stderr, "--------------Updating fields--------------------"
+        input_path = os.path.join(folder_name, "default.csv")
+        output_path = os.path.join(folder_name, "Update_field.csv")
+        with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
+            filter_update_field(input_ptr, filter_meta, output_ptr)
+
+        print >> sys.stderr, "--------------Removing Unnecessary Records--------------------"
+        input_path = os.path.join(folder_name, "Update_field.csv")
+        output_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
+        with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
+            filter_remove_ptid(input_ptr, filter_meta, output_ptr)
+
+        print >> sys.stderr, "--------------Removing Records without VisitDate--------------------"
+        input_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
+        output_path = os.path.join(folder_name, "final_Update.csv")
+        with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
+            filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr)
 
     except Exception as e:
         print "Error in Opening a file"
