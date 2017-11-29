@@ -9,7 +9,6 @@
 import csv
 import re
 import sys
-sys.path.append('. ./nacc/')
 import argparse
 import traceback
 
