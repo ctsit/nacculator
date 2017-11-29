@@ -12,7 +12,6 @@ import sys
 import argparse
 import traceback
 
-from docopt import docopt
 from nacc.uds3 import blanks
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
