@@ -1,0 +1,3 @@
+token: Your RedCap Token
+redcap_server: Your Redcap Server
+current_sub: Path/to/Current_db.csv
