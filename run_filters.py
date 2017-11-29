@@ -1,12 +1,8 @@
 import os
 import sys
 import csv
-import re
-import fileinput
-import requests
 import yaml
 import json
-import csv
 import datetime
 import time
 import nacc
@@ -28,8 +24,7 @@ def get_headers(input_ptr):
     print headers
 
 
-def run_all_filters(folder_name):
-    filter_meta = "./current-db-subjects.csv"
+def run_all_filters(folder_name, filter_meta):
 
     # Calling Filters
     try:
@@ -88,7 +83,7 @@ def run_all_filters(folder_name):
 
     return
 
-def connect_to_redcap(config_path):
+def read_from_config(config_path):
     #Read in the config file. If the config file is missing or the wrong format, exit the program.
     print config_path
     try:
@@ -103,11 +98,9 @@ def connect_to_redcap(config_path):
 
 
 # Getting Data From RedCap
-def get_data_from_redcap(folder_name):
+def get_data_from_redcap(folder_name, token, redcap_url):
     # Enter the path for filters_config
-    config = connect_to_redcap("filters_config.yaml")
-    token = config.get('token')
-    redcap_url = config.get('redcap_server')
+
     redcap_access_api = API(token, redcap_url, 'master.yaml')
     res = redcap_access_api.export_records(adhoc_redcap_options={
                                               'format': 'csv'
@@ -131,8 +124,8 @@ def get_data_from_redcap(folder_name):
 
 
 if __name__ == '__main__':
-    curentdate = datetime.datetime.now().strftime('%m-%d-%Y')
-    folder_name = "run_"+curentdate
+    currentdate = datetime.datetime.now().strftime('%m-%d-%Y')
+    folder_name = "run_ "+currentdate
     print >> sys.stderr, "Recent folder "+folder_name
     print "Recent folder "+folder_name
 
@@ -142,7 +135,14 @@ if __name__ == '__main__':
     if not os.path.exists(identified_folder):
         recent_run_folder(identified_folder)
 
-    get_data_from_redcap(folder_name)
-    run_all_filters(folder_name)
+# Reading from Config and Accessing the necessary Data
+    config = read_from_config("filters_config.yaml")
+    token = config.get('token')
+    redcap_url = config.get('redcap_server')
+    filter_meta = config.get('current_sub')
+
+
+    get_data_from_redcap(folder_name, token, redcap_url)
+    run_all_filters(folder_name, filter_meta)
 
     exit()

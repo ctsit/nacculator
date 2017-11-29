@@ -9,16 +9,38 @@
 import csv
 import re
 import sys
+sys.path.append('. ./nacc/')
 import argparse
 import traceback
 
+from docopt import docopt
 from nacc.uds3 import blanks
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
 from nacc.uds3 import filters
-from nacc.uds3 import filters_ivp
-from nacc.uds3 import filters_fvp
+
+# docstr = """
+# Nacculator
+# Usage:
+#     redcap2nacc.py (-h | --help)
+#     redcap2nacc.py [-i]  (<input_path> <output_path>) [<config_file>]
+#     redcap2nacc.py [-lcm] [<config_file>]
+# Options:
+#   -h --help                     Show this message and exit
+#   -i --ivp                      Set this flag to process as ivp data
+#   -f --fvp                      Set this flag to process as fvp data
+#   -l --log                      Give progress of program
+#   -c --config                   Use config file to get input and output paths
+#   -m --meta                     Get the MetaData
+# Instructions:
+#     Run polyjuice on individual files, ISOs, or directories. This will give an ouput folder
+# containing dicom files that have had their tags cleaned according to your standards set in the config file.
+# $ ./polyjuice.py path/to/input path/to/output
+# If you put your inputs and outputs in the config file, you can use the flag -c and write:
+# $ ./polyjuice.py
+# In order to ZIP your Cleaned Output Directory, add the -z flag.
+# """
 
 def check_blanks(packet):
     """
@@ -155,7 +177,6 @@ def main():
                 'updateField' : 'update_field',
                 'removePtid' : 'remove_ptid',
                 'removeDateRecord' : 'eliminate_empty_date'}
-                # 'removeRedCapEvent':'eliminate_redcapeventname'}
 
     filter_exclusive_names = {
         'cleanPtid' : 'clean_ptid',
