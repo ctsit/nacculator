@@ -24,13 +24,16 @@ def get_headers(input_ptr):
     print headers
 
 
-def run_all_filters(folder_name, filter_meta):
+def run_all_filters(folder_name, filter_config):
+    filter_meta = filter_config.get('current_sub')
+    header_mapping = filter_config.get('header_mapping', {})
 
     # Calling Filters
     try:
         print >> sys.stderr, "--------------Removing subjects already in current--------------------"
-        input_path = os.path.join(folder_name, "redcap_intput.csv")
+        input_path = os.path.join(folder_name, "redcap_input.csv")
         output_path = os.path.join(folder_name, "clean.csv")
+        print >> sys.stderr, "Processing"
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
             filter_clean_ptid(input_ptr, filter_meta, output_ptr)
 
@@ -40,20 +43,13 @@ def run_all_filters(folder_name, filter_meta):
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
             filter_replace_drug_id(input_ptr, filter_meta, output_ptr)
 
-        print >> sys.stderr, "--------------Fixing C1S in files--------------------"
+        print >> sys.stderr, "--------------Fixing Headers--------------------"
         input_path = os.path.join(folder_name, "drugs.csv")
-        output_path = os.path.join(folder_name, "c1s.csv")
-        with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-            filter_fix_c1s(input_ptr, filter_meta, output_ptr)
-
-        print >> sys.stderr, "--------------Fixing FVP in files--------------------"
-        input_path = os.path.join(folder_name, "c1s.csv")
-        output_path = os.path.join(folder_name, "fixed_fvp.csv")
-        with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-            filter_fix_fvpheader(input_ptr, filter_meta, output_ptr)
+        output_path = os.path.join(folder_name, "clean_headers.csv")
+        filter_fix_headers(input_path, header_mapping, output_path)
 
         print >> sys.stderr, "--------------Filling in Defaults--------------------"
-        input_path = os.path.join(folder_name, "fixed_fvp.csv")
+        input_path = os.path.join(folder_name, "clean_headers.csv")
         output_path = os.path.join(folder_name, "default.csv")
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
             filter_fill_default(input_ptr, filter_meta, output_ptr)
@@ -109,7 +105,7 @@ def get_data_from_redcap(folder_name, token, redcap_url):
         rawdata = str(res.content).encode("utf-8")
         myreader = csv.reader(rawdata.splitlines())
         try:
-            with open(os.path.join(folder_name, "redcap_intput.csv"),"w") as file:
+            with open(os.path.join(folder_name, "redcap_input.csv"),"w") as file:
                 writer = csv.writer(file, delimiter=',')
                 for row in myreader:
                     writer.writerow(row)
@@ -125,9 +121,9 @@ def get_data_from_redcap(folder_name, token, redcap_url):
 
 if __name__ == '__main__':
     currentdate = datetime.datetime.now().strftime('%m-%d-%Y')
-    folder_name = "run_ "+currentdate
-    print >> sys.stderr, "Recent folder "+folder_name
-    print "Recent folder "+folder_name
+    folder_name = "run_" + currentdate
+    print >> sys.stderr, "Recent folder " + folder_name
+    print "Recent folder " + folder_name
 
     current_directory = os.getcwd()
     identified_folder = os.path.join(current_directory, folder_name)
@@ -140,9 +136,9 @@ if __name__ == '__main__':
     token = config.get('token')
     redcap_url = config.get('redcap_server')
     filter_meta = config.get('current_sub')
-
+    filter_config = config.get('filter_config')
 
     get_data_from_redcap(folder_name, token, redcap_url)
-    run_all_filters(folder_name, filter_meta)
+    run_all_filters(folder_name, filter_config)
 
     exit()
