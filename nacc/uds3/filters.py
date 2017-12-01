@@ -3,15 +3,6 @@ import sys
 import csv
 import re
 import fileinput
-import yaml
-
-fix_c1s_headers = { 'c1s_2a_npsylan' : 'c1s_2_npsycloc',
-                    'c1s_2a_npsylanx' : 'c1s_2a_npsylan',
-                    'b6s_2a1_npsylanx' : 'c1s_2a1_npsylanx'}
-
-fix_fvp_headers = { 'fu_otherneur' : 'fu_othneur',
-                    'fu_otherneurx' : 'fu_othneurx',
-                    'fu_strokedec' : 'fu_strokdec' }
 
 fill_default_values = { 'nogds' : 0,
                         'arthupex' : 0,
@@ -34,7 +25,6 @@ def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
         ptid = record['ptid']
         visit_num = record['visitnum']
         with open(filter_meta, 'r') as ptid_file:
-
             curr_ptid = csv.DictReader(ptid_file)
             repeat_flag = 0
 
@@ -89,36 +79,16 @@ def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
         print >> sys.stderr, 'Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) + ' fields.'
     return
 
-def filter_fix_c1s(input_ptr, filter_meta, output_ptr):
-
-    lines = input_ptr.read().splitlines()
-    output = csv.writer(output_ptr, dialect=csv.excel)
-    header = True
-    for line in lines:
-        if header:
-            header = False
-            for key in fix_c1s_headers.keys():
-                print >> sys.stderr, 'key : ' + key + ' Value : '+  fix_c1s_headers[key]
-                line=line.replace(key, fix_c1s_headers[key],1)
-        output_ptr.write(line)
-        output_ptr.write("\n")
-    return
-
-def filter_fix_fvpheader(input_ptr, filter_meta, output_ptr):
-
-    lines = input_ptr.read().splitlines()
-    header = True
-    for line in lines:
-        if header:
-            header = False
-            for key in fix_fvp_headers.keys():
-                print >> sys.stderr, 'key : ' + key + ' Value : '+  fix_fvp_headers[key]
-                line=line.replace(key, fix_fvp_headers[key],1)
-        output_ptr.write(line)
-        output_ptr.write("\n")
+def filter_fix_headers(input_file, header_mapping, output_file):
+    with open(input_file, 'r') as input_csv, open(output_file, 'w') as output_csv:
+        csv_reader = csv.reader(input_csv)
+        csv_writer = csv.writer(output_csv)
+        headers = csv_reader.next()
+        fixed_headers = list(map(lambda header: header_mapping.get(header,header), headers))
+        csv_writer.writerow(fixed_headers)
+        csv_writer.writerows([row for row in csv_reader])
 
     return
-
 
 def filter_remove_ptid(input_ptr, filter_meta, output_ptr):
 

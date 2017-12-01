@@ -1,3 +1,11 @@
 token: Your RedCap Token
 redcap_server: Your Redcap Server
-current_sub: Path/to/Current_db.csv
+filter_config:
+    current_sub: Path/to/Current_db.csv
+    header_mapping:
+      c1s_2a_npsylan : c1s_2_npsycloc
+      c1s_2a_npsylanx : c1s_2a_npsylan
+      b6s_2a1_npsylanx : c1s_2a1_npsylanx
+      fu_otherneur : fu_othneur
+      fu_otherneurx : fu_othneurxs
+      fu_strokedec : fu_strokdec

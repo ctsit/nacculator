@@ -1,0 +1,2 @@
+-e git+git@github.com:ctsit/cappy.git@1.2.0#egg=cappy
+PyYAML
