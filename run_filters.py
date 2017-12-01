@@ -27,6 +27,8 @@ def get_headers(input_ptr):
 def run_all_filters(folder_name, filter_config):
     filter_meta = filter_config.get('current_sub')
     header_mapping = filter_config.get('header_mapping', {})
+    regex_exp = filter_config.get('ptid_format')
+    print "ptid Format "+regex_exp
 
     # Calling Filters
     try:
@@ -64,7 +66,7 @@ def run_all_filters(folder_name, filter_config):
         input_path = os.path.join(folder_name, "Update_field.csv")
         output_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-            filter_remove_ptid(input_ptr, filter_meta, output_ptr)
+            filter_remove_ptid(input_ptr, filter_meta, regex_exp, output_ptr)
 
         print >> sys.stderr, "--------------Removing Records without VisitDate--------------------"
         input_path = os.path.join(folder_name, "CleanedPtid_Update.csv")

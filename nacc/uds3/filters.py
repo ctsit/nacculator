@@ -41,13 +41,15 @@ def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
                         print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
 
                     elif packet_type == "F" and prog_followup_visit.match(record['redcap_event_name']):
-                        if (not visit_num and visit_num == curr_visit) or visit_num == '':
+                        if (visit_num and visit_num == curr_visit) or visit_num == '':
                             repeat_flag = 1
                             print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
 
                     elif packet_type == "M" and prog_mile_visit.match(record['redcap_event_name']):
-                        repeat_flag = 1
-                        print >> sys.stderr, 'Eliminated ptid : ' + ptid+ " Event Name : " + record['redcap_event_name']
+                        # The visit num for Mile Stone is given in M1...M2...M3 for so to get integra; part of it we use Regex
+                        if (visit_num and re.search('\d+',curr_visit).group() == visit_num) or visit_num == '':
+                            repeat_flag = 1
+                            print >> sys.stderr, 'Eliminated ptid : ' + ptid+ " Event Name : " + record['redcap_event_name']
             if(repeat_flag == 0):
                 output.writerow(record)
     return output
@@ -90,13 +92,13 @@ def filter_fix_headers(input_file, header_mapping, output_file):
 
     return
 
-def filter_remove_ptid(input_ptr, filter_meta, output_ptr):
+def filter_remove_ptid(input_ptr, filter_meta, regex_exp, output_ptr):
 
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
     for record in reader:
-        prog = re.compile("11\d.*")
+        prog = re.compile(regex_exp)
         if prog.match(record['ptid'])!=None:
             output.writerow(record)
         else:
@@ -108,8 +110,8 @@ def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
     for record in reader:
-        if record['visitmo']=='' and record['visitday']=='' and record['visityr']=='':
-            print >> sys.stderr, 'Removed ptid : ' + record['ptid']
+        if record['visitmo']=='' or record['visitday']=='' or record['visityr']=='':
+            print >> sys.stderr, ' Empty Visit Date ' + record['ptid']
         else:
             output.writerow(record)
 
