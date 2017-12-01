@@ -135,7 +135,6 @@ if __name__ == '__main__':
     config = read_from_config("filters_config.yaml")
     token = config.get('token')
     redcap_url = config.get('redcap_server')
-    filter_meta = config.get('current_sub')
     filter_config = config.get('filter_config')
 
     get_data_from_redcap(folder_name, token, redcap_url)
