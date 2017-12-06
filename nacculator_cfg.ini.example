@@ -1,0 +1,21 @@
+[DEFAULT]
+
+[cappy]
+token: Your REDCAP Token
+redcap_server: Your Redcap Server
+
+#[filters] - Each section is named after the corresponding function name
+#in filters.py
+[filter_clean_ptid]
+filepath: path/to/current-db-subjects.csv
+
+[filter_fix_headers]
+c1s_2a_npsylan: c1s_2_npsycloc
+c1s_2a_npsylanx: c1s_2a_npsylan
+b6s_2a1_npsylanx: c1s_2a1_npsylanx
+fu_otherneur: fu_othneur
+fu_otherneurx: fu_othneurxs
+fu_strokedec: fu_strokdec
+
+[filter_remove_ptid]
+ptid_format: 11\d.*

@@ -147,8 +147,7 @@ def main():
     filters_names = {
                 'cleanPtid' : 'clean_ptid',
                 'replaceDrugId' : 'replace_drug_id',
-                'fixC1S' : 'fix_c1s',
-                'fixFVP' : 'fix_fvpheader',
+                'fixHeaders' : 'fix_headers',
                 'fillDefault' : 'fill_default',
                 'updateField' : 'update_field',
                 'removePtid' : 'remove_ptid',
@@ -181,8 +180,9 @@ def main():
     output = sys.stdout
 
     if options.filter:
-        filter_method = getattr(filters, 'filter_' + filters_names[options.filter])
-        filter_method(fp, options.filter_meta, output)
+        filter_method = 'filter_' + filters_names[options.filter]
+        filter_func = getattr(filters, filter_method)
+        filter_func(fp, options.filter_meta, output)
     else:
         reader = csv.DictReader(fp)
         for record in reader:
