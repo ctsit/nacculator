@@ -1,11 +1,11 @@
 import os
 import sys
 import csv
-import yaml
 import json
 import datetime
 import time
 import nacc
+import ConfigParser
 from cappy import API
 from nacc.uds3.filters import *
 
@@ -24,12 +24,7 @@ def get_headers(input_ptr):
     print headers
 
 
-def run_all_filters(folder_name, filter_config):
-    filter_meta = filter_config.get('current_sub')
-    header_mapping = filter_config.get('header_mapping', {})
-    regex_exp = filter_config.get('ptid_format')
-    print "ptid Format "+regex_exp
-
+def run_all_filters(folder_name, config):
     # Calling Filters
     try:
         print >> sys.stderr, "--------------Removing subjects already in current--------------------"
@@ -37,42 +32,43 @@ def run_all_filters(folder_name, filter_config):
         output_path = os.path.join(folder_name, "clean.csv")
         print >> sys.stderr, "Processing"
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-            filter_clean_ptid(input_ptr, filter_meta, output_ptr)
+            filter_clean_ptid(input_ptr, config, output_ptr)
 
         print >> sys.stderr, "--------------Replacing drug IDs--------------------"
         input_path = os.path.join(folder_name, "clean.csv")
         output_path = os.path.join(folder_name, "drugs.csv")
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-            filter_replace_drug_id(input_ptr, filter_meta, output_ptr)
+            filter_replace_drug_id(input_ptr, config, output_ptr)
 
         print >> sys.stderr, "--------------Fixing Headers--------------------"
         input_path = os.path.join(folder_name, "drugs.csv")
         output_path = os.path.join(folder_name, "clean_headers.csv")
-        filter_fix_headers(input_path, header_mapping, output_path)
+        with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
+            filter_fix_headers(input_ptr, config, output_ptr)
 
         print >> sys.stderr, "--------------Filling in Defaults--------------------"
         input_path = os.path.join(folder_name, "clean_headers.csv")
         output_path = os.path.join(folder_name, "default.csv")
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-            filter_fill_default(input_ptr, filter_meta, output_ptr)
+            filter_fill_default(input_ptr, config, output_ptr)
 
         print >> sys.stderr, "--------------Updating fields--------------------"
         input_path = os.path.join(folder_name, "default.csv")
         output_path = os.path.join(folder_name, "Update_field.csv")
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-            filter_update_field(input_ptr, filter_meta, output_ptr)
+            filter_update_field(input_ptr, config, output_ptr)
 
         print >> sys.stderr, "--------------Removing Unnecessary Records--------------------"
         input_path = os.path.join(folder_name, "Update_field.csv")
         output_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-            filter_remove_ptid(input_ptr, filter_meta, regex_exp, output_ptr)
+            filter_remove_ptid(input_ptr, config, output_ptr)
 
         print >> sys.stderr, "--------------Removing Records without VisitDate--------------------"
         input_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
         output_path = os.path.join(folder_name, "final_Update.csv")
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
-            filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr)
+            filter_eliminate_empty_date(input_ptr, config, output_ptr)
 
     except Exception as e:
         print "Error in Opening a file"
@@ -81,23 +77,21 @@ def run_all_filters(folder_name, filter_config):
 
     return
 
-def read_from_config(config_path):
-    #Read in the config file. If the config file is missing or the wrong format, exit the program.
-    print config_path
-    try:
-        with open(config_path, 'r') as config_file:
-            config = yaml.load(config_file.read())
-        print "Config Loaded"
-    except:
-        print("Error: Check config file")
-        exit()
+def read_config(config_path):
+    config = ConfigParser.ConfigParser()
+    config.read(config_path)
     return config
 
-
-
 # Getting Data From RedCap
-def get_data_from_redcap(folder_name, token, redcap_url):
+def get_data_from_redcap(folder_name, config):
     # Enter the path for filters_config
+    try:
+        token = config.get('cappy','token')
+        redcap_url= config.get('cappy','redcap_server')
+    except Exception as e:
+        print >> sys.stderr, "Please check the config file and validate all the proper fields exist"
+        print e
+        raise e
 
     redcap_access_api = API(token, redcap_url, 'master.yaml')
     res = redcap_access_api.export_records(adhoc_redcap_options={
@@ -125,7 +119,6 @@ if __name__ == '__main__':
     currentdate = datetime.datetime.now().strftime('%m-%d-%Y')
     folder_name = "run_" + currentdate
     print >> sys.stderr, "Recent folder " + folder_name
-    print "Recent folder " + folder_name
 
     current_directory = os.getcwd()
     identified_folder = os.path.join(current_directory, folder_name)
@@ -134,12 +127,10 @@ if __name__ == '__main__':
         recent_run_folder(identified_folder)
 
 # Reading from Config and Accessing the necessary Data
-    config = read_from_config("filters_config.yaml")
-    token = config.get('token')
-    redcap_url = config.get('redcap_server')
-    filter_config = config.get('filter_config')
+    config_path = sys.argv[1]
+    config = read_config(config_path)
 
-    get_data_from_redcap(folder_name, token, redcap_url)
-    run_all_filters(folder_name, filter_config)
+    get_data_from_redcap(folder_name, config)
+    run_all_filters(folder_name, config_path)
 
     exit()

@@ -3,6 +3,7 @@ import sys
 import csv
 import re
 import fileinput
+import ConfigParser
 
 fill_default_values = { 'nogds' : 0,
                         'arthupex' : 0,
@@ -14,9 +15,36 @@ fill_default_values = { 'nogds' : 0,
 
 fill_non_blank_values = { 'adcid' : '41' }
 
-def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
+#This dictionary contains the keys used in the config 
+def validate(func):
+    def read_config(config_path):
+        config = ConfigParser.ConfigParser()
+        config.read(config_path)
+        return config
+
+    def get_reqs_dict(config_path):
+        config = read_config(config_path)
+        reqs = None
+        if config.has_section(func.__name__):
+            reqs = dict(config.items(func.__name__))
+        return reqs
+
+    def validate_filter(*args, **kwargs):
+        config_path = args[1]
+        data_dict = None
+        if config_path:
+            data_dict = get_reqs_dict(args[1])
+        updated_args = list(args)
+        updated_args[1] = data_dict
+        func(*updated_args,**kwargs)
+
+    return validate_filter
+
+@validate
+def filter_clean_ptid(input_ptr, filter_config, output_ptr):
 # TODO  To deal with M Flag in Current_db.csv
 
+    filepath = filter_config['filepath']
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -24,7 +52,7 @@ def filter_clean_ptid(input_ptr, filter_meta, output_ptr):
     for record in reader:
         ptid = record['ptid']
         visit_num = record['visitnum']
-        with open(filter_meta, 'r') as ptid_file:
+        with open(filepath, 'r') as ptid_file:
             curr_ptid = csv.DictReader(ptid_file)
             repeat_flag = 0
 
@@ -61,8 +89,8 @@ def write_headers(reader, output):
         output_header = dict((h,h) for h in reader.fieldnames)
         output.writerow(output_header)
 
+@validate
 def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
-
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -81,19 +109,20 @@ def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
         print >> sys.stderr, 'Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) + ' fields.'
     return
 
+@validate
 def filter_fix_headers(input_file, header_mapping, output_file):
-    with open(input_file, 'r') as input_csv, open(output_file, 'w') as output_csv:
-        csv_reader = csv.reader(input_csv)
-        csv_writer = csv.writer(output_csv)
-        headers = csv_reader.next()
-        fixed_headers = list(map(lambda header: header_mapping.get(header,header), headers))
-        csv_writer.writerow(fixed_headers)
-        csv_writer.writerows([row for row in csv_reader])
+    csv_reader = csv.reader(input_file)
+    csv_writer = csv.writer(output_file)
+    headers = csv_reader.next()
+    fixed_headers = list(map(lambda header: header_mapping.get(header,header), headers))
+    csv_writer.writerow(fixed_headers)
+    csv_writer.writerows([row for row in csv_reader])
 
     return
 
-def filter_remove_ptid(input_ptr, filter_meta, regex_exp, output_ptr):
-
+@validate
+def filter_remove_ptid(input_ptr, filter_config, output_ptr):
+    regex_exp = filter_config['ptid_format']
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -104,8 +133,8 @@ def filter_remove_ptid(input_ptr, filter_meta, regex_exp, output_ptr):
         else:
             print >> sys.stderr, 'Removed ptid : ' + record['ptid']
 
+@validate
 def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
-
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -116,7 +145,6 @@ def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
             output.writerow(record)
 
 def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defaultCheck=False):
-
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -134,8 +162,10 @@ def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defa
         print >> sys.stderr, 'Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) + ' fields.'
     return
 
+@validate
 def filter_fill_default(input_ptr, filter_meta, output_ptr):
     fill_value_of_fields(input_ptr, output_ptr, fill_default_values, defaultCheck=True)
 
+@validate
 def filter_update_field(input_ptr, filter_meta, output_ptr):
     fill_value_of_fields(input_ptr, output_ptr, fill_non_blank_values, blankCheck=True)
