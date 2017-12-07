@@ -163,10 +163,11 @@ def main():
     option_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data')
     option_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data')
     option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
+    # option_group.add_argument('-p', action='store_true', dest='p', help='Gets the Data of single ptid')
 
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
     parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
-
+    parser.add_argument('-ptid', action='store', dest='ptid', help='Ptid for which you need the records')
     options = parser.parse_args()
 
     # Defaults to processing of ivp.
@@ -180,9 +181,19 @@ def main():
     output = sys.stdout
 
     if options.filter:
+        # print >> sys.stderr, "The Ptid is " + options.ptid
         filter_method = 'filter_' + filters_names[options.filter]
         filter_func = getattr(filters, filter_method)
         filter_func(fp, options.filter_meta, output)
+
+    elif options.ptid:
+        try:
+            print >> sys.stderr, "The Ptid is " + options.ptid
+            filters.filter_get_ptid(fp, options.ptid, output)
+        except Exception as e:
+            print >> sys.stderr, "Error in Searching for " + options.ptid
+            print >> sys.stderr, e
+
     else:
         reader = csv.DictReader(fp)
         for record in reader:
@@ -194,6 +205,7 @@ def main():
                     packet = np_builder.build_uds3_np_form(record)
                 elif options.fvp:
                     packet = fvp_builder.build_uds3_fvp_form(record)
+
             except Exception, exp:
                 if 'ptid' in record:
                     print >> sys.stderr, "[SKIP] Error for ptid : " + str(record['ptid'])

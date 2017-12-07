@@ -15,7 +15,7 @@ fill_default_values = { 'nogds' : 0,
 
 fill_non_blank_values = { 'adcid' : '41' }
 
-#This dictionary contains the keys used in the config 
+#This dictionary contains the keys used in the config
 def validate(func):
     def read_config(config_path):
         config = ConfigParser.ConfigParser()
@@ -169,3 +169,18 @@ def filter_fill_default(input_ptr, filter_meta, output_ptr):
 @validate
 def filter_update_field(input_ptr, filter_meta, output_ptr):
     fill_value_of_fields(input_ptr, output_ptr, fill_non_blank_values, blankCheck=True)
+
+def filter_get_ptid(input_ptr, Ptid, output_ptr):
+    reader = csv.DictReader(input_ptr)
+    output = csv.DictWriter(output_ptr, None)
+    write_headers(reader, output)
+    flag_ptid_found = 0
+    for record in reader:
+        if record['ptid'] == Ptid:
+            flag_ptid_found = 1
+            output.writerow(record)
+
+    if flag_ptid_found != 0:
+        return output_ptr
+    else:
+        raise Exception( "Ptid Not Found in given file" )
