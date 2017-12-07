@@ -46,7 +46,7 @@ def build_uds3_fvp_form(record):
     a2.INCALLS   = record['fu_incalls']
     a2.INRELY    = record['fu_inrely']
     packet.append(a2)
-    
+
     a3 = fvp_forms.FormA3()
     a3.NWINFMUT  = record['fu_nwinfmut']
     a3.FADMUT    = record['fu_fadmut']
@@ -543,14 +543,18 @@ def build_uds3_fvp_form(record):
     b9.FTLDEVAL  = record['fu_ftldeval']
     packet.append(b9)
 
-
     # Among C1 and C2 forms, one must be filled, one must be empty.
-    isC1NotBlank = '0' + (record['fu_mmseloc'] and record['fu_mmseloc'].strip()) \
-                or (record['fu_cogstat'] and record['fu_cogstat'].strip())
-    isC2NotBlank = '0' + (record['fu_mocacomp'] and record['fu_mocacomp'].strip()) \
-                or (record['fu_cogstat_c2'] and record['fu_cogstat_c2'].strip())
 
-    condition = int(isC1NotBlank) + int(isC2NotBlank)
+    isC1NotBlank = 0
+    isC2NotBlank = 0
+
+    if(len(record['fu_mmseloc'].strip())!=0 or len(record['fu_cogstat'].strip())!=0):
+        isC1NotBlank = 1
+
+    if(len(record['fu_mocacomp'].strip())!=0 or len(record['fu_cogstat_c2'].strip())!=0):
+        isC2NotBlank = 1
+
+    condition = isC1NotBlank + isC2NotBlank
 
     if(condition != 1):
         ptid = record['ptid']
@@ -558,7 +562,7 @@ def build_uds3_fvp_form(record):
         message = message + " for PTID : " + ("unknown" if not ptid else ptid)
         raise Exception(message)
 
-    if(isC1NotBlank):
+    if(int(isC1NotBlank)):
         add_redcap_C1_alz_C1S(record, packet)
     else:
         addC2(record, packet)
@@ -780,7 +784,7 @@ def add_redcap_C1_alz_C1S(record, packet):
     c1.NPSYLANX  = record['fu_npsylanx']
     c1.LOGIMO    = record['fu_logimo']
     c1.LOGIDAY   = record['fu_logiday'] #TODO
-    c1.LOGIYR    = record['fu_logiyr'] #TODO        
+    c1.LOGIYR    = record['fu_logiyr'] #TODO
     c1.LOGIPREV  = record['fu_logiprev']
     c1.LOGIMEM   = record['fu_logimem']
     c1.UDSBENTC  = record['fu_udsbentc_c1'] #TODO
@@ -801,7 +805,7 @@ def add_redcap_C1_alz_C1S(record, packet):
     c1.UDSBENTD  = record['fu_udsbentd_c1'] #TODO
     c1.UDSBENRS  = record['fu_udsbenrs_c1'] #TODO
     c1.BOSTON    = record['fu_boston']
-    c1.UDSVERFC  = record['fu_udsverfc_c1'] #TODO 
+    c1.UDSVERFC  = record['fu_udsverfc_c1'] #TODO
     c1.UDSVERFN  = record['fu_udsverfn_c1'] #TODO
     c1.UDSVERNF  = record['fu_udsvernf_c1'] #TODO
     c1.UDSVERLC  = record['fu_udsverlc_c1'] #TODO

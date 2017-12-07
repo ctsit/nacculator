@@ -1,3 +1,29 @@
+## [0.3.0] - 2017-12-07
+### Added
+ * add a reqs file for using a venv (Matthew McConnell)
+ * Create new filters.py script to pull data from REDCap and run filters on it (AjanthaRamineni)
+ * Add a filter to change headers based on config (Matthew McConnell)
+ * Add fiter to remove unneccessary RedCap Events (AjanthaRamineni)
+* Add a script to run all the filters with a config file (Matthew McConnell)
+### Changed
+ * Add a config across all filters with a decorator for validation (Matthew McConnell)
+ * Change how filter_ptid works - it now checks ptid, visit type, and visit num (AjanthaRamineni)
+ * Update the aod range for kids and siblings. Changed field from num to char (Matthew McConnell)
+ * Update changelog and setup (Tarun Gupta Akirala)
+ * Update README in preperation for release (Matthew McConnell)
+ * Update notes (Tarun Gupta Akirala)
+### Fixed]
+* Fix logic for determing existance of C1S and C2 forms (AjanthaRamineni)
+* Fix column numbering on FVP B8 form (Naomi Braun)
+* Fix bug where 2 questions should be able to hold values regardless of other values (Matthew McConnell)
+* fixes #25 and adds more debugging logs (Tarun Gupta Akirala)
+
+
+ ## [0.2.4] - 2017-03-27
+ ### Added
+ * Added few log statements as changes.
+ * Project handover from takirala to ctsit
+
  ## [0.2.3] - 2017-02-14
  ### Changed
  * Refactored c1s form - redcap C1 form to C1S in alz website
@@ -49,4 +75,4 @@
  * Created error messages where data does not meet form definitions (Tarun Gupta Akirala)
  * Added the C1S temporary Spanish form definitions and rules (Tarun Gupta Akirala)
  * Added flag to have NACCulator output only the Neuropathology form (Tarun Gupta Akirala)
- * Added ability to check for data in C2 or C1S form and make determination on which form to use based on data present or not present (Tarun Gupta Akirala)
+ * Added ability to check for data in C2 or C1S form and make determination on which form to use based on data present or not present (Tarun Gupta Akirala)j

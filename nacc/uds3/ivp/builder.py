@@ -7,7 +7,7 @@
 from nacc.uds3 import blanks
 import forms as ivp_forms
 from nacc.uds3 import packet as ivp_packet
-
+import sys
 
 def build_uds3_ivp_form(record):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
@@ -626,20 +626,26 @@ def build_uds3_ivp_form(record):
     packet.append(b9)
 
     # Among C1S and C2 forms, one must be filled, one must be empty.
-    isC1SNotBlank = '0' + (record['c1s_1a_mmseloc'] and record['c1s_1a_mmseloc'].strip()) \
-                or (record['c1s_11a_cogstat'] and record['c1s_11a_cogstat'].strip())
-    isC2NotBlank = '0' + (record['mocacomp'] and record['mocacomp'].strip()) \
-                or (record['cogstat_c2'] and record['cogstat_c2'].strip())
 
-    condition = int(isC1SNotBlank) + int(isC2NotBlank)
+    isC1SNotBlank = 0
+
+    isC2NotBlank = 0
+
+    if(len(record['c1s_1a_mmseloc'].strip())!=0 or len(record['c1s_11a_cogstat'].strip())!=0):
+        isC1SNotBlank = 1
+
+    if(len(record['mocacomp'].strip())!=0 or len(record['cogstat_c2'].strip())!=0):
+        isC2NotBlank = 1
+
+    condition = isC1SNotBlank + isC2NotBlank
 
     if(condition != 1):
         ptid = record['ptid']
-        message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " c1s/c2 forms has data";
+        message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " c1s/c2 forms has data "
         message = message + " for PTID : " + ("unknown" if not ptid else ptid)
         raise Exception(message)
 
-    if(isC1SNotBlank):
+    if(int(isC1SNotBlank)):
         addC1S(record, packet)
     else:
         addC2(record, packet)
