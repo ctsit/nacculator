@@ -190,9 +190,7 @@ def main():
 
     elif options.ptid:
         try:
-            print >> sys.stderr, "The Ptid is " + options.ptid
-            print >> sys.stderr, "The Ptid is " + options.vnum
-            print >> sys.stderr, "The Ptid is " + options.vtype
+            # print >> sys.stderr, "The Ptid is " + options.vtype
             filters.filter_get_ptid(fp, options.ptid, options.vnum, options.vtype, output)
         except Exception as e:
             print >> sys.stderr, "Error in Searching for " + options.ptid

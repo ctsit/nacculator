@@ -174,16 +174,21 @@ def filter_get_ptid(input_ptr, Ptid, visit_num, visit_type, output_ptr):
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
+
     flag_ptid_found = 0
     for record in reader:
-        if visit_num:
-            if (not visit_type and (record['ptid'] == Ptid and record['visitnum'] == visit_num and (re.search(visit_type, record['redcap_event_name'])))) or (record['ptid'] == Ptid and record['visitnum'] == visit_num):
-                flag_ptid_found = 1
-                output.writerow(record)
-        else:
-            if record['ptid'] == Ptid:
-                flag_ptid_found = 1
-                output.writerow(record)
+        if (visit_num and visit_type) and (record['ptid'] == Ptid and record['visitnum'] == visit_num and (re.search(visit_type, record['redcap_event_name']))):
+            flag_ptid_found = 1
+            output.writerow(record)
+        elif (visit_num and record['ptid'] == Ptid and record['visitnum'].lstrip("0") == visit_num):
+            flag_ptid_found = 1
+            output.writerow(record)
+        elif visit_type and record['ptid'] == Ptid and re.search(visit_type, record['redcap_event_name']):
+            flag_ptid_found = 1
+            output.writerow(record)
+        elif (not visit_num and not visit_type) and record['ptid'] == Ptid:
+            flag_ptid_found = 1
+            output.writerow(record)
 
     if flag_ptid_found != 0:
         return output_ptr
