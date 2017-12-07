@@ -170,15 +170,20 @@ def filter_fill_default(input_ptr, filter_meta, output_ptr):
 def filter_update_field(input_ptr, filter_meta, output_ptr):
     fill_value_of_fields(input_ptr, output_ptr, fill_non_blank_values, blankCheck=True)
 
-def filter_get_ptid(input_ptr, Ptid, output_ptr):
+def filter_get_ptid(input_ptr, Ptid, visit_num, visit_type, output_ptr):
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
     flag_ptid_found = 0
     for record in reader:
-        if record['ptid'] == Ptid:
-            flag_ptid_found = 1
-            output.writerow(record)
+        if visit_num:
+            if (not visit_type and (record['ptid'] == Ptid and record['visitnum'] == visit_num and (re.search(visit_type, record['redcap_event_name'])))) or (record['ptid'] == Ptid and record['visitnum'] == visit_num):
+                flag_ptid_found = 1
+                output.writerow(record)
+        else:
+            if record['ptid'] == Ptid:
+                flag_ptid_found = 1
+                output.writerow(record)
 
     if flag_ptid_found != 0:
         return output_ptr

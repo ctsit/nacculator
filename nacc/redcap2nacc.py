@@ -168,6 +168,8 @@ def main():
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
     parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
     parser.add_argument('-ptid', action='store', dest='ptid', help='Ptid for which you need the records')
+    parser.add_argument('-vnum', action='store', dest='vnum', help='Ptid for which you need the records')
+    parser.add_argument('-vtype', action='store', dest='vtype', help='Ptid for which you need the records')
     options = parser.parse_args()
 
     # Defaults to processing of ivp.
@@ -189,7 +191,9 @@ def main():
     elif options.ptid:
         try:
             print >> sys.stderr, "The Ptid is " + options.ptid
-            filters.filter_get_ptid(fp, options.ptid, output)
+            print >> sys.stderr, "The Ptid is " + options.vnum
+            print >> sys.stderr, "The Ptid is " + options.vtype
+            filters.filter_get_ptid(fp, options.ptid, options.vnum, options.vtype, output)
         except Exception as e:
             print >> sys.stderr, "Error in Searching for " + options.ptid
             print >> sys.stderr, e
