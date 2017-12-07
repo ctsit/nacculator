@@ -144,11 +144,19 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Process redcap form output to nacculator.')
 
-    filters_names = { 'cleanPtid' : 'clean_ptid',
+    filters_names = {
+                'cleanPtid' : 'clean_ptid',
                 'replaceDrugId' : 'replace_drug_id',
-                'fixC1S' : 'fix_c1s',
+                'fixHeaders' : 'fix_headers',
                 'fillDefault' : 'fill_default',
-                'updateField' : 'update_field'}
+                'updateField' : 'update_field',
+                'removePtid' : 'remove_ptid',
+                'removeDateRecord' : 'eliminate_empty_date'}
+
+    filter_exclusive_names = {
+        'cleanPtid' : 'clean_ptid',
+        'removeRedCapEvent':'eliminate_redcapeventname'
+    }
 
     option_group = parser.add_mutually_exclusive_group()
     option_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
@@ -172,15 +180,16 @@ def main():
     output = sys.stdout
 
     if options.filter:
-        filter_method = getattr(filters, 'filter_' + filters_names[options.filter])
-        filter_method(fp, options.filter_meta, output)
+        filter_method = 'filter_' + filters_names[options.filter]
+        filter_func = getattr(filters, filter_method)
+        filter_func(fp, options.filter_meta, output)
     else:
         reader = csv.DictReader(fp)
-        for record in reader:    
+        for record in reader:
             print >> sys.stderr, "[START] ptid : " + str(record['ptid'])
             try:
                 if options.ivp:
-                    packet = ivp_builder.build_uds3_ivp_form(record)    
+                    packet = ivp_builder.build_uds3_ivp_form(record)
                 elif options.np:
                     packet = np_builder.build_uds3_np_form(record)
                 elif options.fvp:

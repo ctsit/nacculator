@@ -543,23 +543,18 @@ def build_uds3_fvp_form(record):
     b9.FTLDEVAL  = record['fu_ftldeval']
     packet.append(b9)
 
-    # Checking if those records are filled with 0 and marking as incomplete to those forms
-    if(record['fu_mmseloc'].strip() == 0):
-        record['fu_mmseloc'] = ""
-    if(record['fu_cogstat'].strip() == 0):
-        record['fu_cogstat'] = ""
-    if(record['fu_mocacomp'].strip() == 0):
-        record['fu_mocacomp'] = ""
-    if(record['fu_cogstat_c2'] == 0):
-        record['fu_cogstat_c2'] = ""
-
     # Among C1 and C2 forms, one must be filled, one must be empty.
-    isC1NotBlank = '0' + (record['fu_mmseloc'] and record['fu_mmseloc'].strip()) \
-                or (record['fu_cogstat'] and record['fu_cogstat'].strip())
-    isC2NotBlank = '0' + (record['fu_mocacomp'] and record['fu_mocacomp'].strip()) \
-                or (record['fu_cogstat_c2'] and record['fu_cogstat_c2'].strip())
 
-    condition = int(isC1NotBlank) + int(isC2NotBlank)
+    isC1NotBlank = 0
+    isC2NotBlank = 0
+
+    if(len(record['fu_mmseloc'].strip())!=0 or len(record['fu_cogstat'].strip())!=0):
+        isC1NotBlank = 1
+
+    if(len(record['fu_mocacomp'].strip())!=0 or len(record['fu_cogstat_c2'].strip())!=0):
+        isC2NotBlank = 1
+
+    condition = isC1NotBlank + isC2NotBlank
 
     if(condition != 1):
         ptid = record['ptid']
