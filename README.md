@@ -28,6 +28,9 @@ This is not exhaustive, but here is an explanation of some important files.
 * `tools/generator.py`:
     generates Python objects based on NACC Data Element Dictionaries in CSV.
 
+* `/run_filters.py and run_filters.sh`:
+    pulls data from REDCap based on the settings found in nacculator_cfg.ini (for .py) 
+    and filters_config.cfg (for .sh).
 
 HOW TO Convert from REDCap to NACC
 ---------------------------------
@@ -46,7 +49,7 @@ The program accepts two arguments -file and -(ivp|fvp|np). Both the arguments ar
       $ PYTHONPATH=. ./nacc/redcap2nacc.py -h
       usage: redcap2nacc.py [-h]
                         [-fvp | -ivp | -np | -f {cleanPtid,updateField,replaceDrugId,fillDefault,fixC1S}]
-                        [-file FILE] [-meta FILTER_META]
+                        [-file FILE] [-meta FILTER_CONFIG]
 
       Process redcap form output to nacculator.
 
@@ -58,7 +61,7 @@ The program accepts two arguments -file and -(ivp|fvp|np). Both the arguments ar
       -f or --filter        Accepts one of {cleanPtid,updateField,replaceDrugId,fillDefault,fixC1S}
                             Set this flag to process the filter
       -file FILE            Path of the csv file to be processed.
-      -meta FILTER_META     Input file for the filter metadata (in case cleanPtid is used)
+      -meta FILTER_META     Filter config file (nacculator_cfg.ini) when running filters 
 
 Example Usage
 
@@ -66,9 +69,7 @@ Example Usage
 
 To use a filter,
 
-    PYTHONPATH=. ./nacc/redcap2nacc.py  -f cleanPtid -meta someFileName.csv < data.csv > data.txt
-
-Only cleanPtid filter requires a meta file to be passed to it. Other filters do not need a meta tag.    
+    PYTHONPATH=. ./nacc/redcap2nacc.py  -f cleanPtid -meta nacculator_cfg.ini < data.csv > data.txt
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input can
 be `STDIN` or the first argument passed to `redcap2nacc`._
@@ -81,18 +82,29 @@ HOW TO Use nacculator to filter data
 If your data is not clean enough to be processed by nacculator, there are some
 built in functions to clean (read transform) the data.
 
+In order to properly use the filters, the first step is to check and validate
+that the nacculator_cfg.ini file has the proper settings for the filter to run.
+The config file contains sections with in-code filter function name. Each of
+these sections contains elements necessary for the filter to run.
+The filters described below will discuss what is required, if anything.
+If the filter requires the config, it must be passed with the -meta flag like
+the example above shows.
+
 * **cleanPtid**
 
-  This filter requires the meta option to be set using the -meta flag. The meta
-  file can be a csv file of ptids to be removed. All the records whose ptid is
-  found in the passed meta file will be discarded in the output file.
+  **Filter config required**
+  This filter requires a section in the config called 'filter_clean_ptid'. This
+  section will contain a single key 'filepath' which will point to a csv file 
+  of ptids to be removed. All the records whose ptid with same packet and visit
+  num found in the passed meta file will be discarded in the output file. 
 
   Example meta file:
 
-      $ cat sampleRemovePtidFile.csv
-      ptids
-      110001
-      110003
+      Patient ID,Packet type,Visit Num,Status
+      110001,I,1,Current
+      110001,M,M1,Current
+      110003,I,001,Current
+      110003,F,002,Current
 
 * **replaceDrugId**
 
@@ -101,16 +113,24 @@ built in functions to clean (read transform) the data.
 
   This filter does not require any meta data file as of now.
 
-* **fixC1S**
+* **fixHeaders**
 
-  This filter fixes the column names of some of the fields in C1S form. This
-  filter does not check for any data. It always replaces the column names if found.
+  **Filter config required**
+  This filter requires a section in the config called 'filter_fix_headers' with
+  as many keys as needed to replace the necessary columns. See example below.
+  This filter fixes the column names of any column found in the filter mapping.
+  This filter does not check for any data. It always replaces the column names
+  if found.
 
   Currently, below replacements are used:
 
-      c1s_2a_npsylan    ->  c1s_2_npsycloc
-      c1s_2a_npsylanx   ->  c1s_2a_npsylan
-      b6s_2a1_npsylanx  ->  c1s_2a1_npsylanx
+      config:
+      c1s_2a_npsylan: c1s_2_npsycloc
+      c1s_2a_npsylanx: c1s_2a_npsylan
+      b6s_2a1_npsylanx: c1s_2a1_npsylanx
+      fu_otherneur: fu_othneur
+      fu_otherneurx: fu_othneurxs
+      fu_strokedec: fu_strokdec
 
 
 * **fillDefault**
@@ -131,6 +151,27 @@ built in functions to clean (read transform) the data.
   This filter is used to update non blank fields. Currently, only adcid is updated
   to 41.
 
+* **removePtid**
+  
+  **Filter config required**
+  This filter requires a section in the config called 'filter_remove_ptid' with
+  a single key called 'ptid_format'. The value for that key is a regex string
+  to match ptids that are to be kept.
+  
+  This filter is used to remove ptids that may have a different set of ids for a
+  different study, or help limit which ids show up in the final result.
+  
+      config:
+      ptid_format: 11\d.*
+
+* **removeDateRecord**
+
+  This filter is used to remove records who may be missing visit dates. It
+  searches for rows missing the visit day, month, or year. If any of those
+  fields are missing, it removes the row.
+  
+
+
 HOW TO Generate New Forms
 ------------------------
 
@@ -145,10 +186,3 @@ working directory called `corrected`._
     $ edit ../nacc/uds3/ivp/forms
 
 * Resources for uds3 fvp forms are available [here](https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/).
-
-
-FAQ
-------------------------
-
-- This is developed and tested on Python 2.7
-- If there are key not found errors, then your dictionary may have the value with a different name. Make sure you the name of the keys is consistent while writing and reading.
