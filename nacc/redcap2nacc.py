@@ -151,7 +151,8 @@ def main():
                 'fillDefault' : 'fill_default',
                 'updateField' : 'update_field',
                 'removePtid' : 'remove_ptid',
-                'removeDateRecord' : 'eliminate_empty_date'}
+                'removeDateRecord' : 'eliminate_empty_date',
+                'getPtid' : 'extract_ptid'}
 
     filter_exclusive_names = {
         'cleanPtid' : 'clean_ptid',
@@ -163,7 +164,6 @@ def main():
     option_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data')
     option_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data')
     option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
-    # option_group.add_argument('-p', action='store_true', dest='p', help='Gets the Data of single ptid')
 
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
     parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
@@ -183,18 +183,12 @@ def main():
     output = sys.stdout
 
     if options.filter:
-        # print >> sys.stderr, "The Ptid is " + options.ptid
-        filter_method = 'filter_' + filters_names[options.filter]
-        filter_func = getattr(filters, filter_method)
-        filter_func(fp, options.filter_meta, output)
-
-    elif options.ptid:
-        try:
-            # print >> sys.stderr, "The Ptid is " + options.vtype
-            filters.filter_get_ptid(fp, options.ptid, options.vnum, options.vtype, output)
-        except Exception as e:
-            print >> sys.stderr, "Error in Searching for " + options.ptid
-            print >> sys.stderr, e
+        if options.filter == "getPtid":
+            filters.filter_extract_ptid(fp, options.ptid, options.vnum, options.vtype, output)
+        else:
+            filter_method = 'filter_' + filters_names[options.filter]
+            filter_func = getattr(filters, filter_method)
+            filter_func(fp, options.filter_meta, output)
 
     else:
         reader = csv.DictReader(fp)

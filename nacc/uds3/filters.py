@@ -170,27 +170,36 @@ def filter_fill_default(input_ptr, filter_meta, output_ptr):
 def filter_update_field(input_ptr, filter_meta, output_ptr):
     fill_value_of_fields(input_ptr, output_ptr, fill_non_blank_values, blankCheck=True)
 
-def filter_get_ptid(input_ptr, Ptid, visit_num, visit_type, output_ptr):
+def filter_extract_ptid(input_ptr, Ptid, visit_num, visit_type, output_ptr):
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
 
-    flag_ptid_found = 0
-    for record in reader:
-        if (visit_num and visit_type) and (record['ptid'] == Ptid and record['visitnum'] == visit_num and (re.search(visit_type, record['redcap_event_name']))):
-            flag_ptid_found = 1
-            output.writerow(record)
-        elif (visit_num and record['ptid'] == Ptid and record['visitnum'].lstrip("0") == visit_num):
-            flag_ptid_found = 1
-            output.writerow(record)
-        elif visit_type and record['ptid'] == Ptid and re.search(visit_type, record['redcap_event_name']):
-            flag_ptid_found = 1
-            output.writerow(record)
-        elif (not visit_num and not visit_type) and record['ptid'] == Ptid:
-            flag_ptid_found = 1
-            output.writerow(record)
+    if(visit_num and visit_type):
+        filtered = filter(lambda row: filter_csv_all(Ptid, visit_num, visit_type, row), reader)
 
-    if flag_ptid_found != 0:
-        return output_ptr
-    else:
-        raise Exception( "Ptid Not Found in given file" )
+    elif(not visit_num and visit_type):
+        filtered = filter(lambda row: filter_csv_vtype(Ptid, visit_type, row), reader)
+
+    elif(not visit_type and visit_num):
+        filtered = filter(lambda row: filter_csv_vnum(Ptid, visit_num, row), reader)
+
+    elif(not visit_type and not visit_num):
+        filtered = filter(lambda row: filter_csv_ptid(Ptid, row), reader)
+    output.writerows(filtered)
+
+def filter_csv_all(Ptid, visit_num, visit_type, record):
+    if record['ptid'] == Ptid and record['visitnum'].lstrip("0") == visit_num and (re.search(visit_type, record['redcap_event_name'])):
+        return record
+
+def filter_csv_vtype(Ptid, visit_type, record):
+    if record['ptid'] == Ptid and re.search(visit_type, record['redcap_event_name']):
+        return record
+
+def filter_csv_vnum(Ptid, visit_num, record):
+    if record['ptid'] == Ptid and record['visitnum'].lstrip("0") == visit_num:
+        return record
+
+def filter_csv_ptid(Ptid, record):
+    if record['ptid'] == Ptid:
+        return record
