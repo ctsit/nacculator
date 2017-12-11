@@ -126,13 +126,15 @@ built in functions to clean (read transform) the data.
 
 * **getPtid**
 
-    This filter is used to get information about a single PatientID. You need to use <kbd>-ptid</kbd> to give the patient ID.
+    This filter is used to get information about a single PatientID. 
+    You need to use <kbd>-ptid</kbd> to give the patient ID.
     You can use the optional tags like <kbd>-vnum</kbd> to get the records with particular visit number and PatientID or use
     <kbd>-vtype</kbd> to get records with particular visit type and Patient ID.
+    
     <code>
-    PYTHONPATH=. ./nacc/redcap2nacc.py  -f getPtid -ptid some_patient_ID -vnum some_visit_num -vtype somevisit_type < data.csv > data.txt
+    PYTHONPATH=. ./nacc/redcap2nacc.py  -f getPtid -ptid some_patient_ID -vnum some_visit_num -vtype somevisit_type                          < data.csv > data.txt
     </code>
-==========
+
 
 [![DOI](https://zenodo.org/badge/20501/ctsit/nacculator.svg)](https://zenodo.org/badge/latestdoi/20501/ctsit/nacculator)
 
