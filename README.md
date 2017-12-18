@@ -94,9 +94,9 @@ the example above shows.
 
   **Filter config required**
   This filter requires a section in the config called 'filter_clean_ptid'. This
-  section will contain a single key 'filepath' which will point to a csv file
+  section will contain a single key 'filepath' which will point to a csv file 
   of ptids to be removed. All the records whose ptid with same packet and visit
-  num found in the passed meta file will be discarded in the output file.
+  num found in the passed meta file will be discarded in the output file. 
 
   Example meta file:
 
@@ -157,10 +157,10 @@ the example above shows.
   This filter requires a section in the config called 'filter_remove_ptid' with
   a single key called 'ptid_format'. The value for that key is a regex string
   to match ptids that are to be kept.
-
+  
   This filter is used to remove ptids that may have a different set of ids for a
   different study, or help limit which ids show up in the final result.
-
+  
       config:
       ptid_format: 11\d.*
 
