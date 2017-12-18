@@ -15,7 +15,7 @@ fill_default_values = { 'nogds' : 0,
 
 fill_non_blank_values = { 'adcid' : '41' }
 
-#This dictionary contains the keys used in the config 
+#This dictionary contains the keys used in the config
 def validate(func):
     def read_config(config_path):
         config = ConfigParser.ConfigParser()
@@ -169,3 +169,37 @@ def filter_fill_default(input_ptr, filter_meta, output_ptr):
 @validate
 def filter_update_field(input_ptr, filter_meta, output_ptr):
     fill_value_of_fields(input_ptr, output_ptr, fill_non_blank_values, blankCheck=True)
+
+def filter_extract_ptid(input_ptr, Ptid, visit_num, visit_type, output_ptr):
+    reader = csv.DictReader(input_ptr)
+    output = csv.DictWriter(output_ptr, None)
+    write_headers(reader, output)
+
+    if(visit_num and visit_type):
+        filtered = filter(lambda row: filter_csv_all(Ptid, visit_num, visit_type, row), reader)
+
+    elif(not visit_num and visit_type):
+        filtered = filter(lambda row: filter_csv_vtype(Ptid, visit_type, row), reader)
+
+    elif(not visit_type and visit_num):
+        filtered = filter(lambda row: filter_csv_vnum(Ptid, visit_num, row), reader)
+
+    elif(not visit_type and not visit_num):
+        filtered = filter(lambda row: filter_csv_ptid(Ptid, row), reader)
+    output.writerows(filtered)
+
+def filter_csv_all(Ptid, visit_num, visit_type, record):
+    if record['ptid'] == Ptid and record['visitnum'].lstrip("0") == visit_num and (re.search(visit_type, record['redcap_event_name'])):
+        return record
+
+def filter_csv_vtype(Ptid, visit_type, record):
+    if record['ptid'] == Ptid and re.search(visit_type, record['redcap_event_name']):
+        return record
+
+def filter_csv_vnum(Ptid, visit_num, record):
+    if record['ptid'] == Ptid and record['visitnum'].lstrip("0") == visit_num:
+        return record
+
+def filter_csv_ptid(Ptid, record):
+    if record['ptid'] == Ptid:
+        return record

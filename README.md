@@ -29,7 +29,7 @@ This is not exhaustive, but here is an explanation of some important files.
     generates Python objects based on NACC Data Element Dictionaries in CSV.
 
 * `/run_filters.py and run_filters.sh`:
-    pulls data from REDCap based on the settings found in nacculator_cfg.ini (for .py) 
+    pulls data from REDCap based on the settings found in nacculator_cfg.ini (for .py)
     and filters_config.cfg (for .sh).
 
 HOW TO Convert from REDCap to NACC
@@ -61,7 +61,7 @@ The program accepts two arguments -file and -(ivp|fvp|np). Both the arguments ar
       -f or --filter        Accepts one of {cleanPtid,updateField,replaceDrugId,fillDefault,fixC1S}
                             Set this flag to process the filter
       -file FILE            Path of the csv file to be processed.
-      -meta FILTER_META     Filter config file (nacculator_cfg.ini) when running filters 
+      -meta FILTER_META     Filter config file (nacculator_cfg.ini) when running filters
 
 Example Usage
 
@@ -152,7 +152,7 @@ the example above shows.
   to 41.
 
 * **removePtid**
-  
+
   **Filter config required**
   This filter requires a section in the config called 'filter_remove_ptid' with
   a single key called 'ptid_format'. The value for that key is a regex string
@@ -169,7 +169,18 @@ the example above shows.
   This filter is used to remove records who may be missing visit dates. It
   searches for rows missing the visit day, month, or year. If any of those
   fields are missing, it removes the row.
-  
+
+* **getPtid**
+
+    This filter is used to get information about a single PatientID.
+    You need to use <kbd>-ptid</kbd> to give the patient ID.
+    You can use the optional tags like <kbd>-vnum</kbd> to get the records with particular visit number and PatientID or use
+    <kbd>-vtype</kbd> to get records with particular visit type and Patient ID.
+
+    <code>
+    PYTHONPATH=. ./nacc/redcap2nacc.py  -f getPtid -ptid some_patient_ID -vnum some_visit_num -vtype somevisit_type < data.csv > data.txt
+    </code>
+
 
 
 HOW TO Generate New Forms
