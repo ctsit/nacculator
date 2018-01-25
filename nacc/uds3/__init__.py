@@ -6,8 +6,6 @@
 
 # nacc.uds3
 import decimal
-# Change later
-import sys
 
 class _UdsType(object):
     def __init__(self, length):
