@@ -6,7 +6,8 @@
 
 # nacc.uds3
 import decimal
-
+# Change later
+import sys
 
 class _UdsType(object):
     def __init__(self, length):
@@ -127,6 +128,8 @@ class FieldBag(object):
         return str(self.write())
 
     def __find_key(self, key):
+
+        #
         if key in self.fields:
             return key
 
@@ -158,4 +161,3 @@ class FieldBag(object):
 
         assert len(buf) == orig_buf_size, field.name + ": buffer changed size!"
         return buf
-

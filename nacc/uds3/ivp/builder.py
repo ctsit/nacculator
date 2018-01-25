@@ -849,6 +849,58 @@ def build_uds3_ivp_form(record):
     packet.insert(0, z1)
 
     update_header(record, packet)
+
+    z1x = ivp_forms.FormZ1X()
+    z1x.LANGA1  = record['a1lang']
+    z1x.LANGA2  = record['a2lang']
+    z1x.A2SUB = record['a2sub']
+    z1x.A3SUB   = record['a3sub']
+    # z1x.A2NOT   = record['a2not']
+    z1x.LANGA3  = record['a3lang']
+    z1x.A3NOT   = record['a3not']
+    # z1x.LANGA4  = record['a4lang']
+    # z1x.A4SUB   = record['a4sub']
+    # z1x.A4NOT   = record['a4not']
+    # z1x.LANGA5  = record['a5lang']
+    # z1x.LANGB1  = record['b1lang']
+    # z1x.B1SUB   = record['b1sub']
+    # z1x.B1NOT   = record['b1not']
+    # z1x.LANGB4  = record['b4lang']
+    # z1x.LANGB5  = record['b5lang']
+    # z1x.B5SUB   = record['b5sub']
+    # # z1x.B5NOT   = record['b5not']
+    # z1x.LANGB6  = record['b6lang']
+    # z1x.B6SUB   = record['b6sub']
+    # # z1x.B6NOT   = record['b6not']
+    # z1x.LANGB7  = record['b7lang']
+    # z1x.B7SUB   = record['b7sub']
+    # # z1x.B7NOT   = record['b7not']
+    # z1x.LANGB8  = record['b8lang']
+    # z1x.LANGB9  = record['b9lang']
+    # z1x.LANGC2  = record['c2lang']
+    # z1x.LANGD1  = record['d1lang']
+    # z1x.LANGD2  = record['d2lang']
+    # z1x.LANGA3A  = record['a3alang']
+    # z1x.FTDA3AFS = record['a3asubmitted']
+    # z1x.FTDA3AFR = record['a3anot']
+    # z1x.LANGB3F = record['b3flang']
+    # z1x.LANGB9F = record['b9flang']
+    # z1x.LANGC1F = record['c1flang']
+    # z1x.LANGC2F = record['c2flang']
+    # z1x.LANGC3F = record['c3flang']
+    # z1x.LANGC4F = record['c4flang']
+    # z1x.FTDC4FS = record['c4fsubmitted']
+    # z1x.FTDC4FR = record['c4fnot']
+    # z1x.FTDC5FS = record['c5fsubmitted']
+    # z1x.FTDC5FR = record['c5fnot']
+    # z1x.FTDC6FS = record['c6fsubmitted']
+    # z1x.FTDC6FR = record['c6fnot']
+    # z1x.LANGE2F = record['e2flang']
+    # z1x.LANGE3F = record['e3flang']
+    # z1x.LANGCLS = record['clslang']
+    # z1x.CLSSUB  = record['clssubmitted']
+    packet.append(z1x)
+
     return packet
 
 
