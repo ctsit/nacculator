@@ -67,17 +67,20 @@ def filter_clean_ptid(input_ptr, filter_config, output_ptr):
                     if packet_type == "I" and prog_initial_visit.match(record['redcap_event_name']):
                         repeat_flag = 1
                         print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
+                        break
 
                     elif packet_type == "F" and prog_followup_visit.match(record['redcap_event_name']):
-                        if (visit_num and visit_num == curr_visit) or visit_num == '':
+                        if (visit_num and int(visit_num) == int(curr_visit)) or visit_num == '':
                             repeat_flag = 1
                             print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
+                            break
 
                     elif packet_type == "M" and prog_mile_visit.match(record['redcap_event_name']):
                         # The visit num for Mile Stone is given in M1...M2...M3 for so to get integra; part of it we use Regex
                         if (visit_num and re.search('\d+',curr_visit).group() == visit_num) or visit_num == '':
                             repeat_flag = 1
                             print >> sys.stderr, 'Eliminated ptid : ' + ptid+ " Event Name : " + record['redcap_event_name']
+                            break
             if(repeat_flag == 0):
                 output.writerow(record)
     return output
