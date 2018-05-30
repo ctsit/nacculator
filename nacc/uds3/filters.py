@@ -139,10 +139,14 @@ def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
     for record in reader:
-        if record['visitmo']=='' or record['visitday']=='' or record['visityr']=='':
+        if _invalid_date(record):
             print >> sys.stderr, ' Empty Visit Date ' + record['ptid']
         else:
             output.writerow(record)
+
+def _invalid_date(record):
+    return record['redcap_event_name']!='language_arm_1' 
+    and (record['visitmo']=='' or record['visitday']=='' or record['visityr']=='')
 
 def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defaultCheck=False):
     reader = csv.DictReader(input_ptr)
