@@ -775,24 +775,6 @@ class FormC2(nacc.uds3.FieldBag):
         self.fields['UDSVERTI'] = nacc.uds3.Field(name='UDSVERTI', typename='Num', position=(358, 359), length=2, inclusive_range=(0, 30), allowable_values=[], blanks=['Blank if Question 12d UDSVERLC = 95-98'])
         self.fields['COGSTAT'] = nacc.uds3.Field(name='COGSTAT', typename='Num', position=(361, 361), length=1, inclusive_range=(0, 4), allowable_values=['3', '2', '1', '0', '4'], blanks=[])
 
-
-class FormCLS(nacc.uds3.FieldBag):
-    def __init__(self):
-        self.fields = header_fields()
-        self.fields['APREFLAN'] = nacc.uds3.Fiels(name='APREFLAN', typename='Num', position=(45, 45), length=1, inclusive_range=(1, 2), allowable_values=['1', '2'], blanks=[])
-        self.fields['AYRSPAN'] = nacc.uds3.Fiels(name='AYRSPAN', typename='Num', position=(47, 49), length=3, inclusive_range=(0, 110), allowable_values=[], blanks=[])
-        self.fields['AYRENGL'] = nacc.uds3.Fiels(name='AYRENGL', typename='Num', position=(51, 53), length=3, inclusive_range=(0, 110), allowable_values=[], blanks=[])
-        self.fields['APCSPAN'] = nacc.uds3.Fiels(name='APCSPAN', typename='Num', position=(55, 57), length=3, inclusive_range=(0, 100), allowable_values=[], blanks=[])
-        self.fields['APCENGL'] = nacc.uds3.Fiels(name='APCENGL', typename='Num', position=(59, 61), length=3, inclusive_range=(0, 110), allowable_values=[], blanks=[])
-        self.fields['ASPKSPAN'] = nacc.uds3.Fiels(name='ASPKSPAN', typename='Num', position=(63, 63), length=1, inclusive_range=(1, 7), allowable_values=['1', '2', '3', '4', '5', '6', '7'], blanks=[])
-        self.fields['AREASPAN'] = nacc.uds3.Fiels(name='AREASPAN', typename='Num', position=(65, 65), length=1, inclusive_range=(1, 7), allowable_values=['1', '2', '3', '4', '5', '6', '7'], blanks=[])
-        self.fields['AWRISPAN'] = nacc.uds3.Fiels(name='AWRISPAN', typename='Num', position=(67, 67), length=1, inclusive_range=(1, 7), allowable_values=['1', '2', '3', '4', '5', '6', '7'], blanks=[])
-        self.fields['AUNDSPAN'] = nacc.uds3.Fiels(name='AUNDSPAN', typename='Num', position=(69, 69), length=1, inclusive_range=(1, 7), allowable_values=['1', '2', '3', '4', '5', '6', '7'], blanks=[])
-        self.fields['ASPKENGL'] = nacc.uds3.Fiels(name='ASPKENGL', typename='Num', position=(71, 71), length=1, inclusive_range=(1, 7), allowable_values=['1', '2', '3', '4', '5', '6', '7'], blanks=[])
-        self.fields['AREAENGL'] = nacc.uds3.Fiels(name='AREAENGL', typename='Num', position=(73, 73), length=1, inclusive_range=(1, 7), allowable_values=['1', '2', '3', '4', '5', '6', '7'], blanks=[])
-        self.fields['AWRIENGL'] = nacc.uds3.Fiels(name='AWRIENGL', typename='Num', position=(75, 75), length=1, inclusive_range=(1, 7), allowable_values=['1', '2', '3', '4', '5', '6', '7'], blanks=[])
-        self.fields['AUNDENGL'] = nacc.uds3.Fiels(name='AUNDENGL', typename='Num', position=(77, 77), length=1, inclusive_range=(1, 7), allowable_values=['1', '2', '3', '4', '5', '6', '7'], blanks=[])
-
 class FormD1(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
