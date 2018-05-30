@@ -16,6 +16,7 @@ from nacc.uds3 import blanks
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
+from nacc.uds3.lang import builder as lang_builder
 from nacc.uds3 import filters
 
 def check_blanks(packet):
@@ -163,6 +164,7 @@ def main():
     option_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
     option_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data')
     option_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data')
+    option_group.add_argument('-lang', action='store_true', dest='lang', help='Set this flag to process as lang data')
     option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
 
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
@@ -174,7 +176,7 @@ def main():
 
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.np or options.filter):
+    if not (options.ivp or options.fvp or options.np or options.lang or options.filter):
         options.ivp = True
 
     fp = sys.stdin if options.file == None else open(options.file, 'r')
@@ -201,6 +203,8 @@ def main():
                     packet = np_builder.build_uds3_np_form(record)
                 elif options.fvp:
                     packet = fvp_builder.build_uds3_fvp_form(record)
+                elif options.lang:
+                    packet = lang_builder.build_uds3_lang_form(record)
 
             except Exception, exp:
                 if 'ptid' in record:

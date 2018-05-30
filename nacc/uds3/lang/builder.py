@@ -9,7 +9,7 @@ import forms as ivp_forms
 from nacc.uds3 import packet as ivp_packet
 import sys
 
-def build_uds3_ivp_form(record):
+def build_uds3_lang_form(record):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
     packet = ivp_packet.Packet()
 
