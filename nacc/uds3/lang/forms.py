@@ -14,15 +14,6 @@ from datetime import date
 # WARNING: When generating new forms, use CURRENT_YEAR-15 instead of "1999"
 CURRENT_YEAR = date.today().year
 
-
-class FormA4G(nacc.uds3.FieldBag):
-    def __init__(self):
-        self.fields = header_fields()
-        self.fields['ANYMEDS'] = nacc.uds3.Field(name='ANYMEDS',
-                                                 typename='Num',
-                                                 position=(45, 45), length=1,
-                                                 allowable_values=['0', '1'])
-
 ### END non-generated code
 
 
@@ -35,7 +26,7 @@ def header_fields():
     fields['PTID'] = nacc.uds3.Field(name='PTID', typename='Char', position=(15, 24), length=10, inclusive_range=None, allowable_values=[], blanks=[])
     fields['VISITMO'] = nacc.uds3.Field(name='VISITMO', typename='Num', position=(26, 27), length=2, inclusive_range=(1, 12), allowable_values=[], blanks=[])
     fields['VISITDAY'] = nacc.uds3.Field(name='VISITDAY', typename='Num', position=(29, 30), length=2, inclusive_range=(1, 31), allowable_values=[], blanks=[])
-    fields['VISITYR'] = nacc.uds3.Field(name='VISITYR', typename='Num', position=(32, 35), length=4, inclusive_range=(2005, CURRENT_YEAR), allowable_values=[], blanks=[])
+    fields['VISITYR'] = nacc.uds3.Field(name='VISITYR', typename='Num', position=(32, 35), length=4, inclusive_range=(2017, CURRENT_YEAR), allowable_values=[], blanks=[])
     fields['VISITNUM'] = nacc.uds3.Field(name='VISITNUM', typename='Char', position=(37, 39), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     fields['INITIALS'] = nacc.uds3.Field(name='INITIALS', typename='Char', position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     return fields

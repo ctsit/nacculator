@@ -6,12 +6,12 @@
 
 from nacc.uds3 import blanks
 import forms as ivp_forms
-from nacc.uds3 import packet as ivp_packet
+from nacc.uds3 import packet as lang_packet
 import sys
 
 def build_uds3_lang_form(record):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
-    packet = ivp_packet.Packet()
+    packet = lang_packet.Packet()
 
     # Set up us the forms
     cls_form = ivp_forms.FormCLS()
@@ -36,6 +36,9 @@ def build_uds3_lang_form(record):
         message = message + " for PTID : " + ("unknown" if not ptid else ptid)
         raise Exception(message)
 
+    update_header(record, packet)
+    return packet
+
 def update_header(record, packet):
     for header in packet:
         header.PACKET = "I"
@@ -53,3 +56,10 @@ def update_header(record, packet):
         header.VISITYR = record['visityr']
         header.VISITNUM = record['visitnum']
         header.INITIALS = record['initials']
+
+        if header.VISITYR == '2017':
+            if header.VISITMO < '6':
+                ptid = record['ptid']
+                message = "Could not parse packet as date precees June 01, 2017"
+                message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+                raise Exception(message)
