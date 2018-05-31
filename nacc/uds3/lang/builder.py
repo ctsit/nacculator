@@ -30,6 +30,12 @@ def build_uds3_lang_form(record):
     cls_form.AUNDENGL = record['eng_proficiency_oral_english']
     packet.append(cls_form)
 
+    if (int(cls_form.APCENGL) + int(cls_form.APCSPAN)) != 100:
+        ptid = record['ptid']
+        message = "Could not parse packet as language proficiency percentages do not equal 100"
+        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+        raise Exception(message)
+
 def update_header(record, packet):
     for header in packet:
         header.PACKET = "I"
