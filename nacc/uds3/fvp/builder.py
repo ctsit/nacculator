@@ -738,7 +738,34 @@ def build_uds3_fvp_form(record):
     d2.OTHCONDX  = record['fu_othcondx']
     packet.append(d2)
 
+    Z1_has_data = 0
 
+    Z1X_has_data = 0
+
+    if(len(record['fu_a2sub'].strip())!=0 or len(record['fu_b7sub'].strip())!=0):
+        Z1_has_data = 1
+
+    if(len(record['a1lang'].strip())!=0 or len(record['clssubmitted'].strip())!=0):
+        Z1X_has_data = 1
+
+    condition = Z1X_has_data + Z1_has_data
+
+    if(condition != 1):
+        ptid = record['ptid']
+        message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " Z1X/Z1 forms has data "
+        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+        raise Exception(message)
+
+    if(int(Z1_has_data)):
+        addZ1(record, packet)
+    else:
+        addZ1X(record, packet)
+
+
+    update_header(record, packet)
+    return packet
+
+def addZ1(record, packet):
     z1 = fvp_forms.FormZ1()
     z1.A2SUB     = record['fu_a2sub']
     z1.A2NOT     = record['fu_a2not']
@@ -761,10 +788,60 @@ def build_uds3_fvp_form(record):
     z1.B7SUB     = record['fu_b7sub']
     z1.B7NOT     = record['fu_b7not']
     z1.B7COMM    = record['fu_b7comm']
-    packet.append(z1)
+    packet.insert(0,z1)
 
-    update_header(record, packet)
-    return packet
+def addZ1X(record, packet):
+    z1x = ivp_forms.FormZ1X()
+    z1x.LANGA1 = record['fu_a1lang']
+    z1x.LANGA2 = record['fu_a2lang']
+    z1x.A2SUB = record['fu_a2sub_73fdc7']
+    z1x.A2NOT = record['fu_a2not_fd65a7']
+    z1x.LANGA3 = record['fu_a3lang']
+    z1x.A3SUB = record['fu_a3sub_c2a68b']
+    z1x.A3NOT = record['fu_a3not_f7c411']
+    z1x.LANGA4 = record['fu_a4lang']
+    z1x.A4SUB = record['fu_a4sub_143f22']
+    z1x.A4NOT = record['fu_a4not_b95e64']
+    z1x.LANGA5 = record['fu_a5lang']
+    z1x.LANGB1 = record['fu_b1lang']
+    z1x.B1SUB = record['fu_b1sub_c03500']
+    z1x.B1NOT = record['fu_b1not_0a7e9f']
+    z1x.LANGB4 = record['fu_b4lang']
+    z1x.LANGB5 = record['fu_b5lang']
+    z1x.B5SUB = record['fu_b5sub_51a694']
+    z1x.B5NOT = record['b5not_fvpz1x']
+    z1x.LANGB6 = record['fu_b6lang']
+    z1x.B6SUB = record['fu_b6sub_db439d']
+    z1x.B6NOT = record['fu_b6not_310244']
+    z1x.LANGB7 = record['fu_b7lang']
+    z1x.B7SUB = record['fu_b7sub_21a95f']
+    z1x.B7NOT = record['fu_b7not_dccb30']
+    z1x.LANGB8 = record['fu_b8lang']
+    z1x.LANGB9 = record['fu_b9lang']
+    z1x.LANGC2 = record['fu_c2lang']
+    z1x.LANGD1 = record['fu_d1lang']
+    z1x.LANGD2 = record['fu_d2lang']
+    z1x.LANGA3A = record['fu_a3alang']
+    z1x.FTDA3AFS = record['fu_a3asubmitted']
+    z1x.FTDA3AFR = record['fu_a3anot']
+    z1x.LANGB3F = record['fu_b3flang']
+    z1x.LANGB9F = record['fu_b9flang']
+    z1x.LANGC1F = record['fu_c1flang']
+    z1x.LANGC2F = record['fu_c2flang']
+    z1x.LANGC3F = record['fu_c3flang']
+    z1x.LANGC4F = record['fu_c4flang']
+    z1x.FTDC4FS = record['fu_c4fsubmitted']
+    z1x.FTDC4FR = record['fu_c4fnot']
+    z1x.FTDC5FS = record['fu_c5fsubmitted']
+    z1x.FTDC5FR = record['fu_c5fnot']
+    z1x.FTDC6FS = record['fu_c6fsubmitted']
+    z1x.FTDC6FR = record['fu_c6fnot']
+    z1x.LANGE2F = record['fu_e2flang']
+    z1x.LANGE3F = record['fu_e3flang']
+    z1x.LANGCLS = record['fu_clslang']
+    z1x.CLSSUB  = record['fu_clssubmitted']
+    packet.insert(0, z1x)
+
 
 def add_redcap_C1_alz_C1S(record, packet):
     c1 = fvp_forms.FormC1S()
