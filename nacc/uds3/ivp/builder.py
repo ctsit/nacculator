@@ -650,6 +650,28 @@ def build_uds3_ivp_form(record):
     else:
         addC2(record, packet)
 
+    cls_form = ivp_forms.FormCLS()
+    cls_form.APREFLAN = record['eng_preferred_language']
+    cls_form.AYRSPAN = record['eng_years_speak_spanish']
+    cls_form.AYRENGL = record['eng_years_speak_english']
+    cls_form.APCSPAN = record['eng_percentage_spanish']
+    cls_form.APCENGL = record['eng_percentage_english']
+    cls_form.ASPKSPAN = record['eng_proficiency_spanish']
+    cls_form.AREASPAN = record['eng_proficiency_read_spanish']
+    cls_form.AWRISPAN = record['eng_proficiency_write_spanish']
+    cls_form.AUNDSPAN = record['eng_proficiency_oral_spanish']
+    cls_form.ASPKENGL = record['eng_proficiency_speak_english']
+    cls_form.AREAENGL = record['eng_proficiency_read_english']
+    cls_form.AWRIENGL = record['eng_proficiency_write_english']
+    cls_form.AUNDENGL = record['eng_proficiency_oral_english']
+    packet.append(cls_form)
+
+    if (int(cls_form.APCENGL) + int(cls_form.APCSPAN)) != 100:
+        ptid = record['ptid']
+        message = "Could not parse packet as language proficiency percentages do not equal 100"
+        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+        raise Exception(message)
+
     d1 = ivp_forms.FormD1()
     d1.DXMETHOD = record['dxmethod']
     d1.NORMCOG = record['normcog']
