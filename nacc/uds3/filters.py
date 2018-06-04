@@ -145,8 +145,7 @@ def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
             output.writerow(record)
 
 def _invalid_date(record):
-    return record['redcap_event_name']!='language_arm_1' \
-    and (record['visitmo']=='' or record['visitday']=='' or record['visityr']=='')
+    return (record['visitmo']=='' or record['visitday']=='' or record['visityr']=='')
 
 def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defaultCheck=False):
     reader = csv.DictReader(input_ptr)
