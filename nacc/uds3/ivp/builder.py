@@ -666,7 +666,21 @@ def build_uds3_ivp_form(record):
     cls_form.AUNDENGL = record['eng_proficiency_oral_english']
     packet.append(cls_form)
 
-    if (int(cls_form.APCENGL) + int(cls_form.APCSPAN)) != 100:
+    if len(record['eng_percentage_spanish']) == 0:
+        pct_spn = 0
+    else:
+        pct_spn = int(record['eng_percentage_spanish'])
+
+    if len(record['eng_percentage_english']) == 0:
+        pct_eng = 0
+    else:
+        pct_eng = int(record['eng_percentage_english'])
+
+    post_cls = True
+    if (record['visityr']<'2017') or (record['visityr']=='2017' and record['visitmo']<'6'):
+        post_cls = False
+
+    if (pct_eng + pct_spn)!=100 and post_cls:
         ptid = record['ptid']
         message = "Could not parse packet as language proficiency percentages do not equal 100"
         message = message + " for PTID : " + ("unknown" if not ptid else ptid)
