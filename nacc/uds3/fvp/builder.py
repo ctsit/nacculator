@@ -583,12 +583,12 @@ def build_uds3_fvp_form(record):
     cls_form.AUNDENGL = record['eng_proficiency_oral_english']
     packet.append(cls_form)
 
-    if len(record['eng_percentage_spanish']) == 0:
+    if len(record['eng_percentage_spanish'].strip()) == 0:
         pct_spn = 0
     else:
         pct_spn = int(record['eng_percentage_spanish'])
 
-    if len(record['eng_percentage_english']) == 0:
+    if len(record['eng_percentage_english'].strip()) == 0:
         pct_eng = 0
     else:
         pct_eng = int(record['eng_percentage_english'])
