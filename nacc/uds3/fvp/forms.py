@@ -689,7 +689,7 @@ class FormC2(nacc.uds3.FieldBag):
         self.fields['UDSVERFC'] = nacc.uds3.Field(name='UDSVERFC', typename='Num', position=(334, 335), length=2, inclusive_range=(0, 40), allowable_values=['96', '95', '98', '97'], blanks=[])
         self.fields['UDSVERFN'] = nacc.uds3.Field(name='UDSVERFN', typename='Num', position=(337, 338), length=2, inclusive_range=(0, 15), allowable_values=[], blanks=['Blank if Question 12a UDSVERFC = 95-98'])
         self.fields['UDSVERNF'] = nacc.uds3.Field(name='UDSVERNF', typename='Num', position=(340, 341), length=2, inclusive_range=(0, 15), allowable_values=[], blanks=['Blank if Question 12a UDSVERFC = 95-98'])
-        self.fields['UDSVERLC'] = nacc.uds3.Field(name='UDSVERLC', typename='Num', position=(343, 344), length=2, inclusive_range=(0, 40), allowable_values=['96', '95', '98', '97'], blanks=['Blank if Question 12a UDSVERFC = 95-98'])
+        self.fields['UDSVERLC'] = nacc.uds3.Field(name='UDSVERLC', typename='Num', position=(343, 344), length=2, inclusive_range=(0, 40), allowable_values=['96', '95', '98', '97'], blanks=[])
         self.fields['UDSVERLR'] = nacc.uds3.Field(name='UDSVERLR', typename='Num', position=(346, 347), length=2, inclusive_range=(0, 15), allowable_values=[], blanks=['Blank if Question 12d UDSVERLC = 95-98'])
         self.fields['UDSVERLN'] = nacc.uds3.Field(name='UDSVERLN', typename='Num', position=(349, 350), length=2, inclusive_range=(0, 15), allowable_values=[], blanks=['Blank if Question 12d UDSVERLC = 95-98'])
         self.fields['UDSVERTN'] = nacc.uds3.Field(name='UDSVERTN', typename='Num', position=(352, 353), length=2, inclusive_range=(0, 80), allowable_values=[], blanks=['Blank if Question 12d UDSVERLC = 95-98'])
