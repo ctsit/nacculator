@@ -680,12 +680,22 @@ def build_uds3_ivp_form(record):
     if (record['visityr']<'2017') or (record['visityr']=='2017' and record['visitmo']<'6'):
         post_cls = False
 
-    if (pct_eng + pct_spn)!=100 and post_cls:
+    bad_pct = False
+    if (pct_eng + pct_spn)!=100:
+        bad_pct = True
+
+    if (post_cls and bad_pct):
         ptid = record['ptid']
         message = "Could not parse packet as language proficiency percentages do not equal 100"
         message = message + " for PTID : " + ("unknown" if not ptid else ptid)
         raise Exception(message)
 
+    if not post_cls and (pct_spn!=0 or pct_eng!=0):
+        ptid = record['ptid']
+        message = "Could not parse packet as CLS forms should not be in packets from before June 1, 2017"
+        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+        raise Exception(message)
+        
     d1 = ivp_forms.FormD1()
     d1.DXMETHOD = record['dxmethod']
     d1.NORMCOG = record['normcog']
