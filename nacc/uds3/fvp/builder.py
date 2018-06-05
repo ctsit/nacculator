@@ -568,19 +568,19 @@ def build_uds3_fvp_form(record):
         addC2(record, packet)
 
     cls_form = fvp_forms.FormCLS()
-    cls_form.APREFLAN = record['eng_preferred_language']
-    cls_form.AYRSPAN = record['eng_years_speak_spanish']
-    cls_form.AYRENGL = record['eng_years_speak_english']
-    cls_form.APCSPAN = record['eng_percentage_spanish']
-    cls_form.APCENGL = record['eng_percentage_english']
-    cls_form.ASPKSPAN = record['eng_proficiency_spanish']
-    cls_form.AREASPAN = record['eng_proficiency_read_spanish']
-    cls_form.AWRISPAN = record['eng_proficiency_write_spanish']
-    cls_form.AUNDSPAN = record['eng_proficiency_oral_spanish']
-    cls_form.ASPKENGL = record['eng_proficiency_speak_english']
-    cls_form.AREAENGL = record['eng_proficiency_read_english']
-    cls_form.AWRIENGL = record['eng_proficiency_write_english']
-    cls_form.AUNDENGL = record['eng_proficiency_oral_english']
+    cls_form.APREFLAN = record['fu_eng_preferred_language']
+    cls_form.AYRSPAN = record['fu_eng_years_speak_spanish']
+    cls_form.AYRENGL = record['fu_eng_years_speak_english']
+    cls_form.APCSPAN = record['fu_eng_percentage_spanish']
+    cls_form.APCENGL = record['fu_eng_percentage_english']
+    cls_form.ASPKSPAN = record['fu_eng_proficiency_spanish']
+    cls_form.AREASPAN = record['fu_eng_proficiency_read_spanish']
+    cls_form.AWRISPAN = record['fu_eng_proficiency_write_spanish']
+    cls_form.AUNDSPAN = record['fu_eng_proficiency_oral_spanish']
+    cls_form.ASPKENGL = record['fu_eng_proficiency_speak_english']
+    cls_form.AREAENGL = record['fu_eng_proficiency_read_english']
+    cls_form.AWRIENGL = record['fu_eng_proficiency_write_english']
+    cls_form.AUNDENGL = record['fu_eng_proficiency_oral_english']
     packet.append(cls_form)
 
     if len(record['eng_percentage_spanish'].strip()) == 0:
