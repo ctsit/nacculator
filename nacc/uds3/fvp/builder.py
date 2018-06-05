@@ -745,7 +745,7 @@ def build_uds3_fvp_form(record):
     if(len(record['fu_a2sub'].strip())!=0 or len(record['fu_b7sub'].strip())!=0):
         Z1_has_data = 1
 
-    if(len(record['a1lang'].strip())!=0 or len(record['clssubmitted'].strip())!=0):
+    if(len(record['fu_a1lang'].strip())!=0 or len(record['fu_clssubmitted'].strip())!=0):
         Z1X_has_data = 1
 
     condition = Z1X_has_data + Z1_has_data
@@ -753,7 +753,7 @@ def build_uds3_fvp_form(record):
     if(condition != 1):
         ptid = record['ptid']
         message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " Z1X/Z1 forms has data "
-        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+        message = message + "for PTID : " + ("unknown" if not ptid else ptid)
         raise Exception(message)
 
     if(int(Z1_has_data)):
@@ -791,7 +791,7 @@ def addZ1(record, packet):
     packet.insert(0,z1)
 
 def addZ1X(record, packet):
-    z1x = ivp_forms.FormZ1X()
+    z1x = fvp_forms.FormZ1X()
     z1x.LANGA1 = record['fu_a1lang']
     z1x.LANGA2 = record['fu_a2lang']
     z1x.A2SUB = record['fu_a2sub_73fdc7']
@@ -802,7 +802,6 @@ def addZ1X(record, packet):
     z1x.LANGA4 = record['fu_a4lang']
     z1x.A4SUB = record['fu_a4sub_143f22']
     z1x.A4NOT = record['fu_a4not_b95e64']
-    z1x.LANGA5 = record['fu_a5lang']
     z1x.LANGB1 = record['fu_b1lang']
     z1x.B1SUB = record['fu_b1sub_c03500']
     z1x.B1NOT = record['fu_b1not_0a7e9f']
