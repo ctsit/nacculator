@@ -127,7 +127,6 @@ class FieldBag(object):
 
     def __find_key(self, key):
 
-        #
         if key in self.fields:
             return key
 
