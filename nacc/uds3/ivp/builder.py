@@ -650,6 +650,52 @@ def build_uds3_ivp_form(record):
     else:
         addC2(record, packet)
 
+    cls_form = ivp_forms.FormCLS()
+    cls_form.APREFLAN = record['eng_preferred_language']
+    cls_form.AYRSPAN = record['eng_years_speak_spanish']
+    cls_form.AYRENGL = record['eng_years_speak_english']
+    cls_form.APCSPAN = record['eng_percentage_spanish']
+    cls_form.APCENGL = record['eng_percentage_english']
+    cls_form.ASPKSPAN = record['eng_proficiency_spanish']
+    cls_form.AREASPAN = record['eng_proficiency_read_spanish']
+    cls_form.AWRISPAN = record['eng_proficiency_write_spanish']
+    cls_form.AUNDSPAN = record['eng_proficiency_oral_spanish']
+    cls_form.ASPKENGL = record['eng_proficiency_speak_english']
+    cls_form.AREAENGL = record['eng_proficiency_read_english']
+    cls_form.AWRIENGL = record['eng_proficiency_write_english']
+    cls_form.AUNDENGL = record['eng_proficiency_oral_english']
+    packet.append(cls_form)
+
+    if len(record['eng_percentage_spanish'].strip()) == 0:
+        pct_spn = 0
+    else:
+        pct_spn = int(record['eng_percentage_spanish'])
+
+    if len(record['eng_percentage_english'].strip()) == 0:
+        pct_eng = 0
+    else:
+        pct_eng = int(record['eng_percentage_english'])
+
+    post_cls = True
+    if (record['visityr']<'2017') or (record['visityr']=='2017' and record['visitmo']<'6'):
+        post_cls = False
+
+    bad_pct = False
+    if (pct_eng + pct_spn)!=100:
+        bad_pct = True
+
+    if (post_cls and bad_pct):
+        ptid = record['ptid']
+        message = "Could not parse packet as language proficiency percentages do not equal 100"
+        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+        raise Exception(message)
+
+    if not post_cls and (pct_spn!=0 or pct_eng!=0):
+        ptid = record['ptid']
+        message = "Could not parse packet as CLS forms should not be in packets from before June 1, 2017"
+        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+        raise Exception(message)
+        
     d1 = ivp_forms.FormD1()
     d1.DXMETHOD = record['dxmethod']
     d1.NORMCOG = record['normcog']
@@ -820,6 +866,34 @@ def build_uds3_ivp_form(record):
     d2.OTHCONDX = record['othcondx']
     packet.append(d2)
 
+    Z1_has_data = 0
+
+    Z1X_has_data = 0
+
+    if(len(record['a2sub'].strip())!=0 or len(record['b7sub'].strip())!=0):
+        Z1_has_data = 1
+
+    if(len(record['a1lang'].strip())!=0 or len(record['clssubmitted'].strip())!=0):
+        Z1X_has_data = 1
+
+    condition = Z1X_has_data + Z1_has_data
+
+    if(condition != 1):
+        ptid = record['ptid']
+        message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " Z1X/Z1 forms has data "
+        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+        raise Exception(message)
+
+    if(int(Z1_has_data)):
+        addZ1(record, packet)
+    else:
+        addZ1X(record, packet)
+
+    update_header(record, packet)
+
+    return packet
+
+def addZ1(record, packet):
     z1 = ivp_forms.FormZ1()
     # Forms A1, A5, B4, B8, B9, C2, D1, and D2 are all REQUIRED.
     # Fields a1sub, a5sub1, b4sub1, b8sub1, b9sub1, c2sub1, d1sub1, and d2sub1
@@ -848,9 +922,57 @@ def build_uds3_ivp_form(record):
     z1.B7COMM = record['b7comm']
     packet.insert(0, z1)
 
-    update_header(record, packet)
-    return packet
-
+def addZ1X(record, packet):
+    z1x = ivp_forms.FormZ1X()
+    z1x.LANGA1 = record['a1lang']
+    z1x.LANGA2 = record['a2lang']
+    z1x.A2SUB = record['a2sub_095a3b']
+    z1x.A2NOT = record['a2not_21e87d']
+    z1x.LANGA3 = record['a3lang']
+    z1x.A3SUB = record['a3sub_2b0d69']
+    z1x.A3NOT = record['a3not_c7cb57']
+    z1x.LANGA4 = record['a4lang']
+    z1x.A4SUB = record['a4sub_2c437c']
+    z1x.A4NOT = record['a4not_c4e53e']
+    z1x.LANGA5 = record['a5lang']
+    z1x.LANGB1 = record['b1lang']
+    z1x.B1SUB = record['b1sub_3c9b3b']
+    z1x.B1NOT = record['b1not_8b7733']
+    z1x.LANGB4 = record['b4lang']
+    z1x.LANGB5 = record['b5lang']
+    z1x.B5SUB = record['b5sub_712f66']
+    z1x.B5NOT = record['b5not_a4b779']
+    z1x.LANGB6 = record['b6lang']
+    z1x.B6SUB = record['b6sub_35db4c']
+    z1x.B6NOT = record['b6not_06dff0']
+    z1x.LANGB7 = record['b7lang']
+    z1x.B7SUB = record['b7sub_7e2220']
+    z1x.B7NOT = record['b7not_2dfac5']
+    z1x.LANGB8 = record['b8lang']
+    z1x.LANGB9 = record['b9lang']
+    z1x.LANGC2 = record['c2lang']
+    z1x.LANGD1 = record['d1lang']
+    z1x.LANGD2 = record['d2lang']
+    z1x.LANGA3A = record['a3alang']
+    z1x.FTDA3AFS = record['a3asubmitted']
+    z1x.FTDA3AFR = record['a3anot']
+    z1x.LANGB3F = record['b3flang']
+    z1x.LANGB9F = record['b9flang']
+    z1x.LANGC1F = record['c1flang']
+    z1x.LANGC2F = record['c2flang']
+    z1x.LANGC3F = record['c3flang']
+    z1x.LANGC4F = record['c4flang']
+    z1x.FTDC4FS = record['c4fsubmitted']
+    z1x.FTDC4FR = record['c4fnot']
+    z1x.FTDC5FS = record['c5fsubmitted']
+    z1x.FTDC5FR = record['c5fnot']
+    z1x.FTDC6FS = record['c6fsubmitted']
+    z1x.FTDC6FR = record['c6fnot']
+    z1x.LANGE2F = record['e2flang']
+    z1x.LANGE3F = record['e3flang']
+    z1x.LANGCLS = record['clslang']
+    z1x.CLSSUB  = record['clssubmitted']
+    packet.insert(0, z1x)
 
 def addC1S(record, packet):
     c1s = ivp_forms.FormC1S()

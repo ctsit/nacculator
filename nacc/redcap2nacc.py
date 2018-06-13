@@ -151,7 +151,8 @@ def main():
                 'fillDefault' : 'fill_default',
                 'updateField' : 'update_field',
                 'removePtid' : 'remove_ptid',
-                'removeDateRecord' : 'eliminate_empty_date'}
+                'removeDateRecord' : 'eliminate_empty_date',
+                'getPtid' : 'extract_ptid'}
 
     filter_exclusive_names = {
         'cleanPtid' : 'clean_ptid',
@@ -166,7 +167,9 @@ def main():
 
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
     parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
-
+    parser.add_argument('-ptid', action='store', dest='ptid', help='Ptid for which you need the records')
+    parser.add_argument('-vnum', action='store', dest='vnum', help='Ptid for which you need the records')
+    parser.add_argument('-vtype', action='store', dest='vtype', help='Ptid for which you need the records')
     options = parser.parse_args()
 
     # Defaults to processing of ivp.
@@ -180,9 +183,13 @@ def main():
     output = sys.stdout
 
     if options.filter:
-        filter_method = 'filter_' + filters_names[options.filter]
-        filter_func = getattr(filters, filter_method)
-        filter_func(fp, options.filter_meta, output)
+        if options.filter == "getPtid":
+            filters.filter_extract_ptid(fp, options.ptid, options.vnum, options.vtype, output)
+        else:
+            filter_method = 'filter_' + filters_names[options.filter]
+            filter_func = getattr(filters, filter_method)
+            filter_func(fp, options.filter_meta, output)
+
     else:
         reader = csv.DictReader(fp)
         for record in reader:
@@ -194,6 +201,7 @@ def main():
                     packet = np_builder.build_uds3_np_form(record)
                 elif options.fvp:
                     packet = fvp_builder.build_uds3_fvp_form(record)
+
             except Exception, exp:
                 if 'ptid' in record:
                     print >> sys.stderr, "[SKIP] Error for ptid : " + str(record['ptid'])
