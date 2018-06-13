@@ -1,3 +1,16 @@
+## [0.3.1] - 2018-05-21
+### Added
+* add csv and txt files to ignore file to avoid adding data to repo (Kevin Hanson)
+* Update filters.py (AjanthaRamineni)
+* ReadMe to new filter (AjanthaRamineni)
+* Adding Lambda functions to filters (AjanthaRamineni)
+### Changed
+* Adding ReadMe to new filter (AjanthaRamineni)
+* Update README.md (AjanthaRamineni)
+* Adjusting a Single Ptid file (AjanthaRamineni)
+* Extracting a file with Visit Number a type Specified (AjanthaRamineni)
+* New filter for Grabbing A Ptid (AjanthaRamineni)
+
 ## [0.3.0] - 2017-12-07
 ### Added
  * add a reqs file for using a venv (Matthew McConnell)
@@ -46,7 +59,7 @@
 
  ### Added
  * Added filters for clean up of data. (Tarun Gupta Akirala)
- * Added five filters : {cleanPtid,updateField,replaceDrugId,fillDefault,fixC1S} (Tarun Gupta Akirala) 
+ * Added five filters : {cleanPtid,updateField,replaceDrugId,fillDefault,fixC1S} (Tarun Gupta Akirala)
  * Filters output can be piped together to apply multiple filters in a sequence (Tarun Gupta Akirala)
 
  ## [0.2.0] - 2016-12-19
@@ -71,7 +84,7 @@
 
 
  ### Added
- * Added the Neuropathology form definitions and rules (Tarun Gupta Akirala) 
+ * Added the Neuropathology form definitions and rules (Tarun Gupta Akirala)
  * Created error messages where data does not meet form definitions (Tarun Gupta Akirala)
  * Added the C1S temporary Spanish form definitions and rules (Tarun Gupta Akirala)
  * Added flag to have NACCulator output only the Neuropathology form (Tarun Gupta Akirala)
