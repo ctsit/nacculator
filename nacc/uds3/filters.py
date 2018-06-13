@@ -5,6 +5,8 @@ import re
 import fileinput
 import ConfigParser
 
+from collections import defaultdict
+
 fill_default_values = { 'nogds' : 0,
                         'arthupex' : 0,
                         'arthloex' : 0,
@@ -40,46 +42,54 @@ def validate(func):
 
     return validate_filter
 
+def int_or_string(value, default=-1):
+    try:
+        returnable = int(value)
+    except ValueError:
+        returnable = value or default
+
+    return returnable
+
 @validate
 def filter_clean_ptid(input_ptr, filter_config, output_ptr):
 # TODO  To deal with M Flag in Current_db.csv
 
     filepath = filter_config['filepath']
-    reader = csv.DictReader(input_ptr)
+    redcap_packet_list = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
-    write_headers(reader, output)
+    write_headers(redcap_packet_list, output)
 
-    for record in reader:
-        ptid = record['ptid']
-        visit_num = record['visitnum']
-        with open(filepath, 'r') as ptid_file:
-            curr_ptid = csv.DictReader(ptid_file)
-            repeat_flag = 0
+    followup_visit = re.compile("followup.*")
+    initial_visit = re.compile("initial.*")
 
-            for row in curr_ptid:
-                packet_type = row['Packet type']
-                curr_visit = row['Visit Num']
+    completed_subjs = defaultdict(list)
+    with open(filepath, 'r') as nacc_packet_file:
+        nacc_packet_list = csv.DictReader(nacc_packet_file)
+        for nacc_packet in nacc_packet_list:
+            if nacc_packet['Status'].lower() == "current":
+                nacc_subj_id = nacc_packet['Patient ID']
+                nacc_visit_num = int_or_string(nacc_packet['Visit Num'])
+                completed_subjs[nacc_subj_id].append(nacc_visit_num)
 
-                if ptid == row['Patient ID']:
-                    prog_followup_visit = re.compile("followup.*")
-                    prog_initial_visit = re.compile("initial.*")
-                    prog_mile_visit = re.compile("milestone.*")
-                    if packet_type == "I" and prog_initial_visit.match(record['redcap_event_name']):
-                        repeat_flag = 1
-                        print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
+    for redcap_packet in redcap_packet_list:
+        #if they exist in completed subjs (same id and visit num) then remove them.
+        rc_ptid = redcap_packet['ptid']
+        rc_event = redcap_packet['redcap_event_name']
+        if not (initial_visit.match(rc_event) or followup_visit.match(rc_event)):
+            print >> sys.stderr, 'Eliminated ptid : ' + rc_ptid + " Event Name : " + redcap_packet['redcap_event_name'] + " NOT INIT OR FOLLOWUP"
+            continue
 
-                    elif packet_type == "F" and prog_followup_visit.match(record['redcap_event_name']):
-                        if (visit_num and visit_num == curr_visit) or visit_num == '':
-                            repeat_flag = 1
-                            print >> sys.stderr, 'Eliminated ptid : ' + ptid + " Event Name : " + record['redcap_event_name']
+        if redcap_packet['visitnum']:
+            rc_visit_num = int_or_string(redcap_packet['visitnum'], -1)
+        else:
+            print >> sys.stderr, 'Eliminated ptid : ' + rc_ptid + " Event Name : " + redcap_packet['redcap_event_name'] + " MISSING VISIT NUM"
+            continue
+        if rc_ptid in completed_subjs:
+            if rc_visit_num in completed_subjs[rc_ptid]:
+                print >> sys.stderr, 'Eliminated ptid : ' + rc_ptid + " Event Name : " + redcap_packet['redcap_event_name'] + " IN CURRENT"
+                continue
+        output.writerow(redcap_packet)
 
-                    elif packet_type == "M" and prog_mile_visit.match(record['redcap_event_name']):
-                        # The visit num for Mile Stone is given in M1...M2...M3 for so to get integra; part of it we use Regex
-                        if (visit_num and re.search('\d+',curr_visit).group() == visit_num) or visit_num == '':
-                            repeat_flag = 1
-                            print >> sys.stderr, 'Eliminated ptid : ' + ptid+ " Event Name : " + record['redcap_event_name']
-            if(repeat_flag == 0):
-                output.writerow(record)
     return output
 
 def write_headers(reader, output):
