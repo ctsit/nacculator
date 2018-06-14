@@ -1,4 +1,15 @@
-## [0.4.0] - 2018-05-21
+## [0.4.1] - 2018-06-14
+### Summary
+ This release corrects some form logic bugs and adds a new filter to normalize visit numbers.
+### Added
+ * add a new filter to correct visit dates (Matthew McConnell)
+### Fixed
+ * fix bug with form logic (Matthew McConnell)
+ * fix form position for z1x on fvp (Matthew McConnell)
+ * validate that cls was completed in a particular packet before removing a packet missing the form (Matthew McConnell)
+ * update fvp field names for cls (Matthew McConnell)
+
+## [0.4.0] - 2018-06-14
 ### Summary
  Nacculator now has logic built in for the Z1X and CLS forms. Also, there
  were various bug fixes and code clean up.
