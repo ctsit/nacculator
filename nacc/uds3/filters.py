@@ -175,6 +175,18 @@ def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defa
     return
 
 @validate
+def filter_fix_visitdate(input_ptr, filter_meta, output_ptr):
+    reader = csv.DictReader(input_ptr)
+    output = csv.DictWriter(output_ptr, None)
+    write_headers(reader,output)
+    for record in reader:
+        if record['visitnum']:
+            record['visitnum'] = int_or_string(record['visitnum'])
+        print >> sys.stderr, 'Processed ptid : ' + record['ptid']
+        output.writerow(record)
+    return
+
+@validate
 def filter_fill_default(input_ptr, filter_meta, output_ptr):
     fill_value_of_fields(input_ptr, output_ptr, fill_default_values, defaultCheck=True)
 
