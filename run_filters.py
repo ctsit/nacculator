@@ -54,12 +54,17 @@ def run_all_filters(folder_name, config):
 
         print >> sys.stderr, "--------------Updating fields--------------------"
         input_path = os.path.join(folder_name, "default.csv")
-        output_path = os.path.join(folder_name, "Update_field.csv")
+        output_path = os.path.join(folder_name, "update_fields.csv")
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
             filter_update_field(input_ptr, config, output_ptr)
 
+        print >> sys.stderr, "--------------Fixing Visit Dates--------------------"
+        input_path = os.path.join(folder_name, "update_fields.csv")
+        output_path = os.path.join(folder_name, "proper_visitdate.csv")
+        with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
+            filter_fix_visitdate(input_ptr, config, output_ptr)
         print >> sys.stderr, "--------------Removing Unnecessary Records--------------------"
-        input_path = os.path.join(folder_name, "Update_field.csv")
+        input_path = os.path.join(folder_name, "proper_visitdate.csv")
         output_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
         with open (output_path,'w') as output_ptr, open (input_path,'r') as input_ptr:
             filter_remove_ptid(input_ptr, config, output_ptr)
