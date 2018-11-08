@@ -10,13 +10,8 @@ from nacc.uds3 import packet as ivp_packet
 import sys
 
 def build_uds3_ivp_form(record):
-    print("Test 1")
-    print >> sys.std_out, "test 2"
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
     packet = ivp_packet.Packet()
-
-    import time
-    time.sleep(10)
 
     # Set up us the forms
     a1 = ivp_forms.FormA1()
