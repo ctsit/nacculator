@@ -12,6 +12,9 @@ def build_uds3_fvp_form(record):
     """ Converts REDCap CSV data into a packet (list of FVP Form objects) """
     packet = fvp_packet.Packet()
 
+    import time
+    time.sleep(10)
+    
     #Set up the forms.
     a1 = fvp_forms.FormA1()
     a1.BIRTHMO   = record['fu_birthmo']
@@ -550,7 +553,7 @@ def build_uds3_fvp_form(record):
         post_c2 = True
 
     if post_c2:
-        if(len(record['c1s_1a_mmseloc'].strip())!=0 or len(record['c1s_11a_cogstat'].strip())!=0):
+        if(len(record['c1s_1a_mmseloc'].strip())==0 or len(record['c1s_11a_cogstat'].strip())==0):
             ptid = record['ptid']
             message = "Could not parse packet as C2 form is missing data"
             message = message + " for PTID : " + ("unknown" if not ptid else ptid)
@@ -558,7 +561,7 @@ def build_uds3_fvp_form(record):
         else:
             addC2(record, packet)
     else:
-        if(len(record['mocacomp'].strip())!=0 or len(record['cogstat_c2'].strip())!=0):
+        if(len(record['mocacomp'].strip())==0 or len(record['cogstat_c2'].strip())==0):
             ptid = record['ptid']
             message = "Could not parse packet as C1S form is missing data"
             message = message + " for PTID : " + ("unknown" if not ptid else ptid)
@@ -789,7 +792,7 @@ def build_uds3_fvp_form(record):
         post_Z1X = True
 
     if post_Z1X:
-        if(len(record['a1lang'].strip())!=0 or len(record['clssubmitted'].strip())!=0):
+        if(len(record['a1lang'].strip())==0 or len(record['clssubmitted'].strip())==0):
             ptid = record['ptid']
             message = "Could not parse packet as Z1X form is missing data"
             message = message + " for PTID : " + ("unknown" if not ptid else ptid)
@@ -797,7 +800,7 @@ def build_uds3_fvp_form(record):
         else:
             addZ1X(record, packet)
     else:
-        if(len(record['a2sub'].strip())!=0 or len(record['b7sub'].strip())!=0):
+        if(len(record['a2sub'].strip())==0 or len(record['b7sub'].strip())==0):
             ptid = record['ptid']
             message = "Could not parse packet as Z1 form is missing data"
             message = message + " for PTID : " + ("unknown" if not ptid else ptid)
