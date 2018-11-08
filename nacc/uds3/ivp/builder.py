@@ -895,7 +895,7 @@ def build_uds3_ivp_form(record):
         (record['visityr']=='2018' and record['visitmo']=='04' and record['visitday']>='02'):
         post_Z1X = True
 
-    if post_c2:
+    if post_Z1X:
         if(len(record['a1lang'].strip())!=0 or len(record['clssubmitted'].strip())!=0):
             ptid = record['ptid']
             message = "Could not parse packet as Z1X form is missing data"
