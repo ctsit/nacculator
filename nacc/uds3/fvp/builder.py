@@ -545,8 +545,8 @@ def build_uds3_fvp_form(record):
 
     # Among C1S and C2 forms, one must be filled, one must be empty. After 2017/10/23, must be C2
     post_c2 = False
-    if (record['visityr']>'2017') or (record['visityr']=='2017' and record['visitmo']>'10') or \
-        (record['visityr']=='2017' and record['visitmo']=='10' and record['visitday']>='23'):
+    if (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and int(record['visitmo'])>10) or \
+        (int(record['visityr'])==2017 and int(record['visitmo'])==10 and int(record['visitday'])>=23):
         post_c2 = True
 
     if post_c2:
@@ -594,7 +594,7 @@ def build_uds3_fvp_form(record):
             pct_eng = int(record['eng_percentage_english'])
 
         post_cls = True
-        if (record['visityr']<'2017') or (record['visityr']=='2017' and record['visitmo']<'6'):
+        if (record['visityr']<'2017') or (record['visityr']=='2017' and int(record['visitmo'])<6):
             post_cls = False
 
         bad_pct = False
@@ -784,8 +784,8 @@ def build_uds3_fvp_form(record):
     packet.append(d2)
 
     post_Z1X = False
-    if (record['visityr']>'2018') or (record['visityr']=='2018' and record['visitmo']>'04') or \
-        (record['visityr']=='2018' and record['visitmo']=='04' and record['visitday']>='02'):
+    if (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and int(record['visitmo'])>4) or \
+        (int(record['visityr'])==2018 and int(record['visitmo'])==4 and int(record['visitday'])>=2):
         post_Z1X = True
 
     if post_Z1X:
