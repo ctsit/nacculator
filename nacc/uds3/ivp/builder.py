@@ -625,30 +625,30 @@ def build_uds3_ivp_form(record):
     b9.FTLDEVAL = record['ftldeval']
     packet.append(b9)
 
-    # Among C1S and C2 forms, one must be filled, one must be empty.
+    # Among C1S and C2 forms, one must be filled, one must be empty. After 2017/10/23, must be C2
+    post_c2 = False
+    if (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and int(record['visitmo'])>10) or \
+        (int(record['visityr'])==2017 and int(record['visitmo'])==10 and int(record['visitday'])>=23):
+        post_c2 = True
 
-    isC1SNotBlank = 0
-
-    isC2NotBlank = 0
-
-    if(len(record['c1s_1a_mmseloc'].strip())!=0 or len(record['c1s_11a_cogstat'].strip())!=0):
-        isC1SNotBlank = 1
-
-    if(len(record['mocacomp'].strip())!=0 or len(record['cogstat_c2'].strip())!=0):
-        isC2NotBlank = 1
-
-    condition = isC1SNotBlank + isC2NotBlank
-
-    if(condition != 1):
-        ptid = record['ptid']
-        message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " c1s/c2 forms has data "
-        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-        raise Exception(message)
-
-    if(int(isC1SNotBlank)):
-        addC1S(record, packet)
+    if post_c2:
+        # print("Initial visit. C2. Year: " + record['visityr'] + " Month: " + record['visitmo'] + " Day: " + record['visitday'])
+        if(len(record['c1s_1a_mmseloc'].strip())==0 or len(record['c1s_11a_cogstat'].strip())==0):
+            ptid = record['ptid']
+            message = "Could not parse packet as C2 form is missing data"
+            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+            raise Exception(message)
+        else:
+            addC2(record, packet)
     else:
-        addC2(record, packet)
+        # print("Initial visit. C1S. Year: " + record['visityr'] + " Month: " + record['visitmo'] + " Day: " + record['visitday'])
+        if(len(record['mocacomp'].strip())==0 or len(record['cogstat_c2'].strip())==0):
+            ptid = record['ptid']
+            message = "Could not parse packet as C1S form is missing data"
+            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+            raise Exception(message)
+        else:
+            addC1S(record, packet)
 
     cls_form = ivp_forms.FormCLS()
     cls_form.APREFLAN = record['eng_preferred_language']
@@ -678,7 +678,7 @@ def build_uds3_ivp_form(record):
             pct_eng = int(record['eng_percentage_english'])
 
         post_cls = True
-        if (record['visityr']<'2017') or (record['visityr']=='2017' and record['visitmo']<'6'):
+        if (record['visityr']<'2017') or (record['visityr']=='2017' and int(record['visitmo'])<6):
             post_cls = False
 
         bad_pct = False
@@ -867,28 +867,29 @@ def build_uds3_ivp_form(record):
     d2.OTHCONDX = record['othcondx']
     packet.append(d2)
 
-    Z1_has_data = 0
+    post_Z1X = False
+    if (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and int(record['visitmo'])>4) or \
+        (int(record['visityr'])==2018 and int(record['visitmo'])==4 and int(record['visitday'])>=2):
+        post_Z1X = True
 
-    Z1X_has_data = 0
-
-    if(len(record['a2sub'].strip())!=0 or len(record['b7sub'].strip())!=0):
-        Z1_has_data = 1
-
-    if(len(record['a1lang'].strip())!=0 or len(record['clssubmitted'].strip())!=0):
-        Z1X_has_data = 1
-
-    condition = Z1X_has_data + Z1_has_data
-
-    if(condition != 1):
-        ptid = record['ptid']
-        message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " Z1X/Z1 forms has data "
-        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-        raise Exception(message)
-
-    if(int(Z1_has_data)):
-        addZ1(record, packet)
+    if post_Z1X:
+        # print("Initial visit. Z1X. Year: " + record['visityr'] + " Month: " + record['visitmo'] + " Day: " + record['visitday'])
+        if(len(record['a1lang'].strip())==0 or len(record['clssubmitted'].strip())==0):
+            ptid = record['ptid']
+            message = "Could not parse packet as Z1X form is missing data"
+            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+            raise Exception(message)
+        else:
+            addZ1X(record, packet)
     else:
-        addZ1X(record, packet)
+        # print("Initial visit. Z1. Year: " + record['visityr'] + " Month: " + record['visitmo'] + " Day: " + record['visitday'])
+        if(len(record['a2sub'].strip())==0 or len(record['b7sub'].strip())==0):
+            ptid = record['ptid']
+            message = "Could not parse packet as Z1 form is missing data"
+            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+            raise Exception(message)
+        else:
+            addZ1(record, packet)
 
     update_header(record, packet)
 
