@@ -197,3 +197,15 @@ working directory called `corrected`._
     $ edit ../nacc/uds3/ivp/forms
 
 * Resources for uds3 fvp forms are available [here](https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/).
+
+
+Testing
+-------
+
+To run all the tests:
+
+    $ make tests
+
+
+To run only the tests in a file:
+    $ PYTHONPATH=. python tests/WHICHEVER_test.py
