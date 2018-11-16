@@ -545,8 +545,10 @@ def build_uds3_fvp_form(record):
 
     # Among C1S and C2 forms, one must be filled, one must be empty. After 2017/10/23, must be C2
     post_c2 = False
-    if (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and int(record['visitmo'])>10) or \
-        (int(record['visityr'])==2017 and int(record['visitmo'])==10 and int(record['visitday'])>=23):
+    if (int(record['visityr'])>2017) or \
+       (int(record['visityr'])==2017 and int(record['visitmo'])>10) or \
+       (int(record['visityr'])==2017 and int(record['visitmo'])==10 and
+            int(record['visitday'])>=23):
         post_c2 = True
 
     if post_c2:
@@ -566,52 +568,42 @@ def build_uds3_fvp_form(record):
         else:
             addC1S(record, packet)
 
-    cls_form = fvp_forms.FormCLS()
-    cls_form.APREFLAN = record['eng_preferred_language']
-    cls_form.AYRSPAN = record['eng_years_speak_spanish']
-    cls_form.AYRENGL = record['eng_years_speak_english']
-    cls_form.APCSPAN = record['eng_percentage_spanish']
-    cls_form.APCENGL = record['eng_percentage_english']
-    cls_form.ASPKSPAN = record['eng_proficiency_spanish']
-    cls_form.AREASPAN = record['eng_proficiency_read_spanish']
-    cls_form.AWRISPAN = record['eng_proficiency_write_spanish']
-    cls_form.AUNDSPAN = record['eng_proficiency_oral_spanish']
-    cls_form.ASPKENGL = record['eng_proficiency_speak_english']
-    cls_form.AREAENGL = record['eng_proficiency_read_english']
-    cls_form.AWRIENGL = record['eng_proficiency_write_english']
-    cls_form.AUNDENGL = record['eng_proficiency_oral_english']
-    packet.append(cls_form)
+    if len(record['eng_preferred_language'].strip()) != 0:
+        addCLS(record, packet)
 
-    if ['fu_clslang'] == 1: #Yes, CLS filled out
-        if len(record['eng_percentage_spanish'].strip()) == 0:
-            pct_spn = 0
-        else:
-            pct_spn = int(record['eng_percentage_spanish'])
+        if ['fu_clslang'] == 1:    # CLS lang completed
+            if len(record['eng_percentage_spanish'].strip()) == 0:
+                pct_spn = 0
+            else:
+                pct_spn = int(record['eng_percentage_spanish'])
 
-        if len(record['eng_percentage_english'].strip()) == 0:
-            pct_eng = 0
-        else:
-            pct_eng = int(record['eng_percentage_english'])
+            if len(record['eng_percentage_english'].strip()) == 0:
+                pct_eng = 0
+            else:
+                pct_eng = int(record['eng_percentage_english'])
 
-        post_cls = True
-        if (record['visityr']<'2017') or (record['visityr']=='2017' and int(record['visitmo'])<6):
-            post_cls = False
+            post_cls = True
+            if (record['visityr'] < '2017') or \
+               (record['visityr'] == '2017' and int(record['visitmo']) < 6):
+                post_cls = False
 
-        bad_pct = False
-        if (pct_eng + pct_spn)!=100:
-            bad_pct = True
+            bad_pct = False
+            if (pct_eng + pct_spn)!=100:
+                bad_pct = True
 
-        if (post_cls and bad_pct):
-            ptid = record['ptid']
-            message = "Could not parse packet as language proficiency percentages do not equal 100"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
+            if (post_cls and bad_pct):
+                ptid = record['ptid']
+                message = "Could not parse packet as language proficiency percentages do not equal 100"
+                message = message + " for PTID : " + \
+                    ("unknown" if not ptid else ptid)
+                raise Exception(message)
 
-        if not post_cls and (pct_spn!=0 or pct_eng!=0):
-            ptid = record['ptid']
-            message = "Could not parse packet as CLS forms should not be in packets from before June 1, 2017"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
+            if not post_cls and (pct_spn != 0 or pct_eng != 0):
+                ptid = record['ptid']
+                message = "Could not parse packet as CLS forms should not be in packets from before June 1, 2017"
+                message = message + " for PTID : " + \
+                    ("unknown" if not ptid else ptid)
+                raise Exception(message)
 
     d1 = fvp_forms.FormD1()
     d1.DXMETHOD  = record['fu_dxmethod']
@@ -784,8 +776,10 @@ def build_uds3_fvp_form(record):
     packet.append(d2)
 
     post_Z1X = False
-    if (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and int(record['visitmo'])>4) or \
-        (int(record['visityr'])==2018 and int(record['visitmo'])==4 and int(record['visitday'])>=2):
+    if (int(record['visityr'])>2018) or \
+       (int(record['visityr'])==2018 and int(record['visitmo'])>4) or \
+       (int(record['visityr'])==2018 and int(record['visitmo'])==4 and
+            int(record['visitday'])>=2):
         post_Z1X = True
 
     if post_Z1X:
@@ -808,6 +802,24 @@ def build_uds3_fvp_form(record):
 
     update_header(record, packet)
     return packet
+
+def addCLS(record, packet):
+    cls_form = ivp_forms.FormCLS()
+    cls_form.APREFLAN = record['eng_preferred_language']
+    cls_form.AYRSPAN = record['eng_years_speak_spanish']
+    cls_form.AYRENGL = record['eng_years_speak_english']
+    cls_form.APCSPAN = record['eng_percentage_spanish']
+    cls_form.APCENGL = record['eng_percentage_english']
+    cls_form.ASPKSPAN = record['eng_proficiency_spanish']
+    cls_form.AREASPAN = record['eng_proficiency_read_spanish']
+    cls_form.AWRISPAN = record['eng_proficiency_write_spanish']
+    cls_form.AUNDSPAN = record['eng_proficiency_oral_spanish']
+    cls_form.ASPKENGL = record['eng_proficiency_speak_english']
+    cls_form.AREAENGL = record['eng_proficiency_read_english']
+    cls_form.AWRIENGL = record['eng_proficiency_write_english']
+    cls_form.AUNDENGL = record['eng_proficiency_oral_english']
+    packet.append(cls_form)
+
 
 def addZ1(record, packet):
     z1 = fvp_forms.FormZ1()
@@ -833,6 +845,7 @@ def addZ1(record, packet):
     z1.B7NOT     = record['fu_b7not']
     z1.B7COMM    = record['fu_b7comm']
     packet.insert(0,z1)
+
 
 def addZ1X(record, packet):
     z1x = fvp_forms.FormZ1X()
@@ -886,7 +899,7 @@ def addZ1X(record, packet):
     packet.insert(0, z1x)
 
 
-def add_redcap_C1_alz_C1S(record, packet):
+def add_C1S(record, packet):
     c1 = fvp_forms.FormC1S()
     c1.MMSECOMP  = record['fu_mmsecomp']
     c1.MMSEREAS  = record['fu_mmsereas']
