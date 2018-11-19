@@ -900,7 +900,7 @@ def addZ1X(record, packet):
 
 
 def addC1S(record, packet):
-    c1s = ivp_forms.FormC1S()
+    c1s = fvp_forms.FormC1S()
     c1s.MMSELOC = record['c1s_1a_mmseloc']
     c1s.MMSELAN = record['c1s_1a1_mmselan']
     c1s.MMSELANX = record['c1s_1a2_mmselanx']
