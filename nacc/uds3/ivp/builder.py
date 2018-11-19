@@ -428,6 +428,12 @@ def build_uds3_ivp_form(record):
     a5.NPSYDEV = record['npsydev']
     a5.PSYCDIS = record['psycdis']
     a5.PSYCDISX = record['psycdisx']
+
+    if a5.ARTHRIT == 0:
+        a5.ARTHUPEX = ''
+        a5.ARTHLOEX = ''
+        a5.ARTHSPIN = ''
+        a5.ARTHUNK = '' 
     packet.append(a5)
 
     b1 = ivp_forms.FormB1()

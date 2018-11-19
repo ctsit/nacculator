@@ -8,10 +8,6 @@ import ConfigParser
 from collections import defaultdict
 
 fill_default_values = { 'nogds' : 0,
-                        'arthupex' : 0,
-                        'arthloex' : 0,
-                        'arthspin' : 0,
-                        'arthunk' : 0,
                         'adcid' : 41,
                         'formver' : 3 }
 
