@@ -66,6 +66,15 @@ class TestCLS(unittest.TestCase):
         with self.assertRaises(Exception):
             builder.add_cls(record, packet)
 
+    def test_cls_form_marked_complete(self):
+        """If the completed CLS form is not marked complete, raise."""
+        packet = ivp_packet.Packet()
+        record = make_filled_record()
+        record['form_cls_linguistic_history_of_subject_complete'] = '0 or 1'
+
+        with self.assertRaises(Exception):
+            builder.add_cls(record, packet)
+
 
 def make_blank_record():
     return {
@@ -83,6 +92,9 @@ def make_blank_record():
         'eng_proficiency_write_english': '',
         'eng_proficiency_oral_english': '',
         'hispanic': '',  # This is from Form A1
+        'visityr': '',
+        'visitmo': '',
+        'form_cls_linguistic_history_of_subject_complete': '',
     }
 
 
@@ -104,6 +116,7 @@ def make_filled_record():
         'hispanic': '1',
         'visityr': '2018',
         'visitmo': '11',
+        'form_cls_linguistic_history_of_subject_complete': '2',
     }
 
 

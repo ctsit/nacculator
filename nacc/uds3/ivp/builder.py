@@ -947,6 +947,11 @@ def add_cls(record, packet):
             "packets from before June 1, 2017 for PTID: " + ptid
         raise Exception(message)
 
+    if record['form_cls_linguistic_history_of_subject_complete'] != '2':
+        message = "Could not parse packet as completed CLS form is not " + \
+            "marked complete in REDCap for PTID: " + ptid
+        raise Exception(message)
+
     packet.append(cls_form)
 
 
