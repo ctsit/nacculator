@@ -6,6 +6,7 @@
 
 from nacc.uds3 import blanks
 import forms as fvp_forms
+from nacc.uds3 import clsform
 from nacc.uds3 import packet as fvp_packet
 
 def build_uds3_fvp_form(record):
@@ -566,52 +567,7 @@ def build_uds3_fvp_form(record):
         else:
             addC1S(record, packet)
 
-    cls_form = fvp_forms.FormCLS()
-    cls_form.APREFLAN = record['eng_preferred_language']
-    cls_form.AYRSPAN = record['eng_years_speak_spanish']
-    cls_form.AYRENGL = record['eng_years_speak_english']
-    cls_form.APCSPAN = record['eng_percentage_spanish']
-    cls_form.APCENGL = record['eng_percentage_english']
-    cls_form.ASPKSPAN = record['eng_proficiency_spanish']
-    cls_form.AREASPAN = record['eng_proficiency_read_spanish']
-    cls_form.AWRISPAN = record['eng_proficiency_write_spanish']
-    cls_form.AUNDSPAN = record['eng_proficiency_oral_spanish']
-    cls_form.ASPKENGL = record['eng_proficiency_speak_english']
-    cls_form.AREAENGL = record['eng_proficiency_read_english']
-    cls_form.AWRIENGL = record['eng_proficiency_write_english']
-    cls_form.AUNDENGL = record['eng_proficiency_oral_english']
-    packet.append(cls_form)
-
-    if ['fu_clslang'] == 1: #Yes, CLS filled out
-        if len(record['eng_percentage_spanish'].strip()) == 0:
-            pct_spn = 0
-        else:
-            pct_spn = int(record['eng_percentage_spanish'])
-
-        if len(record['eng_percentage_english'].strip()) == 0:
-            pct_eng = 0
-        else:
-            pct_eng = int(record['eng_percentage_english'])
-
-        post_cls = True
-        if (record['visityr']<'2017') or (record['visityr']=='2017' and int(record['visitmo'])<6):
-            post_cls = False
-
-        bad_pct = False
-        if (pct_eng + pct_spn)!=100:
-            bad_pct = True
-
-        if (post_cls and bad_pct):
-            ptid = record['ptid']
-            message = "Could not parse packet as language proficiency percentages do not equal 100"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
-
-        if not post_cls and (pct_spn!=0 or pct_eng!=0):
-            ptid = record['ptid']
-            message = "Could not parse packet as CLS forms should not be in packets from before June 1, 2017"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
+    clsform.add_cls(record, packet, fvp_forms)
 
     d1 = fvp_forms.FormD1()
     d1.DXMETHOD  = record['fu_dxmethod']

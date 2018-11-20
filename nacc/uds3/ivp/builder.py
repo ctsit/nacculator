@@ -5,9 +5,11 @@
 ###############################################################################
 
 from nacc.uds3 import blanks
+from nacc.uds3 import clsform
 import forms as ivp_forms
 from nacc.uds3 import packet as ivp_packet
 import sys
+
 
 def build_uds3_ivp_form(record):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
@@ -656,53 +658,8 @@ def build_uds3_ivp_form(record):
         else:
             addC1S(record, packet)
 
-    cls_form = ivp_forms.FormCLS()
-    cls_form.APREFLAN = record['eng_preferred_language']
-    cls_form.AYRSPAN = record['eng_years_speak_spanish']
-    cls_form.AYRENGL = record['eng_years_speak_english']
-    cls_form.APCSPAN = record['eng_percentage_spanish']
-    cls_form.APCENGL = record['eng_percentage_english']
-    cls_form.ASPKSPAN = record['eng_proficiency_spanish']
-    cls_form.AREASPAN = record['eng_proficiency_read_spanish']
-    cls_form.AWRISPAN = record['eng_proficiency_write_spanish']
-    cls_form.AUNDSPAN = record['eng_proficiency_oral_spanish']
-    cls_form.ASPKENGL = record['eng_proficiency_speak_english']
-    cls_form.AREAENGL = record['eng_proficiency_read_english']
-    cls_form.AWRIENGL = record['eng_proficiency_write_english']
-    cls_form.AUNDENGL = record['eng_proficiency_oral_english']
-    packet.append(cls_form)
+    clsform.add_cls(record, packet, ivp_forms)
 
-    if record['clslang'] == 1: #yes, CLS lang completed
-        if len(record['eng_percentage_spanish'].strip()) == 0:
-            pct_spn = 0
-        else:
-            pct_spn = int(record['eng_percentage_spanish'])
-
-        if len(record['eng_percentage_english'].strip()) == 0:
-            pct_eng = 0
-        else:
-            pct_eng = int(record['eng_percentage_english'])
-
-        post_cls = True
-        if (record['visityr']<'2017') or (record['visityr']=='2017' and int(record['visitmo'])<6):
-            post_cls = False
-
-        bad_pct = False
-        if (pct_eng + pct_spn)!=100:
-            bad_pct = True
-
-        if (post_cls and bad_pct):
-            ptid = record['ptid']
-            message = "Could not parse packet as language proficiency percentages do not equal 100"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
-
-        if not post_cls and (pct_spn!=0 or pct_eng!=0):
-            ptid = record['ptid']
-            message = "Could not parse packet as CLS forms should not be in packets from before June 1, 2017"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
-        
     d1 = ivp_forms.FormD1()
     d1.DXMETHOD = record['dxmethod']
     d1.NORMCOG = record['normcog']
@@ -901,6 +858,8 @@ def build_uds3_ivp_form(record):
 
     return packet
 
+
+
 def addZ1(record, packet):
     z1 = ivp_forms.FormZ1()
     # Forms A1, A5, B4, B8, B9, C2, D1, and D2 are all REQUIRED.
@@ -981,6 +940,7 @@ def addZ1X(record, packet):
     z1x.LANGCLS = record['clslang']
     z1x.CLSSUB  = record['clssubmitted']
     packet.insert(0, z1x)
+
 
 def addC1S(record, packet):
     c1s = ivp_forms.FormC1S()
