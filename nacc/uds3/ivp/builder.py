@@ -858,8 +858,21 @@ def build_uds3_ivp_form(record):
 
 
 def add_cls(record, packet):
-    """Adds CLS form to packet."""
+    """
+    Adds CLS form to packet.
 
+    According to the IVP Guidebook (v3.0, March 2015), Form CLS should be
+    completed if the subject or co-participant indicates that the subject is
+    Hispanic/Latino.
+
+    Therefore, if the subject is not Hispanic/Latino, do not add a CLS.
+
+    IVP Guidebook:
+      https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/UDS3_ivp_guidebook.pdf
+
+    Form CLS:
+      https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/CLS/CLS_en.pdf
+    """
     cls_form = ivp_forms.FormCLS()
     cls_form.APREFLAN = record['eng_preferred_language']
     cls_form.AYRSPAN = record['eng_years_speak_spanish']
