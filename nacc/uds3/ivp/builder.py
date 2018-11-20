@@ -7,7 +7,9 @@
 from nacc.uds3 import blanks
 import forms as ivp_forms
 from nacc.uds3 import packet as ivp_packet
+import datetime
 import sys
+
 
 def build_uds3_ivp_form(record):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
@@ -873,52 +875,79 @@ def add_cls(record, packet):
     Form CLS:
       https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/CLS/CLS_en.pdf
     """
+
+    is_hispanic = record['hispanic'] == '1'
+    if not is_hispanic:
+        return
+
+    fields_mapping = {
+        'APREFLAN': 'eng_preferred_language',
+        'AYRSPAN': 'eng_years_speak_spanish',
+        'AYRENGL': 'eng_years_speak_english',
+        'APCSPAN': 'eng_percentage_spanish',
+        'APCENGL': 'eng_percentage_english',
+        'ASPKSPAN': 'eng_proficiency_spanish',
+        'AREASPAN': 'eng_proficiency_read_spanish',
+        'AWRISPAN': 'eng_proficiency_write_spanish',
+        'AUNDSPAN': 'eng_proficiency_oral_spanish',
+        'ASPKENGL': 'eng_proficiency_speak_english',
+        'AREAENGL': 'eng_proficiency_read_english',
+        'AWRIENGL': 'eng_proficiency_write_english',
+        'AUNDENGL': 'eng_proficiency_oral_english',
+    }
+
+    num_filled_fields = 0
+    total_fields = len(fields_mapping)
     cls_form = ivp_forms.FormCLS()
-    cls_form.APREFLAN = record['eng_preferred_language']
-    cls_form.AYRSPAN = record['eng_years_speak_spanish']
-    cls_form.AYRENGL = record['eng_years_speak_english']
-    cls_form.APCSPAN = record['eng_percentage_spanish']
-    cls_form.APCENGL = record['eng_percentage_english']
-    cls_form.ASPKSPAN = record['eng_proficiency_spanish']
-    cls_form.AREASPAN = record['eng_proficiency_read_spanish']
-    cls_form.AWRISPAN = record['eng_proficiency_write_spanish']
-    cls_form.AUNDSPAN = record['eng_proficiency_oral_spanish']
-    cls_form.ASPKENGL = record['eng_proficiency_speak_english']
-    cls_form.AREAENGL = record['eng_proficiency_read_english']
-    cls_form.AWRIENGL = record['eng_proficiency_write_english']
-    cls_form.AUNDENGL = record['eng_proficiency_oral_english']
+
+    for key, val in fields_mapping.iteritems():
+        if record[val].strip():
+            setattr(cls_form, key, record[val])
+            num_filled_fields += 1
+
+    # If every field is blank, return
+    if num_filled_fields == 0:
+        return
+
+    # If only some of the fields are filled, raise error.
+    ptid = record.get('ptid', 'unknown')
+    if num_filled_fields != total_fields:
+        msg = "Could not parse packet as CLS form is incomplete for PTID: " \
+            + ptid
+        raise Exception(msg)
+
+    # Otherwise, check percentages and dates before appending.
+
+    # Check percentages
+    try:
+        pct_spn = int(record['eng_percentage_spanish'])
+    except ValueError:
+        raise Exception(
+            "Could not parse packet as eng_percentage_spanish is not an "
+            "integer for PTID: " + ptid
+        )
+
+    try:
+        pct_eng = int(record['eng_percentage_english'])
+    except ValueError:
+        raise Exception(
+            "Could not parse packet as eng_percentage_english is not an "
+            "integer for PTID: " + ptid
+        )
+
+    if pct_eng + pct_spn != 100:
+        message = "Could not parse packet as language proficiency " + \
+            "percentages do not equal 100 for PTID : " + ptid
+        raise Exception(message)
+
+    visit_date = datetime.datetime(int(record['visityr']), int(record['visitmo']), 1)
+    cls_added = datetime.datetime(2017, 6, 1)
+    if visit_date < cls_added:
+        message = "Could not parse packet as CLS forms should not be in " + \
+            "packets from before June 1, 2017 for PTID: " + ptid
+        raise Exception(message)
+
     packet.append(cls_form)
-
-    if record['clslang'] == 1: #yes, CLS lang completed
-        if len(record['eng_percentage_spanish'].strip()) == 0:
-            pct_spn = 0
-        else:
-            pct_spn = int(record['eng_percentage_spanish'])
-
-        if len(record['eng_percentage_english'].strip()) == 0:
-            pct_eng = 0
-        else:
-            pct_eng = int(record['eng_percentage_english'])
-
-        post_cls = True
-        if (record['visityr']<'2017') or (record['visityr']=='2017' and int(record['visitmo'])<6):
-            post_cls = False
-
-        bad_pct = False
-        if (pct_eng + pct_spn)!=100:
-            bad_pct = True
-
-        if (post_cls and bad_pct):
-            ptid = record['ptid']
-            message = "Could not parse packet as language proficiency percentages do not equal 100"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
-
-        if not post_cls and (pct_spn!=0 or pct_eng!=0):
-            ptid = record['ptid']
-            message = "Could not parse packet as CLS forms should not be in packets from before June 1, 2017"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
 
 
 def addZ1(record, packet):
