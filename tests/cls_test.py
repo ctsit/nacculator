@@ -12,7 +12,7 @@ class TestCLS(unittest.TestCase):
         record = make_record()
 
         builder.add_cls(record, packet)
-        self.assertEqual(len(packet), 0)
+        self.assertEqual(len(packet), 0, "Expected packet to be empty")
 
     def test_cls_not_added_if_not_hispanic(self):
         """
@@ -25,7 +25,7 @@ class TestCLS(unittest.TestCase):
         record['hispanic'] = '0'  # Subject is not Hispanic/Latino.
 
         builder.add_cls(record, packet)
-        self.assertEqual(len(packet), 0)
+        self.assertEqual(len(packet), 0, "Expected packet to be empty")
 
 
 def make_record():
