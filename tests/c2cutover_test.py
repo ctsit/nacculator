@@ -10,6 +10,7 @@ participantIVP = ""  # noqa: E501
 
 class TestC2Cutover(unittest.TestCase):
 
+    @unittest.skip("This test requires some mock data before it'll pass.")
     def test_use_c1s_before_cutover(self):
         """Use C1S before the 2017-10-23 cutover."""
         fp = io.StringIO('\n'.join([headers, participantIVP]))
@@ -24,6 +25,7 @@ class TestC2Cutover(unittest.TestCase):
 
         self.assertTrue(len(e) > 0, "Expected error messages")
 
+    @unittest.skip("This test is just a placeholder.")
     def test_use_c2_on_cutover(self):
         """Use C2 on the 2017-10-23 cutover."""
         self.assertFalse(True)
