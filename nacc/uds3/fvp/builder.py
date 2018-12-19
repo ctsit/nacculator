@@ -551,7 +551,7 @@ def build_uds3_fvp_form(record):
         post_c2 = True
 
     if post_c2:
-        if(len(record['c1s_1a_mmseloc'].strip())==0 or len(record['c1s_11a_cogstat'].strip())==0):
+        if(len(record['mocacomp'].strip())==0 or len(record['cogstat_c2'].strip())==0):
             ptid = record['ptid']
             message = "Could not parse packet as C2 form is missing data"
             message = message + " for PTID : " + ("unknown" if not ptid else ptid)
@@ -559,7 +559,7 @@ def build_uds3_fvp_form(record):
         else:
             addC2(record, packet)
     else:
-        if(len(record['mocacomp'].strip())==0 or len(record['cogstat_c2'].strip())==0):
+        if(len(record['c1s_1a_mmseloc'].strip())==0 or len(record['c1s_11a_cogstat'].strip())==0):        
             ptid = record['ptid']
             message = "Could not parse packet as C1S form is missing data"
             message = message + " for PTID : " + ("unknown" if not ptid else ptid)
