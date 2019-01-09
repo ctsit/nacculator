@@ -18,6 +18,7 @@ from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
 from nacc.uds3 import filters
 
+
 def check_blanks(packet):
     """
     Parses rules for when each field should be blank and then checks them
@@ -138,6 +139,7 @@ def set_blanks_to_zero(packet):
     if packet['ARTH'] == 1:
         set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
 
+
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
@@ -207,13 +209,14 @@ def parse_args(args=None):
 
     return options
 
+
 def main():
     """
     Reads a REDCap exported CSV, data file, then prints it out in NACC's format
     """
     options = parse_args()
 
-    fp = sys.stdin if options.file == None else open(options.file, 'r')
+    fp = sys.stdin if options.file is None else open(options.file, 'r')
 
     # Place holder for future. May need to output to a specific file in future.
     output = sys.stdout
@@ -227,6 +230,7 @@ def main():
             filter_func(fp, options.filter_meta, output)
     else:
         convert(fp, options)
+
 
 if __name__ == '__main__':
     main()
