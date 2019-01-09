@@ -5,9 +5,11 @@
 ###############################################################################
 
 from nacc.uds3 import blanks
+from nacc.uds3 import clsform
 import forms as ivp_forms
 from nacc.uds3 import packet as ivp_packet
 import sys
+
 
 def build_uds3_ivp_form(record):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
@@ -428,6 +430,12 @@ def build_uds3_ivp_form(record):
     a5.NPSYDEV = record['npsydev']
     a5.PSYCDIS = record['psycdis']
     a5.PSYCDISX = record['psycdisx']
+
+    if a5.ARTHRIT == 0:
+        a5.ARTHUPEX = ''
+        a5.ARTHLOEX = ''
+        a5.ARTHSPIN = ''
+        a5.ARTHUNK = '' 
     packet.append(a5)
 
     b1 = ivp_forms.FormB1()
@@ -625,78 +633,10 @@ def build_uds3_ivp_form(record):
     b9.FTLDEVAL = record['ftldeval']
     packet.append(b9)
 
-    # Among C1S and C2 forms, one must be filled, one must be empty.
+    add_c1s_or_c2(record, packet)
 
-    isC1SNotBlank = 0
+    clsform.add_cls(record, packet, ivp_forms)
 
-    isC2NotBlank = 0
-
-    if(len(record['c1s_1a_mmseloc'].strip())!=0 or len(record['c1s_11a_cogstat'].strip())!=0):
-        isC1SNotBlank = 1
-
-    if(len(record['mocacomp'].strip())!=0 or len(record['cogstat_c2'].strip())!=0):
-        isC2NotBlank = 1
-
-    condition = isC1SNotBlank + isC2NotBlank
-
-    if(condition != 1):
-        ptid = record['ptid']
-        message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " c1s/c2 forms has data "
-        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-        raise Exception(message)
-
-    if(int(isC1SNotBlank)):
-        addC1S(record, packet)
-    else:
-        addC2(record, packet)
-
-    cls_form = ivp_forms.FormCLS()
-    cls_form.APREFLAN = record['eng_preferred_language']
-    cls_form.AYRSPAN = record['eng_years_speak_spanish']
-    cls_form.AYRENGL = record['eng_years_speak_english']
-    cls_form.APCSPAN = record['eng_percentage_spanish']
-    cls_form.APCENGL = record['eng_percentage_english']
-    cls_form.ASPKSPAN = record['eng_proficiency_spanish']
-    cls_form.AREASPAN = record['eng_proficiency_read_spanish']
-    cls_form.AWRISPAN = record['eng_proficiency_write_spanish']
-    cls_form.AUNDSPAN = record['eng_proficiency_oral_spanish']
-    cls_form.ASPKENGL = record['eng_proficiency_speak_english']
-    cls_form.AREAENGL = record['eng_proficiency_read_english']
-    cls_form.AWRIENGL = record['eng_proficiency_write_english']
-    cls_form.AUNDENGL = record['eng_proficiency_oral_english']
-    packet.append(cls_form)
-
-    if record['clslang'] == 1: #yes, CLS lang completed
-        if len(record['eng_percentage_spanish'].strip()) == 0:
-            pct_spn = 0
-        else:
-            pct_spn = int(record['eng_percentage_spanish'])
-
-        if len(record['eng_percentage_english'].strip()) == 0:
-            pct_eng = 0
-        else:
-            pct_eng = int(record['eng_percentage_english'])
-
-        post_cls = True
-        if (record['visityr']<'2017') or (record['visityr']=='2017' and record['visitmo']<'6'):
-            post_cls = False
-
-        bad_pct = False
-        if (pct_eng + pct_spn)!=100:
-            bad_pct = True
-
-        if (post_cls and bad_pct):
-            ptid = record['ptid']
-            message = "Could not parse packet as language proficiency percentages do not equal 100"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
-
-        if not post_cls and (pct_spn!=0 or pct_eng!=0):
-            ptid = record['ptid']
-            message = "Could not parse packet as CLS forms should not be in packets from before June 1, 2017"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
-        
     d1 = ivp_forms.FormD1()
     d1.DXMETHOD = record['dxmethod']
     d1.NORMCOG = record['normcog']
@@ -867,32 +807,159 @@ def build_uds3_ivp_form(record):
     d2.OTHCONDX = record['othcondx']
     packet.append(d2)
 
-    Z1_has_data = 0
+    post_Z1X = False
+    if (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and int(record['visitmo'])>4) or \
+        (int(record['visityr'])==2018 and int(record['visitmo'])==4 and int(record['visitday'])>=2):
+        post_Z1X = True
 
-    Z1X_has_data = 0
-
-    if(len(record['a2sub'].strip())!=0 or len(record['b7sub'].strip())!=0):
-        Z1_has_data = 1
-
-    if(len(record['a1lang'].strip())!=0 or len(record['clssubmitted'].strip())!=0):
-        Z1X_has_data = 1
-
-    condition = Z1X_has_data + Z1_has_data
-
-    if(condition != 1):
-        ptid = record['ptid']
-        message = "Could not parse packet as " + ("both" if condition > 1 else "neither") + " Z1X/Z1 forms has data "
-        message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-        raise Exception(message)
-
-    if(int(Z1_has_data)):
-        addZ1(record, packet)
+    if post_Z1X:
+        # print("Initial visit. Z1X. Year: " + record['visityr'] + " Month: " + record['visitmo'] + " Day: " + record['visitday'])
+        if(len(record['a1lang'].strip())==0 or len(record['clssubmitted'].strip())==0):
+            ptid = record['ptid']
+            message = "Could not parse packet as Z1X form is missing data"
+            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+            raise Exception(message)
+        else:
+            addZ1X(record, packet)
     else:
-        addZ1X(record, packet)
+        # print("Initial visit. Z1. Year: " + record['visityr'] + " Month: " + record['visitmo'] + " Day: " + record['visitday'])
+        if(len(record['a2sub'].strip())==0 or len(record['b7sub'].strip())==0):
+            ptid = record['ptid']
+            message = "Could not parse packet as Z1 form is missing data"
+            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+            raise Exception(message)
+        else:
+            addZ1(record, packet)
 
     update_header(record, packet)
 
     return packet
+
+
+def add_c1s_or_c2(record, packet):
+    # Among C1S and C2 forms, one must be filled, one must be empty. After 2017/10/23, must be C2
+    if (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and int(record['visitmo'])>10) or \
+       (int(record['visityr'])==2017 and int(record['visitmo'])==10 and int(record['visitday'])>=23):
+        if(len(record['mocacomp'].strip())==0 or len(record['cogstat_c2'].strip())==0):
+            ptid = record['ptid']
+            message = "Could not parse packet as C2 form is missing data"
+            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+            raise Exception(message)
+        else:
+            c2 = ivp_forms.FormC2()
+            c2.MOCACOMP = record['mocacomp']
+            c2.MOCAREAS = record['mocareas']
+            c2.MOCALOC = record['mocaloc']
+            c2.MOCALAN = record['mocalan']
+            c2.MOCALANX = record['mocalanx']
+            c2.MOCAVIS = record['mocavis']
+            c2.MOCAHEAR = record['mocahear']
+            c2.MOCATOTS = record['mocatots']
+            c2.MOCATRAI = record['mocatrai']
+            c2.MOCACUBE = record['mocacube']
+            c2.MOCACLOC = record['mocacloc']
+            c2.MOCACLON = record['mocaclon']
+            c2.MOCACLOH = record['mocacloh']
+            c2.MOCANAMI = record['mocanami']
+            c2.MOCAREGI = record['mocaregi']
+            c2.MOCADIGI = record['mocadigi']
+            c2.MOCALETT = record['mocalett']
+            c2.MOCASER7 = record['mocaser7']
+            c2.MOCAREPE = record['mocarepe']
+            c2.MOCAFLUE = record['mocaflue']
+            c2.MOCAABST = record['mocaabst']
+            c2.MOCARECN = record['mocarecn']
+            c2.MOCARECC = record['mocarecc']
+            c2.MOCARECR = record['mocarecr']
+            c2.MOCAORDT = record['mocaordt']
+            c2.MOCAORMO = record['mocaormo']
+            c2.MOCAORYR = record['mocaoryr']
+            c2.MOCAORDY = record['mocaordy']
+            c2.MOCAORPL = record['mocaorpl']
+            c2.MOCAORCT = record['mocaorct']
+            c2.NPSYCLOC = record['npsycloc_c2']
+            c2.NPSYLAN = record['npsylan_c2']
+            c2.NPSYLANX = record['npsylanx_c2']
+            c2.CRAFTVRS = record['craftvrs']
+            c2.CRAFTURS = record['crafturs']
+            c2.UDSBENTC = record['udsbentc']
+            c2.DIGFORCT = record['digforct']
+            c2.DIGFORSL = record['digforsl']
+            c2.DIGBACCT = record['digbacct']
+            c2.DIGBACLS = record['digbacls']
+            c2.ANIMALS = record['animals_c2']
+            c2.VEG = record['veg_c2']
+            c2.TRAILA = record['traila_c2']
+            c2.TRAILARR = record['trailarr_c2']
+            c2.TRAILALI = record['trailali_c2']
+            c2.TRAILB = record['trailb_c2']
+            c2.TRAILBRR = record['trailbrr_c2']
+            c2.TRAILBLI = record['trailbli_c2']
+            c2.CRAFTDVR = record['craftdvr']
+            c2.CRAFTDRE = record['craftdre']
+            c2.CRAFTDTI = record['craftdti']
+            c2.CRAFTCUE = record['craftcue']
+            c2.UDSBENTD = record['udsbentd']
+            c2.UDSBENRS = record['udsbenrs']
+            c2.MINTTOTS = record['minttots']
+            c2.MINTTOTW = record['minttotw']
+            c2.MINTSCNG = record['mintscng']
+            c2.MINTSCNC = record['mintscnc']
+            c2.MINTPCNG = record['mintpcng']
+            c2.MINTPCNC = record['mintpcnc']
+            c2.UDSVERFC = record['udsverfc']
+            c2.UDSVERFN = record['udsverfn']
+            c2.UDSVERNF = record['udsvernf']
+            c2.UDSVERLC = record['udsverlc']
+            c2.UDSVERLR = record['udsverlr']
+            c2.UDSVERLN = record['udsverln']
+            c2.UDSVERTN = record['udsvertn']
+            c2.UDSVERTE = record['udsverte']
+            c2.UDSVERTI = record['udsverti']
+            c2.COGSTAT = record['cogstat_c2']
+            packet.append(c2)
+    else:
+        if(len(record['c1s_1a_mmseloc'].strip())==0 or len(record['c1s_11a_cogstat'].strip())==0):
+            ptid = record['ptid']
+            message = "Could not parse packet as C1S form is missing data"
+            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
+            raise Exception(message)
+        else:
+            c1s = ivp_forms.FormC1S()
+            c1s.MMSELOC = record['c1s_1a_mmseloc'] #check for blank
+            c1s.MMSELAN = record['c1s_1a1_mmselan']
+            c1s.MMSELANX = record['c1s_1a2_mmselanx']
+            c1s.MMSEORDA = record['c1s_1b1_mmseorda']
+            c1s.MMSEORLO = record['c1s_1b2_mmseorlo']
+            c1s.PENTAGON = record['c1s_1c_pentagon']
+            c1s.MMSE = record['c1s_1d_mmse']
+            c1s.NPSYCLOC = record['c1s_2_npsycloc']
+            c1s.NPSYLAN = record['c1s_2a_npsylan']
+            c1s.NPSYLANX = record['c1s_2a1_npsylanx']
+            c1s.LOGIMO = record['c1s_3amo_logimo']
+            c1s.LOGIDAY = record['c1s_3ady_logiday']
+            c1s.LOGIYR = record['c1s_3ayr_logiyr']
+            c1s.LOGIPREV = record['c1s_3a1_logiprev']
+            c1s.LOGIMEM = record['c1s_3b_logimem']
+            c1s.DIGIF = record['c1s_4a_digif']
+            c1s.DIGIFLEN = record['c1s_4b_digiflen']
+            c1s.DIGIB = record['c1s_5a_digib']
+            c1s.DIGIBLEN = record['c1s_5b_digiblen']
+            c1s.ANIMALS = record['c1s_6a_animals']
+            c1s.VEG = record['c1s_6b_veg']
+            c1s.TRAILA = record['c1s_7a_traila']
+            c1s.TRAILARR = record['c1s_7a1_trailarr']
+            c1s.TRAILALI = record['c1s_7a2_trailali']
+            c1s.TRAILB = record['c1s_7b_trailb']
+            c1s.TRAILBRR = record['c1s_7b1_trailbrr']
+            c1s.TRAILBLI = record['c1s_7b2_trailbli']
+            c1s.WAIS = record['c1s_8a_wais']
+            c1s.MEMUNITS = record['c1s_9a_memunits']
+            c1s.MEMTIME = record['c1s_9b_memtime']
+            c1s.BOSTON = record['c1s_10a_boston']
+            c1s.COGSTAT = record['c1s_11a_cogstat'] #check for blank
+            packet.append(c1s)
+
 
 def addZ1(record, packet):
     z1 = ivp_forms.FormZ1()
@@ -974,117 +1041,6 @@ def addZ1X(record, packet):
     z1x.LANGCLS = record['clslang']
     z1x.CLSSUB  = record['clssubmitted']
     packet.insert(0, z1x)
-
-def addC1S(record, packet):
-    c1s = ivp_forms.FormC1S()
-    c1s.MMSELOC = record['c1s_1a_mmseloc'] #check for blank
-    c1s.MMSELAN = record['c1s_1a1_mmselan']
-    c1s.MMSELANX = record['c1s_1a2_mmselanx']
-    c1s.MMSEORDA = record['c1s_1b1_mmseorda']
-    c1s.MMSEORLO = record['c1s_1b2_mmseorlo']
-    c1s.PENTAGON = record['c1s_1c_pentagon']
-    c1s.MMSE = record['c1s_1d_mmse']
-    c1s.NPSYCLOC = record['c1s_2_npsycloc']
-    c1s.NPSYLAN = record['c1s_2a_npsylan']
-    c1s.NPSYLANX = record['c1s_2a1_npsylanx']
-    c1s.LOGIMO = record['c1s_3amo_logimo']
-    c1s.LOGIDAY = record['c1s_3ady_logiday']
-    c1s.LOGIYR = record['c1s_3ayr_logiyr']
-    c1s.LOGIPREV = record['c1s_3a1_logiprev']
-    c1s.LOGIMEM = record['c1s_3b_logimem']
-    c1s.DIGIF = record['c1s_4a_digif']
-    c1s.DIGIFLEN = record['c1s_4b_digiflen']
-    c1s.DIGIB = record['c1s_5a_digib']
-    c1s.DIGIBLEN = record['c1s_5b_digiblen']
-    c1s.ANIMALS = record['c1s_6a_animals']
-    c1s.VEG = record['c1s_6b_veg']
-    c1s.TRAILA = record['c1s_7a_traila']
-    c1s.TRAILARR = record['c1s_7a1_trailarr']
-    c1s.TRAILALI = record['c1s_7a2_trailali']
-    c1s.TRAILB = record['c1s_7b_trailb']
-    c1s.TRAILBRR = record['c1s_7b1_trailbrr']
-    c1s.TRAILBLI = record['c1s_7b2_trailbli']
-    c1s.WAIS = record['c1s_8a_wais']
-    c1s.MEMUNITS = record['c1s_9a_memunits']
-    c1s.MEMTIME = record['c1s_9b_memtime']
-    c1s.BOSTON = record['c1s_10a_boston']
-    c1s.COGSTAT = record['c1s_11a_cogstat'] #check for blank
-    packet.append(c1s)
-
-
-def addC2(record, packet):
-    c2 = ivp_forms.FormC2()
-    c2.MOCACOMP = record['mocacomp']
-    c2.MOCAREAS = record['mocareas']
-    c2.MOCALOC = record['mocaloc']
-    c2.MOCALAN = record['mocalan']
-    c2.MOCALANX = record['mocalanx']
-    c2.MOCAVIS = record['mocavis']
-    c2.MOCAHEAR = record['mocahear']
-    c2.MOCATOTS = record['mocatots']
-    c2.MOCATRAI = record['mocatrai']
-    c2.MOCACUBE = record['mocacube']
-    c2.MOCACLOC = record['mocacloc']
-    c2.MOCACLON = record['mocaclon']
-    c2.MOCACLOH = record['mocacloh']
-    c2.MOCANAMI = record['mocanami']
-    c2.MOCAREGI = record['mocaregi']
-    c2.MOCADIGI = record['mocadigi']
-    c2.MOCALETT = record['mocalett']
-    c2.MOCASER7 = record['mocaser7']
-    c2.MOCAREPE = record['mocarepe']
-    c2.MOCAFLUE = record['mocaflue']
-    c2.MOCAABST = record['mocaabst']
-    c2.MOCARECN = record['mocarecn']
-    c2.MOCARECC = record['mocarecc']
-    c2.MOCARECR = record['mocarecr']
-    c2.MOCAORDT = record['mocaordt']
-    c2.MOCAORMO = record['mocaormo']
-    c2.MOCAORYR = record['mocaoryr']
-    c2.MOCAORDY = record['mocaordy']
-    c2.MOCAORPL = record['mocaorpl']
-    c2.MOCAORCT = record['mocaorct']
-    c2.NPSYCLOC = record['npsycloc_c2']
-    c2.NPSYLAN = record['npsylan_c2']
-    c2.NPSYLANX = record['npsylanx_c2']
-    c2.CRAFTVRS = record['craftvrs']
-    c2.CRAFTURS = record['crafturs']
-    c2.UDSBENTC = record['udsbentc']
-    c2.DIGFORCT = record['digforct']
-    c2.DIGFORSL = record['digforsl']
-    c2.DIGBACCT = record['digbacct']
-    c2.DIGBACLS = record['digbacls']
-    c2.ANIMALS = record['animals_c2']
-    c2.VEG = record['veg_c2']
-    c2.TRAILA = record['traila_c2']
-    c2.TRAILARR = record['trailarr_c2']
-    c2.TRAILALI = record['trailali_c2']
-    c2.TRAILB = record['trailb_c2']
-    c2.TRAILBRR = record['trailbrr_c2']
-    c2.TRAILBLI = record['trailbli_c2']
-    c2.CRAFTDVR = record['craftdvr']
-    c2.CRAFTDRE = record['craftdre']
-    c2.CRAFTDTI = record['craftdti']
-    c2.CRAFTCUE = record['craftcue']
-    c2.UDSBENTD = record['udsbentd']
-    c2.UDSBENRS = record['udsbenrs']
-    c2.MINTTOTS = record['minttots']
-    c2.MINTTOTW = record['minttotw']
-    c2.MINTSCNG = record['mintscng']
-    c2.MINTSCNC = record['mintscnc']
-    c2.MINTPCNG = record['mintpcng']
-    c2.MINTPCNC = record['mintpcnc']
-    c2.UDSVERFC = record['udsverfc']
-    c2.UDSVERFN = record['udsverfn']
-    c2.UDSVERNF = record['udsvernf']
-    c2.UDSVERLC = record['udsverlc']
-    c2.UDSVERLR = record['udsverlr']
-    c2.UDSVERLN = record['udsverln']
-    c2.UDSVERTN = record['udsvertn']
-    c2.UDSVERTE = record['udsverte']
-    c2.UDSVERTI = record['udsverti']
-    c2.COGSTAT = record['cogstat_c2']
-    packet.append(c2)
 
 
 def update_header(record, packet):

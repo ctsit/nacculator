@@ -18,6 +18,7 @@ from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
 from nacc.uds3 import filters
 
+
 def check_blanks(packet):
     """
     Parses rules for when each field should be blank and then checks them
@@ -138,26 +139,55 @@ def set_blanks_to_zero(packet):
     if packet['ARTH'] == 1:
         set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
 
-def main():
-    """
-    Reads a REDCap exported CSV, data file, then prints it out in NACC's format
-    """
+
+def convert(fp, options, out=sys.stdout, err=sys.stderr):
+    """Converts data in REDCap's CSV format to NACC's fixed-width format."""
+    reader = csv.DictReader(fp)
+    for record in reader:
+        print >> err, "[START] ptid : " + str(record['ptid'])
+        try:
+            if options.ivp:
+                packet = ivp_builder.build_uds3_ivp_form(record)
+            elif options.np:
+                packet = np_builder.build_uds3_np_form(record)
+            elif options.fvp:
+                packet = fvp_builder.build_uds3_fvp_form(record)
+
+        except Exception:
+            if 'ptid' in record:
+                print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
+            traceback.print_exc()
+            continue
+
+        if not options.np:
+            set_blanks_to_zero(packet)
+
+        warnings = []
+        warnings += check_blanks(packet)
+
+        if not options.np:
+            warnings += check_single_select(packet)
+
+        if warnings:
+            print >> err, "\n".join(warnings)
+
+        for form in packet:
+            print >> out, form
+
+
+filters_names = {
+    'cleanPtid': 'clean_ptid',
+    'replaceDrugId': 'replace_drug_id',
+    'fixHeaders': 'fix_headers',
+    'fillDefault': 'fill_default',
+    'updateField': 'update_field',
+    'removePtid': 'remove_ptid',
+    'removeDateRecord': 'eliminate_empty_date',
+    'getPtid': 'extract_ptid'}
+
+
+def parse_args(args=None):
     parser = argparse.ArgumentParser(description='Process redcap form output to nacculator.')
-
-    filters_names = {
-                'cleanPtid' : 'clean_ptid',
-                'replaceDrugId' : 'replace_drug_id',
-                'fixHeaders' : 'fix_headers',
-                'fillDefault' : 'fill_default',
-                'updateField' : 'update_field',
-                'removePtid' : 'remove_ptid',
-                'removeDateRecord' : 'eliminate_empty_date',
-                'getPtid' : 'extract_ptid'}
-
-    filter_exclusive_names = {
-        'cleanPtid' : 'clean_ptid',
-        'removeRedCapEvent':'eliminate_redcapeventname'
-    }
 
     option_group = parser.add_mutually_exclusive_group()
     option_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
@@ -170,14 +200,23 @@ def main():
     parser.add_argument('-ptid', action='store', dest='ptid', help='Ptid for which you need the records')
     parser.add_argument('-vnum', action='store', dest='vnum', help='Ptid for which you need the records')
     parser.add_argument('-vtype', action='store', dest='vtype', help='Ptid for which you need the records')
-    options = parser.parse_args()
 
+    options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
     if not (options.ivp or options.fvp or options.np or options.filter):
         options.ivp = True
 
-    fp = sys.stdin if options.file == None else open(options.file, 'r')
+    return options
+
+
+def main():
+    """
+    Reads a REDCap exported CSV, data file, then prints it out in NACC's format
+    """
+    options = parse_args()
+
+    fp = sys.stdin if options.file is None else open(options.file, 'r')
 
     # Place holder for future. May need to output to a specific file in future.
     output = sys.stdout
@@ -189,39 +228,9 @@ def main():
             filter_method = 'filter_' + filters_names[options.filter]
             filter_func = getattr(filters, filter_method)
             filter_func(fp, options.filter_meta, output)
-
     else:
-        reader = csv.DictReader(fp)
-        for record in reader:
-            print >> sys.stderr, "[START] ptid : " + str(record['ptid'])
-            try:
-                if options.ivp:
-                    packet = ivp_builder.build_uds3_ivp_form(record)
-                elif options.np:
-                    packet = np_builder.build_uds3_np_form(record)
-                elif options.fvp:
-                    packet = fvp_builder.build_uds3_fvp_form(record)
+        convert(fp, options)
 
-            except Exception, exp:
-                if 'ptid' in record:
-                    print >> sys.stderr, "[SKIP] Error for ptid : " + str(record['ptid'])
-                traceback.print_exc()
-                continue
-
-            if not options.np:
-                set_blanks_to_zero(packet)
-
-            warnings = []
-            warnings += check_blanks(packet)
-
-            if not options.np:
-                warnings += check_single_select(packet)
-
-            if warnings:
-                print >> sys.stderr, "\n".join(warnings)
-
-            for form in packet:
-                print form
 
 if __name__ == '__main__':
     main()

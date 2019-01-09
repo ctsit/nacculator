@@ -46,22 +46,28 @@ Or, if you're using the source code:
 
 The program accepts two arguments -file and -(ivp|fvp|np). Both the arguments are optional. See the python help as:
 
-      $ PYTHONPATH=. ./nacc/redcap2nacc.py -h
-      usage: redcap2nacc.py [-h]
-                        [-fvp | -ivp | -np | -f {cleanPtid,updateField,replaceDrugId,fillDefault,fixC1S}]
-                        [-file FILE] [-meta FILTER_CONFIG]
+    $ PYTHONPATH=. ./nacc/redcap2nacc.py -h
+    usage: redcap2nacc.py [-h]
+                          [-fvp | -ivp | -np | -f {cleanPtid,updateField,fixHeaders,replaceDrugId,getPtid,removePtid,fillDefault,removeDateRecord}]
+                          [-file FILE] [-meta FILTER_META] [-ptid PTID]
+                          [-vnum VNUM] [-vtype VTYPE]
 
-      Process redcap form output to nacculator.
+    Process redcap form output to nacculator.
 
-      optional arguments:
+    optional arguments:
       -h, --help            show this help message and exit
       -fvp                  Set this flag to process as fvp data
       -ivp                  Set this flag to process as ivp data
       -np                   Set this flag to process as np data
-      -f or --filter        Accepts one of {cleanPtid,updateField,replaceDrugId,fillDefault,fixC1S}
+      -f {cleanPtid,updateField,fixHeaders,replaceDrugId,getPtid,removePtid,fillDefault,removeDateRecord}, --filter {cleanPtid,updateField,fixHeaders,replaceDrugId,getPtid,removePtid,fillDefault,removeDateRecord}
                             Set this flag to process the filter
       -file FILE            Path of the csv file to be processed.
-      -meta FILTER_META     Filter config file (nacculator_cfg.ini) when running filters
+      -meta FILTER_META     Input file for the filter metadata (in case -filter is
+                            used)
+      -ptid PTID            Ptid for which you need the records
+      -vnum VNUM            Ptid for which you need the records
+      -vtype VTYPE          Ptid for which you need the records
+
 
 Example Usage
 
@@ -197,3 +203,15 @@ working directory called `corrected`._
     $ edit ../nacc/uds3/ivp/forms
 
 * Resources for uds3 fvp forms are available [here](https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/).
+
+
+Testing
+-------
+
+To run all the tests:
+
+    $ make tests
+
+
+To run only the tests in a file:
+    $ PYTHONPATH=. python tests/WHICHEVER_test.py

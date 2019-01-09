@@ -59,7 +59,7 @@ class FormA2(nacc.uds3.FieldBag):
         self.fields['INRASECX'] = nacc.uds3.Field(name='INRASECX', typename='Char', position=(190, 249), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 6 INRASEC ne 50 (Other)'])
         self.fields['INRATER'] = nacc.uds3.Field(name='INRATER', typename='Num', position=(251, 252), length=2, inclusive_range=(1, 5), allowable_values=['88', '99', '3', '2', '1', '50', '5', '4'], blanks=['Blank if Question 3 NEWINF = 0 (No)'])
         self.fields['INRATERX'] = nacc.uds3.Field(name='INRATERX', typename='Char', position=(254, 313), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 7 INRATER ne 50 (Other)'])
-        self.fields['INEDUC'] = nacc.uds3.Field(name='INEDUC', typename='Num', position=(315, 316), length=2, inclusive_range=(0, 36), allowable_values=['999'], blanks=['Blank if Question 3 NEWINF = 0 (No)'])
+        self.fields['INEDUC'] = nacc.uds3.Field(name='INEDUC', typename='Num', position=(315, 316), length=2, inclusive_range=(0, 36), allowable_values=['99'], blanks=['Blank if Question 3 NEWINF = 0 (No)'])
         self.fields['INRELTO'] = nacc.uds3.Field(name='INRELTO', typename='Num', position=(318, 318), length=1, inclusive_range=(1, 6), allowable_values=['3', '2', '1', '6', '5', '4'], blanks=[])
         self.fields['INKNOWN'] = nacc.uds3.Field(name='INKNOWN', typename='Num', position=(320, 322), length=3, inclusive_range=(0, 120), allowable_values=['999'], blanks=[])
         self.fields['INLIVWTH'] = nacc.uds3.Field(name='INLIVWTH', typename='Num', position=(324, 324), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])

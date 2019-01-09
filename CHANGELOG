@@ -1,3 +1,22 @@
+Changelog
+=========
+
+## [0.5.0] - 2019-01-19
+### Summary
+
+Added automated testing, date checking for certain forms, and bug fixes.
+
+### Added
+ * Unit tests and Travis CI integration (Taeber Rapczak)
+ * Several checks for properly including or omitting Form CLS (Taeber Rapczak, Naomi Braun)
+ * Add date check for C1S/C2 and Z1X/Z1 selection (Naomi Braun)
+
+### Fixed
+ * Incorrect unknown value '999' for Form A2 INEDUC (Anthony Rodriguez, Nicolas May)
+ * C1S/C2 FVP checks (Naomi Braun)
+ * Fixed logic for assuring A5 5f details are blank when arthrit is 0 (Naomi Braun)
+
+
 ## [0.4.1] - 2018-06-14
 ### Summary
  This release corrects some form logic bugs and adds a new filter to normalize visit numbers.
