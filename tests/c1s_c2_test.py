@@ -18,7 +18,7 @@ class TestC1SC2(unittest.TestCase):
         self.assertEqual(ipacket['MMSELOC'], '1')
 
     def test_c2_added_to_ivp_when_filled(self):
-        """ If header us frin after October 23, 2017, the C2 form should be added """
+        """ If header is from after October 23, 2017, the C2 form should be added """
         record = make_blank_ivp()
         record['visityr'] = '2018'
         record['mocacomp'] = '1'
