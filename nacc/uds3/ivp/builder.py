@@ -806,17 +806,8 @@ def build_uds3_ivp_form(record):
     d2.OTHCOND = record['othcond']
     d2.OTHCONDX = record['othcondx']
     packet.append(d2)
-
-    post_Z1X = False
-    if (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and int(record['visitmo'])>4) or \
-        (int(record['visityr'])==2018 and int(record['visitmo'])==4 and int(record['visitday'])>=2):
-        post_Z1X = True
-
-    if post_Z1X:
-        addZ1X(record, packet)
-    else:
-        addZ1(record, packet)
-
+    
+    add_z1_or_z1x(record, packet)
     update_header(record, packet)
 
     return packet
@@ -935,86 +926,88 @@ def add_c1s_or_c2(record, packet):
         packet.append(c1s)
 
 
-def addZ1(record, packet):
-    z1 = ivp_forms.FormZ1()
+def add_z1_or_z1x(record, packet):
     # Forms A1, A5, B4, B8, B9, C2, D1, and D2 are all REQUIRED.
     # Fields a1sub, a5sub1, b4sub1, b8sub1, b9sub1, c2sub1, d1sub1, and d2sub1
     # are just section separators.
 
-    z1.A2SUB = record['a2sub']
-    z1.A2NOT = record['a2not']
-    z1.A2COMM = record['a2comm']
-    z1.A3SUB = record['a3sub']
-    z1.A3NOT = record['a3not']
-    z1.A3COMM = record['a3comm']
-    z1.A4SUB = record['a4sub']
-    z1.A4NOT = record['a4not']
-    z1.A4COMM = record['a4comm']
-    z1.B1SUB = record['b1sub']
-    z1.B1NOT = record['b1not']
-    z1.B1COMM = record['b1comm']
-    z1.B5SUB = record['b5sub']
-    z1.B5NOT = record['b5not']
-    z1.B5COMM = record['b5comm']
-    z1.B6SUB = record['b6sub']
-    z1.B6NOT = record['b6not']
-    z1.B6COMM = record['b6comm']
-    z1.B7SUB = record['b7sub']
-    z1.B7NOT = record['b7not']
-    z1.B7COMM = record['b7comm']
-    packet.insert(0, z1)
-
-def addZ1X(record, packet):
-    z1x = ivp_forms.FormZ1X()
-    z1x.LANGA1 = record['a1lang']
-    z1x.LANGA2 = record['a2lang']
-    z1x.A2SUB = record['a2sub_095a3b']
-    z1x.A2NOT = record['a2not_21e87d']
-    z1x.LANGA3 = record['a3lang']
-    z1x.A3SUB = record['a3sub_2b0d69']
-    z1x.A3NOT = record['a3not_c7cb57']
-    z1x.LANGA4 = record['a4lang']
-    z1x.A4SUB = record['a4sub_2c437c']
-    z1x.A4NOT = record['a4not_c4e53e']
-    z1x.LANGA5 = record['a5lang']
-    z1x.LANGB1 = record['b1lang']
-    z1x.B1SUB = record['b1sub_3c9b3b']
-    z1x.B1NOT = record['b1not_8b7733']
-    z1x.LANGB4 = record['b4lang']
-    z1x.LANGB5 = record['b5lang']
-    z1x.B5SUB = record['b5sub_712f66']
-    z1x.B5NOT = record['b5not_a4b779']
-    z1x.LANGB6 = record['b6lang']
-    z1x.B6SUB = record['b6sub_35db4c']
-    z1x.B6NOT = record['b6not_06dff0']
-    z1x.LANGB7 = record['b7lang']
-    z1x.B7SUB = record['b7sub_7e2220']
-    z1x.B7NOT = record['b7not_2dfac5']
-    z1x.LANGB8 = record['b8lang']
-    z1x.LANGB9 = record['b9lang']
-    z1x.LANGC2 = record['c2lang']
-    z1x.LANGD1 = record['d1lang']
-    z1x.LANGD2 = record['d2lang']
-    z1x.LANGA3A = record['a3alang']
-    z1x.FTDA3AFS = record['a3asubmitted']
-    z1x.FTDA3AFR = record['a3anot']
-    z1x.LANGB3F = record['b3flang']
-    z1x.LANGB9F = record['b9flang']
-    z1x.LANGC1F = record['c1flang']
-    z1x.LANGC2F = record['c2flang']
-    z1x.LANGC3F = record['c3flang']
-    z1x.LANGC4F = record['c4flang']
-    z1x.FTDC4FS = record['c4fsubmitted']
-    z1x.FTDC4FR = record['c4fnot']
-    z1x.FTDC5FS = record['c5fsubmitted']
-    z1x.FTDC5FR = record['c5fnot']
-    z1x.FTDC6FS = record['c6fsubmitted']
-    z1x.FTDC6FR = record['c6fnot']
-    z1x.LANGE2F = record['e2flang']
-    z1x.LANGE3F = record['e3flang']
-    z1x.LANGCLS = record['clslang']
-    z1x.CLSSUB  = record['clssubmitted']
-    packet.insert(0, z1x)
+    # Among Z1 and Z1X forms, one must be filled, one must be empty. After 2018/04/02, must be Z1X
+    if (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and int(record['visitmo'])>4) or \
+        (int(record['visityr'])==2018 and int(record['visitmo'])==4 and int(record['visitday'])>=2):
+        z1x = ivp_forms.FormZ1X()
+        z1x.LANGA1 = record['a1lang']
+        z1x.LANGA2 = record['a2lang']
+        z1x.A2SUB = record['a2sub_095a3b']
+        z1x.A2NOT = record['a2not_21e87d']
+        z1x.LANGA3 = record['a3lang']
+        z1x.A3SUB = record['a3sub_2b0d69']
+        z1x.A3NOT = record['a3not_c7cb57']
+        z1x.LANGA4 = record['a4lang']
+        z1x.A4SUB = record['a4sub_2c437c']
+        z1x.A4NOT = record['a4not_c4e53e']
+        z1x.LANGA5 = record['a5lang']
+        z1x.LANGB1 = record['b1lang']
+        z1x.B1SUB = record['b1sub_3c9b3b']
+        z1x.B1NOT = record['b1not_8b7733']
+        z1x.LANGB4 = record['b4lang']
+        z1x.LANGB5 = record['b5lang']
+        z1x.B5SUB = record['b5sub_712f66']
+        z1x.B5NOT = record['b5not_a4b779']
+        z1x.LANGB6 = record['b6lang']
+        z1x.B6SUB = record['b6sub_35db4c']
+        z1x.B6NOT = record['b6not_06dff0']
+        z1x.LANGB7 = record['b7lang']
+        z1x.B7SUB = record['b7sub_7e2220']
+        z1x.B7NOT = record['b7not_2dfac5']
+        z1x.LANGB8 = record['b8lang']
+        z1x.LANGB9 = record['b9lang']
+        z1x.LANGC2 = record['c2lang']
+        z1x.LANGD1 = record['d1lang']
+        z1x.LANGD2 = record['d2lang']
+        z1x.LANGA3A = record['a3alang']
+        z1x.FTDA3AFS = record['a3asubmitted']
+        z1x.FTDA3AFR = record['a3anot']
+        z1x.LANGB3F = record['b3flang']
+        z1x.LANGB9F = record['b9flang']
+        z1x.LANGC1F = record['c1flang']
+        z1x.LANGC2F = record['c2flang']
+        z1x.LANGC3F = record['c3flang']
+        z1x.LANGC4F = record['c4flang']
+        z1x.FTDC4FS = record['c4fsubmitted']
+        z1x.FTDC4FR = record['c4fnot']
+        z1x.FTDC5FS = record['c5fsubmitted']
+        z1x.FTDC5FR = record['c5fnot']
+        z1x.FTDC6FS = record['c6fsubmitted']
+        z1x.FTDC6FR = record['c6fnot']
+        z1x.LANGE2F = record['e2flang']
+        z1x.LANGE3F = record['e3flang']
+        z1x.LANGCLS = record['clslang']
+        z1x.CLSSUB  = record['clssubmitted']
+        packet.insert(0, z1x)
+    else:
+        z1 = ivp_forms.FormZ1()
+        z1.A2SUB = record['a2sub']
+        z1.A2NOT = record['a2not']
+        z1.A2COMM = record['a2comm']
+        z1.A3SUB = record['a3sub']
+        z1.A3NOT = record['a3not']
+        z1.A3COMM = record['a3comm']
+        z1.A4SUB = record['a4sub']
+        z1.A4NOT = record['a4not']
+        z1.A4COMM = record['a4comm']
+        z1.B1SUB = record['b1sub']
+        z1.B1NOT = record['b1not']
+        z1.B1COMM = record['b1comm']
+        z1.B5SUB = record['b5sub']
+        z1.B5NOT = record['b5not']
+        z1.B5COMM = record['b5comm']
+        z1.B6SUB = record['b6sub']
+        z1.B6NOT = record['b6not']
+        z1.B6COMM = record['b6comm']
+        z1.B7SUB = record['b7sub']
+        z1.B7NOT = record['b7not']
+        z1.B7COMM = record['b7comm']
+        packet.insert(0, z1)
 
 
 def update_header(record, packet):
