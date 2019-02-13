@@ -50,33 +50,6 @@ class TestCLS(unittest.TestCase):
         clsform.add_cls(record, fpacket, fvp_forms)
         self.assertEqual(len(fpacket), 1, "Expected packet to have CLS")
 
-    def test_partial_cls_raises_error(self):
-        """Partially completed CLS should raise an exception."""
-        record = make_filled_record()
-        record['eng_preferred_language'] = ' '  # Make form partially complete.
-
-        ipacket = packet.Packet()
-        with self.assertRaises(Exception):
-            clsform.add_cls(record, ipacket, ivp_forms)
-
-        fpacket = packet.Packet()
-        with self.assertRaises(Exception):
-            clsform.add_cls(record, fpacket, fvp_forms)
-
-    def test_cls_proficiency_must_be_100(self):
-        """Language proficiency percentages must sum to 100."""
-        record = make_filled_record()
-        record['eng_percentage_english'] = '20'
-        record['eng_percentage_spanish'] = '9001'
-
-        ipacket = packet.Packet()
-        with self.assertRaises(Exception):
-            clsform.add_cls(record, ipacket, ivp_forms)
-
-        fpacket = packet.Packet()
-        with self.assertRaises(Exception):
-            clsform.add_cls(record, fpacket, fvp_forms)
-
     def test_check_cls_date(self):
         """
         Having a CLS with a visit date before June 1, 2017 raises an exception.

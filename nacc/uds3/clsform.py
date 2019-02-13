@@ -87,9 +87,9 @@ def add_cls(record, packet, forms, err=sys.stderr):
         int(record['visityr']), int(record['visitmo']), 1)
     cls_added = datetime.datetime(2017, 6, 1)
     if visit_date < cls_added:
-        msg = "[WARNING] CLS forms should not be in " + \
+        message = "CLS forms should not be in " + \
             "packets from before June 1, 2017 for PTID: " + ptid
-        print >> err, msg
+        raise Exception(message)
 
     if record['form_cls_linguistic_history_of_subject_complete'] != '2':
         message = "Could not parse packet as completed CLS form is not " + \
