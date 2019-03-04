@@ -65,18 +65,16 @@ def add_cls(record, packet, forms, err=sys.stderr):
     try:
         pct_spn = int(record['eng_percentage_spanish'])
     except ValueError:
-        raise Exception(
-            "[WARNING] eng_percentage_spanish is not an "
+        msg = "[WARNING] eng_percentage_spanish is not an " \
             "integer for PTID: " + ptid
-        )
+        print >> err, msg
 
     try:
         pct_eng = int(record['eng_percentage_english'])
     except ValueError:
-        raise Exception(
-            "[WARNING] eng_percentage_english is not an "
+        msg = "[WARNING] eng_percentage_english is not an " \
             "integer for PTID: " + ptid
-        )
+        print >> err, msg
 
     if pct_eng + pct_spn != 100:
         msg = "[WARNING] language proficiency " + \
