@@ -1,4 +1,5 @@
 import unittest
+import StringIO
 
 from nacc.uds3 import clsform
 from nacc.uds3 import packet
@@ -50,6 +51,42 @@ class TestCLS(unittest.TestCase):
         clsform.add_cls(record, fpacket, fvp_forms)
         self.assertEqual(len(fpacket), 1, "Expected packet to have CLS")
 
+    
+    def test_partial_cls_has_warning(self):
+        """Partially completed CLS should create a warning."""    
+        record = make_filled_record()   
+        record['eng_preferred_language'] = ' '  # Make form partially complete. 
+
+        ipacket = packet.Packet()
+        itrap = StringIO.StringIO()
+        clsform.add_cls(record, ipacket, ivp_forms, itrap)
+        assert itrap.getvalue() == "[WARNING] CLS form is incomplete for PTID: unknown\n"
+        itrap.close()
+
+        fpacket = packet.Packet()
+        ftrap = StringIO.StringIO()
+        clsform.add_cls(record, fpacket, fvp_forms, ftrap)
+        assert ftrap.getvalue() == "[WARNING] CLS form is incomplete for PTID: unknown\n"
+        ftrap.close()
+
+    def test_cls_proficiency_not_100_has_warning(self):    
+        """If language proficiency percentages do not add to 100, create a warning.""" 
+        record = make_filled_record()   
+        record['eng_percentage_english'] = '20' 
+        record['eng_percentage_spanish'] = '9001'   
+
+        ipacket = packet.Packet()
+        itrap = StringIO.StringIO()
+        clsform.add_cls(record, ipacket, ivp_forms, itrap)
+        assert itrap.getvalue() == "[WARNING] language proficiency percentages do not equal 100 for PTID : unknown\n"
+        itrap.close()
+
+        fpacket = packet.Packet()
+        ftrap = StringIO.StringIO()
+        clsform.add_cls(record, ipacket, ivp_forms, ftrap)
+        assert ftrap.getvalue() == "[WARNING] language proficiency percentages do not equal 100 for PTID : unknown\n"
+        ftrap.close()
+
     def test_check_cls_date(self):
         """
         Having a CLS with a visit date before June 1, 2017 raises an exception.
@@ -77,7 +114,6 @@ class TestCLS(unittest.TestCase):
         fpacket = packet.Packet()
         with self.assertRaises(Exception):
             clsform.add_cls(record, fpacket, fvp_forms)
-
 
 def make_blank_record():
     return {
@@ -116,7 +152,7 @@ def make_filled_record():
         'eng_proficiency_read_english': '1',
         'eng_proficiency_write_english': '1',
         'eng_proficiency_oral_english': '1',
-        'hispanic': '1',
+        'hispanic': '1',    # This is from Form A1
         'visityr': '2018',
         'visitmo': '11',
         'form_cls_linguistic_history_of_subject_complete': '2',
