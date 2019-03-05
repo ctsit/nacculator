@@ -1,7 +1,8 @@
 import datetime
+import sys
 
 
-def add_cls(record, packet, forms):
+def add_cls(record, packet, forms, err=sys.stderr):
     """
     Adds CLS form to packet.
 
@@ -51,12 +52,12 @@ def add_cls(record, packet, forms):
     if num_filled_fields == 0:
         return
 
-    # If only some of the fields are filled, raise error.
+    # If only some of the fields are filled, make note.
     ptid = record.get('ptid', 'unknown')
     if num_filled_fields != total_fields:
-        msg = "Could not parse packet as CLS form is incomplete for PTID: " \
+        msg = "[WARNING] CLS form is incomplete for PTID: " \
             + ptid
-        raise Exception(msg)
+        print >> err, msg
 
     # Otherwise, check percentages and dates before appending.
 
@@ -64,29 +65,27 @@ def add_cls(record, packet, forms):
     try:
         pct_spn = int(record['eng_percentage_spanish'])
     except ValueError:
-        raise Exception(
-            "Could not parse packet as eng_percentage_spanish is not an "
+        msg = "[WARNING] eng_percentage_spanish is not an " \
             "integer for PTID: " + ptid
-        )
+        print >> err, msg
 
     try:
         pct_eng = int(record['eng_percentage_english'])
     except ValueError:
-        raise Exception(
-            "Could not parse packet as eng_percentage_english is not an "
+        msg = "[WARNING] eng_percentage_english is not an " \
             "integer for PTID: " + ptid
-        )
+        print >> err, msg
 
     if pct_eng + pct_spn != 100:
-        message = "Could not parse packet as language proficiency " + \
+        msg = "[WARNING] language proficiency " + \
             "percentages do not equal 100 for PTID : " + ptid
-        raise Exception(message)
+        print >> err, msg
 
     visit_date = datetime.datetime(
         int(record['visityr']), int(record['visitmo']), 1)
     cls_added = datetime.datetime(2017, 6, 1)
     if visit_date < cls_added:
-        message = "Could not parse packet as CLS forms should not be in " + \
+        message = "CLS forms should not be in " + \
             "packets from before June 1, 2017 for PTID: " + ptid
         raise Exception(message)
 
