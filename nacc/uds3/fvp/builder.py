@@ -718,28 +718,7 @@ def build_uds3_fvp_form(record):
     d2.OTHCONDX  = record['fu_othcondx']
     packet.append(d2)
 
-    post_Z1X = False
-    if (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and int(record['visitmo'])>4) or \
-        (int(record['visityr'])==2018 and int(record['visitmo'])==4 and int(record['visitday'])>=2):
-        post_Z1X = True
-
-    if post_Z1X:
-        if(len(record['a1lang'].strip())==0 or len(record['clssubmitted'].strip())==0):
-            ptid = record['ptid']
-            message = "Could not parse packet as Z1X form is missing data"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
-        else:
-            addZ1X(record, packet)
-    else:
-        if(len(record['a2sub'].strip())==0 or len(record['b7sub'].strip())==0):
-            ptid = record['ptid']
-            message = "Could not parse packet as Z1 form is missing data"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
-        else:
-            addZ1(record, packet)
-
+    add_z1_or_z1x(record, packet)
 
     update_header(record, packet)
     return packet
@@ -749,217 +728,207 @@ def add_c1s_or_c2(record, packet):
     # Among C1S and C2 forms, one must be filled, one must be empty. After 2017/10/23, must be C2
     if (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and int(record['visitmo'])>10) or \
        (int(record['visityr'])==2017 and int(record['visitmo'])==10 and int(record['visitday'])>=23):
-        if(len(record['fu_mocacomp'].strip())==0 or len(record['fu_cogstat_c2'].strip())==0):
-            ptid = record['ptid']
-            message = "Could not parse packet as C2 form is missing data"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
-        else:
-            c2 = fvp_forms.FormC2()
-            c2.MOCACOMP  = record['fu_mocacomp']
-            c2.MOCAREAS  = record['fu_mocareas']
-            c2.MOCALOC   = record['fu_mocaloc']
-            c2.MOCALAN   = record['fu_mocalan']
-            c2.MOCALANX  = record['fu_mocalanx']
-            c2.MOCAVIS   = record['fu_mocavis']
-            c2.MOCAHEAR  = record['fu_mocahear']
-            c2.MOCATOTS  = record['fu_mocatots']
-            c2.MOCATRAI  = record['fu_mocatrai']
-            c2.MOCACUBE  = record['fu_mocacube']
-            c2.MOCACLOC  = record['fu_mocacloc']
-            c2.MOCACLON  = record['fu_mocaclon']
-            c2.MOCACLOH  = record['fu_mocacloh']
-            c2.MOCANAMI  = record['fu_mocanami']
-            c2.MOCAREGI  = record['fu_mocaregi']
-            c2.MOCADIGI  = record['fu_mocadigi']
-            c2.MOCALETT  = record['fu_mocalett']
-            c2.MOCASER7  = record['fu_mocaser7']
-            c2.MOCAREPE  = record['fu_mocarepe']
-            c2.MOCAFLUE  = record['fu_mocaflue']
-            c2.MOCAABST  = record['fu_mocaabst']
-            c2.MOCARECN  = record['fu_mocarecn']
-            c2.MOCARECC  = record['fu_mocarecc']
-            c2.MOCARECR  = record['fu_mocarecr']
-            c2.MOCAORDT  = record['fu_mocaordt']
-            c2.MOCAORMO  = record['fu_mocaormo']
-            c2.MOCAORYR  = record['fu_mocaoryr']
-            c2.MOCAORDY  = record['fu_mocaordy']
-            c2.MOCAORPL  = record['fu_mocaorpl']
-            c2.MOCAORCT  = record['fu_mocaorct']
-            c2.NPSYCLOC  = record['fu_npsycloc_c2'] #TODO
-            c2.NPSYLAN   = record['fu_npsylan_c2'] #TODO
-            c2.NPSYLANX  = record['fu_npsylanx_c2'] #TODO
-            c2.CRAFTVRS  = record['fu_craftvrs']
-            c2.CRAFTURS  = record['fu_crafturs']
-            c2.UDSBENTC  = record['fu_udsbentc']
-            c2.DIGFORCT  = record['fu_digforct']
-            c2.DIGFORSL  = record['fu_digforsl']
-            c2.DIGBACCT  = record['fu_digbacct']
-            c2.DIGBACLS  = record['fu_digbacls']
-            c2.ANIMALS   = record['fu_animals_c2'] #TODO
-            c2.VEG       = record['fu_veg_c2'] #TODO
-            c2.TRAILA    = record['fu_traila_c2'] #TODO
-            c2.TRAILARR  = record['fu_trailarr_c2'] #TODO
-            c2.TRAILALI  = record['fu_trailali_c2'] #TODO
-            c2.TRAILB    = record['fu_trailb_c2'] #TODO
-            c2.TRAILBRR  = record['fu_trailbrr_c2'] #TODO
-            c2.TRAILBLI  = record['fu_trailbli_c2'] #TODO
-            c2.CRAFTDVR  = record['fu_craftdvr']
-            c2.CRAFTDRE  = record['fu_craftdre']
-            c2.CRAFTDTI  = record['fu_craftdti']
-            c2.CRAFTCUE  = record['fu_craftcue']
-            c2.UDSBENTD  = record['fu_udsbentd']
-            c2.UDSBENRS  = record['fu_udsbenrs']
-            c2.MINTTOTS  = record['fu_minttots']
-            c2.MINTTOTW  = record['fu_minttotw']
-            c2.MINTSCNG  = record['fu_mintscng']
-            c2.MINTSCNC  = record['fu_mintscnc']
-            c2.MINTPCNG  = record['fu_mintpcng']
-            c2.MINTPCNC  = record['fu_mintpcnc']
-            c2.UDSVERFC  = record['fu_udsverfc']
-            c2.UDSVERFN  = record['fu_udsverfn']
-            c2.UDSVERNF  = record['fu_udsvernf']
-            c2.UDSVERLC  = record['fu_udsverlc']
-            c2.UDSVERLR  = record['fu_udsverlr']
-            c2.UDSVERLN  = record['fu_udsverln']
-            c2.UDSVERTN  = record['fu_udsvertn']
-            c2.UDSVERTE  = record['fu_udsverte']
-            c2.UDSVERTI  = record['fu_udsverti']
-            c2.COGSTAT   = record['fu_cogstat_c2'] #TODO
-            packet.append(c2)
+        c2 = fvp_forms.FormC2()
+        c2.MOCACOMP  = record['fu_mocacomp']
+        c2.MOCAREAS  = record['fu_mocareas']
+        c2.MOCALOC   = record['fu_mocaloc']
+        c2.MOCALAN   = record['fu_mocalan']
+        c2.MOCALANX  = record['fu_mocalanx']
+        c2.MOCAVIS   = record['fu_mocavis']
+        c2.MOCAHEAR  = record['fu_mocahear']
+        c2.MOCATOTS  = record['fu_mocatots']
+        c2.MOCATRAI  = record['fu_mocatrai']
+        c2.MOCACUBE  = record['fu_mocacube']
+        c2.MOCACLOC  = record['fu_mocacloc']
+        c2.MOCACLON  = record['fu_mocaclon']
+        c2.MOCACLOH  = record['fu_mocacloh']
+        c2.MOCANAMI  = record['fu_mocanami']
+        c2.MOCAREGI  = record['fu_mocaregi']
+        c2.MOCADIGI  = record['fu_mocadigi']
+        c2.MOCALETT  = record['fu_mocalett']
+        c2.MOCASER7  = record['fu_mocaser7']
+        c2.MOCAREPE  = record['fu_mocarepe']
+        c2.MOCAFLUE  = record['fu_mocaflue']
+        c2.MOCAABST  = record['fu_mocaabst']
+        c2.MOCARECN  = record['fu_mocarecn']
+        c2.MOCARECC  = record['fu_mocarecc']
+        c2.MOCARECR  = record['fu_mocarecr']
+        c2.MOCAORDT  = record['fu_mocaordt']
+        c2.MOCAORMO  = record['fu_mocaormo']
+        c2.MOCAORYR  = record['fu_mocaoryr']
+        c2.MOCAORDY  = record['fu_mocaordy']
+        c2.MOCAORPL  = record['fu_mocaorpl']
+        c2.MOCAORCT  = record['fu_mocaorct']
+        c2.NPSYCLOC  = record['fu_npsycloc_c2'] #TODO
+        c2.NPSYLAN   = record['fu_npsylan_c2'] #TODO
+        c2.NPSYLANX  = record['fu_npsylanx_c2'] #TODO
+        c2.CRAFTVRS  = record['fu_craftvrs']
+        c2.CRAFTURS  = record['fu_crafturs']
+        c2.UDSBENTC  = record['fu_udsbentc']
+        c2.DIGFORCT  = record['fu_digforct']
+        c2.DIGFORSL  = record['fu_digforsl']
+        c2.DIGBACCT  = record['fu_digbacct']
+        c2.DIGBACLS  = record['fu_digbacls']
+        c2.ANIMALS   = record['fu_animals_c2'] #TODO
+        c2.VEG       = record['fu_veg_c2'] #TODO
+        c2.TRAILA    = record['fu_traila_c2'] #TODO
+        c2.TRAILARR  = record['fu_trailarr_c2'] #TODO
+        c2.TRAILALI  = record['fu_trailali_c2'] #TODO
+        c2.TRAILB    = record['fu_trailb_c2'] #TODO
+        c2.TRAILBRR  = record['fu_trailbrr_c2'] #TODO
+        c2.TRAILBLI  = record['fu_trailbli_c2'] #TODO
+        c2.CRAFTDVR  = record['fu_craftdvr']
+        c2.CRAFTDRE  = record['fu_craftdre']
+        c2.CRAFTDTI  = record['fu_craftdti']
+        c2.CRAFTCUE  = record['fu_craftcue']
+        c2.UDSBENTD  = record['fu_udsbentd']
+        c2.UDSBENRS  = record['fu_udsbenrs']
+        c2.MINTTOTS  = record['fu_minttots']
+        c2.MINTTOTW  = record['fu_minttotw']
+        c2.MINTSCNG  = record['fu_mintscng']
+        c2.MINTSCNC  = record['fu_mintscnc']
+        c2.MINTPCNG  = record['fu_mintpcng']
+        c2.MINTPCNC  = record['fu_mintpcnc']
+        c2.UDSVERFC  = record['fu_udsverfc']
+        c2.UDSVERFN  = record['fu_udsverfn']
+        c2.UDSVERNF  = record['fu_udsvernf']
+        c2.UDSVERLC  = record['fu_udsverlc']
+        c2.UDSVERLR  = record['fu_udsverlr']
+        c2.UDSVERLN  = record['fu_udsverln']
+        c2.UDSVERTN  = record['fu_udsvertn']
+        c2.UDSVERTE  = record['fu_udsverte']
+        c2.UDSVERTI  = record['fu_udsverti']
+        c2.COGSTAT   = record['fu_cogstat_c2'] #TODO
+        packet.append(c2)
     else:
-        if(len(record['fu_mmsecomp'].strip())==0 or len(record['fu_cogstat'].strip())==0):
-            ptid = record['ptid']
-            message = "Could not parse packet as C1S form is missing data"
-            message = message + " for PTID : " + ("unknown" if not ptid else ptid)
-            raise Exception(message)
-        else:
-            c1s = fvp_forms.FormC1S()
-            c1s.MMSECOMP  = record['fu_mmsecomp']
-            c1s.MMSEREAS  = record['fu_mmsereas']
-            c1s.MMSELOC   = record['fu_mmseloc']
-            c1s.MMSELAN   = record['fu_mmselan']
-            c1s.MMSELANX  = record['fu_mmselanx']
-            c1s.MMSEVIS   = record['fu_mmsevis']
-            c1s.MMSEHEAR  = record['fu_mmsehear']
-            c1s.MMSEORDA  = record['fu_mmseorda']
-            c1s.MMSEORLO  = record['fu_mmseorlo']
-            c1s.PENTAGON  = record['fu_pentagon']
-            c1s.MMSE      = record['fu_mmse']
-            c1s.NPSYCLOC  = record['fu_npsycloc']
-            c1s.NPSYLAN   = record['fu_npsylan']
-            c1s.NPSYLANX  = record['fu_npsylanx']
-            c1s.LOGIMO    = record['fu_logimo']
-            c1s.LOGIDAY   = record['fu_logiday'] #TODO
-            c1s.LOGIYR    = record['fu_logiyr'] #TODO
-            c1s.LOGIPREV  = record['fu_logiprev']
-            c1s.LOGIMEM   = record['fu_logimem']
-            c1s.UDSBENTC  = record['fu_udsbentc_c1'] #TODO
-            c1s.DIGIF     = record['fu_digif']
-            c1s.DIGIFLEN  = record['fu_digiflen']
-            c1s.DIGIB     = record['fu_digib']
-            c1s.DIGIBLEN  = record['fu_digiblen']
-            c1s.ANIMALS   = record['fu_animals']
-            c1s.VEG       = record['fu_veg']
-            c1s.TRAILA    = record['fu_traila']
-            c1s.TRAILARR  = record['fu_trailarr']
-            c1s.TRAILALI  = record['fu_trailali']
-            c1s.TRAILB    = record['fu_trailb']
-            c1s.TRAILBRR  = record['fu_trailbrr']
-            c1s.TRAILBLI  = record['fu_trailbli']
-            c1s.MEMUNITS  = record['fu_memunits']
-            c1s.MEMTIME   = record['fu_memtime']
-            c1s.UDSBENTD  = record['fu_udsbentd_c1'] #TODO
-            c1s.UDSBENRS  = record['fu_udsbenrs_c1'] #TODO
-            c1s.BOSTON    = record['fu_boston']
-            c1s.UDSVERFC  = record['fu_udsverfc_c1'] #TODO
-            c1s.UDSVERFN  = record['fu_udsverfn_c1'] #TODO
-            c1s.UDSVERNF  = record['fu_udsvernf_c1'] #TODO
-            c1s.UDSVERLC  = record['fu_udsverlc_c1'] #TODO
-            c1s.UDSVERLR  = record['fu_udsverlr_c1'] #TODO
-            c1s.UDSVERLN  = record['fu_udsverln_c1'] #TODO
-            c1s.UDSVERTN  = record['fu_udsvertn_c1'] #TODO
-            c1s.UDSVERTE  = record['fu_udsverte_c1'] #TODO
-            c1s.UDSVERTI  = record['fu_udsverti_c1'] #TODO
-            c1s.COGSTAT   = record['fu_cogstat']
-            packet.append(c1s)
+        c1s = fvp_forms.FormC1S()
+        c1s.MMSECOMP  = record['fu_mmsecomp']
+        c1s.MMSEREAS  = record['fu_mmsereas']
+        c1s.MMSELOC   = record['fu_mmseloc']
+        c1s.MMSELAN   = record['fu_mmselan']
+        c1s.MMSELANX  = record['fu_mmselanx']
+        c1s.MMSEVIS   = record['fu_mmsevis']
+        c1s.MMSEHEAR  = record['fu_mmsehear']
+        c1s.MMSEORDA  = record['fu_mmseorda']
+        c1s.MMSEORLO  = record['fu_mmseorlo']
+        c1s.PENTAGON  = record['fu_pentagon']
+        c1s.MMSE      = record['fu_mmse']
+        c1s.NPSYCLOC  = record['fu_npsycloc']
+        c1s.NPSYLAN   = record['fu_npsylan']
+        c1s.NPSYLANX  = record['fu_npsylanx']
+        c1s.LOGIMO    = record['fu_logimo']
+        c1s.LOGIDAY   = record['fu_logiday'] #TODO
+        c1s.LOGIYR    = record['fu_logiyr'] #TODO
+        c1s.LOGIPREV  = record['fu_logiprev']
+        c1s.LOGIMEM   = record['fu_logimem']
+        c1s.UDSBENTC  = record['fu_udsbentc_c1'] #TODO
+        c1s.DIGIF     = record['fu_digif']
+        c1s.DIGIFLEN  = record['fu_digiflen']
+        c1s.DIGIB     = record['fu_digib']
+        c1s.DIGIBLEN  = record['fu_digiblen']
+        c1s.ANIMALS   = record['fu_animals']
+        c1s.VEG       = record['fu_veg']
+        c1s.TRAILA    = record['fu_traila']
+        c1s.TRAILARR  = record['fu_trailarr']
+        c1s.TRAILALI  = record['fu_trailali']
+        c1s.TRAILB    = record['fu_trailb']
+        c1s.TRAILBRR  = record['fu_trailbrr']
+        c1s.TRAILBLI  = record['fu_trailbli']
+        c1s.MEMUNITS  = record['fu_memunits']
+        c1s.MEMTIME   = record['fu_memtime']
+        c1s.UDSBENTD  = record['fu_udsbentd_c1'] #TODO
+        c1s.UDSBENRS  = record['fu_udsbenrs_c1'] #TODO
+        c1s.BOSTON    = record['fu_boston']
+        c1s.UDSVERFC  = record['fu_udsverfc_c1'] #TODO
+        c1s.UDSVERFN  = record['fu_udsverfn_c1'] #TODO
+        c1s.UDSVERNF  = record['fu_udsvernf_c1'] #TODO
+        c1s.UDSVERLC  = record['fu_udsverlc_c1'] #TODO
+        c1s.UDSVERLR  = record['fu_udsverlr_c1'] #TODO
+        c1s.UDSVERLN  = record['fu_udsverln_c1'] #TODO
+        c1s.UDSVERTN  = record['fu_udsvertn_c1'] #TODO
+        c1s.UDSVERTE  = record['fu_udsverte_c1'] #TODO
+        c1s.UDSVERTI  = record['fu_udsverti_c1'] #TODO
+        c1s.COGSTAT   = record['fu_cogstat']
+        packet.append(c1s)
 
 
-def addZ1(record, packet):
-    z1 = fvp_forms.FormZ1()
-    z1.A2SUB     = record['fu_a2sub']
-    z1.A2NOT     = record['fu_a2not']
-    z1.A2COMM    = record['fu_a2comm']
-    z1.A3SUB     = record['fu_a3sub']
-    z1.A3NOT     = record['fu_a3not']
-    z1.A3COMM    = record['fu_a3comm']
-    z1.A4SUB     = record['fu_a4sub']
-    z1.A4NOT     = record['fu_a4not']
-    z1.A4COMM    = record['fu_a4comm']
-    z1.B1SUB     = record['fu_b1sub']
-    z1.B1NOT     = record['fu_b1not']
-    z1.B1COMM    = record['fu_b1comm']
-    z1.B5SUB     = record['fu_b5sub']
-    z1.B5NOT     = record['fu_b5not']
-    z1.B5COMM    = record['fu_b5comm']
-    z1.B6SUB     = record['fu_b6sub']
-    z1.B6NOT     = record['fu_b6not']
-    z1.B6COMM    = record['fu_b6comm']
-    z1.B7SUB     = record['fu_b7sub']
-    z1.B7NOT     = record['fu_b7not']
-    z1.B7COMM    = record['fu_b7comm']
-    packet.insert(0,z1)
-
-def addZ1X(record, packet):
-    z1x = fvp_forms.FormZ1X()
-    z1x.LANGA1 = record['fu_a1lang']
-    z1x.LANGA2 = record['fu_a2lang']
-    z1x.A2SUB = record['fu_a2sub_73fdc7']
-    z1x.A2NOT = record['fu_a2not_fd65a7']
-    z1x.LANGA3 = record['fu_a3lang']
-    z1x.A3SUB = record['fu_a3sub_c2a68b']
-    z1x.A3NOT = record['fu_a3not_f7c411']
-    z1x.LANGA4 = record['fu_a4lang']
-    z1x.A4SUB = record['fu_a4sub_143f22']
-    z1x.A4NOT = record['fu_a4not_b95e64']
-    z1x.LANGB1 = record['fu_b1lang']
-    z1x.B1SUB = record['fu_b1sub_c03500']
-    z1x.B1NOT = record['fu_b1not_0a7e9f']
-    z1x.LANGB4 = record['fu_b4lang']
-    z1x.LANGB5 = record['fu_b5lang']
-    z1x.B5SUB = record['fu_b5sub_51a694']
-    z1x.B5NOT = record['b5not_fvpz1x']
-    z1x.LANGB6 = record['fu_b6lang']
-    z1x.B6SUB = record['fu_b6sub_db439d']
-    z1x.B6NOT = record['fu_b6not_310244']
-    z1x.LANGB7 = record['fu_b7lang']
-    z1x.B7SUB = record['fu_b7sub_21a95f']
-    z1x.B7NOT = record['fu_b7not_dccb30']
-    z1x.LANGB8 = record['fu_b8lang']
-    z1x.LANGB9 = record['fu_b9lang']
-    z1x.LANGC2 = record['fu_c2lang']
-    z1x.LANGD1 = record['fu_d1lang']
-    z1x.LANGD2 = record['fu_d2lang']
-    z1x.LANGA3A = record['fu_a3alang']
-    z1x.FTDA3AFS = record['fu_a3asubmitted']
-    z1x.FTDA3AFR = record['fu_a3anot']
-    z1x.LANGB3F = record['fu_b3flang']
-    z1x.LANGB9F = record['fu_b9flang']
-    z1x.LANGC1F = record['fu_c1flang']
-    z1x.LANGC2F = record['fu_c2flang']
-    z1x.LANGC3F = record['fu_c3flang']
-    z1x.LANGC4F = record['fu_c4flang']
-    z1x.FTDC4FS = record['fu_c4fsubmitted']
-    z1x.FTDC4FR = record['fu_c4fnot']
-    z1x.FTDC5FS = record['fu_c5fsubmitted']
-    z1x.FTDC5FR = record['fu_c5fnot']
-    z1x.FTDC6FS = record['fu_c6fsubmitted']
-    z1x.FTDC6FR = record['fu_c6fnot']
-    z1x.LANGE2F = record['fu_e2flang']
-    z1x.LANGE3F = record['fu_e3flang']
-    z1x.LANGCLS = record['fu_clslang']
-    z1x.CLSSUB  = record['fu_clssubmitted']
-    packet.insert(0, z1x)
+def add_z1_or_z1x(record, packet):
+    # Among Z1 and Z1X forms, one must be filled, one must be empty. After 2018/04/02, must be Z1X
+    if (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and int(record['visitmo'])>4) or \
+        (int(record['visityr'])==2018 and int(record['visitmo'])==4 and int(record['visitday'])>=2):
+        z1x = fvp_forms.FormZ1X()
+        z1x.LANGA1 = record['fu_a1lang']
+        z1x.LANGA2 = record['fu_a2lang']
+        z1x.A2SUB = record['fu_a2sub_73fdc7']
+        z1x.A2NOT = record['fu_a2not_fd65a7']
+        z1x.LANGA3 = record['fu_a3lang']
+        z1x.A3SUB = record['fu_a3sub_c2a68b']
+        z1x.A3NOT = record['fu_a3not_f7c411']
+        z1x.LANGA4 = record['fu_a4lang']
+        z1x.A4SUB = record['fu_a4sub_143f22']
+        z1x.A4NOT = record['fu_a4not_b95e64']
+        z1x.LANGB1 = record['fu_b1lang']
+        z1x.B1SUB = record['fu_b1sub_c03500']
+        z1x.B1NOT = record['fu_b1not_0a7e9f']
+        z1x.LANGB4 = record['fu_b4lang']
+        z1x.LANGB5 = record['fu_b5lang']
+        z1x.B5SUB = record['fu_b5sub_51a694']
+        z1x.B5NOT = record['b5not_fvpz1x']
+        z1x.LANGB6 = record['fu_b6lang']
+        z1x.B6SUB = record['fu_b6sub_db439d']
+        z1x.B6NOT = record['fu_b6not_310244']
+        z1x.LANGB7 = record['fu_b7lang']
+        z1x.B7SUB = record['fu_b7sub_21a95f']
+        z1x.B7NOT = record['fu_b7not_dccb30']
+        z1x.LANGB8 = record['fu_b8lang']
+        z1x.LANGB9 = record['fu_b9lang']
+        z1x.LANGC2 = record['fu_c2lang']
+        z1x.LANGD1 = record['fu_d1lang']
+        z1x.LANGD2 = record['fu_d2lang']
+        z1x.LANGA3A = record['fu_a3alang']
+        z1x.FTDA3AFS = record['fu_a3asubmitted']
+        z1x.FTDA3AFR = record['fu_a3anot']
+        z1x.LANGB3F = record['fu_b3flang']
+        z1x.LANGB9F = record['fu_b9flang']
+        z1x.LANGC1F = record['fu_c1flang']
+        z1x.LANGC2F = record['fu_c2flang']
+        z1x.LANGC3F = record['fu_c3flang']
+        z1x.LANGC4F = record['fu_c4flang']
+        z1x.FTDC4FS = record['fu_c4fsubmitted']
+        z1x.FTDC4FR = record['fu_c4fnot']
+        z1x.FTDC5FS = record['fu_c5fsubmitted']
+        z1x.FTDC5FR = record['fu_c5fnot']
+        z1x.FTDC6FS = record['fu_c6fsubmitted']
+        z1x.FTDC6FR = record['fu_c6fnot']
+        z1x.LANGE2F = record['fu_e2flang']
+        z1x.LANGE3F = record['fu_e3flang']
+        z1x.LANGCLS = record['fu_clslang']
+        z1x.CLSSUB  = record['fu_clssubmitted']
+        packet.insert(0, z1x)
+    else:
+        z1 = fvp_forms.FormZ1()
+        z1.A2SUB     = record['fu_a2sub']
+        z1.A2NOT     = record['fu_a2not']
+        z1.A2COMM    = record['fu_a2comm']
+        z1.A3SUB     = record['fu_a3sub']
+        z1.A3NOT     = record['fu_a3not']
+        z1.A3COMM    = record['fu_a3comm']
+        z1.A4SUB     = record['fu_a4sub']
+        z1.A4NOT     = record['fu_a4not']
+        z1.A4COMM    = record['fu_a4comm']
+        z1.B1SUB     = record['fu_b1sub']
+        z1.B1NOT     = record['fu_b1not']
+        z1.B1COMM    = record['fu_b1comm']
+        z1.B5SUB     = record['fu_b5sub']
+        z1.B5NOT     = record['fu_b5not']
+        z1.B5COMM    = record['fu_b5comm']
+        z1.B6SUB     = record['fu_b6sub']
+        z1.B6NOT     = record['fu_b6not']
+        z1.B6COMM    = record['fu_b6comm']
+        z1.B7SUB     = record['fu_b7sub']
+        z1.B7NOT     = record['fu_b7not']
+        z1.B7COMM    = record['fu_b7comm']
+        packet.insert(0,z1)
 
 
 def update_header(record, packet):

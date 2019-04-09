@@ -172,7 +172,12 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             print >> err, "\n".join(warnings)
 
         for form in packet:
-            print >> out, form
+            try:
+                print >> out, form
+            except AssertionError as e:
+                print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
+                traceback.print_exc()
+                continue
 
 
 filters_names = {
