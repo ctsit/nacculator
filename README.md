@@ -6,6 +6,11 @@ NACCulator
 Converts a CSV data file exported from REDCap into the NACC's UDS3 fixed-width
 format.
 
+#### Note
+NACCulator uses Python 2.
+
+If you are having trouble with Cappy, you may need to clone [the repo](https://github.com/ctsit/cappy) and then install it from your local instance using
+`pip install -e <local/path/to/cappy>`
 
 Files
 -----
@@ -203,6 +208,30 @@ working directory called `corrected`._
     $ edit ../nacc/uds3/ivp/forms
 
 * Resources for uds3 fvp forms are available [here](https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/).
+
+
+
+Example Workflow
+----------------
+Once you have edited the `nacculator_cfg.ini` file with your api token and desired filters, you can get a filtered csv of the REDCap data with
+
+`python run_filters.py nacculator_cfg.ini`
+
+This will create a run folder with the current date that contains the csv and each iteration of filter, ending with `final_update.csv`.
+You will likely need to split apart the IVP and FVP visits.
+
+`bash split_ivp_fvp.sh $run_folder/final_update.csv`
+
+The resulting files will not be in the run folder created by `run_filters.py`. They will be in the base directory. You can move them if you would like to, but you will need to modify the filepaths in the following commands.
+
+Next you will need to run the actual `redcap2nacc.py` program to produced the fixed width text file for NACC. As you have split the IVP and FVP visits, you will run the program twice, using each flag once.
+
+`PYTHONPATH=. python2 nacc/redcap2nacc.py -ivp < initial_visits.csv > $run_folder/iv_nacc_complete.txt 2> $run_folder/ivp_errors.txt`
+
+`PYTHONPATH=. python2 nacc/redcap2nacc.py -fvp < followup_visits.csv > $run_folder/fv_nacc_complete.txt 2> $run_folder/fvp_errors.txt`
+
+This will place the text files in the run folder created earlier, as well as a log of the run which will have any errors encountered.
+
 
 
 Testing
