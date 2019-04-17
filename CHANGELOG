@@ -1,5 +1,27 @@
 Changelog
 =========
+## [0.6.0] - 2019-04-17
+### Summary
+
+Updated readme file for run instructions, added more tests, corrected assertion handling, add split script
+
+### Added
+ * Handle assertion errors gracefully (Naomi Braun)
+ * Add tests for CLS issues that cause Warnings (Naomi Braun)
+ * Fix errors caused by reformatting (Naomi Braun)
+ * Restore packet rejection for CLS form on an early packet and remove outdated tests (Naomi Braun)
+ * Create z1/z1x function and tests (Naomi Braun)
+ * Add script for ivp/fvp split (Naomi Braun)
+
+### Changed
+ * Adjust tests for new expected behavior (Naomi Braun)
+ * Update README with example workflow reflecting our process (Naomi Braun)
+ * Stop most CLS errors from preventing packet upload (Naomi Braun)
+
+### Fixed
+ * Fix typo in comment (Naomi Braun)
+ * Remove error for missing forms on Z1/Z1X and C1S/C2 (Naomi Braun)
+
 
 ## [0.5.0] - 2019-01-19
 ### Summary
