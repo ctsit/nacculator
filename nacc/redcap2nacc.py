@@ -5,12 +5,13 @@
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
-
+import os
 import csv
 import re
 import sys
 import argparse
 import traceback
+from subprocess import call
 
 from nacc.uds3 import blanks
 from nacc.uds3.ivp import builder as ivp_builder
@@ -142,6 +143,16 @@ def set_blanks_to_zero(packet):
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
+
+    if options.auto:
+        if options.ivp:
+            out = open(os.path.join(options.folder,'iv_nacc_complete.txt'),'w')
+            err = open(os.path.join(options.folder,'ivp_errors.txt'),'w')
+        elif options.fvp:
+            out = open(os.path.join(options.folder,'fv_nacc_complete.txt'),'w')
+            err = open(os.path.join(options.folder,'fvp_errors.txt'),'w')
+       
+
     reader = csv.DictReader(fp)
     for record in reader:
         print >> err, "[START] ptid : " + str(record['ptid'])
@@ -152,11 +163,14 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 packet = np_builder.build_uds3_np_form(record)
             elif options.fvp:
                 packet = fvp_builder.build_uds3_fvp_form(record)
+           
+
+
 
         except Exception:
             if 'ptid' in record:
                 print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
-            traceback.print_exc()
+            traceback.print_exc(file=err)
             continue
 
         if not options.np:
@@ -176,7 +190,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 print >> out, form
             except AssertionError as e:
                 print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
-                traceback.print_exc()
+                traceback.print_exc(file=err) 
                 continue
 
 
@@ -195,11 +209,14 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(description='Process redcap form output to nacculator.')
 
     option_group = parser.add_mutually_exclusive_group()
+    option_group.add_argument('-auto', action='store_true', dest='auto', help='Set this flag to automatically process both ivp and fvp data')
     option_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
     option_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data')
     option_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data')
     option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
-
+    
+    
+    parser.add_argument('-folder', action='store', dest='folder', help='Path of the run folder containing file to be processed.')
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
     parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
     parser.add_argument('-ptid', action='store', dest='ptid', help='Ptid for which you need the records')
@@ -207,9 +224,10 @@ def parse_args(args=None):
     parser.add_argument('-vtype', action='store', dest='vtype', help='Ptid for which you need the records')
 
     options = parser.parse_args(args)
+    
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.np or options.filter):
+    if not (options.auto or options.ivp or options.fvp or options.np or options.filter):
         options.ivp = True
 
     return options
@@ -220,20 +238,43 @@ def main():
     Reads a REDCap exported CSV, data file, then prints it out in NACC's format
     """
     options = parse_args()
+    
+    
 
-    fp = sys.stdin if options.file is None else open(options.file, 'r')
+    if options.auto:
 
+            if options.folder is None:
+                sys.exit("Please provide path of the folder that contains final_Update.csv file")
+            else:
+                options.file = os.path.join(options.folder,'final_Update.csv')
+
+            call(['bash', 'split_ivp_fvp.sh',options.file])
+            print "Writing output files to folder: "+options.folder
+            options.ivp = True
+            fp_initial = open('initial_visits.csv', 'r')
+            convert(fp_initial,options,)
+            options.ivp = False
+            options.fvp = True
+            fp_final= open('followup_visits.csv', 'r')
+            convert(fp_final,options)
+           
+
+      
+       
     # Place holder for future. May need to output to a specific file in future.
     output = sys.stdout
-
-    if options.filter:
+     
+    elif options.filter:
+        fp = sys.stdin if options.file is None else open(options.file, 'r')
         if options.filter == "getPtid":
             filters.filter_extract_ptid(fp, options.ptid, options.vnum, options.vtype, output)
         else:
             filter_method = 'filter_' + filters_names[options.filter]
             filter_func = getattr(filters, filter_method)
             filter_func(fp, options.filter_meta, output)
+
     else:
+        fp = sys.stdin if options.file is None else open(options.file, 'r')
         convert(fp, options)
 
 
