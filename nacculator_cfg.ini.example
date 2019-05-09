@@ -10,6 +10,8 @@ redcap_server: Your Redcap Server
 filepath: path/to/current-db-subjects.csv
 
 [filter_fix_headers]
+# Write in format:
+# old_header: corrected_header
 c1s_2a_npsylan: c1s_2_npsycloc
 c1s_2a_npsylanx: c1s_2a_npsylan
 b6s_2a1_npsylanx: c1s_2a1_npsylanx
