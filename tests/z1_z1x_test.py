@@ -167,7 +167,6 @@ def make_blank_fvp():
         'fu_langa4': '',
         'fu_a4sub': '',
         'fu_a4not': '',
-        'fu_langa5': '',
         'fu_langb1': '',
         'fu_b1sub': '',
         'fu_b1not': '',
