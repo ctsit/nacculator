@@ -163,7 +163,12 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             set_blanks_to_zero(packet)
 
         warnings = []
-        warnings += check_blanks(packet)
+        try:
+            warnings += check_blanks(packet)
+        except KeyError:
+            print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
+            traceback.print_exc()
+            continue
 
         if not options.np:
             warnings += check_single_select(packet)
