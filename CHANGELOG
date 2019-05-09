@@ -1,5 +1,16 @@
 Changelog
 =========
+## [0.6.1] - 2019-05-19
+### Summary
+
+Fix field names and blanks circumstances.
+
+### Fixed
+ * Incorrect fields used in blanks check on D1 form (Naomi Braun, Nicolas May)
+ * Field names missing in blanks check on A3 form (Naomi Braun)
+ * Adjust builder files to use correct field names for Z1X form (Naomi Braun)
+
+
 ## [0.6.0] - 2019-04-17
 ### Summary
 
