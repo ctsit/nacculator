@@ -137,9 +137,9 @@ def filter_remove_ptid(input_ptr, filter_config, output_ptr):
     write_headers(reader, output)
     for record in reader:
         prog = re.compile(regex_exp)
-        if test_all_ptid(bad_ptids_list,record['ptid']):        #have not tested removing specific bad ptid
+        if record['ptid'] in bad_ptids_list:
             print >> sys.stderr, 'Removed ptid : ' + record['ptid']
-        elif test_all_ptid(good_ptids_list,record['ptid']):     
+        elif record['ptid'] in good_ptids_list:     
             output.writerow(record)
         elif prog.match(record['ptid'])!=None:
             output.writerow(record)
@@ -231,11 +231,6 @@ def filter_csv_vnum(Ptid, visit_num, record):
 def filter_csv_ptid(Ptid, record):
     if record['ptid'] == Ptid:
         return record
-
-def test_all_ptid(ptid_list, record):  
-    for x in ptid_list:
-        if record == x:
-            return True
 
 def ptid_string_to_list(ptid_string):
     li = list(ptid_string.split(","))
