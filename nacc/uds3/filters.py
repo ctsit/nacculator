@@ -128,8 +128,10 @@ def filter_fix_headers(input_file, header_mapping, output_file):
 @validate
 def filter_remove_ptid(input_ptr, filter_config, output_ptr):
     regex_exp = filter_config['ptid_format']
-    good_ptids_list = load_special_case_ptid('good_ptid',filter_config)
-    bad_ptids_list = load_special_case_ptid('bad_ptid',filter_config)
+    good_ptids_string = filter_config['good_ptid'] 
+    bad_ptids_string = filter_config['bad_ptid'] 
+    good_ptids_list = ptid_string_to_list(good_ptids_string)
+    bad_ptids_list = ptid_string_to_list(bad_ptids_string)
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -229,11 +231,7 @@ def filter_csv_vnum(Ptid, visit_num, record):
 def filter_csv_ptid(Ptid, record):
     if record['ptid'] == Ptid:
         return record
-#here
-def load_special_case_ptid(case_name,filter_config):
-    try:
-        ptids_string = filter_config[case_name]
-        li = list(ptids_string.split(","))
-        return li
-    except KeyError:
-        return []
+
+def ptid_string_to_list(ptid_string):
+    li = list(ptid_string.split(","))
+    return li  
