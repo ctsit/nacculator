@@ -25,17 +25,18 @@ def header_fields(): # may not need the headers.
     fields['VISITMO'] = nacc.uds3.Field(name='VISITMO', typename='Num', position=(26, 27), length=2, inclusive_range=(1, 12), allowable_values=[], blanks=[])
     fields['VISITDAY'] = nacc.uds3.Field(name='VISITDAY', typename='Num', position=(29, 30), length=2, inclusive_range=(1, 31), allowable_values=[], blanks=[])
     fields['VISITYR'] = nacc.uds3.Field(name='VISITYR', typename='Num', position=(32, 35), length=4, inclusive_range=(2005, CURRENT_YEAR), allowable_values=[], blanks=[])
-    fields['VISITNUM'] = nacc.uds3.Field(name='VISITNUM', typename='Char', position=(37, 39), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     fields['INITIALS'] = nacc.uds3.Field(name='INITIALS', typename='Char', position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     return fields
 
-class FormM(nacc.ubs.FieldBag): # DECEASED,DISCONT field skips (not yet implement skip)
+# DECEASED and DISCONT skip Not yet implamented. 
+# Pulled data from readcap is not same as version 3.0 milestone data formating. 
+class FormM(nacc.uds3.FieldBag): 
     def __init__(self):
         self.fields = header_fields()
         self.fields['CHANGEMO'] = nacc.uds3.Field(name='CHANGEMO', typename='Num', position=(45,46), length=2, inclusive_range=(1, 12), allowable_values=['99'], blanks=['Blank if Question 4a DECEASED = 1 (Yes)', 'Blank if Question 4b DISCONT = 1 (Yes)'])
         self.fields['CHANGEDY'] = nacc.uds3.Field(name='CHANGEDY', typename='Num', position=(48,49), length=2, inclusive_range=(1, 31), allowable_values=['99'], blanks=['Blank if Question 4a DECEASED = 1 (Yes)', 'Blank if Question 4b DISCONT = 1 (Yes)'])
         self.fields['CHANGEYR'] = nacc.uds3.Field(name='CHANGEYR', typename='Num', position=(51,54), length=4, inclusive_range=(2015, CURRENT_YEAR), allowable_values=[], blanks=['Blank if Question 4a DECEASED = 1 (Yes)', 'Blank if Question 4b DISCONT = 1 (Yes)'])
-        self.fields['PROTOCOL'] = nacc.uds3.Field(name='PROTOCOL', typename='Num', position=(56,56), length=1, inclusive_range=(1, 3), allowable_values=[], blanks=['If Question 2a PROTOCOL = 1 then skip to Question 2a1 ACONSENT', 'If Question 2a PROTOCOL = 2 then skip to Question 2a1 ACONSENT', 'Blank if Question 2a PROTOCOL = 3 (Annual in-person follow-up', 'Blank if Question 4a DECEASED = 1 (Yes)','Blank if Question 4b DISCONT = 1 (Yes)']) 
+        self.fields['PROTOCOL'] = nacc.uds3.Field(name='PROTOCOL', typename='Num', position=(56,56), length=1, inclusive_range=(1, 3), allowable_values=[], blanks=['If Question 2a PROTOCOL = 1 (Annual UDS follow-up by telephone) then skip to Question 2a1 ACONSENT', 'If Question 2a PROTOCOL = 2 (Minimal contact) then skip to Question 2a1 ACONSENT', 'Blank if Question 2a PROTOCOL = 3 (Annual in-person follow-up', 'Blank if Question 4a DECEASED = 1 (Yes)','Blank if Question 4b DISCONT = 1 (Yes)']) 
         self.fields['ACONSENT'] = nacc.uds3.Field(name='ACONSENT', typename='Num', position=(58,58), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=['Blank if Question 4a DECEASED = 1 (Yes)', 'Blank if Question 4b DISCONT = 1 (Yes)'])
         self.fields['RECOGIM'] =  nacc.uds3.Field(name='RECOGIM',  typename='Num', position=(60,60), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=['Blank if Question 4a DECEASED = 1 (Yes)', 'Blank if Question 4b DISCONT = 1 (Yes)'])
         self.fields['REPHYILL'] = nacc.uds3.Field(name='REPHYILL', typename='Num', position=(62,62), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=['Blank if Question 4a DECEASED = 1 (Yes)', 'Blank if Question 4b DISCONT = 1 (Yes)'])
