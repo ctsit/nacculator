@@ -34,6 +34,8 @@ def convert_rule_to_python(name, rule):
         'ZIP': _blanking_rule_dummy,
         'DECCLMOT': _blanking_rule_dummy,
         'CRAFTDRE': _blanking_rule_dummy,
+        ## 'DISCONT' : _blanking_rule_dummy,
+        ## 'DECEASED' : _blanking_rule_dummy,
         # Neuropath skip rules
         'NPINF': _blanking_rule_dummy,
         'NPHEMO': _blanking_rule_dummy,

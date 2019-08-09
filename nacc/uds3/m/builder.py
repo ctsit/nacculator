@@ -9,40 +9,40 @@ from nacc.uds3 import clsform
 import forms as m_form
 from nacc.uds3 import packet as m_packet
 import sys
+import datetime
 
 def build_uds3_m_form(record):
-    """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
+    """ Converts REDCap CSV data into a packet (list of M Form objects) """
     packet = m_packet.Packet()
-
     # Set up us the forms
     m = m_form.FormM()
-    m.CHANGEMO = record['changemo']
-    m.CHANGEDY = record['changedy']
-    m.CHANGEYR = record['changeyr']
-    m.PROTOCOL = record['protocol']
-    m.ACONSENT = record['aconsent']
-    m.RECOGIM = record['recogim']
-    m.REPHYILL = record['rephyill']
-    m.REREFUSE = record['rerefuse']
-    m.RENAVAIL = record['renavail']
-    m.RENURSE = record['renurse']
-    m.NURSEMO = record['nursemo']
-    m.NURSEDY = record['nursedy']
-    m.NURSEYR = record['nerseyr']
-    m.REJOIN = record['rejoin']
-    m.FTLDDISC = record['ftlddisc']
-    m.FTLDREAS = record['ftldreas']
-    m.FTLDREAx = record['ftldreax']
-    m.DECEASED = record['deceased']
-    m.DISCONT = record['discont']
-    m.DEATHMO = record['deathmo']
-    m.DEATHDY = record['deathdy']
-    m.DEATHYR = record['deathyr']
-    m.AUTOPSY = record['autopsy']
-    m.DISCMO = record['discmo']
-    m.DISCDY = record['discdy']
-    m.DISCYR = record['discyr']
-    m.DROPREAS = record['dropreas']
+    m.CHANGEMO = split_date(record['m1_1'],'M')
+    m.CHANGEDY = split_date(record['m1_1'],'D')
+    m.CHANGEYR = split_date(record['m1_1'],'Y')
+    m.PROTOCOL = record['m1_2a']
+    m.ACONSENT = record['m1_2a1']
+    m.RECOGIM = record['m1_2b___1']
+    m.REPHYILL = record['m1_2b___2']
+    m.REREFUSE = record['m1_2b___3']
+    m.RENAVAIL = record['m1_2b___4']
+    m.RENURSE = record['m1_2b___5']
+    m.NURSEMO = split_date(record['m1_2b1'],'M')
+    m.NURSEDY = split_date(record['m1_2b1'],'D')
+    m.NURSEYR = split_date(record['m1_2b1'],'Y')
+    m.REJOIN = record['m1_2b___6']
+    m.FTLDDISC = record['m1_3']
+    m.FTLDREAS = record['m1_3a']
+    m.FTLDREAx = record['m1_3a'] # Could not find in redcap.
+    m.DECEASED = subject_deceased(record['m1_4'])
+    m.DISCONT = subject_discont(record['m1_4'])
+    m.DEATHMO = split_date(record['m1_5a'],'M')
+    m.DEATHDY = split_date(record['m1_5a'],'D')
+    m.DEATHYR = split_date(record['m1_5a'],'Y')
+    m.AUTOPSY = record['m1_5b']
+    m.DISCMO = split_date(record['m1_6a'],'M')
+    m.DISCDAY = split_date(record['m1_6a'],'D')
+    m.DISCYR = split_date(record['m1_6a'],'Y')
+    m.DROPREAS = record['m1_6b']
 
     packet.append(m)
     return packet
@@ -58,3 +58,31 @@ def update_header(record, packet):
         header.VISITDAY = record['visitday']
         header.VISITYR = record['visityr']
         header.INITIALS = record['initials']
+
+# may want to use python time object
+# add condition for 99 as unknown
+def split_date(date,DMY_choice):
+    for fmt in ["%Y-%m-%d" ,"%m/%d/%Y"]:
+        try:
+            if DMY_choice =='D':
+                return int(datetime.datetime.strptime(date, fmt).date().strftime("%d"))
+            elif DMY_choice =='M':
+                return int(datetime.datetime.strptime(date, fmt).date().strftime("%m"))
+            elif DMY_choice == 'Y':
+                return int(datetime.datetime.strptime(date, fmt).date().strftime("%Y"))
+        except ValueError:
+            print(ValueError)
+            continue
+# may be wrong depending on what record[] returns
+def subject_deceased(status):
+    if status == 1:
+        return 1
+    else:
+        return 0
+
+def subject_discont(status):
+    if status == 2:
+        return 1
+    else:
+        return 0
+    
