@@ -236,4 +236,4 @@ def load_special_case_ptid(case_name,filter_config):
         li = list(ptids_string.split(","))
         return li 
     except KeyError:
-        return [] 
+        return []

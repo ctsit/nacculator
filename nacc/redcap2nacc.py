@@ -162,7 +162,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np:
+        if not options.np and not options.m:
             set_blanks_to_zero(packet)
 
         warnings = []
