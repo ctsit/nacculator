@@ -140,6 +140,18 @@ def set_blanks_to_zero(packet):
     if packet['ARTH'] == 1:
         set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
 
+def set_zeros_to_blanks(packet):
+    """ Sets specific fields to zero if they meet certain criteria """
+    def set_to_blank_if_zero(*field_names):
+        for field_name in field_names:
+            field = packet[field_name]
+            if field == 0:
+                field.value = ''
+    # M1 
+    if packet['DECEASED'] == 1 or packet['DISCONT']==1:
+        set_to_blank_if_zero('RENURSE','RENAVAIL','RECOGIM','REJOIN','REPHYILL',
+        'REREFUSE')
+
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
@@ -162,8 +174,11 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m:
+        if not options.np and not options.m: 
             set_blanks_to_zero(packet)
+
+        if options.m:
+            set_zeros_to_blanks(packet)
 
         warnings = []
         try:
@@ -173,13 +188,14 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np:
+        if not options.np and not options.m: 
             warnings += check_single_select(packet)
 
         if warnings:
             print >> err, "\n".join(warnings)
-
+        
         for form in packet:
+            
             try:
                 print >> out, form
             except AssertionError as e:
