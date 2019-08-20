@@ -140,17 +140,7 @@ def set_blanks_to_zero(packet):
     if packet['ARTH'] == 1:
         set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
 
-def set_zeros_to_blanks(packet):
-    """ Sets specific fields to zero if they meet certain criteria """
-    def set_to_blank_if_zero(*field_names):
-        for field_name in field_names:
-            field = packet[field_name]
-            if field == 0:
-                field.value = ''
-    # M1 
-    if packet['DECEASED'] == 1 or packet['DISCONT']==1:
-        set_to_blank_if_zero('RENURSE','RENAVAIL','RECOGIM','REJOIN','REPHYILL',
-        'REREFUSE')
+
 
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
@@ -178,7 +168,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             set_blanks_to_zero(packet)
 
         if options.m:
-            set_zeros_to_blanks(packet)
+            blanks.set_zeros_to_blanks(packet)
 
         warnings = []
         try:
