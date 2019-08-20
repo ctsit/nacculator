@@ -34,7 +34,7 @@ def build_uds3_m_form(record):
     m.REJOIN = record['m1_2b___6']
     m.FTLDDISC = record['m1_3']
     m.FTLDREAS = record['m1_3a']
-    m.FTLDREAx = record['m1_3a'] # Note :  Could not find in redcap.
+    m.FTLDREAx = record['m1_3a1'] # Note :  May need to add testing for {',",&,%} to remove
     m.DECEASED = subject_deceased(record['m1_4'])
     m.DISCONT =  subject_discont(record['m1_4'])
     m.DEATHMO = parse_date(record['m1_5a'],'M')
