@@ -1,4 +1,5 @@
 import csv
+import io
 import os
 import tempfile
 import unittest
@@ -11,8 +12,8 @@ class TestFilters(unittest.TestCase):
         ''' Visits already in NACC's Current db should be filtered '''
         subj_list, subj_list_name = make_subj_list()
         config, config_name = make_config(subj_list_name)
-        data = make_csv()
-        output_file = tempfile.TemporaryFile(suffix='.csv')
+        data = make_data_file()
+        output_file = io.BytesIO()
 
         with open(subj_list_name, 'a') as subj_f:
             sbj_writer = csv.writer(subj_f, delimiter=',')
@@ -30,23 +31,22 @@ class TestFilters(unittest.TestCase):
                               '99', '1', '1', '2019', '002', 'ABC', '2'])
         data_writer.writerow(['110004', 'followup_visit_yea_arm_1', '3',
                               '99', '1', '1', '2019', '002', 'ABC', '2'])
+        data.seek(0)
 
         try:
             filters.filter_clean_ptid(data, config_name, output_file)
             surviving_ids = []
             expected_ids = ['110002', '110004']
-            with open(output_name, 'r') as output_f:
-                output_reader = csv.DictReader(output_f)
-                for row in output_reader:
-                    surviving_ids.append(row['ptid'])
+            output_file.seek(0)
+            output_reader = csv.DictReader(output_file)
+            for row in output_reader:
+                surviving_ids.append(row['ptid'])
             self.assertListEqual(surviving_ids, expected_ids)
         finally:
             os.close(subj_list)
             os.remove(subj_list_name)
             os.close(config)
             os.remove(config_name)
-            data.close()
-            output_file.close()
 
 
 def make_subj_list():
@@ -70,8 +70,8 @@ def make_config(subj_list_name=None):
     return config, config_name
 
 
-def make_csv():
-    data = tempfile.TemporaryFile(suffix='.csv')
+def make_data_file():
+    data = io.BytesIO()
     writer = csv.writer(data, delimiter=',', quotechar='"')
     writer.writerow(['ptid','redcap_event_name','formver',
                      'adcid','visitmo','visitday','visityr',
