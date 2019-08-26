@@ -46,11 +46,16 @@ def int_or_string(value, default=-1):
 
     return returnable
 
+
 @validate
 def filter_clean_ptid(input_ptr, filter_config, output_ptr):
-# TODO  To deal with M Flag in Current_db.csv
-
     filepath = filter_config['filepath']
+    with open(filepath, 'r') as nacc_packet_file:
+        output = filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr)
+        return output
+
+
+def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
     redcap_packet_list = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(redcap_packet_list, output)
@@ -58,14 +63,15 @@ def filter_clean_ptid(input_ptr, filter_config, output_ptr):
     followup_visit = re.compile("followup.*")
     initial_visit = re.compile("initial.*")
 
+    # TODO: Deal with M Flag in Current_db.csv.
+
     completed_subjs = defaultdict(list)
-    with open(filepath, 'r') as nacc_packet_file:
-        nacc_packet_list = csv.DictReader(nacc_packet_file)
-        for nacc_packet in nacc_packet_list:
-            if nacc_packet['Status'].lower() == "current":
-                nacc_subj_id = nacc_packet['Patient ID']
-                nacc_visit_num = int_or_string(nacc_packet['Visit Num'])
-                completed_subjs[nacc_subj_id].append(nacc_visit_num)
+    nacc_packet_list = csv.DictReader(nacc_packet_file)
+    for nacc_packet in nacc_packet_list:
+        if nacc_packet['Status'].lower() == "current":
+            nacc_subj_id = nacc_packet['Patient ID']
+            nacc_visit_num = int_or_string(nacc_packet['Visit Num'])
+            completed_subjs[nacc_subj_id].append(nacc_visit_num)
 
     for redcap_packet in redcap_packet_list:
         #if they exist in completed subjs (same id and visit num) then remove them.
@@ -137,7 +143,7 @@ def filter_remove_ptid(input_ptr, filter_config, output_ptr):
         prog = re.compile(regex_exp)
         if record['ptid'] in bad_ptids_list:
             print >> sys.stderr, 'Removed ptid : ' + record['ptid']
-        elif record['ptid'] in good_ptids_list:     
+        elif record['ptid'] in good_ptids_list:
             output.writerow(record)
         elif prog.match(record['ptid'])!=None:
             output.writerow(record)
@@ -234,6 +240,6 @@ def load_special_case_ptid(case_name,filter_config):
     try:
         ptids_string = filter_config[case_name]
         li = list(ptids_string.split(","))
-        return li 
+        return li
     except KeyError:
-        return [] 
+        return []
