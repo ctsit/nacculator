@@ -1,19 +1,18 @@
-import os
 import sys
 import csv
 import re
-import fileinput
 import ConfigParser
 
 from collections import defaultdict
 
-fill_default_values = { 'nogds' : 0,
-                        'adcid' : 41,
-                        'formver' : 3 }
+fill_default_values = {'nogds': 0,
+                       'adcid': 41,
+                       'formver': 3}
 
-fill_non_blank_values = { 'adcid' : '41' }
+fill_non_blank_values = {'adcid': '41'}
+# This dictionary contains the keys used in the config
 
-#This dictionary contains the keys used in the config
+
 def validate(func):
     def read_config(config_path):
         config = ConfigParser.ConfigParser()
@@ -34,9 +33,10 @@ def validate(func):
             data_dict = get_reqs_dict(args[1])
         updated_args = list(args)
         updated_args[1] = data_dict
-        func(*updated_args,**kwargs)
+        func(*updated_args, **kwargs)
 
     return validate_filter
+
 
 def int_or_string(value, default=-1):
     try:
@@ -74,7 +74,8 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
             completed_subjs[nacc_subj_id].append(nacc_visit_num)
 
     for redcap_packet in redcap_packet_list:
-        #if they exist in completed subjs (same id and visit num) then remove them.
+        # if they exist in completed subjs (same id and visit num) 
+        # then remove them.
         rc_ptid = redcap_packet['ptid']
         rc_event = redcap_packet['redcap_event_name']
         if not (initial_visit.match(rc_event) or followup_visit.match(rc_event)):
@@ -133,9 +134,12 @@ def filter_fix_headers(input_file, header_mapping, output_file):
 
 @validate
 def filter_remove_ptid(input_ptr, filter_config, output_ptr):
-    regex_exp = filter_config['ptid_format']
-    good_ptids_list = load_special_case_ptid('good_ptid', filter_config)
-    bad_ptids_list = load_special_case_ptid('bad_ptid', filter_config)
+    return filter_remove_ptid_do(input_ptr, filter_config, output_ptr)
+
+def filter_remove_ptid_do(input_ptr, filter_diction, output_ptr):
+    regex_exp = filter_diction['ptid_format']
+    good_ptids_list = load_special_case_ptid('good_ptid', filter_diction)
+    bad_ptids_list = load_special_case_ptid('bad_ptid', filter_diction)
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -149,6 +153,7 @@ def filter_remove_ptid(input_ptr, filter_config, output_ptr):
             output.writerow(record)
         else:
             print >> sys.stderr, 'Removed ptid : ' + record['ptid']
+
 
 @validate
 def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
