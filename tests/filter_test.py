@@ -1,7 +1,6 @@
 import csv
 import io
 import unittest
-
 from nacc.uds3 import filters
 
 
@@ -33,9 +32,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         with io.BytesIO(redcap_data) as data, \
                 io.BytesIO("") as results, \
                 io.BytesIO(subjects) as nacc_packet_file:
-
             filters.filter_clean_ptid_do(data, nacc_packet_file, results)
-
             # Reset the file position indicator so DictReader reads from the
             # beginning of the results "file".
             results.seek(0)
@@ -65,8 +62,6 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
                 io.BytesIO("") as results:
             filters.filter_eliminate_empty_date(data, '', results)
 
-            # Reset the file position indicator so DictReader reads from the
-            # beginning of the results "file".
             results.seek(0)
             reader = csv.DictReader(results)
             for row in reader:
@@ -76,18 +71,18 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         self.assertListEqual(actual, expected)
 
     def test_filter_remove_ptid(self):
-        # TODO:also add the good ptid test as well
         '''
-        `filter_remove_ptid' shopuld remove ptid from
+        `filter_remove_ptid' should remove and keep ptid from
         meta file (nacculator_cfg.ini)
         '''
         filter_diction = {
             'ptid_format': '11\\d.*',
             'bad_ptid': '110002,110004',
-            'good_ptid': ''
+            'good_ptid': '1600-A'
         }
         redcap_data = '''
 ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,header_complete
+1600-A,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
 110001,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
 110002,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
 110003,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
@@ -104,7 +99,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
             for row in reader:
                 actual.append(row['ptid'])
 
-        expected = ['110001', '110003']
+        expected = ['1600-A', '110001', '110003']
         self.assertListEqual(actual, expected)
 
     def test_filter_fix_vistdate(self):
@@ -123,8 +118,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         with io.BytesIO(redcap_data) as data, \
                 io.BytesIO("") as results:
             filters.filter_fix_visitdate(data, '', results)
-            # Reset the file position indicator so DictReader reads from the
-            # beginning of the results "file".
+
             results.seek(0)
             reader = csv.DictReader(results)
             for row in reader:
@@ -137,10 +131,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         `filter_fill_default` should fill out blanks for
         a specific col with defualt.
         '''
-        # is fill_value_of_fields(input_ptr, output_ptr,
-        # keysDict, blankCheck=False, defaultCheck=False)
-        # with fill_default_values as
-        fill_default_values = {'adcid': 41, 'formver': 3}
+        fill_default_values = {'adcid': 41, 'formver': 3}  # in filters.py
 
         redcap_data = '''
 ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,header_complete
@@ -168,12 +159,10 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 
     def test_filter_update_field(self):
         '''
-        `filter_fill_default` should fill out blanks for
-        a specific col with defualt.
+        `filter_fill_default` should update feild value if feild has value
+        and leave blanks blank.
         '''
-        # is fill_value_of_fields(input_ptr, output_ptr,
-        # keysDict, blankCheck=False, defaultCheck=False)
-        # with fill_default_values as
+
         fill_non_blank_values = {'adcid': '41'}
 
         redcap_data = '''
@@ -196,52 +185,127 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         expected = ['', '41', '', '41']
         self.assertEqual(actual, expected)
 
-    def test_filter_extract_ptid(slef):
-        '''
-        `filter_extract_prid` should extract the ptid for visit
-        number and/or visit type
-        '''
-        # TODO: make test case for each of the 4 settings
-        # filter_extract_ptid has
-        redcap_data = '''
-ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,header_complete
-110001,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
-110002,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
-110003,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
-110004,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
-'''.strip()
-
-    @unittest.skip('is already tested in filter_extract_ptid.')
+# Next 4 filters are sub filters of filter_extract_ptid
     def test_filter_csv_vnum(self):
         '''
-        `filter_csv_vnum` should return record of the input ptid
-        and visit number given
+        `filter_csv_vnum` should return records of matching input ptid
+        and visit number.
         '''
-
+        Ptid = '110001'
+        visit_num = '1'
         redcap_data = '''
 ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,header_complete
 110001,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
 110002,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
 110001,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
 110002,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
+110001,followup_visit_yea_arm_1,3,99,1,1,2019,001,ABC,2
+110001,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
 '''.strip()
         actual = []
         with io.BytesIO(redcap_data) as data, \
                 io.BytesIO("") as results:
 
-            # simulate other filters here### unneeded becuse in
-            # filter_extract_ptid
             reader = csv.DictReader(data)
             output = csv.DictWriter(results, None)
             filters.write_headers(reader, output)
-            for record in reader:
-                if filters.filter_csv_vnum('110001', '002',
-                                           record) is not None:
-                    output.writerow(record)
-            ##########
+            filtered = filter(lambda row: filters.filter_csv_vnum(Ptid, visit_num, row), reader)
+            output.writerows(filtered)
             results.seek(0)
             reader = csv.DictReader(results)
             for row in reader:
                 actual.append(row['ptid'])
-        expected = ['11001']
+        expected = ['110001', '110001']
+        self.assertListEqual(actual, expected)
+
+    def test_filter_csv_all(self):
+        '''
+        `filter_csv_all` should return records of mathcing
+        ptid, visit number and vistit type
+        '''
+        Ptid = '110001'
+        visit_num = '1'
+        visit_type = 'initial_visit_year_arm_1'
+        redcap_data = '''
+ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,header_complete
+110001,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
+110002,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
+110001,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
+110002,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
+110001,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
+'''.strip()
+        actual = []
+        with io.BytesIO(redcap_data) as data, \
+                io.BytesIO("") as results:
+
+            reader = csv.DictReader(data)
+            output = csv.DictWriter(results, None)
+            filters.write_headers(reader, output)
+            filtered = filter(lambda row: filters.filter_csv_all(Ptid, visit_num, visit_type, row), reader)
+            output.writerows(filtered)
+            results.seek(0)
+            reader = csv.DictReader(results)
+            for row in reader:
+                actual.append(row['ptid'])
+        expected = ['110001', '110001']
+        self.assertListEqual(actual, expected)
+
+    def test_filter_vtype(self):
+        '''
+        `filter_csv_vtype` should return records of mathcing
+        ptid and vistit type
+        '''
+        Ptid = '110002'
+        visit_type = 'initial_visit_year_arm_1'
+        redcap_data = '''
+ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,header_complete
+110001,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
+110002,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
+110001,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
+110002,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
+110002,initial_visit_year_arm_1,3,99,1,1,2019,002,ABC,2
+'''.strip()
+        actual = []
+        with io.BytesIO(redcap_data) as data, \
+                io.BytesIO("") as results:
+
+            reader = csv.DictReader(data)
+            output = csv.DictWriter(results, None)
+            filters.write_headers(reader, output)
+            filtered = filter(lambda row: filters.filter_csv_vtype(Ptid, visit_type, row), reader)
+            output.writerows(filtered)
+            results.seek(0)
+            reader = csv.DictReader(results)
+            for row in reader:
+                actual.append(row['ptid'])
+        expected = ['110002', '110002']
+        self.assertListEqual(actual, expected)
+
+    def test_filter_ptid(self):
+        '''
+        `filter_csv_ptid` should return records of mathcing
+        ptid.
+        '''
+        Ptid = '110001'
+        redcap_data = '''
+ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,header_complete
+110001,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
+110002,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
+110001,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
+110002,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
+110001,in_person_home_visit,3,99,1,1,2019,002,ABC,2
+'''.strip()
+        actual = []
+        with io.BytesIO(redcap_data) as data, \
+                io.BytesIO("") as results:
+            reader = csv.DictReader(data)
+            output = csv.DictWriter(results, None)
+            filters.write_headers(reader, output)
+            filtered = filter(lambda row: filters.filter_csv_ptid(Ptid, row), reader)
+            output.writerows(filtered)
+            results.seek(0)
+            reader = csv.DictReader(results)
+            for row in reader:
+                actual.append(row['ptid'])
+        expected = ['110001', '110001', '110001']
         self.assertListEqual(actual, expected)
