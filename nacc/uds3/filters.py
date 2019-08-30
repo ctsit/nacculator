@@ -122,14 +122,15 @@ def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
 
 @validate
 def filter_fix_headers(input_file, header_mapping, output_file):
-    csv_reader = csv.reader(input_file)
-    csv_writer = csv.writer(output_file)
+    return filter_fix_headers_do(input_file, header_mapping, output_file)
+
+def filter_fix_headers_do(input_ptr, header_dictionary, output_ptr):
+    csv_reader = csv.reader(input_ptr)
+    csv_writer = csv.writer(output_ptr)
     headers = csv_reader.next()
-    fixed_headers = list(map(lambda header: header_mapping.get(header,header), headers))
+    fixed_headers = list(map(lambda header: header_dictionary.get(header,header), headers))
     csv_writer.writerow(fixed_headers)
     csv_writer.writerows([row for row in csv_reader])
-
-    return
 
 @validate
 def filter_remove_ptid(input_ptr, filter_config, output_ptr):
