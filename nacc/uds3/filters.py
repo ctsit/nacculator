@@ -4,13 +4,12 @@ import re
 import ConfigParser
 
 from collections import defaultdict
-
+# This dictionary contains the keys used in the config
 fill_default_values = {'nogds': 0,
                        'adcid': 41,
                        'formver': 3}
 
 fill_non_blank_values = {'adcid': '41'}
-# This dictionary contains the keys used in the config
 
 
 def validate(func):
