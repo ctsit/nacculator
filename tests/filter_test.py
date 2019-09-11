@@ -112,7 +112,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
                 filter_out_1.append(row['fu_drugid_4'])
                 filter_out_2.append(row['drugid_3'])
 
-        expected = ['d00002', '', '', 'd00001']
-        self.assertListEqual(filter_out_1, expected)
-        expected = ['d11111', 'd22222', 'd22222', '']
-        self.assertListEqual(filter_out_2, expected)
+        expected_1 = ['d00002', '', '', 'd00001']
+        self.assertListEqual(filter_out_1, expected_1)
+        expected_2 = ['d11111', 'd22222', 'd22222', '']
+        self.assertListEqual(filter_out_2, expected_2)
