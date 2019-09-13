@@ -18,6 +18,7 @@ Patient ID,Packet type,Visit Num,Status
 110002,I,001,Working
 110003,F,002,Current
 110004,F,002,Working
+110005,I,001,Certified
 '''.strip()
 
         redcap_data = '''
@@ -26,6 +27,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 110002,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
 110003,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
 110004,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
+110005,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
 '''.strip()
 
         actual = []
