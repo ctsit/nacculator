@@ -309,3 +309,71 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
                 actual.append(row['ptid'])
         expected = ['110001', '110001', '110001']
         self.assertListEqual(actual, expected)
+
+    def test_filter_fix_headers(self):
+        '''
+        `filter_fix_headers` should change REDCap headers to NACC headers.
+        '''
+
+        redcap_data = '''
+ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,header_complete
+110001,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
+110002,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
+110003,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
+110004,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
+'''.strip()
+        
+        fix_header_dict = {
+            'ptid' : 'PTID',
+            'visitmo' : 'VisitMo',
+            'adcid' : 'ADCid',
+            'initials' : 'Initials'
+        }
+
+        actual = []
+        with io.BytesIO(redcap_data) as data, \
+                io.BytesIO("") as results:
+                
+            filters.filter_fix_headers_do(data, fix_header_dict, results)
+
+        # Reset the file position indicator so DictReader reads from the
+        # beginning of the results "file".
+        
+            results.seek(0)
+            reader = csv.reader(results)
+            actual = reader.next()
+        expected = ['PTID','redcap_event_name','formver','ADCid','VisitMo','visitday','visityr','visitnum','Initials','header_complete']
+        self.assertListEqual(actual, expected)
+
+    def test_filter_replace_drug_id(self):
+        '''
+        `test_filter_replace_drug_id` should replace drug id in the record, and print the processed ptid and number of updated fields.
+        '''
+
+        redcap_data = '''
+ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,header_complete,fu_drugid_4,drugid_3
+110001,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2,000002,111111
+110002,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2,,222222
+110003,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2,,222222
+110004,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2,000001,
+'''.strip()
+
+        filter_out_1 = []
+        filter_out_2 = []
+        with io.BytesIO(redcap_data) as data, \
+                io.BytesIO("") as results:
+
+            filters.filter_replace_drug_id(data,'', results)
+
+            # Reset the file position indicator so DictReader reads from the
+            # beginning of the results "file".
+            results.seek(0)
+            reader = csv.DictReader(results)
+            for row in reader:
+                filter_out_1.append(row['fu_drugid_4'])
+                filter_out_2.append(row['drugid_3'])
+
+        expected_1 = ['d00002', '', '', 'd00001']
+        self.assertListEqual(filter_out_1, expected_1)
+        expected_2 = ['d11111', 'd22222', 'd22222', '']
+        self.assertListEqual(filter_out_2, expected_2)
