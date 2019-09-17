@@ -22,7 +22,7 @@ from nacc.uds3 import filters
 
 def check_blanks(packet):
     """
-    Parfvpses rules for when each field should be blank and then checks them
+    Parses rules for when each field should be blank and then checks them
     """
     pattern = re.compile(r"Blank if Question \d+ (\w+) (ne|=) (\d+)")
     warnings = []
