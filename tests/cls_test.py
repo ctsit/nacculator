@@ -1,5 +1,5 @@
 import unittest
-import StringIO
+from io import StringIO
 
 from nacc.uds3 import clsform
 from nacc.uds3 import packet
@@ -51,20 +51,19 @@ class TestCLS(unittest.TestCase):
         clsform.add_cls(record, fpacket, fvp_forms)
         self.assertEqual(len(fpacket), 1, "Expected packet to have CLS")
 
-    
     def test_partial_cls_has_warning(self):
         """Partially completed CLS should create a warning."""    
         record = make_filled_record()   
         record['eng_preferred_language'] = ' '  # Make form partially complete. 
 
         ipacket = packet.Packet()
-        itrap = StringIO.StringIO()
+        itrap = StringIO()
         clsform.add_cls(record, ipacket, ivp_forms, itrap)
         assert itrap.getvalue() == "[WARNING] CLS form is incomplete for PTID: unknown\n"
         itrap.close()
 
         fpacket = packet.Packet()
-        ftrap = StringIO.StringIO()
+        ftrap = StringIO()
         clsform.add_cls(record, fpacket, fvp_forms, ftrap)
         assert ftrap.getvalue() == "[WARNING] CLS form is incomplete for PTID: unknown\n"
         ftrap.close()
@@ -76,13 +75,13 @@ class TestCLS(unittest.TestCase):
         record['eng_percentage_spanish'] = '9001'   
 
         ipacket = packet.Packet()
-        itrap = StringIO.StringIO()
+        itrap = StringIO()
         clsform.add_cls(record, ipacket, ivp_forms, itrap)
         assert itrap.getvalue() == "[WARNING] language proficiency percentages do not equal 100 for PTID : unknown\n"
         itrap.close()
 
         fpacket = packet.Packet()
-        ftrap = StringIO.StringIO()
+        ftrap = StringIO()
         clsform.add_cls(record, ipacket, ivp_forms, ftrap)
         assert ftrap.getvalue() == "[WARNING] language proficiency percentages do not equal 100 for PTID : unknown\n"
         ftrap.close()

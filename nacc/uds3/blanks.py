@@ -112,7 +112,7 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
         if '=' == eq:
             return packet[key] in range(first, last)
         elif 'ne' == eq:
-            return packet[key] not in range(first, last)
+            return packet[key] not in list(range(first, last))
         else:
             raise ValueError("'eq' must be '=' or 'ne', not '%s'." % eq)
 

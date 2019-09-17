@@ -30,9 +30,9 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 '''.strip()
 
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results, \
-                io.BytesIO(subjects) as nacc_packet_file:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results, \
+                io.StringIO(subjects) as nacc_packet_file:
 
             filters.filter_clean_ptid_do(data, nacc_packet_file, results)
 

@@ -142,12 +142,12 @@ class FieldBag(object):
 
     def write(self, buf=None):
         if buf is None:
-            last = max(self.fields.values(), key=lambda f: f.position[1])
+            last = max(list(self.fields.values()), key=lambda f: f.position[1])
             buf = bytearray(' ' * last.position[1], 'ascii')
 
         orig_buf_size = len(buf)
 
-        for field in self.fields.values():
+        for field in list(self.fields.values()):
             value = field.value
             start, end = field.position
             start -= 1
