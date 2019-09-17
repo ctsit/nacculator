@@ -67,7 +67,7 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
     completed_subjs = defaultdict(list)
     nacc_packet_list = csv.DictReader(nacc_packet_file)
     for nacc_packet in nacc_packet_list:
-        if nacc_packet['Status'].lower() == "current":
+        if nacc_packet['Status'].lower() == "current" or nacc_packet['Status'].lower() == "certified":
             nacc_subj_id = nacc_packet['Patient ID']
             nacc_visit_num = int_or_string(nacc_packet['Visit Num'])
             completed_subjs[nacc_subj_id].append(nacc_visit_num)
