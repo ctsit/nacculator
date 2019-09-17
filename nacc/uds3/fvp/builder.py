@@ -5,7 +5,7 @@
 ###############################################################################
 
 from nacc.uds3 import blanks
-from . import forms as fvp_forms
+from nacc.uds3.fvp import forms as fvp_forms
 from nacc.uds3 import clsform
 from nacc.uds3 import packet as fvp_packet
 
