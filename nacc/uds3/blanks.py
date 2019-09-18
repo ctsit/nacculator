@@ -142,6 +142,26 @@ def _blanking_rule_momageo():
     # Blank if Question 54MOMNEUR = 9 (Unknown)
     return lambda packet: packet['MOMNEUR'] in (8, 9)
 
+def set_zeros_to_blanks(packet):
+    """ Sets specific fields to zero if they meet certain criteria """
+    def set_to_blank_if_zero(*field_names):
+        for field_name in field_names:
+            field = packet[field_name]
+            if field == 0:
+                field.value = ''
+    # M1 
+    if packet['DECEASED'] == 1 or packet['DISCONT'] == 1:
+        set_to_blank_if_zero('RENURSE','RENAVAIL','RECOGIM','REJOIN','REPHYILL',
+        'REREFUSE','FTLDDISC','CHANGEMO','CHANGEDY','CHANGEYR','PROTOCOL','ACONSENT',
+        'RECOGIM','REPHYILL','NURSEMO','NURSEDY','NURSEYR','FTLDREAS','FTLDREAX')
+    elif packet['DECEASED'] == 1:
+        #for just dead
+        set_to_blank_if_zero('DISCONT')
+    elif packet['DISCONT'] == 1:
+        # for just discont
+        set_to_blank_if_zero('DECEASED')
+        
+
 
 def main():
     """

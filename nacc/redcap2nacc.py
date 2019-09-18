@@ -17,6 +17,7 @@ from nacc.uds3 import blanks
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
+from nacc.uds3.m import builder as m_builder
 from nacc.uds3 import filters
 
 
@@ -141,6 +142,8 @@ def set_blanks_to_zero(packet):
         set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
 
 
+
+
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
@@ -153,6 +156,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 packet = np_builder.build_uds3_np_form(record)
             elif options.fvp:
                 packet = fvp_builder.build_uds3_fvp_form(record)
+            elif options.m:
+                packet = m_builder.build_uds3_m_form(record)
 
         except Exception:
             if 'ptid' in record:
@@ -160,8 +165,11 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np:
+        if not options.np and not options.m: 
             set_blanks_to_zero(packet)
+
+        if options.m:
+            blanks.set_zeros_to_blanks(packet)
 
         warnings = []
         try:
@@ -171,13 +179,14 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np:
+        if not options.np and not options.m: 
             warnings += check_single_select(packet)
 
         if warnings:
             print("\n".join(warnings), file=err)
 
         for form in packet:
+            
             try:
                 print(form, file=out)
             except AssertionError as e:
@@ -216,7 +225,7 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.np or options.filter):
+    if not (options.ivp or options.fvp or options.np or options.m or options.filter):
         options.ivp = True
 
     return options
