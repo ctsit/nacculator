@@ -21,3 +21,6 @@ fu_strokedec: fu_strokdec
 
 [filter_remove_ptid]
 ptid_format: 11\d.*
+#enter ptid in form of ptid,ptid,ptid,ext... (no spaces)
+bad_ptid: 
+good_ptid:

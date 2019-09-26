@@ -19,10 +19,6 @@ def add_cls(record, packet, forms, err=sys.stderr):
       https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/CLS/CLS_en.pdf
     """
 
-    is_hispanic = record['hispanic'] == '1'
-    if not is_hispanic:
-        return
-
     fields_mapping = {
         'APREFLAN': 'eng_preferred_language',
         'AYRSPAN': 'eng_years_speak_spanish',

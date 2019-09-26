@@ -53,7 +53,7 @@ The program accepts two arguments -file and -(ivp|fvp|np). Both the arguments ar
 
     $ PYTHONPATH=. ./nacc/redcap2nacc.py -h
     usage: redcap2nacc.py [-h]
-                          [-fvp | -ivp | -np | -f {cleanPtid,updateField,fixHeaders,replaceDrugId,getPtid,removePtid,fillDefault,removeDateRecord}]
+                          [-fvp | -ivp | -np | -m | -f {cleanPtid,updateField,fixHeaders,replaceDrugId,getPtid,removePtid,fillDefault,removeDateRecord}]
                           [-file FILE] [-meta FILTER_META] [-ptid PTID]
                           [-vnum VNUM] [-vtype VTYPE]
 
@@ -64,6 +64,7 @@ The program accepts two arguments -file and -(ivp|fvp|np). Both the arguments ar
       -fvp                  Set this flag to process as fvp data
       -ivp                  Set this flag to process as ivp data
       -np                   Set this flag to process as np data
+      -m                    Set this flag to process as m data
       -f {cleanPtid,updateField,fixHeaders,replaceDrugId,getPtid,removePtid,fillDefault,removeDateRecord}, --filter {cleanPtid,updateField,fixHeaders,replaceDrugId,getPtid,removePtid,fillDefault,removeDateRecord}
                             Set this flag to process the filter
       -file FILE            Path of the csv file to be processed.

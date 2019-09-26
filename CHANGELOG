@@ -1,5 +1,23 @@
 Changelog
 =========
+## [0.7.1] - 2019-09-26
+### Summary
+
+Add milestone packets and unit tests.
+
+### Added
+ * Create filter for good and bad PTIDs
+ * Add milestone form
+ * Add unit tests for filters
+
+### Changed
+ * Modify filters to be usable with I/O independent tests
+
+### Fixed
+ * Make CLS form addable to followup visits
+ * Filter out certified visits
+
+
 ## [0.6.1] - 2019-05-19
 ### Summary
 
