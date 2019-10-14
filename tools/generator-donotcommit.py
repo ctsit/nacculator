@@ -52,10 +52,13 @@ def fields_to_strings(fields, this="self."):
 
 def generate(ded):
     """ Generates Python code representing each NACC Form as classes """
-    with open(ded) as stream:
-        reader = csv.DictReader(stream)
+    with open('/Users/s.emerson/Desktop/nacc_code/nacculator/tools/lbd_fvp_b1l.csv') as streamfile:
+        reader = csv.DictReader(streamfile)
         form = DynamicObject()
         form.fields = []
+
+        for row in reader:
+            print(', '.join(row))
 
         for record in reader:
             form.packet = record['Packet']
@@ -117,7 +120,7 @@ def fields_for_records(form, fields):
     print >> sys.stderr, indent("packet.append("+formId+")", 1)
 
 def main():
-    data_dict_path = './ded_fvp'
+    data_dict_path = '/Users/s.emerson/Desktop/nacc_code/nacculator/tools/'
     corrected_dict_path = './corrected'
     header_file = 'uds3dedheader.csv'
 
@@ -130,37 +133,38 @@ def main():
     deds = [f for f in os.listdir(data_dict_path)
             if f.endswith('.csv') and f != header_file]
 
-    print "import nacc.uds3"
-    print ""
-    print ""
+    print ("import nacc.uds3")
+    print ("")
+    print ("")
+    test = os.path.join(data_dict_path, header_file)
     header = generate_header(os.path.join(data_dict_path, header_file))
-    print "def header_fields():"
-    print indent("fields = {}")
+    print ("def header_fields():")
+    print (indent("fields = {}"))
     for field in fields_to_strings(sorted(header.fields,
                                           key=lambda fld: fld.position[1]),
                                    this=""):
-        print indent(field)
-    print indent("return fields")
-    print ""
+        print (indent(field))
+    print (indent("return fields"))
+    print ("")
 
     for ded in deds:
         # First check to see if we have a correct version of the DED
-        dedpath = os.path.join(corrected_dict_path, ded)
-        if not os.path.isfile(dedpath):
-            # If not, then we use the regular path
-            dedpath = os.path.join(data_dict_path, ded)
+        dedpath = os.path.join(data_dict_path, ded)
+        # if not os.path.isfile(dedpath):
+        #     # If not, then we use the regular path
+        #     dedpath = os.path.join(data_dict_path, ded)
 
-        print ""
+        print ("")
         form = generate(dedpath)
         # Uncomment this method if you want to print the templates to read records. Keys have
         # to be filled manually as per your csv header names. To seperate this from the normal
         # output, this prints to standard error
         # fields_for_records(form, sorted(form.fields, key=lambda fld: fld.position[1]))
     
-        print form_to_string(form, 'FVP_')
+        print (form_to_string(form, 'FVP_'))
         for field in fields_to_strings(sorted(form.fields, key=lambda fld: fld.position[1])):
-            print indent(field, 2)
-        print ""
+            print (indent(field, 2))
+        print ("")
 
 
 if __name__ == '__main__':
