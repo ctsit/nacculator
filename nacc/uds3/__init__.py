@@ -156,5 +156,5 @@ class FieldBag(object):
                 "Length of field {} with value {} is not valid. {} != {}".format(field.name, value, len(value), end - start + 1)
             buf[start:start + len(value)] = value.encode('ascii')
 
-            assert len(buf) == orig_buf_size, field.name + ": buffer changed size!"
+        assert len(buf) == orig_buf_size, field.name + ": buffer changed size!"
         return buf.decode('ascii')
