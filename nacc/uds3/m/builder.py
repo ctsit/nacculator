@@ -5,7 +5,8 @@
 ###############################################################################
 
 from nacc.uds3 import blanks
-import forms as m_form
+from . import forms as m_form
+# import forms as m_form
 from nacc.uds3 import packet as m_packet
 import sys
 import re

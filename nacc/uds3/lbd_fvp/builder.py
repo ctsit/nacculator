@@ -7,19 +7,21 @@
 
 from nacc.uds3 import blanks
 from nacc.uds3 import clsform
-import forms as fvp_forms
-from nacc.uds3 import packet as fvp_packet
+from . import forms as lbd_fvp_forms
+# import forms as lbd_fvp_forms
+from nacc.uds3 import packet as lbd_fvp_packet
 import sys
+import re
 
 
-def build_lbd_fvp_form(record):
+def build_uds3_lbd_fvp_form(record):
     # Converts REDCap CSV data into a packet (list of FVP Form objects)
-    packet = fvp_packet.Packet()
+    packet = lbd_fvp_packet.Packet()
 
     # Set up the forms..........
     # Not sure if NACCulator is case sensitive or not. The variables 
     # are all lowercase on the REDCap DED.
-    B1L = fvp_forms.FormB1L()
+    B1L = lbd_fvp_forms.FormB1L()
     B1L.LBSSALIV = record['fu_LBSSALIV']
     B1L.LBSSWALL = record['fu_BSSWALL']
     B1L.LBSINSeX = record['fu_LBSINSeX']
@@ -59,7 +61,7 @@ def build_lbd_fvp_form(record):
     B1L.LBSSCor = record['Lfu_BSSCor']
     packet.append(B1L)
 
-    B2L = fvp_forms.FormB2L()
+    B2L = lbd_fvp_forms.FormB2L()
     B2L.LBUDSPCH = record['fu_LBUDSPCH']
     B2L.LBUDSALV = record['fu_LBUDSALV']
     B2L.LBUDSWAL = record['fu_LBUDSWAL']
@@ -75,7 +77,7 @@ def build_lbd_fvp_form(record):
     B2L.LBUDSeNS = record['fu_LBUDSeNS']
     packet.append(B2L)
 
-    B3L = fvp_forms.FormB3L()
+    B3L = lbd_fvp_forms.FormB3L()
     B3L.LBUMSPCH = record['fu_LBUMSPCH']
     B3L.LBUMSPCX = record['fu_LBUMSPCX']
     B3L.LBUMFACe = record['fu_LBUMFACe']
@@ -134,7 +136,7 @@ def build_lbd_fvp_form(record):
     B3L.LBUMHNyX = record['fu_LBUMHNyX']
     packet.append(B3L)
 
-    B4L = fvp_forms.FormB4L()
+    B4L = lbd_fvp_forms.FormB4L()
     B4L.LBDeLUS  = record['fu_LBDeLUS']    
     B4L.LBDHUrt  = record['fu_LBDHUrt']    
     B4L.LBDSteAL = record['fu_LBDSteAL']
@@ -207,14 +209,14 @@ def build_lbd_fvp_form(record):
     B4L.LBAPAMD2 = record['fu_LBAPAMD2']
     packet.append(B4L)
 
-    B5L = fvp_forms.FormB5L()
+    B5L = lbd_fvp_forms.FormB5L()
     B5L.LBMLtHrG = record['fu_LBMLtHrG']
     B5L.LBMSLeeP = record['fu_LBMSLeeP']
     B5L.LBMDISrG = record['fu_LBMDISrG']
     B5L.LBMStAre = record['fu_LBMStAre']
     packet.append(B5L)
 
-    B6L = fvp_forms.FormB6L()
+    B6L = lbd_fvp_forms.FormB6L()
     B6L.LBSPCGIM = record['fu_LBSPCGIM']
     B6L.LBSPDrM  = record['fu_LBSPDrM']
     B6L.LBSPyrS  = record['fu_LBSPyrS']
@@ -236,7 +238,7 @@ def build_lbd_fvp_form(record):
     B6L.LBSPALrt = record['fu_LBSPALrt']
     packet.append(B6L)
 
-    B7L = fvp_forms.FormB7L()
+    B7L = lbd_fvp_forms.FormB7L()
     B7L.LBSCLIV  = record['fu_LBSCLIV']    
     B7L.LBSCSLP  = record['fu_LBSCSLP']
     B7L.LBSCBeHV = record['fu_LBSCBeHV']
@@ -259,7 +261,7 @@ def build_lbd_fvp_form(record):
     B7L.LBSCALrt = record['fu_LBSCALrt']
     packet.append(B7L)
 
-    B8L = fvp_forms.FormB8L()
+    B8L = lbd_fvp_forms.FormB8L()
     B8L.PACoGIMP = record['fu_PACoGIMP']
     B8L.PANSFALL = record['fu_PANSFALL']
     B8L.PANSWKoF = record['fu_PANSWKoF']
@@ -275,7 +277,7 @@ def build_lbd_fvp_form(record):
     B8L.PADSFLDy = record['fu_PADSFLDy']
     packet.append(B8L)
 
-    B9L = fvp_forms.FormB9L()
+    B9L = lbd_fvp_forms.FormB9L()
     B9L.CoNSFALL = record['fu_CoNSFALL']
     B9L.CoNSWKoF = record['fu_CoNSWKoF']
     B9L.CoNSLyAW = record['fu_CoNSLyAW']
@@ -297,7 +299,7 @@ def build_lbd_fvp_form(record):
     B9L.SCCoSCor = record['fu_SCCoSCor']
     packet.append(B9L)
 
-    C1L = fvp_forms.FormC1L()
+    C1L = lbd_fvp_forms.FormC1L()
     C1L.LBNSWorD = record['fu_LBNSWorD']
     C1L.LBNSCoLr = record['fu_LBNSCoLr']
     C1L.LBNSCLWD = record['fu_LBNSCLWD']
@@ -307,7 +309,7 @@ def build_lbd_fvp_form(record):
     C1L.LBNPPArD = record['fu_LBNPPArD']
     packet.append(C1L)
 
-    D1L = fvp_forms.FormD1L()
+    D1L = lbd_fvp_forms.FormD1L()
     D1L.LBCDSCoG = record['fu_LBCDSCoG']
     D1L.LBCCMeM  = record['fu_LBCCMeM']
     D1L.LBCCLANG = record['fu_LBCCLANG']
@@ -346,7 +348,7 @@ def build_lbd_fvp_form(record):
     D1L.LBCoGDX  = record['fu_LBCoGDX']
     packet.append(D1L)
     
-    E1L = fvp_forms.FormE1L()
+    E1L = lbd_fvp_forms.FormE1L()
     E1L.LBGNeWGN = record['fu_LBGNeWGN']
     E1L.LBGLrrK2 = record['fu_LBGLrrK2']
     E1L.LBGLrKiS = record['fu_LBGPrKiS']
@@ -365,7 +367,7 @@ def build_lbd_fvp_form(record):
     E1L.LBGotHX  = record['fu_LBGotHX']
     packet.append(E1L)
 
-    E2L = fvp_forms.FormE2L()
+    E2L = lbd_fvp_forms.FormE2L()
     E2L.LBISMrI  = record['fu_LBISMrI']    
     E2L.LBISMMo  = record['fu_LBISMMo']
     E2L.LBISMDy  = record['fu_LBISMDy']
@@ -432,7 +434,7 @@ def build_lbd_fvp_form(record):
     E2L.LBIDSABN = record['fu_LBIDSABN']
     packet.append(E2L)
 
-    E3L = fvp_forms.FormE3L()
+    E3L = lbd_fvp_forms.FormE3L()
     E3L.LBoPoLyS = record['fu_LBoPoLyS']
     E3L.LBoPoSMo = record['fu_LBoPoSMo']
     E3L.LBoPoSDy = record['fu_LBoPoSDy']
@@ -491,24 +493,26 @@ def build_lbd_fvp_form(record):
     E3L.LBoCGAVL = record['fu_LBoCGAVL']
     packet.append(E3L)
 
+    update_header(record,packet)
+    return packet
 
 # update_header takes the header form to fill out info about the full packet, 
 # but i'm not sure what this if/else thing does
 
-# def update_header(record, packet):
-#     for header in packet:
-#         header.PACKET = "I"
-#         header.FORMID = header.form_name
-#         if header.FORMID.value == "B5 ":
-#             header.FORMVER = "3.1"
-#         elif header.FORMID.value == "C1S":
-#             header.FORMVER = 2
-#         else:
-#             header.FORMVER = 3
-#         header.ADCID = record['adcid']
-#         header.PTID = record['ptid']
-#         header.VISITMO = record['visitmo']
-#         header.VISITDAY = record['visitday']
-#         header.VISITYR = record['visityr']
-#         header.VISITNUM = record['visitnum']
-#         header.INITIALS = record['initials']
+def update_header(record, packet):
+    for header in packet:
+        header.PACKET = "I"
+        header.FORMID = header.form_name
+        if header.FORMID.value == "B5 ":
+            header.FORMVER = "3.1"
+        elif header.FORMID.value == "C1S":
+            header.FORMVER = 2
+        else:
+            header.FORMVER = 3
+        header.ADCID = record['adcid']
+        header.PTID = record['ptid']
+        header.VISITMO = record['visitmo']
+        header.VISITDAY = record['visitday']
+        header.VISITYR = record['visityr']
+        header.VISITNUM = record['visitnum']
+        header.INITIALS = record['initials']

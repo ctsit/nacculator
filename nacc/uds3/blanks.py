@@ -62,7 +62,9 @@ def convert_rule_to_python(name, rule):
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
 
     # First, check to see if the rule is a "Special Case"
-    if name in special_cases.iterkeys():
+    # the commented-out line below was causing an error; vscode doesn't understand what "iterkeys" is
+    # if name in special_cases.iterkeys():
+    if name in special_cases:
         return special_cases[name]()
 
     # Then, check to see if the rule is of the within-range type
@@ -181,7 +183,7 @@ def main():
 
     for ded in deds:
         for rule in extract_blanks(os.path.join(data_dict_path, ded)):
-            print rule
+            print (rule)
 
 
 if __name__ == '__main__':

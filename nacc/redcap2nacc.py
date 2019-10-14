@@ -17,6 +17,8 @@ from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
 from nacc.uds3.m import builder as m_builder
+from nacc.uds3.lbd_ivp import builder as lbd_ivp_builder
+from nacc.uds3.lbd_fvp import builder as lbd_fvp_builder
 from nacc.uds3 import filters
 
 
@@ -157,6 +159,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 packet = fvp_builder.build_uds3_fvp_form(record)
             elif options.m:
                 packet = m_builder.build_uds3_m_form(record)
+            elif options.lbd_ivp:
+                packet = lbd_ivp_builder.build_uds3_lbd_ivp_form(record)
+            elif options.lbd_fvp:
+                packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
 
         except Exception:
             if 'ptid' in record:
@@ -213,6 +219,8 @@ def parse_args(args=None):
     option_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data')
     option_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data')
     option_group.add_argument('-m', action='store_true', dest='m', help='Set this flag to process as m data')
+    option_group.add_argument('-lbdf', action='store_true', dest='lbdf', help='Set this flag to process as lbd fvp data')
+    option_group.add_argument('-lbdi', action='store_true', dest='lbdi', help='Set this flag to process as lbd ivp data')
     option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
 
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
@@ -224,7 +232,7 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.np or options.m or options.filter):
+    if not (options.ivp or options.fvp or options.np or options.m or options.lbd_ivp or options.lbd_fvp or options.filter):
         options.ivp = True
 
     return options

@@ -22,7 +22,7 @@ class DynamicObject(object):
     # The commented-out init is in case the program does not 
     # create these fields later- not sure what caused that 
     # problem, but this fixed it. If this bit is uncommented, 
-    # make sure to comemnt out "pass" at the bottom.
+    # make sure to comment out "pass" at the bottom.
     
     # def __init__(self):
     #     self.fields = []

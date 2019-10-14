@@ -16,6 +16,8 @@ CURRENT_YEAR = date.today().year
 
 ### END non-generated code
 
+# This form is for LBD FVP
+
 def header_fields():
     fields = {}
     fields['PACKet'] = nacc.uds3.Field(name='PACKet', typename='Char', position=(1, 2), length=2, inclusive_range=None, allowable_values=[], blanks=[])
