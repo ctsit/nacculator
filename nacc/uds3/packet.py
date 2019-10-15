@@ -36,4 +36,4 @@ class Packet(list):
                 self._cache[key] = form.fields[key]
                 return self._cache[key]
 
-        raise KeyError(key)
+            raise KeyError(key)

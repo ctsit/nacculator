@@ -7,8 +7,7 @@
 from nacc.uds3 import blanks
 from nacc.uds3 import clsform
 from . import forms as ivp_forms
-# import forms as ivp_forms
-from nacc.uds3 import packet as ivp_packet
+from .. import packet as ivp_packet
 import sys
 
 

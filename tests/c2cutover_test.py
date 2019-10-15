@@ -1,4 +1,4 @@
-import StringIO as io
+from io import StringIO as io
 import unittest
 
 from nacc import redcap2nacc
