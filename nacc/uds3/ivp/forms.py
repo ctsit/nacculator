@@ -1044,3 +1044,4 @@ class FormZ1X(nacc.uds3.FieldBag):
         self.fields['LANGE3F'] = nacc.uds3.Field(name='LANGE3F', typename='Num', position=(150, 150), length=1, inclusive_range=(1,2), allowable_values=['2','1'], blanks=[])
         self.fields['LANGCLS'] = nacc.uds3.Field(name='LANGCLS', typename='Num', position=(152, 152), length=1, inclusive_range=(1,2), allowable_values=['2','1'], blanks=['Blank if Question 27 CLSSUB = 0 (No)'])
         self.fields['CLSSUB'] = nacc.uds3.Field(name='CLSSUB', typename='Num', position=(154, 154), length=1, inclusive_range=(0,1), allowable_values=['1','0'], blanks=[])
+

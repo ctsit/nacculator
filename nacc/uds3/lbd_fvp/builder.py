@@ -6,9 +6,8 @@
 ###############################################################################
 
 from nacc.uds3 import blanks
-from nacc.uds3 import clsform
+# from nacc.uds3 import clsform
 from . import forms as lbd_fvp_forms
-# import forms as lbd_fvp_forms
 from nacc.uds3 import packet as lbd_fvp_packet
 import sys
 import re
@@ -19,8 +18,7 @@ def build_uds3_lbd_fvp_form(record):
     packet = lbd_fvp_packet.Packet()
 
     # Set up the forms..........
-    # Not sure if NACCulator is case sensitive or not. The variables 
-    # are all lowercase on the REDCap DED.
+
     B1L = lbd_fvp_forms.FormB1L()
     B1L.LBSSALIV = record['fu_LBSSALIV'.lower()]
     B1L.LBSSWALL = record['fu_lBSSWALL'.lower()]
@@ -58,7 +56,7 @@ def build_uds3_lbd_fvp_form(record):
     B1L.LBSSCLAU = record['fu_LBSSCLAU'.lower()]
     B1L.LBSSCLVr = record['fu_LBSSCLVr'.lower()]
     B1L.LBSSCLot = record['fu_LBSSCLot'.lower()]
-    B1L.LBSSCor = record['fu_LBSSCor'.lower()]
+    B1L.LBSSCor  = record['fu_LBSSCor'.lower()]
     packet.append(B1L)
 
     B2L = lbd_fvp_forms.FormB2L()
@@ -493,26 +491,24 @@ def build_uds3_lbd_fvp_form(record):
     E3L.LBoCGAVL = record['fu_LBoCGAVL'.lower()]
     packet.append(E3L)
 
-    # update_header(record,packet)
+    update_header(record,packet)
     return packet
 
-# update_header takes the header form to fill out info about the full packet, 
-# but i'm not sure what this if/else thing does
-# 
-# def update_header(record, packet):
-#     for header in packet:
-#         header.PACKET = "I"
-#         header.FORMID = header.form_name
-#         if header.FORMID.value == "B5 ":
-#             header.FORMVER = "3.1"
-#         elif header.FORMID.value == "C1S":
-#             header.FORMVER = 2
-#         else:
-#             header.FORMVER = 3
-#         header.ADCID = record['adcid']
-#         header.PTID = record['ptid']
-#         header.VISITMO = record['visitmo']
-#         header.VISITDAY = record['visitday']
-#         header.VISITYR = record['visityr']
-#         header.VISITNUM = record['visitnum']
-#         header.INITIALS = record['initials']
+
+def update_header(record, packet):
+    for header in packet:
+        header.PACKET = "I"
+        header.FORMID = header.form_name
+        if header.FORMID.value == "B5 ":
+            header.FORMVER = "3.1"
+        elif header.FORMID.value == "C1S":
+            header.FORMVER = 2
+        else:
+            header.FORMVER = 3
+        header.ADCID = record['adcid']
+        header.PTID = record['ptid']
+        header.VISITMO = record['visitmo']
+        header.VISITDAY = record['visitday']
+        header.VISITYR = record['visityr']
+        header.VISITNUM = record['visitnum']
+        header.INITIALS = record['initials']

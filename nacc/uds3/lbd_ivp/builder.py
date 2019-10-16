@@ -6,10 +6,8 @@
 ###############################################################################
 
 from nacc.uds3 import blanks
-from nacc.uds3 import clsform
-from nacc.uds3.lbd_ivp import forms
+# from nacc.uds3 import clsform
 from . import forms as lbd_ivp_forms
-# import forms as lbd_ivp_forms
 from nacc.uds3 import packet as lbd_ivp_packet
 import sys
 import re
@@ -20,20 +18,19 @@ def build_uds3_lbd_ivp_form(record):
     packet = lbd_ivp_packet.Packet()
 
     # Set up the forms..........
-    # Not sure if NACCulator is case sensitive or not. The variables 
-    # are all lowercase on the REDCap DED.
+
     B1L = lbd_ivp_forms.FormB1L()
     B1L.LBSSALIV = record['LBSSALIV'.lower()]
-    B1L.LBSSWALL = record['BSSWALL'.lower()]
+    B1L.LBSSWALL = record['LBSSWALL'.lower()]
     B1L.LBSINSeX = record['LBSINSeX'.lower()]
     B1L.LBSPrSeX = record['LBSPrSeX'.lower()]
     B1L.LBSWeIGH = record['LBSWeIGH'.lower()]
     B1L.LBSSMeLL = record['LBSSMeLL'.lower()]
     B1L.LBSSWeAt = record['LBSSWeAT'.lower()]
     B1L.LBStoLCD = record['LBStoLCD'.lower()]
-    B1L.LBStoLHt = record['LBStoHLt'.lower()]
+    B1L.LBStoLHt = record['LBStoLHt'.lower()]
     B1L.LBSDBVIS = record['LBSDBVIS'.lower()]
-    B1L.LBSCoNSt = record['LBSCoNST'.lower()]
+    B1L.LBSCoNSt = record['LBSCoNSt'.lower()]
     B1L.LBSHDStL = record['LBSHDStL'.lower()]
     B1L.LBSLSStL = record['LBSLSStL'.lower()]
     B1L.LBSUBLAD = record['LBSUBLAD'.lower()]
@@ -59,7 +56,7 @@ def build_uds3_lbd_ivp_form(record):
     B1L.LBSSCLAU = record['LBSSCLAU'.lower()]
     B1L.LBSSCLVr = record['LBSSCLVr'.lower()]
     B1L.LBSSCLot = record['LBSSCLot'.lower()]
-    B1L.LBSSCor = record['LBSSCor'.lower()]
+    B1L.LBSSCor  = record['LBSSCor'.lower()]
     packet.append(B1L)
 
     B2L = lbd_ivp_forms.FormB2L()
@@ -471,8 +468,8 @@ def build_uds3_lbd_ivp_form(record):
     E3L.LBotLMo  = record['LBotLMo'.lower()]
     E3L.LBotLDy  = record['LBotLDY'.lower()]
     E3L.LBotLyr  = record['LBotLyr'.lower()]
-    E3L.LBotLPoS = record['LBoPoS'.lower()]
-    E3L.LBotLAVL = record['LBoAVL'.lower()]
+    E3L.LBotLPoS = record['LBotLPoS'.lower()]
+    E3L.LBotLAVL = record['LBotLAVL'.lower()]
     E3L.LBoQSArt = record['LBoQSArt'.lower()]
     E3L.LBoQSMo  = record['LBoQSMo'.lower()]
     E3L.LBoQSDy  = record['LBoQSDy'.lower()]
@@ -496,9 +493,6 @@ def build_uds3_lbd_ivp_form(record):
     update_header(record,packet)
     return packet
 
-
-# update_header takes the header form to fill out info about the full packet, 
-# but i'm not sure what this if/else thing does
 
 def update_header(record, packet):
     for header in packet:

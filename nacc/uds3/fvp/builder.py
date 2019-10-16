@@ -6,8 +6,7 @@
 
 from nacc.uds3 import blanks
 from . import forms as fvp_forms
-# import forms as fvp_forms
-from nacc.uds3 import clsform
+# from nacc.uds3 import clsform
 from nacc.uds3 import packet as fvp_packet
 
 def build_uds3_fvp_form(record):
@@ -547,7 +546,7 @@ def build_uds3_fvp_form(record):
 
     add_c1s_or_c2(record, packet)
 
-    clsform.add_cls(record, packet, fvp_forms)
+#    clsform.add_cls(record, packet, fvp_forms)
 
     d1 = fvp_forms.FormD1()
     d1.DXMETHOD  = record['fu_dxmethod']

@@ -5,7 +5,7 @@
 ###############################################################################
 
 from nacc.uds3 import blanks
-from nacc.uds3 import clsform
+# from nacc.uds3 import clsform
 from . import forms as ivp_forms
 from .. import packet as ivp_packet
 import sys
@@ -635,7 +635,7 @@ def build_uds3_ivp_form(record):
 
     add_c1s_or_c2(record, packet)
 
-    clsform.add_cls(record, packet, ivp_forms)
+#    clsform.add_cls(record, packet, ivp_forms)
 
     d1 = ivp_forms.FormD1()
     d1.DXMETHOD = record['dxmethod']
@@ -807,6 +807,7 @@ def build_uds3_ivp_form(record):
     d2.OTHCONDX = record['othcondx']
     packet.append(d2)
     
+
     add_z1_or_z1x(record, packet)
     update_header(record, packet)
 
@@ -1028,3 +1029,4 @@ def update_header(record, packet):
         header.VISITYR = record['visityr']
         header.VISITNUM = record['visitnum']
         header.INITIALS = record['initials']
+

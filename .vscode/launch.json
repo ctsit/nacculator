@@ -11,7 +11,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/nacc/redcap2nacc.py",
-            "args" : ["-lbd_fvp","-meta","nacculator_cfg.ini","<data.csv>", "data.txt"],
+            "args" : ["-lbd_ivp","-meta","nacculator_cfg.ini","<data.csv>", "data.txt"],
             // "pythonPath": "${workspaceFolder}/nacc/redcap2nacc.py",
             // "env": {"PYTHONPATH": "${workspaceRoot}"}
             

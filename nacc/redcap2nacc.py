@@ -59,32 +59,28 @@ def check_single_select(packet):
     """
     warnings = list()
 
-    # We need an "if" statement here to check if items like 'AMNDEM' are actually 
-    # present in the form- I keep getting a "TypeError" warning from the packet.py
-    # For now I have commented these items out.
+    # D1 4
+    fields = ('AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
+    if not exclusive(packet, fields):
+        warnings.append('For Form D1, Question 4, there is unexpectedly more '
+                        'than one syndrome indicated as "Present".')
 
-    # # D1 4
-    # fields = ('AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
-    # if not exclusive(packet, fields):
-    #     warnings.append('For Form D1, Question 4, there is unexpectedly more '
-    #                     'than one syndrome indicated as "Present".')
+    # D1 5
+    fields = ('MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
+    if not exclusive(packet, fields):
+        warnings.append('For Form D1, Question 5, there is unexpectedly more '
+                        'than one syndrome indicated as "Present".')
 
-    # # D1 5
-    # fields = ('MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
-    # if not exclusive(packet, fields):
-    #     warnings.append('For Form D1, Question 5, there is unexpectedly more '
-    #                     'than one syndrome indicated as "Present".')
-
-    # # D1 11-39
-    # fields = ('ALZDISIF', 'LBDIF', 'MSAIF', 'PSPIF', 'CORTIF', 'FTLDMOIF',
-    #           'FTLDNOIF', 'FTLDSUBX', 'CVDIF', 'ESSTREIF', 'DOWNSIF', 'HUNTIF',
-    #           'PRIONIF', 'BRNINJIF', 'HYCEPHIF', 'EPILEPIF', 'NEOPIF', 'HIVIF',
-    #           'OTHCOGIF', 'DEPIF', 'BIPOLDIF', 'SCHIZOIF', 'ANXIETIF',
-    #           'DELIRIF', 'PTSDDXIF', 'OTHPSYIF', 'ALCDEMIF', 'IMPSUBIF',
-    #           'DYSILLIF', 'MEDSIF', 'COGOTHIF', 'COGOTH2F', 'COGOTH3F')
-    # if not exclusive(packet, fields):
-    #     warnings.append('For Form D1, Questions 11-39, there is unexpectedly '
-    #                     'more than one Primary cause selected.')
+    # D1 11-39
+    fields = ('ALZDISIF', 'LBDIF', 'MSAIF', 'PSPIF', 'CORTIF', 'FTLDMOIF',
+            'FTLDNOIF', 'FTLDSUBX', 'CVDIF', 'ESSTREIF', 'DOWNSIF', 'HUNTIF',
+            'PRIONIF', 'BRNINJIF', 'HYCEPHIF', 'EPILEPIF', 'NEOPIF', 'HIVIF',
+            'OTHCOGIF', 'DEPIF', 'BIPOLDIF', 'SCHIZOIF', 'ANXIETIF',
+            'DELIRIF', 'PTSDDXIF', 'OTHPSYIF', 'ALCDEMIF', 'IMPSUBIF',
+            'DYSILLIF', 'MEDSIF', 'COGOTHIF', 'COGOTH2F', 'COGOTH3F')
+    if not exclusive(packet, fields):
+        warnings.append('For Form D1, Questions 11-39, there is unexpectedly '
+                        'more than one Primary cause selected.')
 
     return warnings
 
@@ -109,49 +105,45 @@ def set_blanks_to_zero(packet):
             if empty(field):
                 field.value = 0
 
-    # We need an "if" statement here to check if items like 'PARKSIGN' are actually 
-    # present in the form- I keep getting a "TypeError" warning from the packet.py
-    # For now I have commented these items out.
+    # B8 2.
+    if packet['PARKSIGN'] == 1:
+        set_to_zero_if_blank(
+            'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL', 'RIGIDR',
+            'BRADY', 'PARKGAIT', 'POSTINST')
 
-    # # B8 2.
-    # if packet['PARKSIGN'] == 1:
-    #     set_to_zero_if_blank(
-    #         'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL', 'RIGIDR',
-    #         'BRADY', 'PARKGAIT', 'POSTINST')
+    # B8 3.
+    if packet['CVDSIGNS'] == 1:
+        set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
+                            'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
 
-    # # B8 3.
-    # if packet['CVDSIGNS'] == 1:
-    #     set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
-    #                          'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
+    # B8 5.
+    if packet['PSPCBS'] == 1:
+        set_to_zero_if_blank(
+            'PSPCBS', 'EYEPSP', 'DYSPSP', 'AXIALPSP', 'GAITPSP', 'APRAXSP',
+            'APRAXL', 'APRAXR', 'CORTSENL', 'CORTSENR', 'ATAXL', 'ATAXR',
+            'ALIENLML', 'ALIENLMR', 'DYSTONL', 'DYSTONR')
 
-    # # B8 5.
-    # if packet['PSPCBS'] == 1:
-    #     set_to_zero_if_blank(
-    #         'PSPCBS', 'EYEPSP', 'DYSPSP', 'AXIALPSP', 'GAITPSP', 'APRAXSP',
-    #         'APRAXL', 'APRAXR', 'CORTSENL', 'CORTSENR', 'ATAXL', 'ATAXR',
-    #         'ALIENLML', 'ALIENLMR', 'DYSTONL', 'DYSTONR')
+    # D1 4.
+    if packet['DEMENTED'] == 1:
+        set_to_zero_if_blank(
+                'AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
 
-    # # D1 4.
-    # if packet['DEMENTED'] == 1:
-    #     set_to_zero_if_blank(
-    #             'AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
+    # D1 5.
+    if packet['DEMENTED'] == 0:
+        set_to_zero_if_blank(
+                'MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
 
-    # # D1 5.
-    # if packet['DEMENTED'] == 0:
-    #     set_to_zero_if_blank(
-    #             'MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
+    # D1 11-39.
+    set_to_zero_if_blank(
+        'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS', 'CVD',
+        'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH', 'EPILEP',
+        'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP', 'ANXIET',
+        'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB', 'DYSILL', 'MEDS',
+        'COGOTH', 'COGOTH2', 'COGOTH3')
 
-    # # D1 11-39.
-    # set_to_zero_if_blank(
-    #     'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS', 'CVD',
-    #     'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH', 'EPILEP',
-    #     'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP', 'ANXIET',
-    #     'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB', 'DYSILL', 'MEDS',
-    #     'COGOTH', 'COGOTH2', 'COGOTH3')
-
-    # # D2 11.
-    # if packet['ARTH'] == 1:
-    #     set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
+    # D2 11.
+    if packet['ARTH'] == 1:
+        set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
 
 
 
@@ -182,7 +174,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m: 
+        if not options.np and not options.m and not options.lbd_ivp and not options.lbd_fvp: 
             set_blanks_to_zero(packet)
 
         if options.m:
@@ -196,7 +188,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m: 
+        if not options.np and not options.m and not options.lbd_ivp and not options.lbd_fvp: 
             warnings += check_single_select(packet)
 
         if warnings:
@@ -233,9 +225,9 @@ def parse_args(args=None):
     option_group.add_argument('-m', action='store_true', dest='m', help='Set this flag to process as m data')
     option_group.add_argument('-lbd_fvp', action='store_true', dest='lbd_fvp', help='Set this flag to process as lbd fvp data')
     option_group.add_argument('-lbd_ivp', action='store_true', dest='lbd_ivp', help='Set this flag to process as lbd ivp data')
-    option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
+    option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=list(filters_names.keys()), help='Set this flag to process the filter')
 
-    parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
+    parser.add_argument('-filesource', action='store', dest='file', help='Path of the csv file to be processed.')
     parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
     parser.add_argument('-ptid', action='store', dest='ptid', help='Ptid for which you need the records')
     parser.add_argument('-vnum', action='store', dest='vnum', help='Ptid for which you need the records')
@@ -246,7 +238,7 @@ def parse_args(args=None):
     # TODO this can be changed in future to process fvp by default.
     if not (options.ivp or options.fvp or options.np or options.m or options.lbd_ivp or options.lbd_fvp or options.filter):
         options.ivp = True
-
+    
     return options
 
 
