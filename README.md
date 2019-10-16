@@ -7,7 +7,7 @@ Converts a CSV data file exported from REDCap into the NACC's UDS3 fixed-width
 format.
 
 #### Note
-NACCulator uses Python 2.
+NACCulator uses Python 3.
 
 If you are having trouble with Cappy, you may need to clone [the repo](https://github.com/ctsit/cappy) and then install it from your local instance using
 `pip install -e <local/path/to/cappy>`
@@ -227,9 +227,9 @@ The resulting files will not be in the run folder created by `run_filters.py`. T
 
 Next you will need to run the actual `redcap2nacc.py` program to produced the fixed width text file for NACC. As you have split the IVP and FVP visits, you will run the program twice, using each flag once.
 
-`PYTHONPATH=. python2 nacc/redcap2nacc.py -ivp < initial_visits.csv > $run_folder/iv_nacc_complete.txt 2> $run_folder/ivp_errors.txt`
+`PYTHONPATH=. python3 nacc/redcap2nacc.py -ivp < initial_visits.csv > $run_folder/iv_nacc_complete.txt 2> $run_folder/ivp_errors.txt`
 
-`PYTHONPATH=. python2 nacc/redcap2nacc.py -fvp < followup_visits.csv > $run_folder/fv_nacc_complete.txt 2> $run_folder/fvp_errors.txt`
+`PYTHONPATH=. python3 nacc/redcap2nacc.py -fvp < followup_visits.csv > $run_folder/fv_nacc_complete.txt 2> $run_folder/fvp_errors.txt`
 
 This will place the text files in the run folder created earlier, as well as a log of the run which will have any errors encountered.
 

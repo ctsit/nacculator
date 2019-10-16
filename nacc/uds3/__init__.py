@@ -47,7 +47,7 @@ class Field(object):
     def __init__(self, name, typename, position, length, inclusive_range=None,
                  allowable_values=None, blanks=None, value=None):
         assert allowable_values is None or \
-               allowable_values is not isinstance(allowable_values, basestring)
+               allowable_values is not isinstance(allowable_values, str)
 
         self.name = name
         self.udstype = UDS3_TYPES[typename](length)
@@ -57,7 +57,7 @@ class Field(object):
         # get the canonical representation for allowable values, but filter out
         # empty strings first
         self.allowable_values = [self.udstype(v)
-                                 for v in filter(None, allowable_values)]
+                                 for v in [_f for _f in allowable_values if _f]]
         self.blanks = blanks or []
         self.val = value
 
@@ -83,7 +83,7 @@ class Field(object):
         if self.allowable_values:
             if val is None:
                 pass
-            elif isinstance(val, basestring) and str(val).strip() == "":
+            elif isinstance(val, str) and str(val).strip() == "":
                 pass
             else:
                 # val can be None, but if it isn't AND we are restricted to
@@ -142,19 +142,19 @@ class FieldBag(object):
 
     def write(self, buf=None):
         if buf is None:
-            last = max(self.fields.itervalues(), key=lambda f: f.position[1])
-            buf = bytearray(' '*last.position[1])
+            last = max(list(self.fields.values()), key=lambda f: f.position[1])
+            buf = bytearray(' ' * last.position[1], 'ascii')
 
         orig_buf_size = len(buf)
 
-        for field in self.fields.itervalues():
+        for field in list(self.fields.values()):
             value = field.value
             start, end = field.position
             start -= 1
             end -= 1
-            assert len(value) == end-start+1, \
-                "Length of field {} with value {} is not valid. {} != {}".format(field.name, value, len(value), end-start+1)
-            buf[start:start+len(value)] = value
+            assert len(value) == end - start + 1, \
+                "Length of field {} with value {} is not valid. {} != {}".format(field.name, value, len(value), end - start + 1)
+            buf[start:start + len(value)] = value.encode('ascii')
 
         assert len(buf) == orig_buf_size, field.name + ": buffer changed size!"
-        return buf
+        return buf.decode('ascii')

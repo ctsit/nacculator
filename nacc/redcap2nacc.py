@@ -12,6 +12,7 @@ import sys
 import argparse
 import traceback
 
+
 from nacc.uds3 import blanks
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
@@ -31,7 +32,7 @@ def check_blanks(packet):
         # Find all fields that:
         #   1) have blanking rules; and
         #   2) aren't blank.
-        for field in [f for f in form.fields.itervalues()
+        for field in [f for f in form.fields.values()
                       if f.blanks and not empty(f)]:
 
             for rule in field.blanks:
@@ -88,7 +89,7 @@ def empty(field):
 def exclusive(packet, fields, value_to_check=1):
     """ Returns True iff, for a set of fields, only one of field is set. """
     values = [packet[f].value for f in fields]
-    true_values = filter(lambda v: v == value_to_check, values)
+    true_values = [v for v in values if v == value_to_check]
     return len(true_values) <= 1
 
 
@@ -147,7 +148,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
     for record in reader:
-        print >> err, "[START] ptid : " + str(record['ptid'])
+        print("[START] ptid : " + str(record['ptid']), file=err)
         try:
             if options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
@@ -160,7 +161,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         except Exception:
             if 'ptid' in record:
-                print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
+                print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             traceback.print_exc()
             continue
 
@@ -174,7 +175,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         try:
             warnings += check_blanks(packet)
         except KeyError:
-            print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
+            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             traceback.print_exc()
             continue
 
@@ -182,14 +183,14 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             warnings += check_single_select(packet)
 
         if warnings:
-            print >> err, "\n".join(warnings)
-        
+            print("\n".join(warnings), file=err)
+
         for form in packet:
             
             try:
-                print >> out, form
+                print(form, file=out)
             except AssertionError as e:
-                print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
+                print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
                 traceback.print_exc()
                 continue
 
@@ -213,7 +214,7 @@ def parse_args(args=None):
     option_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data')
     option_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data')
     option_group.add_argument('-m', action='store_true', dest='m', help='Set this flag to process as m data')
-    option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
+    option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=list(filters_names.keys()), help='Set this flag to process the filter')
 
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
     parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
