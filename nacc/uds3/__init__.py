@@ -14,9 +14,9 @@ class _UdsType(object):
 
     def __call__(self, *args, **kwargs):
         value = args[0] if len(args) > 0 else None
-        val = str(value if value is not None else "")
-        val = val.ljust(self.length, ' ')
-        return val
+        self.val = str(value if value is not None else "")
+        self.val = self.val.ljust(self.length, ' ')
+        return self.val
 
     def __eq__(self, other):
         return self.__class__ == other.__class__ and \

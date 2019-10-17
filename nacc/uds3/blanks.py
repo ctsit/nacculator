@@ -54,6 +54,22 @@ def convert_rule_to_python(name, rule):
         'NPPATH9': _blanking_rule_dummy,
         'NPPATH10': _blanking_rule_dummy,
         'NPPATH11': _blanking_rule_dummy,
+        'LBDeLAGe': _blanking_rule_lbd,
+        'LBDeLMeD': _blanking_rule_lbd,
+        'LBDeLMD1': _blanking_rule_lbd,
+        'LBDeLMD2': _blanking_rule_lbd,
+        'LBHALAGe': _blanking_rule_lbd,
+        'LBHALMeD': _blanking_rule_lbd,
+        'LBHALMD1': _blanking_rule_lbd,
+        'LBHALMD2': _blanking_rule_lbd,
+        'LBANXAGe': _blanking_rule_lbd,
+        'LBANXMeD': _blanking_rule_lbd,
+        'LBANXMD1': _blanking_rule_lbd,
+        'LBANXMD2': _blanking_rule_lbd,
+        'LBAPAAGe': _blanking_rule_lbd,
+        'LBAPAMeD': _blanking_rule_lbd,
+        'LBAPAMD1': _blanking_rule_lbd,
+        'LBAPAMD2': _blanking_rule_lbd,
     }
 
     single_value = re.compile(
@@ -127,6 +143,12 @@ def _blanking_rule_ftldsubt():
     #Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1 and 14d FTLDNOS ne 1
     return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
                           packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
+
+def _blanking_rule_lbd():
+    # LBD forms have a lot of "and" statements in their blanking rules that I have 
+    # no idea how to handle right now, so I'm going to temporarily give this the 
+    # same rule as the _blanking_rule_dummy
+    return lambda packet: False
 
 def _blanking_rule_learned():
     # The two rules contradict each other:
