@@ -28,32 +28,22 @@ def convert_rule_to_python(name, rule):
     """
 
     special_cases = {
-        'MOMAGEO': _blanking_rule_momageo,
-        'FTLDSUBT': _blanking_rule_ftldsubt,
-        'LEARNED': _blanking_rule_learned,
-        'ZIP': _blanking_rule_dummy,
-        'DECCLMOT': _blanking_rule_dummy,
-        'CRAFTDRE': _blanking_rule_dummy,
-        # Neuropath skip rules
-        'NPINF': _blanking_rule_dummy,
-        'NPHEMO': _blanking_rule_dummy,
-        'NPOLD': _blanking_rule_dummy,
-        'NPOLDD': _blanking_rule_dummy,
-        'NPFTDTAU': _blanking_rule_dummy,
-        'NPOFTD': _blanking_rule_dummy,
-        'NPNEC': _blanking_rule_dummy,
-        'NPPATH': _blanking_rule_dummy,
-        'NPPATHO': _blanking_rule_dummy,
-        'NPPATH2': _blanking_rule_dummy,
-        'NPPATH3': _blanking_rule_dummy,
-        'NPPATH6': _blanking_rule_dummy,
-        'NPPATH7': _blanking_rule_dummy,
-        'NPPATH4': _blanking_rule_dummy,
-        'NPPATH5': _blanking_rule_dummy,
-        'NPPATH8': _blanking_rule_dummy,
-        'NPPATH9': _blanking_rule_dummy,
-        'NPPATH10': _blanking_rule_dummy,
-        'NPPATH11': _blanking_rule_dummy,
+        'LBDeLAGe': _blanking_rule_lbd,
+        'LBDeLMeD': _blanking_rule_lbd,
+        'LBDeLMD1': _blanking_rule_lbd,
+        'LBDeLMD2': _blanking_rule_lbd,
+        'LBHALAGe': _blanking_rule_lbd,
+        'LBHALMeD': _blanking_rule_lbd,
+        'LBHALMD1': _blanking_rule_lbd,
+        'LBHALMD2': _blanking_rule_lbd,
+        'LBANXAGe': _blanking_rule_lbd,
+        'LBANXMeD': _blanking_rule_lbd,
+        'LBANXMD1': _blanking_rule_lbd,
+        'LBANXMD2': _blanking_rule_lbd,
+        'LBAPAAGe': _blanking_rule_lbd,
+        'LBAPAMeD': _blanking_rule_lbd,
+        'LBAPAMD1': _blanking_rule_lbd,
+        'LBAPAMD2': _blanking_rule_lbd,
     }
 
     single_value = re.compile(
@@ -123,26 +113,33 @@ def _blanking_rule_dummy():
     return lambda packet: False
 
 
-def _blanking_rule_ftldsubt():
-    #Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1 and 14d FTLDNOS ne 1
-    return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
-                          packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
+# def _blanking_rule_lbd_logic():
+#     # LBD forms have a lot of "and" statements in their blanking rules that I have 
+#     # no idea how to handle right now, so I'm going to temporarily give this the 
+#     # same rule as the _blanking_rule_dummy
+
+#     # I would really prefer to keep these all under one function if I can.
+#     # Like, I'd just prefer to extend the logic.
+
+#     single_value = re.compile(
+#         r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<value>\d+)([^-]|$)")
+#     m = single_value.match(rule)
+#     if m:
+#         return _blanking_rule_check_single_value(
+#             m.group('key'), m.group('eq'), m.group('value'))
+
+#     return lambda packet: False
 
 
-def _blanking_rule_learned():
-    # The two rules contradict each other:
-    #  - Blank if Question 2a REFERSC ne 1
-    #  - Blank if Question 2a REFERSC ne 2
-    # The intent appears to be "blank if REFERSC is 3, 4, 5, 6, 8, or 9", but
-    # that makes 6 individual blanking rules and the maximum is 5 (BLANKS1-5).
-    return lambda packet: packet['REFERSC'] in (3, 4, 5, 6, 8, 9)
+def _blanking_rule_lbd():
+    # All of these fields have the same blanking rule.
+    # Blank if Question 1 LBDeLUS, Question 2 LBHALL, Question 3 LBANXIet, and Question 4 LBAPAtHy = 0 (No)
+    return lambda packet: packet['LBDeLUS'] == 0 and packet['LBHALL'] == 0 and \
+                          packet['LBANXIet'] == 0 and packet['LBAPAtHy'] == 0
 
 
-def _blanking_rule_momageo():
-    # Blank if Question 54MOMNEUR = 8 (N/A)
-    # Blank if Question 54MOMNEUR = 9 (Unknown)
-    return lambda packet: packet['MOMNEUR'] in (8, 9)
-
+# Pretty sure I'm going to need this rule for the LBD forms at some point, 
+# but I'm not sure which variables are involved.
 def set_zeros_to_blanks(packet):
     """ Sets specific fields to zero if they meet certain criteria """
     def set_to_blank_if_zero(*field_names):

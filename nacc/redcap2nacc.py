@@ -13,17 +13,18 @@ import argparse
 import traceback
 
 
-from nacc.uds3 import blanks
+from nacc.uds3 import blanks as blanks_uds3
+from nacc.lbd import blanks as blanks_lbd
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
 from nacc.uds3.m import builder as m_builder
-from nacc.uds3.lbd_ivp import builder as lbd_ivp_builder
-from nacc.uds3.lbd_fvp import builder as lbd_fvp_builder
+from nacc.lbd.ivp import builder as lbd_ivp_builder
+from nacc.lbd.fvp import builder as lbd_fvp_builder
 from nacc.uds3 import filters
 
 
-def check_blanks(packet):
+def check_blanks(packet, options):
     """
     Parses rules for when each field should be blank and then checks them
     """
@@ -38,11 +39,19 @@ def check_blanks(packet):
                       if f.blanks and not empty(f)]:
 
             for rule in field.blanks:
-                r = blanks.convert_rule_to_python(field.name, rule)
-                if r(packet):
-                    warnings.append(
-                        "'%s' is '%s' with length '%s', but should be blank: '%s'." %
-                        (field.name, field.value, len(field.value), rule))
+                if not options.lbd_ivp and not options.lbd_fvp: 
+                    r = blanks_uds3.convert_rule_to_python(field.name, rule)
+                    if r(packet):
+                        warnings.append(
+                            "'%s' is '%s' with length '%s', but should be blank: '%s'." %
+                            (field.name, field.value, len(field.value), rule))
+
+                if options.lbd_ivp or options.lbd_fvp:
+                    t = blanks_lbd.convert_rule_to_python(field.name, rule)
+                    if t(packet):
+                        warnings.append(
+                            "'%s' is '%s' with length '%s', but should be blank: '%s'." %
+                            (field.name, field.value, len(field.value), rule))
 
     return warnings
 
@@ -175,11 +184,11 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             set_blanks_to_zero(packet)
 
         if options.m:
-            blanks.set_zeros_to_blanks(packet)
+            blanks_uds3.set_zeros_to_blanks(packet)
 
         warnings = []
         try:
-            warnings += check_blanks(packet)
+            warnings += check_blanks(packet, options)
         except KeyError:
             print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             traceback.print_exc()
