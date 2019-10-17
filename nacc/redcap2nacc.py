@@ -170,7 +170,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         except Exception:
             if 'ptid' in record:
-                 print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+                print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             traceback.print_exc()
             continue
 
@@ -193,7 +193,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         if warnings:
             print("\n".join(warnings), file=err)
-        
+            
         for form in packet:
             
             try:
