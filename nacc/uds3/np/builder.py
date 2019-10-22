@@ -5,7 +5,7 @@
 ###############################################################################
 
 from nacc.uds3 import blanks
-import forms as np_forms
+from nacc.uds3.np import forms as np_forms
 from nacc.uds3 import packet as np_packet
 
 
