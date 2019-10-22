@@ -109,27 +109,6 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
     return should_be_blank
 
 
-def _blanking_rule_dummy():
-    return lambda packet: False
-
-
-# def _blanking_rule_lbd_logic():
-#     # LBD forms have a lot of "and" statements in their blanking rules that I have 
-#     # no idea how to handle right now, so I'm going to temporarily give this the 
-#     # same rule as the _blanking_rule_dummy
-
-#     # I would really prefer to keep these all under one function if I can.
-#     # Like, I'd just prefer to extend the logic.
-
-#     single_value = re.compile(
-#         r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<value>\d+)([^-]|$)")
-#     m = single_value.match(rule)
-#     if m:
-#         return _blanking_rule_check_single_value(
-#             m.group('key'), m.group('eq'), m.group('value'))
-
-#     return lambda packet: False
-
 
 def _blanking_rule_lbd():
     # All of these fields have the same blanking rule.

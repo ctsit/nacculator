@@ -496,14 +496,9 @@ def build_uds3_lbd_ivp_form(record):
 
 def update_header(record, packet):
     for header in packet:
-        header.PACKET = "I"
+        header.PACKET = "IL"
         header.FORMID = header.form_name
-        if header.FORMID.value == "B5 ":
-            header.FORMVER = "3.1"
-        elif header.FORMID.value == "C1S":
-            header.FORMVER = 2
-        else:
-            header.FORMVER = 3
+        header.FORMVER = 3
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
         header.VISITMO = record['visitmo']
