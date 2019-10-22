@@ -4,7 +4,7 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-# nacc.uds3
+# nacc.lbd
 import decimal
 
 class _UdsType(object):
