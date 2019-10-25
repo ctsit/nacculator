@@ -55,6 +55,57 @@ def check_blanks(packet, options):
 
     return warnings
 
+def check_characters(packet):
+    """
+    Checks fields with the "Char" type value for any of 4 special characters: & ' " %
+    If these characters are found, throws an error and skips the ptid.
+    """
+    warnings = []
+    # Where should this function be called? It looks like it would be good to slip into the iterations of check_blanks since it's going through every field anyway, and redcap2nacc would not have to go all the way back through every form a second time.
+    # It may fit better as a separate piece in "convert" with all the other special functions.
+    for form in packet:
+        # Find all fields that:
+        #   1) have the "Char" value type; and
+        #   2) have the forbidden characters
+        # If they are found, append an error to our error file and skip the PTID
+        for field in [f for f in form.fields.values()]:
+            # if nacc.uds3.Char:
+            chars = ['\'', '\"','&','%%']
+            if any((c in chars) for c in field.value):
+                quote = re.search('\'', field.value)
+                dquote = re.search('\"', field.value)
+                amp = re.search('&', field.value)
+                percent = re.search('%%', field.value)
+
+                incompatible = []
+                if quote:
+                    quote = "'"
+                    incompatible.append(quote)
+                
+                if dquote:
+                    dquote = '"'
+                    incompatible.append(dquote)
+                
+                if amp:
+                    amp = '&'
+                    incompatible.append(amp)
+                
+                if percent:
+                    percent = '%%'
+                    incompatible.append(percent)
+                
+                space = " "
+                character = space.join(incompatible)
+
+                warnings.append(
+                    "\'%s\' is \'%s\', which has invalid character(s) %s . This field can have any text or numbers, but cannot include single quotes \', double quotes \", ampersands & or percentage signs %% " %
+                    (field.name, field.value, character))
+    
+    return warnings
+                
+
+
+
 
 def check_single_select(packet):
     """ Checks the values of sets of interdependent questions
@@ -194,11 +245,21 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
+        try:
+            warnings += check_characters(packet)
+        except KeyError:
+            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            traceback.print_exc()
+            continue
+
         if not options.np and not options.m and not options.lbd: 
             warnings += check_single_select(packet)
 
         if warnings:
+            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            traceback.print_exc()
             print("\n".join(warnings), file=err)
+            continue
 
         for form in packet:
             
