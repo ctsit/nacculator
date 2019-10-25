@@ -55,27 +55,26 @@ def check_blanks(packet, options):
 
     return warnings
 
+
 def check_characters(packet):
     """
     Checks fields with the "Char" type value for any of 4 special characters: & ' " %
     If these characters are found, throws an error and skips the ptid.
     """
     warnings = []
-    # Where should this function be called? It looks like it would be good to slip into the iterations of check_blanks since it's going through every field anyway, and redcap2nacc would not have to go all the way back through every form a second time.
-    # It may fit better as a separate piece in "convert" with all the other special functions.
+
     for form in packet:
-        # Find all fields that:
-        #   1) have the "Char" value type; and
-        #   2) have the forbidden characters
+        # Find all fields that have any of the forbidden characters, and
+        #   figure out which characters are present in the string.
         # If they are found, append an error to our error file and skip the PTID
         for field in [f for f in form.fields.values()]:
-            # if nacc.uds3.Char:
             chars = ['\'', '\"','&','%%']
+
             if any((c in chars) for c in field.value):
                 quote = re.search('\'', field.value)
                 dquote = re.search('\"', field.value)
                 amp = re.search('&', field.value)
-                percent = re.search('%%', field.value)
+                percent = re.search('%', field.value)
 
                 incompatible = []
                 if quote:
@@ -103,9 +102,6 @@ def check_characters(packet):
     
     return warnings
                 
-
-
-
 
 def check_single_select(packet):
     """ Checks the values of sets of interdependent questions
