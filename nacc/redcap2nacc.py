@@ -15,12 +15,15 @@ import traceback
 
 from nacc.uds3 import blanks as blanks_uds3
 from nacc.lbd import blanks as blanks_lbd
+from nacc.ftld import blanks as blanks_ftld
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
 from nacc.uds3.m import builder as m_builder
 from nacc.lbd.ivp import builder as lbd_ivp_builder
 from nacc.lbd.fvp import builder as lbd_fvp_builder
+from nacc.ftld.ivp import builder as ftld_ivp_builder
+from nacc.ftld.fvp import builder as ftld_fvp_builder
 from nacc.uds3 import filters
 
 
@@ -39,7 +42,7 @@ def check_blanks(packet, options):
                       if f.blanks and not empty(f)]:
 
             for rule in field.blanks:
-                if not options.lbd: 
+                if not options.lbd and not options.ftld: 
                     r = blanks_uds3.convert_rule_to_python(field.name, rule)
                     if r(packet):
                         warnings.append(
@@ -53,6 +56,12 @@ def check_blanks(packet, options):
                             "'%s' is '%s' with length '%s', but should be blank: '%s'." %
                             (field.name, field.value, len(field.value), rule))
 
+                if options.ftld:
+                    s = blanks_ftld.convert_rule_to_python(field.name, rule)
+                    if s(packet):
+                        warnings.append(
+                            "'%s' is '%s' with length '%s', but should be blank: '%s'." %
+                            (field.name, field.value, len(field.value), rule))
     return warnings
 
 
@@ -165,6 +174,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 packet = lbd_ivp_builder.build_uds3_lbd_ivp_form(record)
             elif options.lbd and options.fvp:
                 packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
+            elif options.ftld and options.ivp:
+                packet = lbd_ivp_builder.build_uds3_lbd_ivp_form(record)
+            elif options.ftld and options.fvp:
+                packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
             elif options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
             elif options.np:
@@ -180,7 +193,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.lbd: 
+        if not options.np and not options.m and not options.lbd and not options.ftld: 
             set_blanks_to_zero(packet)
 
         if options.m:
@@ -194,7 +207,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.lbd: 
+        if not options.np and not options.m and not options.lbd and not options.ftld: 
             warnings += check_single_select(packet)
 
         if warnings:
@@ -232,6 +245,7 @@ def parse_args(args=None):
     option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=list(filters_names.keys()), help='Set this flag to process the filter')
 
     parser.add_argument('-lbd', action='store_true', dest='lbd', help='Set this flag to process as Lewy Body Dementia data')
+    parser.add_argument('-ftld', action='store_true', dest='ftld', help='Set this flag to process as Frontotemporal Lobar Degeneration data')
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
     parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
     parser.add_argument('-ptid', action='store', dest='ptid', help='Ptid for which you need the records')
