@@ -28,7 +28,6 @@ def check_blanks(packet, options):
     """
     Parses rules for when each field should be blank and then checks them
     """
-    pattern = re.compile(r"Blank if Question \d+ (\w+) (ne|=) (\d+)")
     warnings = []
 
     for form in packet:
@@ -90,7 +89,7 @@ def check_characters(packet):
                     incompatible.append(amp)
                 
                 if percent:
-                    percent = '%%'
+                    percent = '%'
                     incompatible.append(percent)
                 
                 space = " "
@@ -261,7 +260,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             
             try:
                 print(form, file=out)
-            except AssertionError as e:
+            except AssertionError:
                 print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
                 traceback.print_exc()
                 continue
