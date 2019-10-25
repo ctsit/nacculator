@@ -57,9 +57,10 @@ def check_blanks(packet, options):
 
 def check_characters(packet):
     """
-    Checks fields with the "Char" type value for any of 4 special characters: & ' " %
+    Checks fields for any of 4 special characters: & ' " %
     If these characters are found, throws an error and skips the ptid.
     """
+    # In the future, might be good to search only "Char" fields if possible.
     warnings = []
 
     for form in packet:
