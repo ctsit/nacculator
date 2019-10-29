@@ -50,6 +50,7 @@ class Field(object):
                allowable_values is not isinstance(allowable_values, str)
 
         self.name = name
+        self.typename = typename
         self.udstype = UDS3_TYPES[typename](length)
         self.position = position
         self.length = length

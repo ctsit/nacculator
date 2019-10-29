@@ -57,10 +57,9 @@ def check_blanks(packet, options):
 
 def check_characters(packet):
     """
-    Checks fields for any of 4 special characters: & ' " %
-    If these characters are found, throws an error and skips the ptid.
+    Checks typename="Char" fields for any of 4 special characters: & ' " %
+    If these characters are found, throws an error and skips the ptid
     """
-    # In the future, might be good to search only "Char" fields if possible.
     warnings = []
 
     for form in packet:
@@ -68,40 +67,54 @@ def check_characters(packet):
         #   figure out which characters are present in the string.
         # If they are found, append an error to our error file and skip the PTID
         for field in [f for f in form.fields.values()]:
-            chars = ['\'', '\"','&','%%']
+            if field.typename == "Char":
+                incompatible = check_for_bad_characters(field)
 
-            if any((c in chars) for c in field.value):
-                quote = re.search('\'', field.value)
-                dquote = re.search('\"', field.value)
-                amp = re.search('&', field.value)
-                percent = re.search('%', field.value)
-
-                incompatible = []
-                if quote:
-                    quote = "'"
-                    incompatible.append(quote)
-                
-                if dquote:
-                    dquote = '"'
-                    incompatible.append(dquote)
-                
-                if amp:
-                    amp = '&'
-                    incompatible.append(amp)
-                
-                if percent:
-                    percent = '%'
-                    incompatible.append(percent)
-                
-                space = " "
-                character = space.join(incompatible)
-
-                warnings.append(
-                    "\'%s\' is \'%s\', which has invalid character(s) %s . This field can have any text or numbers, but cannot include single quotes \', double quotes \", ampersands & or percentage signs %% " %
-                    (field.name, field.value, character))
-    
+                if incompatible:
+                    character = " ".join(incompatible)
+                    warnings.append(
+                        '\'%s\' is \'%s\', which has invalid character(s) %s . This field can have any text or numbers, but cannot include single quotes \', double quotes \", ampersands & or percentage signs %% ' %
+                        (field.name, field.value, character))
+            
     return warnings
-                
+
+
+def check_for_bad_characters(field):
+    """
+    Searches the flagged fields for the special characters 
+    and tallies up all instances of each character
+    """
+    incompatible = []
+
+    text = field.value
+    chars = ["'", '"','&','%']
+
+    if any((c in chars) for c in text):
+        quote = re.search("'", text)
+        num_quote = text.count("'")
+        dquote = re.search('"', text)
+        num_dquote = text.count('"')
+        amp = re.search('&', text)
+        num_amp = text.count("&")
+        percent = re.search('%', text)
+        num_percent = text.count("%")
+
+        incompatible = []
+        if quote:
+            quote = "'"
+            incompatible.append(quote + " (%s)" % num_quote)
+        if dquote:
+            dquote = '"'
+            incompatible.append(dquote + " (%s)" % num_dquote)
+        if amp:
+            amp = '&'
+            incompatible.append(amp + " (%s)" % num_amp)
+        if percent:
+            percent = '%'
+            incompatible.append(percent + " (%s)" % num_percent)
+
+    return incompatible
+
 
 def check_single_select(packet):
     """ Checks the values of sets of interdependent questions
@@ -243,6 +256,12 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         try:
             warnings += check_characters(packet)
+            if warnings:
+                print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+                warn = "\n".join(map(str, warnings))
+                warn = warn.replace("\\","")
+                print(warn, file=err)
+                continue
         except KeyError:
             print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             traceback.print_exc()
@@ -251,11 +270,6 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         if not options.np and not options.m and not options.lbd: 
             warnings += check_single_select(packet)
 
-        if warnings:
-            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
-            traceback.print_exc()
-            print("\n".join(warnings), file=err)
-            continue
 
         for form in packet:
             
