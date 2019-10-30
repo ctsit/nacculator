@@ -56,7 +56,7 @@ def check_blanks(packet, options):
                             (field.name, field.value, len(field.value), rule))
 
                 if options.ftld:
-                    s = blanks_ftld.convert_rule_to_python(field.name, rule)
+                    s = blanks_ftld.convert_rule_to_python(field.name, field.value, rule)
                     if s(packet):
                         warnings.append(
                             "'%s' is '%s' with length '%s', but should be blank: '%s'." %

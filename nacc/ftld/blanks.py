@@ -10,7 +10,7 @@ import re
 import sys
 
 
-def convert_rule_to_python(name, rule):
+def convert_rule_to_python(name, value, rule):
     """
     Converts the text `rule` into a python function.
 
@@ -28,98 +28,64 @@ def convert_rule_to_python(name, rule):
     """
 
     special_cases = {
-        'MOMAGEO': _blanking_rule_momageo,
-        'FTLDSUBT': _blanking_rule_ftldsubt,
-        'LEARNED': _blanking_rule_learned,
-        'ZIP': _blanking_rule_dummy,
-        'DECCLMOT': _blanking_rule_dummy,
-        'CRAFTDRE': _blanking_rule_dummy,
-        # Neuropath skip rules
-        'NPINF': _blanking_rule_dummy,
-        'NPHEMO': _blanking_rule_dummy,
-        'NPOLD': _blanking_rule_dummy,
-        'NPOLDD': _blanking_rule_dummy,
-        'NPFTDTAU': _blanking_rule_dummy,
-        'NPOFTD': _blanking_rule_dummy,
-        'NPNEC': _blanking_rule_dummy,
-        'NPPATH': _blanking_rule_dummy,
-        'NPPATHO': _blanking_rule_dummy,
-        'NPPATH2': _blanking_rule_dummy,
-        'NPPATH3': _blanking_rule_dummy,
-        'NPPATH6': _blanking_rule_dummy,
-        'NPPATH7': _blanking_rule_dummy,
-        'NPPATH4': _blanking_rule_dummy,
-        'NPPATH5': _blanking_rule_dummy,
-        'NPPATH8': _blanking_rule_dummy,
-        'NPPATH9': _blanking_rule_dummy,
-        'NPPATH10': _blanking_rule_dummy,
-        'NPPATH11': _blanking_rule_dummy,
-
-
-        'FTDCPC2F': 'Blank if form completed',
-        'FTDhAIRD': 'Blank if question not answered',
-        'FTDSPIT': 'Blank if question not answered',
-        'FTDNOSE': 'Blank if question not answered',
-        'FTDCOAGE': 'Blank if question not answered',
-        'FTDCRY': 'Blank if question not answered',
-        'FTDCUT': 'Blank if question not answered',
-        'FTDYTRIP': 'Blank if question not answered',
-        'FTDEATP': 'Blank if question not answered',
-        'FTDTELLA': 'Blank if question not answered',
-        'FTDOPIN': 'Blank if question not answered',
-        'FTDLAUGh': 'Blank if question not answered',
-        'FTDShIRT': 'Blank if question not answered',
-        'FTDKEEPM': 'Blank if question not answered',
-        'FTDPICKN': 'Blank if question not answered',
-        'FTDOVER': 'Blank if question not answered',
-        'FTDEATR': 'Blank if question not answered',
-        'FTDhAIRL': 'Blank if question not answered',
-        'FTDShIRW': 'Blank if question not answered',
-        'FTDMOVE': 'Blank if question not answered',
-        'FTDhUGS': 'Blank if question not answered',
-        'FTDLOUD': 'Blank if question not answered',
-        'FTDLOST': 'Blank if question not answered',
+        'FTDCPC2F': _blanking_rule_dummy,
+        'FTDhAIRD': _blanking_rule_ftld_q_noanswer(value),
+        'FTDSPIT': _blanking_rule_ftld_q_noanswer(value),
+        'FTDNOSE': _blanking_rule_ftld_q_noanswer(value),
+        'FTDCOAGE': _blanking_rule_ftld_q_noanswer(value),
+        'FTDCRY': _blanking_rule_ftld_q_noanswer(value),
+        'FTDCUT': _blanking_rule_ftld_q_noanswer(value),
+        'FTDYTRIP': _blanking_rule_ftld_q_noanswer(value),
+        'FTDEATP': _blanking_rule_ftld_q_noanswer(value),
+        'FTDTELLA': _blanking_rule_ftld_q_noanswer(value),
+        'FTDOPIN': _blanking_rule_ftld_q_noanswer(value),
+        'FTDLAUGh': _blanking_rule_ftld_q_noanswer(value),
+        'FTDShIRT': _blanking_rule_ftld_q_noanswer(value),
+        'FTDKEEPM': _blanking_rule_ftld_q_noanswer(value),
+        'FTDPICKN': _blanking_rule_ftld_q_noanswer(value),
+        'FTDOVER': _blanking_rule_ftld_q_noanswer(value),
+        'FTDEATR': _blanking_rule_ftld_q_noanswer(value),
+        'FTDhAIRL': _blanking_rule_ftld_q_noanswer(value),
+        'FTDShIRW': _blanking_rule_ftld_q_noanswer(value),
+        'FTDMOVE': _blanking_rule_ftld_q_noanswer(value),
+        'FTDhUGS': _blanking_rule_ftld_q_noanswer(value),
+        'FTDLOUD': _blanking_rule_ftld_q_noanswer(value),
+        'FTDLOST': _blanking_rule_ftld_q_noanswer(value),
     
-        'FTDWORKU': 'Blank if question not answered',
-        'FTDMIST': 'Blank if question not answered',
-        'FTDCRIT': 'Blank if question not answered',
-        'FTDWORR': 'Blank if question not answered',
-        'FTDBAD': 'Blank if question not answered',
-        'FTDPOOR': 'Blank if question not answered',
-        'FTDFFEAR': 'Blank if question not answered',
-
-
-        'FTDFEEL': 'Blank if question not answered',
-        'FTDDIFF': 'Blank if question not answered',
-        'FTDSORR': 'Blank if question not answered',
-        'FTDSIDE': 'Blank if question not answered',
-        'FTDADVAN': 'Blank if question not answered',
-        'FTDIMAG': 'Blank if question not answered',
-        'FTDMISF': 'Blank if question not answered',
-        'FTDWASTE': 'Blank if question not answered',
-        'FTDPITY': 'Blank if question not answered',
-        'FTDQTOUC': 'Blank if question not answered',
-        'FTDSIDES': 'Blank if question not answered',
-        'FTDSOFTh': 'Blank if question not answered',
-        'FTDUPSET': 'Blank if question not answered',
-        'FTDCRITI': 'Blank if question not answered',
-
-
-        'FTDALTER': 'Blank if question not answered',
-        'FTDEMOT': 'Blank if question not answered',
-        'FTDACROS': 'Blank if question not answered',
-        'FTDCONV': 'Blank if question not answered',
-        'FTDINTUI': 'Blank if question not answered',
-        'FTDJOKE': 'Blank if question not answered',
-        'FTDIMAGP': 'Blank if question not answered',
-        'FTDINAPP': 'Blank if question not answered',
-        'FTDChBEh': 'Blank if question not answered',
-        'FTDADBEh': 'Blank if question not answered',
-        'FTDLYING': 'Blank if question not answered',
-        'FTDGOODF': 'Blank if question not answered',
-        'FTDREGUL': 'Blank if question not answered',
-
-
+        'FTDWORKU': _blanking_rule_ftld_q_noanswer(value),
+        'FTDMIST': _blanking_rule_ftld_q_noanswer(value),
+        'FTDCRIT': _blanking_rule_ftld_q_noanswer(value),
+        'FTDWORR': _blanking_rule_ftld_q_noanswer(value),
+        'FTDBAD': _blanking_rule_ftld_q_noanswer(value),
+        'FTDPOOR': _blanking_rule_ftld_q_noanswer(value),
+        'FTDFFEAR': _blanking_rule_ftld_q_noanswer(value),
+        'FTDFEEL': _blanking_rule_ftld_q_noanswer(value),
+        'FTDDIFF': _blanking_rule_ftld_q_noanswer(value),
+        'FTDSORR': _blanking_rule_ftld_q_noanswer(value),
+        'FTDSIDE': _blanking_rule_ftld_q_noanswer(value),
+        'FTDADVAN': _blanking_rule_ftld_q_noanswer(value),
+        'FTDIMAG': _blanking_rule_ftld_q_noanswer(value),
+        'FTDMISF': _blanking_rule_ftld_q_noanswer(value),
+        'FTDWASTE': _blanking_rule_ftld_q_noanswer(value),
+        'FTDPITY': _blanking_rule_ftld_q_noanswer(value),
+        'FTDQTOUC': _blanking_rule_ftld_q_noanswer(value),
+        'FTDSIDES': _blanking_rule_ftld_q_noanswer(value),
+        'FTDSOFTh': _blanking_rule_ftld_q_noanswer(value),
+        'FTDUPSET': _blanking_rule_ftld_q_noanswer(value),
+        'FTDCRITI': _blanking_rule_ftld_q_noanswer(value),
+        'FTDALTER': _blanking_rule_ftld_q_noanswer(value),
+        'FTDEMOT': _blanking_rule_ftld_q_noanswer(value),
+        'FTDACROS': _blanking_rule_ftld_q_noanswer(value),
+        'FTDCONV': _blanking_rule_ftld_q_noanswer(value),
+        'FTDINTUI': _blanking_rule_ftld_q_noanswer(value),
+        'FTDJOKE': _blanking_rule_ftld_q_noanswer(value),
+        'FTDIMAGP': _blanking_rule_ftld_q_noanswer(value),
+        'FTDINAPP': _blanking_rule_ftld_q_noanswer(value),
+        'FTDChBEh': _blanking_rule_ftld_q_noanswer(value),
+        'FTDADBEh': _blanking_rule_ftld_q_noanswer(value),
+        'FTDLYING': _blanking_rule_ftld_q_noanswer(value),
+        'FTDGOODF': _blanking_rule_ftld_q_noanswer(value),
+        'FTDREGUL': _blanking_rule_ftld_q_noanswer(value),
 
         'FTDMRIRF': _blanking_rule_ftld_or2,
         'FTDMRILF': _blanking_rule_ftld_or2,
@@ -132,7 +98,7 @@ def convert_rule_to_python(name, rule):
         'FTDMRIRB': _blanking_rule_ftld_or2,
         'FTDMRILB': _blanking_rule_ftld_or2,
         'FTDMRIOB': _blanking_rule_ftld_or2,
-        'FTDMRIOS': _blanking_rule_ftld_or2,
+        'FTDMRIOS': _blanking_rule_ftld_or2a,
         'FTDFDGRF': _blanking_rule_ftld_or3,
         'FTDFDGLF': _blanking_rule_ftld_or3,
         'FTDFDGRT': _blanking_rule_ftld_or3,
@@ -144,7 +110,7 @@ def convert_rule_to_python(name, rule):
         'FTDFDGRB': _blanking_rule_ftld_or3,
         'FTDFDGLB': _blanking_rule_ftld_or3,
         'FTDFDGOA': _blanking_rule_ftld_or3,
-        'FTDFDGOS': _blanking_rule_ftld_or3,
+        'FTDFDGOS': _blanking_rule_ftld_or3a,
         'FTDAMYRF': _blanking_rule_ftld_or4,
         'FTDAMYLF': _blanking_rule_ftld_or4,
         'FTDAMYRT': _blanking_rule_ftld_or4,
@@ -156,7 +122,7 @@ def convert_rule_to_python(name, rule):
         'FTDAMYRB': _blanking_rule_ftld_or4,
         'FTDAMYLB': _blanking_rule_ftld_or4,
         'FTDAMYOA': _blanking_rule_ftld_or4,
-        'FTDAMYOS': _blanking_rule_ftld_or4,
+        'FTDAMYOS': _blanking_rule_ftld_or4a,
         'FTDCBFRF': _blanking_rule_ftld_or5,
         'FTDCBFLF': _blanking_rule_ftld_or5,
         'FTDCBFRT': _blanking_rule_ftld_or5,
@@ -168,19 +134,18 @@ def convert_rule_to_python(name, rule):
         'FTDCBFRB': _blanking_rule_ftld_or5,
         'FTDCBFLB': _blanking_rule_ftld_or5,
         'FTDCBFOA': _blanking_rule_ftld_or5,
-        'FTDCBFOS': _blanking_rule_ftld_or5,
+        'FTDCBFOS': _blanking_rule_ftld_or5a,
 
-    
     }
 
-    # single_value = re.compile(
-    #     r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<value>\d+)([^-]|$)")
-    # range_values = re.compile(
-    #     r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
-
     single_value = re.compile(
-        r"Blank if( # *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<value>\d+)([^-]|$)")
+        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<value>\d+)([^-]|$)")
     range_values = re.compile(
+        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
+
+    single_value_2 = re.compile(
+        r"Blank if( # *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<value>\d+)([^-]|$)")
+    range_values_2 = re.compile(
         r"Blank if( # *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
 
     # First, check to see if the rule is a "Special Case"
@@ -189,15 +154,23 @@ def convert_rule_to_python(name, rule):
 
     # Then, check to see if the rule is of the within-range type
     m = range_values.match(rule)
+    n = range_values_2.match(rule)
     if m:
         return _blanking_rule_check_within_range(
             m.group('key'), m.group('eq'), m.group('start'), m.group('stop'))
+    if n:
+        return _blanking_rule_check_within_range(
+            n.group('key'), n.group('eq'), n.group('start'), n.group('stop'))
 
     # Next, check to see if the rule is of the single-value type
     m = single_value.match(rule)
+    n = single_value_2.match(rule)
     if m:
         return _blanking_rule_check_single_value(
             m.group('key'), m.group('eq'), m.group('value'))
+    if n:
+        return _blanking_rule_check_single_value(
+            n.group('key'), n.group('eq'), n.group('value'))
 
     # Finally, raise an error since we do not know how to handle the rule
     raise Exception("Could not parse Blanking rule: "+name)
@@ -241,54 +214,51 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
     return should_be_blank
 
 
-def _blanking_rule_ftld_form_complete():
-    # "Blank if form completed"
-    return lambda packet: False
+# Since this blanking rule is based recursively off questions that come after it (that are left blank if this one is answered), I'm just going to say this one is allowed to be left blank and leave it there.
+# def _blanking_rule_ftld_form_complete():
+#     # 'FTDCPC2F': 'Blank if form completed'
+#     # This blanking rule refers to fields that are checked AFTER this one... This might cause problems
+#     return lambda packet: packet['FTDSNTOT'] == True and packet['FTDSNTBS'] == True and packet['FTDSNTOS'] == True and packet['FTDSNRAT'] == True
+#     # return lambda packet: False
 
-def _blanking_rule_ftld_q_noanswer():
+def _blanking_rule_ftld_q_noanswer(value):
     # "Blank if question not answered"
-    return lambda packet: False
+    if value == None:
+        return lambda packet: True
+    else: return lambda packet: False
 
 def _blanking_rule_ftld_or2():
     # Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    return lambda packet: packet['FTDMRIFA'] in (0, 9)
+    # Along with other regular conditions
+    return lambda packet: packet['FTDMRIFA'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDSMRIO']==0
+
+def _blanking_rule_ftld_or2a():
+    # Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
+    # This rule has an additional condition compared to the others in this form
+    return lambda packet: packet['FTDMRIFA'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDSMRIO']==0 or packet['FTDMRIOB']!=1
 
 def _blanking_rule_ftld_or3():
-    # Blank if either of 2 possibilities is true
-    return lambda packet: packet['FTDFDGFH'] in (0, 9)
+    return lambda packet: packet['FTDFDGFH'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDFDGPE']==0
+
+def _blanking_rule_ftld_or3a():
+    return lambda packet: packet['FTDFDGFH'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDFDGPE']==0 or packet['FTDFDGOA']!=1
 
 def _blanking_rule_ftld_or4():
-    # Blank if either of 2 possibilities is true
-    return lambda packet: packet['FTDAMYVI'] in (0, 9)
+    return lambda packet: packet['FTDAMYVI'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDAMYP']==0
+
+def _blanking_rule_ftld_or4a():
+    return lambda packet: packet['FTDAMYVI'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDAMYP']==0 or packet['FTDAMYOA']!=1
 
 def _blanking_rule_ftld_or5():
-    # Blank if either of 2 possibilities is true
-    return lambda packet: packet['FTDCBFVI'] in (0, 9)
+    return lambda packet: packet['FTDCBFVI'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDCBFSP']==0
+
+def _blanking_rule_ftld_or5a():
+    return lambda packet: packet['FTDCBFVI'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDCBFSP']==0 or packet['FTDCBFOA']!=1
 
 
 def _blanking_rule_dummy():
     return lambda packet: False
 
-
-def _blanking_rule_ftldsubt():
-    #Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1 and 14d FTLDNOS ne 1
-    return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
-                          packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
-
-
-def _blanking_rule_learned():
-    # The two rules contradict each other:
-    #  - Blank if Question 2a REFERSC ne 1
-    #  - Blank if Question 2a REFERSC ne 2
-    # The intent appears to be "blank if REFERSC is 3, 4, 5, 6, 8, or 9", but
-    # that makes 6 individual blanking rules and the maximum is 5 (BLANKS1-5).
-    return lambda packet: packet['REFERSC'] in (3, 4, 5, 6, 8, 9)
-
-
-def _blanking_rule_momageo():
-    # Blank if Question 54MOMNEUR = 8 (N/A)
-    # Blank if Question 54MOMNEUR = 9 (Unknown)
-    return lambda packet: packet['MOMNEUR'] in (8, 9)
 
 def set_zeros_to_blanks(packet):
     """ Sets specific fields to zero if they meet certain criteria """
