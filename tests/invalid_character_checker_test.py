@@ -7,7 +7,7 @@ from nacc.redcap2nacc import check_for_bad_characters
 
 class field():
     name = 'FOTHMUSX'
-    value = '\'O%h& \'No'
+    value = '\'O%h& \'N\"o\"'
 
 
 class TestInvalidCharacters(unittest.TestCase):
@@ -39,13 +39,13 @@ class TestInvalidCharacters(unittest.TestCase):
 
     # This one ended up not mattering- 
     # the csv file takes care of closed double quotes within excel
-    def test_doubles_but_no_singles(self):
-        chars = check_for_bad_characters(field)
-        char_search = str(chars)
-        quote = re.search("'", char_search)
-        dquote = re.search('"', char_search)
-        self.assertFalse(quote)
-        self.assertTrue(dquote)
+    # def test_doubles_but_no_singles(self):
+    #     chars = check_for_bad_characters(field)
+    #     char_search = str(chars)
+    #     quote = re.search("'", char_search)
+    #     dquote = re.search('"', char_search)
+    #     self.assertFalse(quote)
+    #     self.assertTrue(dquote)
 
 
 
