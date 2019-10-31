@@ -210,7 +210,9 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             warnings += check_single_select(packet)
 
         if warnings:
+            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             print("\n".join(warnings), file=err)
+            continue
 
         for form in packet:
             
