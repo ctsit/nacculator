@@ -29,63 +29,122 @@ def convert_rule_to_python(name, value, rule):
 
     special_cases = {
         'FTDCPC2F': _blanking_rule_dummy,
-        'FTDhAIRD': _blanking_rule_ftld_q_noanswer(value),
-        'FTDSPIT': _blanking_rule_ftld_q_noanswer(value),
-        'FTDNOSE': _blanking_rule_ftld_q_noanswer(value),
-        'FTDCOAGE': _blanking_rule_ftld_q_noanswer(value),
-        'FTDCRY': _blanking_rule_ftld_q_noanswer(value),
-        'FTDCUT': _blanking_rule_ftld_q_noanswer(value),
-        'FTDYTRIP': _blanking_rule_ftld_q_noanswer(value),
-        'FTDEATP': _blanking_rule_ftld_q_noanswer(value),
-        'FTDTELLA': _blanking_rule_ftld_q_noanswer(value),
-        'FTDOPIN': _blanking_rule_ftld_q_noanswer(value),
-        'FTDLAUGh': _blanking_rule_ftld_q_noanswer(value),
-        'FTDShIRT': _blanking_rule_ftld_q_noanswer(value),
-        'FTDKEEPM': _blanking_rule_ftld_q_noanswer(value),
-        'FTDPICKN': _blanking_rule_ftld_q_noanswer(value),
-        'FTDOVER': _blanking_rule_ftld_q_noanswer(value),
-        'FTDEATR': _blanking_rule_ftld_q_noanswer(value),
-        'FTDhAIRL': _blanking_rule_ftld_q_noanswer(value),
-        'FTDShIRW': _blanking_rule_ftld_q_noanswer(value),
-        'FTDMOVE': _blanking_rule_ftld_q_noanswer(value),
-        'FTDhUGS': _blanking_rule_ftld_q_noanswer(value),
-        'FTDLOUD': _blanking_rule_ftld_q_noanswer(value),
-        'FTDLOST': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDhAIRD': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDSPIT': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDNOSE': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDCOAGE': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDCRY': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDCUT': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDYTRIP': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDEATP': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDTELLA': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDOPIN': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDLAUGh': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDShIRT': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDKEEPM': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDPICKN': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDOVER': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDEATR': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDhAIRL': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDShIRW': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDMOVE': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDhUGS': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDLOUD': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDLOST': _blanking_rule_ftld_q_noanswer(value),
     
-        'FTDWORKU': _blanking_rule_ftld_q_noanswer(value),
-        'FTDMIST': _blanking_rule_ftld_q_noanswer(value),
-        'FTDCRIT': _blanking_rule_ftld_q_noanswer(value),
-        'FTDWORR': _blanking_rule_ftld_q_noanswer(value),
-        'FTDBAD': _blanking_rule_ftld_q_noanswer(value),
-        'FTDPOOR': _blanking_rule_ftld_q_noanswer(value),
-        'FTDFFEAR': _blanking_rule_ftld_q_noanswer(value),
-        'FTDFEEL': _blanking_rule_ftld_q_noanswer(value),
-        'FTDDIFF': _blanking_rule_ftld_q_noanswer(value),
-        'FTDSORR': _blanking_rule_ftld_q_noanswer(value),
-        'FTDSIDE': _blanking_rule_ftld_q_noanswer(value),
-        'FTDADVAN': _blanking_rule_ftld_q_noanswer(value),
-        'FTDIMAG': _blanking_rule_ftld_q_noanswer(value),
-        'FTDMISF': _blanking_rule_ftld_q_noanswer(value),
-        'FTDWASTE': _blanking_rule_ftld_q_noanswer(value),
-        'FTDPITY': _blanking_rule_ftld_q_noanswer(value),
-        'FTDQTOUC': _blanking_rule_ftld_q_noanswer(value),
-        'FTDSIDES': _blanking_rule_ftld_q_noanswer(value),
-        'FTDSOFTh': _blanking_rule_ftld_q_noanswer(value),
-        'FTDUPSET': _blanking_rule_ftld_q_noanswer(value),
-        'FTDCRITI': _blanking_rule_ftld_q_noanswer(value),
-        'FTDALTER': _blanking_rule_ftld_q_noanswer(value),
-        'FTDEMOT': _blanking_rule_ftld_q_noanswer(value),
-        'FTDACROS': _blanking_rule_ftld_q_noanswer(value),
-        'FTDCONV': _blanking_rule_ftld_q_noanswer(value),
-        'FTDINTUI': _blanking_rule_ftld_q_noanswer(value),
-        'FTDJOKE': _blanking_rule_ftld_q_noanswer(value),
-        'FTDIMAGP': _blanking_rule_ftld_q_noanswer(value),
-        'FTDINAPP': _blanking_rule_ftld_q_noanswer(value),
-        'FTDChBEh': _blanking_rule_ftld_q_noanswer(value),
-        'FTDADBEh': _blanking_rule_ftld_q_noanswer(value),
-        'FTDLYING': _blanking_rule_ftld_q_noanswer(value),
-        'FTDGOODF': _blanking_rule_ftld_q_noanswer(value),
-        'FTDREGUL': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDWORKU': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDMIST': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDCRIT': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDWORR': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDBAD': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDPOOR': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDFFEAR': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDFEEL': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDDIFF': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDSORR': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDSIDE': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDADVAN': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDIMAG': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDMISF': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDWASTE': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDPITY': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDQTOUC': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDSIDES': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDSOFTh': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDUPSET': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDCRITI': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDALTER': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDEMOT': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDACROS': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDCONV': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDINTUI': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDJOKE': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDIMAGP': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDINAPP': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDChBEh': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDADBEh': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDLYING': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDGOODF': _blanking_rule_ftld_q_noanswer(value),
+        # 'FTDREGUL': _blanking_rule_ftld_q_noanswer(value),
+
+    # I do need a special blanking rule for some of these "Blank if left blank" questions, since the first batch of these have other blanking rules too
+        'FTDhAIRD': _blanking_rule_dummy,
+        'FTDSPIT': _blanking_rule_dummy,
+        'FTDNOSE': _blanking_rule_dummy,
+        'FTDCOAGE': _blanking_rule_dummy,
+        'FTDCRY': _blanking_rule_dummy,
+        'FTDCUT': _blanking_rule_dummy,
+        'FTDYTRIP': _blanking_rule_dummy,
+        'FTDEATP': _blanking_rule_dummy,
+        'FTDTELLA': _blanking_rule_dummy,
+        'FTDOPIN': _blanking_rule_dummy,
+        'FTDLAUGh': _blanking_rule_dummy,
+        'FTDShIRT': _blanking_rule_dummy,
+        'FTDKEEPM': _blanking_rule_dummy,
+        'FTDPICKN': _blanking_rule_dummy,
+        'FTDOVER': _blanking_rule_dummy,
+        'FTDEATR': _blanking_rule_dummy,
+        'FTDhAIRL': _blanking_rule_dummy,
+        'FTDShIRW': _blanking_rule_dummy,
+        'FTDMOVE': _blanking_rule_dummy,
+        'FTDhUGS': _blanking_rule_dummy,
+        'FTDLOUD': _blanking_rule_dummy,
+        'FTDLOST': _blanking_rule_dummy,
+    
+        'FTDWORKU': _blanking_rule_dummy,
+        'FTDMIST': _blanking_rule_dummy,
+        'FTDCRIT': _blanking_rule_dummy,
+        'FTDWORR': _blanking_rule_dummy,
+        'FTDBAD': _blanking_rule_dummy,
+        'FTDPOOR': _blanking_rule_dummy,
+        'FTDFFEAR': _blanking_rule_dummy,
+        'FTDFEEL': _blanking_rule_dummy,
+        'FTDDIFF': _blanking_rule_dummy,
+        'FTDSORR': _blanking_rule_dummy,
+        'FTDSIDE': _blanking_rule_dummy,
+        'FTDADVAN': _blanking_rule_dummy,
+        'FTDIMAG': _blanking_rule_dummy,
+        'FTDMISF': _blanking_rule_dummy,
+        'FTDWASTE': _blanking_rule_dummy,
+        'FTDPITY': _blanking_rule_dummy,
+        'FTDQTOUC': _blanking_rule_dummy,
+        'FTDSIDES': _blanking_rule_dummy,
+        'FTDSOFTh': _blanking_rule_dummy,
+        'FTDUPSET': _blanking_rule_dummy,
+        'FTDCRITI': _blanking_rule_dummy,
+        'FTDALTER': _blanking_rule_dummy,
+        'FTDEMOT': _blanking_rule_dummy,
+        'FTDACROS': _blanking_rule_dummy,
+        'FTDCONV': _blanking_rule_dummy,
+        'FTDINTUI': _blanking_rule_dummy,
+        'FTDJOKE': _blanking_rule_dummy,
+        'FTDIMAGP': _blanking_rule_dummy,
+        'FTDINAPP': _blanking_rule_dummy,
+        'FTDChBEh': _blanking_rule_dummy,
+        'FTDADBEh': _blanking_rule_dummy,
+        'FTDLYING': _blanking_rule_dummy,
+        'FTDGOODF': _blanking_rule_dummy,
+        'FTDREGUL': _blanking_rule_dummy,
 
         'FTDMRIRF': _blanking_rule_ftld_or2,
         'FTDMRILF': _blanking_rule_ftld_or2,
@@ -136,6 +195,9 @@ def convert_rule_to_python(name, value, rule):
         'FTDCBFOA': _blanking_rule_ftld_or5,
         'FTDCBFOS': _blanking_rule_ftld_or5a,
 
+        'FTDPABVF': _blanking_rule_for_others_left_blank,
+        
+        
     }
 
     single_value = re.compile(
@@ -143,34 +205,21 @@ def convert_rule_to_python(name, value, rule):
     range_values = re.compile(
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
 
-    single_value_2 = re.compile(
-        r"Blank if( # *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<value>\d+)([^-]|$)")
-    range_values_2 = re.compile(
-        r"Blank if( # *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
-
     # First, check to see if the rule is a "Special Case"
     if name in special_cases:
         return special_cases[name]()
 
     # Then, check to see if the rule is of the within-range type
     m = range_values.match(rule)
-    n = range_values_2.match(rule)
     if m:
         return _blanking_rule_check_within_range(
             m.group('key'), m.group('eq'), m.group('start'), m.group('stop'))
-    if n:
-        return _blanking_rule_check_within_range(
-            n.group('key'), n.group('eq'), n.group('start'), n.group('stop'))
 
     # Next, check to see if the rule is of the single-value type
     m = single_value.match(rule)
-    n = single_value_2.match(rule)
     if m:
         return _blanking_rule_check_single_value(
             m.group('key'), m.group('eq'), m.group('value'))
-    if n:
-        return _blanking_rule_check_single_value(
-            n.group('key'), n.group('eq'), n.group('value'))
 
     # Finally, raise an error since we do not know how to handle the rule
     raise Exception("Could not parse Blanking rule: "+name)
@@ -221,11 +270,12 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
 #     return lambda packet: packet['FTDSNTOT'] == True and packet['FTDSNTBS'] == True and packet['FTDSNTOS'] == True and packet['FTDSNRAT'] == True
 #     # return lambda packet: False
 
-def _blanking_rule_ftld_q_noanswer(value):
-    # "Blank if question not answered"
-    if value == None:
-        return lambda packet: True
-    else: return lambda packet: False
+# Since this blanking rule seems redundant (blank if left blank), I'm going to comment it out for now and ask if it needs to be included later
+# def _blanking_rule_ftld_q_noanswer(value):
+#     # "Blank if question not answered"
+#     if value == None:
+#         return lambda packet: True
+#     else: return lambda packet: False
 
 def _blanking_rule_ftld_or2():
     # Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
@@ -238,10 +288,10 @@ def _blanking_rule_ftld_or2a():
     return lambda packet: packet['FTDMRIFA'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDSMRIO']==0 or packet['FTDMRIOB']!=1
 
 def _blanking_rule_ftld_or3():
-    return lambda packet: packet['FTDFDGFH'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDFDGPE']==0
+    return lambda packet: packet['FTDFDGFh'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDFDGPE']==0
 
 def _blanking_rule_ftld_or3a():
-    return lambda packet: packet['FTDFDGFH'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDFDGPE']==0 or packet['FTDFDGOA']!=1
+    return lambda packet: packet['FTDFDGFh'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDFDGPE']==0 or packet['FTDFDGOA']!=1
 
 def _blanking_rule_ftld_or4():
     return lambda packet: packet['FTDAMYVI'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDAMYP']==0
@@ -255,6 +305,8 @@ def _blanking_rule_ftld_or5():
 def _blanking_rule_ftld_or5a():
     return lambda packet: packet['FTDCBFVI'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDCBFSP']==0 or packet['FTDCBFOA']!=1
 
+def _blanking_rule_for_others_left_blank():
+    return lambda packet: packet['FTDCPPA']==0 or packet['FTDCPPA']==False or packet['FTDBVFT']==0 or packet['FTDBVFT']==False
 
 def _blanking_rule_dummy():
     return lambda packet: False

@@ -174,9 +174,9 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             elif options.lbd and options.fvp:
                 packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
             elif options.ftld and options.ivp:
-                packet = lbd_ivp_builder.build_uds3_lbd_ivp_form(record)
+                packet = ftld_ivp_builder.build_uds3_ftld_ivp_form(record)
             elif options.ftld and options.fvp:
-                packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
+                packet = ftld_fvp_builder.build_uds3_ftld_fvp_form(record)
             elif options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
             elif options.np:
