@@ -31,9 +31,10 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 '''.strip()
 
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results, \
-                io.BytesIO(subjects) as nacc_packet_file:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results, \
+                io.StringIO(subjects) as nacc_packet_file:
+
             filters.filter_clean_ptid_do(data, nacc_packet_file, results)
             # Reset the file position indicator so DictReader reads from the
             # beginning of the results "file".
@@ -60,8 +61,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 '''.strip()
 
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
             filters.filter_eliminate_empty_date(data, '', results)
 
             results.seek(0)
@@ -92,8 +93,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 '''.strip()
 
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
             filters.filter_remove_ptid_do(data, filter_diction, results)
 
             results.seek(0)
@@ -117,8 +118,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 110004,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
 '''.strip()
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
             filters.filter_fix_visitdate(data, '', results)
 
             results.seek(0)
@@ -144,8 +145,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 '''.strip()
         actual_adcid = []
         actual_formver = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
             filters.fill_value_of_fields(data, results, fill_default_values,
                                          defaultCheck=True)
 
@@ -175,8 +176,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 110002,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
 '''.strip()
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
             filters.fill_value_of_fields(data, results, fill_non_blank_values,
                                          blankCheck=True)
 
@@ -205,8 +206,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 110001,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
 '''.strip()
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
 
             reader = csv.DictReader(data)
             output = csv.DictWriter(results, None)
@@ -237,8 +238,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 110001,initial_visit_year_arm_1,3,99,1,1,2019,001,ABC,2
 '''.strip()
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
 
             reader = csv.DictReader(data)
             output = csv.DictWriter(results, None)
@@ -268,8 +269,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 110002,initial_visit_year_arm_1,3,99,1,1,2019,002,ABC,2
 '''.strip()
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
 
             reader = csv.DictReader(data)
             output = csv.DictWriter(results, None)
@@ -298,8 +299,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 110001,in_person_home_visit,3,99,1,1,2019,002,ABC,2
 '''.strip()
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
             reader = csv.DictReader(data)
             output = csv.DictWriter(results, None)
             filters.write_headers(reader, output)
@@ -333,8 +334,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         }
 
         actual = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
                 
             filters.filter_fix_headers_do(data, fix_header_dict, results)
 
@@ -343,7 +344,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         
             results.seek(0)
             reader = csv.reader(results)
-            actual = reader.next()
+            actual = next(reader)
         expected = ['PTID','redcap_event_name','formver','ADCid','VisitMo','visitday','visityr','visitnum','Initials','header_complete']
         self.assertListEqual(actual, expected)
 
@@ -362,8 +363,8 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 
         filter_out_1 = []
         filter_out_2 = []
-        with io.BytesIO(redcap_data) as data, \
-                io.BytesIO("") as results:
+        with io.StringIO(redcap_data) as data, \
+                io.StringIO("") as results:
 
             filters.filter_replace_drug_id(data,'', results)
 

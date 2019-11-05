@@ -12,15 +12,19 @@ import sys
 import argparse
 import traceback
 
-from nacc.uds3 import blanks
+
+from nacc.uds3 import blanks as blanks_uds3
+from nacc.lbd import blanks as blanks_lbd
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
 from nacc.uds3.m import builder as m_builder
+from nacc.lbd.ivp import builder as lbd_ivp_builder
+from nacc.lbd.fvp import builder as lbd_fvp_builder
 from nacc.uds3 import filters
 
 
-def check_blanks(packet):
+def check_blanks(packet, options):
     """
     Parses rules for when each field should be blank and then checks them
     """
@@ -31,15 +35,23 @@ def check_blanks(packet):
         # Find all fields that:
         #   1) have blanking rules; and
         #   2) aren't blank.
-        for field in [f for f in form.fields.itervalues()
+        for field in [f for f in form.fields.values()
                       if f.blanks and not empty(f)]:
 
             for rule in field.blanks:
-                r = blanks.convert_rule_to_python(field.name, rule)
-                if r(packet):
-                    warnings.append(
-                        "'%s' is '%s' with length '%s', but should be blank: '%s'." %
-                        (field.name, field.value, len(field.value), rule))
+                if not options.lbd: 
+                    r = blanks_uds3.convert_rule_to_python(field.name, rule)
+                    if r(packet):
+                        warnings.append(
+                            "'%s' is '%s' with length '%s', but should be blank: '%s'." %
+                            (field.name, field.value, len(field.value), rule))
+
+                if options.lbd:
+                    t = blanks_lbd.convert_rule_to_python(field.name, rule)
+                    if t(packet):
+                        warnings.append(
+                            "'%s' is '%s' with length '%s', but should be blank: '%s'." %
+                            (field.name, field.value, len(field.value), rule))
 
     return warnings
 
@@ -88,7 +100,7 @@ def empty(field):
 def exclusive(packet, fields, value_to_check=1):
     """ Returns True iff, for a set of fields, only one of field is set. """
     values = [packet[f].value for f in fields]
-    true_values = filter(lambda v: v == value_to_check, values)
+    true_values = [v for v in values if v == value_to_check]
     return len(true_values) <= 1
 
 
@@ -147,9 +159,13 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
     for record in reader:
-        print >> err, "[START] ptid : " + str(record['ptid'])
+        print("[START] ptid : " + str(record['ptid']), file=err)
         try:
-            if options.ivp:
+            if options.lbd and options.ivp:
+                packet = lbd_ivp_builder.build_uds3_lbd_ivp_form(record)
+            elif options.lbd and options.fvp:
+                packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
+            elif options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
             elif options.np:
                 packet = np_builder.build_uds3_np_form(record)
@@ -160,36 +176,36 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         except Exception:
             if 'ptid' in record:
-                print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
+                print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m: 
+        if not options.np and not options.m and not options.lbd: 
             set_blanks_to_zero(packet)
 
         if options.m:
-            blanks.set_zeros_to_blanks(packet)
+            blanks_uds3.set_zeros_to_blanks(packet)
 
         warnings = []
         try:
-            warnings += check_blanks(packet)
+            warnings += check_blanks(packet, options)
         except KeyError:
-            print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
+            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m: 
+        if not options.np and not options.m and not options.lbd: 
             warnings += check_single_select(packet)
 
         if warnings:
-            print >> err, "\n".join(warnings)
-        
+            print("\n".join(warnings), file=err)
+
         for form in packet:
             
             try:
-                print >> out, form
+                print(form, file=out)
             except AssertionError as e:
-                print >> err, "[SKIP] Error for ptid : " + str(record['ptid'])
+                print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
                 traceback.print_exc()
                 continue
 
@@ -213,8 +229,9 @@ def parse_args(args=None):
     option_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data')
     option_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data')
     option_group.add_argument('-m', action='store_true', dest='m', help='Set this flag to process as m data')
-    option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=filters_names.keys(), help='Set this flag to process the filter')
+    option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=list(filters_names.keys()), help='Set this flag to process the filter')
 
+    parser.add_argument('-lbd', action='store_true', dest='lbd', help='Set this flag to process as Lewy Body Dementia data')
     parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
     parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
     parser.add_argument('-ptid', action='store', dest='ptid', help='Ptid for which you need the records')

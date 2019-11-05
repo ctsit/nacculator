@@ -111,4 +111,5 @@ current-db-subjects.csv
 *.txt
 *.xls
 *.pdf
+*.bak
 nacculator_cfg.ini

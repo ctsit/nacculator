@@ -39,7 +39,7 @@ def add_cls(record, packet, forms, err=sys.stderr):
     total_fields = len(fields_mapping)
     cls_form = forms.FormCLS()
 
-    for key, val in fields_mapping.iteritems():
+    for key, val in fields_mapping.items():
         if record[val].strip():
             setattr(cls_form, key, record[val])
             num_filled_fields += 1
@@ -53,7 +53,7 @@ def add_cls(record, packet, forms, err=sys.stderr):
     if num_filled_fields != total_fields:
         msg = "[WARNING] CLS form is incomplete for PTID: " \
             + ptid
-        print >> err, msg
+        print(msg, file=err)
 
     # Otherwise, check percentages and dates before appending.
 
@@ -63,19 +63,19 @@ def add_cls(record, packet, forms, err=sys.stderr):
     except ValueError:
         msg = "[WARNING] eng_percentage_spanish is not an " \
             "integer for PTID: " + ptid
-        print >> err, msg
+        print(msg, file=err)
 
     try:
         pct_eng = int(record['eng_percentage_english'])
     except ValueError:
         msg = "[WARNING] eng_percentage_english is not an " \
             "integer for PTID: " + ptid
-        print >> err, msg
+        print(msg, file=err)
 
     if pct_eng + pct_spn != 100:
         msg = "[WARNING] language proficiency " + \
             "percentages do not equal 100 for PTID : " + ptid
-        print >> err, msg
+        print(msg, file=err)
 
     visit_date = datetime.datetime(
         int(record['visityr']), int(record['visitmo']), 1)

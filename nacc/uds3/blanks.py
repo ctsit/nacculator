@@ -62,7 +62,7 @@ def convert_rule_to_python(name, rule):
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
 
     # First, check to see if the rule is a "Special Case"
-    if name in special_cases.iterkeys():
+    if name in special_cases:
         return special_cases[name]()
 
     # Then, check to see if the rule is of the within-range type
@@ -112,7 +112,7 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
         if '=' == eq:
             return packet[key] in range(first, last)
         elif 'ne' == eq:
-            return packet[key] not in range(first, last)
+            return packet[key] not in list(range(first, last))
         else:
             raise ValueError("'eq' must be '=' or 'ne', not '%s'." % eq)
 
@@ -127,6 +127,7 @@ def _blanking_rule_ftldsubt():
     #Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1 and 14d FTLDNOS ne 1
     return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
                           packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
+
 
 def _blanking_rule_learned():
     # The two rules contradict each other:
@@ -181,7 +182,7 @@ def main():
 
     for ded in deds:
         for rule in extract_blanks(os.path.join(data_dict_path, ded)):
-            print rule
+            print(rule)
 
 
 if __name__ == '__main__':
