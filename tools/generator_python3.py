@@ -22,7 +22,7 @@ class DynamicObject(object):
     # The commented-out init is in case the program does not 
     # create these fields later- not sure what caused that 
     # problem, but this fixed it. If this bit is uncommented, 
-    # make sure to comemnt out "pass" at the bottom.
+    # make sure to comment out "pass" at the bottom.
     
     # def __init__(self):
     #     self.fields = []
@@ -41,8 +41,8 @@ class DynamicObject(object):
 
 
 class MethodField(str):
-
-    # Allows for a method to be used in str.format() like a field
+    ''' Allows for a method to be used in str.format() like a field '''
+    
     @property
     def method(self):
         l = self.lower()
@@ -52,14 +52,14 @@ class MethodField(str):
 
 
 def form_to_string(form, class_prefix=''):
+    ''' Returns headers with "self.fields" Python tags '''
 
-    # Returns headers with "self.fields" Python tags
     return ("class " + class_prefix + ("Form{id}(nacc.uds3.Field):\n").format(id=form.id) + indent("def __init__(self):\n") + indent("self.fields = header_fields()"))
 
 
 def fields_to_strings(fields, this="self."):
+    ''' Returns fields in Python formatting '''
 
-    # Returns fields in Python formatting
     for field in fields:
         yield ("{qualifier}fields['{field.name}'] = nacc.uds3.Field("
                "name='{field.name}', "
@@ -73,10 +73,9 @@ def fields_to_strings(fields, this="self."):
 
 
 def generate(ded):
-    # Generates Python code representing each NACC Form as classes
+    ''' Generates Python code representing each NACC Form as classes '''
 
     with open(ded, encoding='utf-8-sig') as stream:
-
         # Opens the specified dictionary based on the variable "header_file" 
         # and creates form fields based on the headers in the first row.
         # These fields are first put into the "field" object, and then
@@ -116,7 +115,6 @@ def generate(ded):
 
 
 def generate_header(ded):
-
     # Calls the above generate function, creates the "form" object, 
     # and adds the id "Header" to it.
     form = generate(ded)
@@ -125,9 +123,8 @@ def generate_header(ded):
 
 
 def indent(text, times=1, tab='    '):
-
-    # Returns indented text
-    # Inserts times number of tabs for each line and at the beginning
+    ''' Returns indented text
+    Inserts times number of tabs for each line and at the beginning '''
     if not text:
         return ''
 
@@ -136,13 +133,12 @@ def indent(text, times=1, tab='    '):
 
 
 def retab(text, newtab='    ', oldtab='\t'):
-
-    # Replaces all occurrences of oldtab with newtab
+    ''' Replaces all occurrences of oldtab with newtab '''
     return text.replace(oldtab, newtab)
 
 def fields_for_records(form, fields):
+    ''' Adds Python formatting to the strings in the "form" object '''
 
-    # Adds Python formatting to the strings in the "form" object
     formId = form.id.lower()
     print(indent("\n\n"+formId+" = fvp_forms.Form"+form.id+"()", 1), file=sys.stderr)
     for field in fields:
@@ -217,9 +213,4 @@ def main():
 
 
 if __name__ == '__main__':
-    
-    # I was trying to print the output to a file since the output was too long to hold 
-    # in the command prompt memory. I need to be able to copy the entire output.
-    # myFile = open('/Users/s.emerson/Desktop/nacc_code/nacculator/tools/output.txt', 'a')
     main()
-    # myFile.close()
