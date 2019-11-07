@@ -5,7 +5,7 @@
 ###############################################################################
 
 
-# Unsure if this search function works on the "builder" file or the "forms" file. 
+# Unsure if this search function works on the "builder" file or the "forms" file.
 
 class Packet(list):
     """
@@ -28,5 +28,10 @@ class Packet(list):
         """
         if key in self._cache:
             return self._cache[key]
+
+        for form in self:
+            if key in form.fields:
+                self._cache[key] = form.fields[key]
+                return self._cache[key]
 
         raise KeyError(key)

@@ -138,8 +138,7 @@ def convert_rule_to_python(name, rule):
         'FTDCBFOS': _blanking_rule_ftld_or5a,
 
         'FTDPABVF': _blanking_rule_for_others_left_blank,
-        
-        
+
     }
 
     single_value = re.compile(
@@ -246,7 +245,7 @@ def _blanking_rule_ftld_or5a():
     return lambda packet: packet['FTDCBFVI'] in (0, 9) or packet['FTDIDIAG']==0 or packet['FTDCBFSP']==0 or packet['FTDCBFOA']!=1
 
 def _blanking_rule_for_others_left_blank():
-    return lambda packet: packet['FTDCPPA']==0 or packet['FTDCPPA']==False or packet['FTDBVFT']==0 or packet['FTDBVFT']==False
+    return lambda packet: packet['FTDCPPA']==0 or packet['FTDCPPA']==None or packet['FTDBVFT']==0 or packet['FTDBVFT']==None
 
 def _blanking_rule_dummy():
     return lambda packet: False
