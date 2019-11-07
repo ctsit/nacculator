@@ -103,7 +103,7 @@ def get_data_from_redcap(folder_name, config):
                                               'format': 'csv'
                                           })
     try:
-        rawdata = str(res.content).encode("utf-8")
+        rawdata = str(res.text)
         myreader = csv.reader(rawdata.splitlines())
         try:
             with open(os.path.join(folder_name, "redcap_input.csv"),"w") as file:
