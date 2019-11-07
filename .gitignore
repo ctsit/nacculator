@@ -113,3 +113,4 @@ current-db-subjects.csv
 *.pdf
 *.bak
 nacculator_cfg.ini
+.vscode/

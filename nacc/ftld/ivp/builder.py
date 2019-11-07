@@ -7,6 +7,7 @@
 
 import sys
 import re
+import typing
 
 from nacc.ftld.ivp import forms as ftld_ivp_forms
 from nacc.uds3 import packet as ftld_ivp_packet

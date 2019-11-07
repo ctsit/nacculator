@@ -5,8 +5,6 @@
 ###############################################################################
 
 
-# Unsure if this search function works on the "builder" file or the "forms" file.
-
 class Packet(list):
     """
     A collection of FTLD Forms

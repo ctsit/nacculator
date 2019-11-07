@@ -1,6 +1,3 @@
-import argparse
-import csv
-import decimal
 import re
 import sys
 import typing
@@ -8,8 +5,7 @@ import unittest
 
 import nacc.uds3
 from nacc import redcap2nacc
-from nacc.ftld import blanks, packet
-from nacc.ftld.ivp import forms
+from nacc.ftld import packet
 
 
 class option():
@@ -101,7 +97,6 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         self.assertEqual(warnings[0], expected)
 
     def test_for_special_case_FTDPABVF_blank(self):
-        # Have it make sure _blanking_rule_for_others_left_blank is working by checking both 0 and False instances (it will skip if either of these is the case for two questions)
         record = make_filled_form()
         record['ftdpabvf'] = '9'
         record['ftdbvft'] = ''
@@ -113,7 +108,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         self.assertEqual(warnings[3], expected)
 
 
-def make_builder(record): 
+def make_builder(record):
     ipacket = packet.Packet()
     form = Form()
     form.FTDIDIAG = record['ftdidiag']
@@ -139,7 +134,7 @@ def make_builder(record):
     return ipacket
 
 
-def update_header(record, packet):
+def update_header(record: dict, packet):
     for header in packet:
         header.PTID = record['ptid']
 
@@ -148,8 +143,8 @@ def make_filled_form():
     return {
         'ptid': '1',
         #Begin variables to be tested
-        'langa4': '', # This is a general blanking rule not in special cases
-        'ftdcppas': '', # This is a general blanking rule with two rules
+        'langa4': '',  # This is a general blanking rule not in special cases
+        'ftdcppas': '',  # This is a general blanking rule with two rules
         'ftdhaird': '',
         'ftdmrirf': '',
         'ftdmrios': '',
@@ -161,7 +156,7 @@ def make_filled_form():
         'ftdppasl': '1',
         'ftdcpc2f': '95',  # _blanking_rule_ftld_q_noanswer
         'ftdmrifa': '1',  # _blanking_rule_ftld_or2
-        'ftdmriob': '1', # _blanking_rule_ftld_or2a
+        'ftdmriob': '1',  # _blanking_rule_ftld_or2a
         'ftdcppa': '1',  # _blanking_rule_for_others_left_blank "0" condition
         'ftdbvcln': '1',
         'ftdbvft': '3',  # _blanking_rule_for_others_left_blank "left blank" condition

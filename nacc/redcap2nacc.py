@@ -11,6 +11,7 @@ import re
 import sys
 import argparse
 import traceback
+import typing
 
 
 from nacc.uds3 import blanks as blanks_uds3
