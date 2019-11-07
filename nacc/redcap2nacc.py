@@ -6,12 +6,12 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
+import argparse
 import csv
 import re
 import sys
-import argparse
 import traceback
-
+import typing
 
 from nacc.uds3 import blanks as blanks_uds3
 from nacc.lbd import blanks as blanks_lbd
@@ -22,13 +22,15 @@ from nacc.uds3.m import builder as m_builder
 from nacc.lbd.ivp import builder as lbd_ivp_builder
 from nacc.lbd.fvp import builder as lbd_fvp_builder
 from nacc.uds3 import filters
+from nacc.uds3 import packet as uds3_packet
+from nacc.uds3 import Field
 
 
-def check_blanks(packet, options):
+def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
+        -> typing.List:
     """
     Parses rules for when each field should be blank and then checks them
     """
-    pattern = re.compile(r"Blank if Question \d+ (\w+) (ne|=) (\d+)")
     warnings = []
 
     for form in packet:
@@ -39,7 +41,7 @@ def check_blanks(packet, options):
                       if f.blanks and not empty(f)]:
 
             for rule in field.blanks:
-                if not options.lbd: 
+                if not options.lbd:
                     r = blanks_uds3.convert_rule_to_python(field.name, rule)
                     if r(packet):
                         warnings.append(
@@ -56,7 +58,69 @@ def check_blanks(packet, options):
     return warnings
 
 
-def check_single_select(packet):
+def check_characters(packet: uds3_packet.Packet) -> typing.List:
+    """
+    Checks typename="Char" fields for any of 4 special characters: & ' " %
+    If these characters are found, throws an error and skips the ptid
+    """
+    warnings = []
+
+    for form in packet:
+        # Find all fields that have any of the forbidden characters, and
+        #   figure out which characters are present in the string.
+        # If they are found, append an error to our error file
+        #   and skip the PTID
+        for field in [f for f in form.fields.values()]:
+            if field.typename == "Char":
+                incompatible = check_for_bad_characters(field)
+
+                if incompatible:
+                    character = " ".join(incompatible)
+                    warnings.append(
+                        '\'%s\' is \'%s\', which has invalid character(s) %s . This field can have any text or numbers, but cannot include single quotes \', double quotes \", ampersands & or percentage signs %% ' %
+                        (field.name, field.value, character))
+
+    return warnings
+
+
+def check_for_bad_characters(field: Field) -> typing.List:
+    """
+    Searches the flagged fields for the special characters
+    and tallies up all instances of each character
+    """
+    incompatible = []
+
+    text = field.value
+    chars = ["'", '"', '&', '%']
+
+    if any((c in chars) for c in text):
+        quote = re.search("'", text)
+        num_quote = text.count("'")
+        dquote = re.search('"', text)
+        num_dquote = text.count('"')
+        amp = re.search('&', text)
+        num_amp = text.count("&")
+        percent = re.search('%', text)
+        num_percent = text.count("%")
+
+        incompatible = []
+        if quote:
+            quote = "'"
+            incompatible.append(quote + " (%s)" % num_quote)
+        if dquote:
+            dquote = '"'
+            incompatible.append(dquote + " (%s)" % num_dquote)
+        if amp:
+            amp = '&'
+            incompatible.append(amp + " (%s)" % num_amp)
+        if percent:
+            percent = '%'
+            incompatible.append(percent + " (%s)" % num_percent)
+
+    return incompatible
+
+
+def check_single_select(packet: uds3_packet.Packet):
     """ Checks the values of sets of interdependent questions
 
     There are some sets of questions which should function like an HTML radio
@@ -153,8 +217,6 @@ def set_blanks_to_zero(packet):
         set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
 
 
-
-
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
@@ -180,7 +242,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.lbd: 
+        if not options.np and not options.m and not options.lbd:
             set_blanks_to_zero(packet)
 
         if options.m:
@@ -194,17 +256,27 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.lbd: 
+        try:
+            warnings += check_characters(packet)
+            if warnings:
+                print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+                warn = "\n".join(map(str, warnings))
+                warn = warn.replace("\\","")
+                print(warn, file=err)
+                continue
+        except KeyError:
+            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            traceback.print_exc()
+            continue
+
+        if not options.np and not options.m and not options.lbd:
             warnings += check_single_select(packet)
 
-        if warnings:
-            print("\n".join(warnings), file=err)
-
         for form in packet:
-            
+
             try:
                 print(form, file=out)
-            except AssertionError as e:
+            except AssertionError:
                 print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
                 traceback.print_exc()
                 continue
