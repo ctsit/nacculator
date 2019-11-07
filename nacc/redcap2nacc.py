@@ -26,7 +26,8 @@ from nacc.uds3 import packet as uds3_packet
 from nacc.uds3 import Field
 
 
-def check_blanks(packet: uds3_packet, options) -> typing.List:
+def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
+        -> typing.List:
     """
     Parses rules for when each field should be blank and then checks them
     """
@@ -57,7 +58,7 @@ def check_blanks(packet: uds3_packet, options) -> typing.List:
     return warnings
 
 
-def check_characters(packet):
+def check_characters(packet: uds3_packet.Packet) -> typing.List:
     """
     Checks typename="Char" fields for any of 4 special characters: & ' " %
     If these characters are found, throws an error and skips the ptid
@@ -67,7 +68,8 @@ def check_characters(packet):
     for form in packet:
         # Find all fields that have any of the forbidden characters, and
         #   figure out which characters are present in the string.
-        # If they are found, append an error to our error file and skip the PTID
+        # If they are found, append an error to our error file
+        #   and skip the PTID
         for field in [f for f in form.fields.values()]:
             if field.typename == "Char":
                 incompatible = check_for_bad_characters(field)
@@ -83,7 +85,7 @@ def check_characters(packet):
 
 def check_for_bad_characters(field: Field) -> typing.List:
     """
-    Searches the flagged fields for the special characters 
+    Searches the flagged fields for the special characters
     and tallies up all instances of each character
     """
     incompatible = []
@@ -118,7 +120,7 @@ def check_for_bad_characters(field: Field) -> typing.List:
     return incompatible
 
 
-def check_single_select(packet):
+def check_single_select(packet: uds3_packet.Packet):
     """ Checks the values of sets of interdependent questions
 
     There are some sets of questions which should function like an HTML radio
@@ -154,7 +156,7 @@ def check_single_select(packet):
     return warnings
 
 
-def empty(field: Field):
+def empty(field):
     """ Helper function that returns True if a field's value is empty """
     return field.value.strip() == ""
 

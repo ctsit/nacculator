@@ -4,18 +4,18 @@ from nacc.uds3 import Field
 from nacc.redcap2nacc import check_for_bad_characters
 
 
-class Field():
-    def __init__(self: Field, name, value):
-        self.name = name
-        # 'FOTHMUSX'
-        self.value = value
-        # '\'O%h& \'N\"o\"'
+# class Field():
+#     def __init__(self: Field, name, value):
+#         self.name = name
+#         # 'FOTHMUSX'
+#         self.value = value
+#         # '\'O%h& \'N\"o\"'
 
 
 class TestInvalidCharacters(unittest.TestCase):
 
     def test_find_any_characters(self):
-        field = Field('FOTHMUSX', 'agf&dfg')
+        field = Field('FOTHMUSX', 'Char', 0, 1, allowable_values='', value='agf&dfg')
         found = check_for_bad_characters(field)
         self.assertTrue(found)
 
