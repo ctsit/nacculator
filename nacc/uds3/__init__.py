@@ -7,6 +7,7 @@
 # nacc.uds3
 import decimal
 
+
 class _UdsType(object):
     def __init__(self, length):
         assert length > 0

@@ -6,12 +6,12 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
+import argparse
 import csv
 import re
 import sys
-import argparse
 import traceback
-
+import typing
 
 from nacc.uds3 import blanks as blanks_uds3
 from nacc.lbd import blanks as blanks_lbd
@@ -22,9 +22,11 @@ from nacc.uds3.m import builder as m_builder
 from nacc.lbd.ivp import builder as lbd_ivp_builder
 from nacc.lbd.fvp import builder as lbd_fvp_builder
 from nacc.uds3 import filters
+from nacc.uds3 import packet as uds3_packet
+from nacc.uds3 import Field
 
 
-def check_blanks(packet, options):
+def check_blanks(packet: uds3_packet, options) -> typing.List:
     """
     Parses rules for when each field should be blank and then checks them
     """
@@ -38,7 +40,7 @@ def check_blanks(packet, options):
                       if f.blanks and not empty(f)]:
 
             for rule in field.blanks:
-                if not options.lbd: 
+                if not options.lbd:
                     r = blanks_uds3.convert_rule_to_python(field.name, rule)
                     if r(packet):
                         warnings.append(
@@ -75,11 +77,11 @@ def check_characters(packet):
                     warnings.append(
                         '\'%s\' is \'%s\', which has invalid character(s) %s . This field can have any text or numbers, but cannot include single quotes \', double quotes \", ampersands & or percentage signs %% ' %
                         (field.name, field.value, character))
-            
+
     return warnings
 
 
-def check_for_bad_characters(field):
+def check_for_bad_characters(field: Field) -> typing.List:
     """
     Searches the flagged fields for the special characters 
     and tallies up all instances of each character
@@ -87,7 +89,7 @@ def check_for_bad_characters(field):
     incompatible = []
 
     text = field.value
-    chars = ["'", '"','&','%']
+    chars = ["'", '"', '&', '%']
 
     if any((c in chars) for c in text):
         quote = re.search("'", text)
@@ -152,7 +154,7 @@ def check_single_select(packet):
     return warnings
 
 
-def empty(field):
+def empty(field: Field):
     """ Helper function that returns True if a field's value is empty """
     return field.value.strip() == ""
 
@@ -213,8 +215,6 @@ def set_blanks_to_zero(packet):
         set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
 
 
-
-
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
@@ -240,7 +240,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.lbd: 
+        if not options.np and not options.m and not options.lbd:
             set_blanks_to_zero(packet)
 
         if options.m:
@@ -267,12 +267,11 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.lbd: 
+        if not options.np and not options.m and not options.lbd:
             warnings += check_single_select(packet)
 
-
         for form in packet:
-            
+
             try:
                 print(form, file=out)
             except AssertionError:
