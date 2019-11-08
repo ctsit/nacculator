@@ -5,12 +5,8 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-from nacc.uds3 import blanks
-# from nacc.uds3 import clsform
-from . import forms as lbd_ivp_forms
+from nacc.lbd.ivp import forms as lbd_ivp_forms
 from nacc.uds3 import packet as lbd_ivp_packet
-import sys
-import re
 
 
 def build_uds3_lbd_ivp_form(record):
@@ -19,9 +15,11 @@ def build_uds3_lbd_ivp_form(record):
 
     # Set up the forms..........
 
-    # This form cannot precede June 1, 2017. 
-    if (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and int(record['visitmo'])>6) or \
-       (int(record['visityr'])==2017 and int(record['visitmo'])==6 and int(record['visitday'])>=1):
+    # This form cannot precede June 1, 2017.
+    if (int(record['visityr']) > 2017) or \
+            (int(record['visityr']) == 2017 and int(record['visitmo']) > 6) \
+            or (int(record['visityr']) == 2017 and int(record['visitmo']) == 6
+                and int(record['visitday']) >= 1):
         B1L = lbd_ivp_forms.FormB1L()
         B1L.LBSSALIV = record['LBSSALIV'.lower()]
         B1L.LBSSWALL = record['LBSSWALL'.lower()]
@@ -138,8 +136,8 @@ def build_uds3_lbd_ivp_form(record):
         packet.append(B3L)
 
         B4L = lbd_ivp_forms.FormB4L()
-        B4L.LBDeLUS  = record['LBDeLUS'.lower()] 
-        B4L.LBDHUrt  = record['LBDHUrt'.lower()] 
+        B4L.LBDeLUS  = record['LBDeLUS'.lower()]
+        B4L.LBDHUrt  = record['LBDHUrt'.lower()]
         B4L.LBDSteAL = record['LBDSteAL'.lower()]
         B4L.LBDAFFr  = record['LBDAFFr'.lower()]
         B4L.LBDGUeSt = record['LBDGUeSt'.lower()]
@@ -331,7 +329,7 @@ def build_uds3_lbd_ivp_form(record):
         D1L.LBCBAPA  = record['LBCBAPA'.lower()]
         D1L.LBCBANX  = record['LBCBANX'.lower()]
         D1L.LBCBHALL = record['LBCBHALL'.lower()]
-        D1L.LBCBDeL  = record['LBCBDeL'.lower()] 
+        D1L.LBCBDeL  = record['LBCBDeL'.lower()]
         D1L.LBCDSAUt = record['LBCDSAUt'.lower()]
         D1L.LBCAreM  = record['LBCAreM'.lower()]
         D1L.LBCAAPN  = record['LBCAAPN'.lower()]
@@ -348,7 +346,7 @@ def build_uds3_lbd_ivp_form(record):
         D1L.LBCoGSt  = record['LBCoGSt'.lower()]
         D1L.LBCoGDX  = record['LBCoGDX'.lower()]
         packet.append(D1L)
-        
+
         E1L = lbd_ivp_forms.FormE1L()
         E1L.LBGLrrK2 = record['LBGLrrK2'.lower()]
         E1L.LBGLrKIS = record['LBGLrKIS'.lower()]
@@ -493,8 +491,9 @@ def build_uds3_lbd_ivp_form(record):
         E3L.LBoCGAVL = record['LBoCGAVL'.lower()]
         packet.append(E3L)
 
-        update_header(record,packet)
-    else: raise ValueError('Visit date cannot precede June 1, 2017.')
+        update_header(record, packet)
+    else:
+        raise ValueError('Visit date cannot precede June 1, 2017.')
 
     return packet
 

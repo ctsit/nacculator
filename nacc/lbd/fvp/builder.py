@@ -5,12 +5,8 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-from nacc.uds3 import blanks
-# from nacc.uds3 import clsform
 from nacc.lbd.fvp import forms as lbd_fvp_forms
 from nacc.uds3 import packet as lbd_fvp_packet
-import sys
-import re
 
 
 def build_uds3_lbd_fvp_form(record):
@@ -19,9 +15,11 @@ def build_uds3_lbd_fvp_form(record):
 
     # Set up the forms..........
 
-    # This form cannot precede June 1, 2017. 
-    if (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and int(record['visitmo'])>6) or \
-       (int(record['visityr'])==2017 and int(record['visitmo'])==6 and int(record['visitday'])>=1):
+    # This form cannot precede June 1, 2017.
+    if (int(record['visityr']) > 2017) or \
+            (int(record['visityr']) == 2017 and int(record['visitmo']) > 6) \
+            or (int(record['visityr']) == 2017 and int(record['visitmo']) == 6
+                and int(record['visitday']) >= 1):
         B1L = lbd_fvp_forms.FormB1L()
         B1L.LBSSALIV = record['fu_LBSSALIV'.lower()]
         B1L.LBSSWALL = record['fu_lBSSWALL'.lower()]
@@ -348,7 +346,7 @@ def build_uds3_lbd_fvp_form(record):
         D1L.LBCoGSt  = record['fu_LBCoGSt'.lower()]
         D1L.LBCoGDX  = record['fu_LBCoGDX'.lower()]
         packet.append(D1L)
-        
+
         E1L = lbd_fvp_forms.FormE1L()
         E1L.LBGNeWGN = record['fu_LBGNeWGN'.lower()]
         E1L.LBGLrrK2 = record['fu_LBGLrrK2'.lower()]
@@ -494,8 +492,9 @@ def build_uds3_lbd_fvp_form(record):
         E3L.LBoCGAVL = record['fu_LBoCGAVL'.lower()]
         packet.append(E3L)
 
-        update_header(record,packet)
-    else: raise ValueError('Visit date cannot precede June 1, 2017.')
+        update_header(record, packet)
+    else:
+        raise ValueError('Visit date cannot precede June 1, 2017.')
 
     return packet
 

@@ -10,13 +10,14 @@ import nacc.uds3
 # WARNING: When generating new forms, do not overwrite this section
 from datetime import date
 
-# WARNING: When generating new forms, use CURRENT_YEAR instead of "CURRENT_YEAR"
+# WARNING: When generating new forms, use CURRENT_YEAR instead of "2014"
 # WARNING: When generating new forms, use CURRENT_YEAR-15 instead of "1999"
 CURRENT_YEAR = date.today().year
 
 ### END non-generated code
 
 # This form is for LBD FVP
+
 
 def header_fields():
     fields = {}
@@ -33,8 +34,7 @@ def header_fields():
     return fields
 
 
-
-# The header fields in this form (and the data) had some odd capitalization patterns. 
+# The header fields in this form (and the data) had some odd capitalization patterns.
 # I have copied the case changes to the fields function from the generated class below.
 # class FormHeader(nacc.uds3.Field):
 #     def __init__(self):

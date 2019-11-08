@@ -10,7 +10,7 @@ import nacc.uds3
 # WARNING: When generating new forms, do not overwrite this section
 from datetime import date
 
-# WARNING: When generating new forms, use CURRENT_YEAR instead of "CURRENT_YEAR"
+# WARNING: When generating new forms, use CURRENT_YEAR instead of "2014"
 # WARNING: When generating new forms, use CURRENT_YEAR-15 instead of "1999"
 CURRENT_YEAR = date.today().year
 
@@ -32,8 +32,6 @@ def header_fields():
     fields['VISITNUM'] = nacc.uds3.Field(name='VISITNUM', typename='Char', position=(37, 39), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     fields['INITIALS'] = nacc.uds3.Field(name='INITIALS', typename='Char', position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     return fields
-
-
 
 
 class FormZ1X(nacc.uds3.FieldBag):
@@ -71,10 +69,10 @@ class FormZ1X(nacc.uds3.FieldBag):
         self.fields['FTDA3AFS'] = nacc.uds3.Field(name='FTDA3AFS', typename='Num', position=(112, 112), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
         self.fields['FTDA3AFR'] = nacc.uds3.Field(name='FTDA3AFR', typename='Num', position=(114, 115), length=2, inclusive_range=None, allowable_values=['95', '96', '97', '98', '99'], blanks=['Blank if Question 16b FTDA3AFS = 1 (Yes)'])
         self.fields['LANGB3F'] = nacc.uds3.Field(name='LANGB3F', typename='Num', position=(117, 117), length=1, inclusive_range=(1, 2), allowable_values=['1', '2'], blanks=[])
-        self.fields['LANGB9F'] = nacc.uds3.Field(name='LANGB9F', typename='Num', position=(119, 119), length=1, inclusive_range=(1, 2), allowable_values=['1', '2'], blanks=[])  
+        self.fields['LANGB9F'] = nacc.uds3.Field(name='LANGB9F', typename='Num', position=(119, 119), length=1, inclusive_range=(1, 2), allowable_values=['1', '2'], blanks=[])
         self.fields['LANGC1F'] = nacc.uds3.Field(name='LANGC1F', typename='Num', position=(121, 121), length=1, inclusive_range=(1, 2), allowable_values=['1', '2'], blanks=[])
         self.fields['LANGC2F'] = nacc.uds3.Field(name='LANGC2F', typename='Num', position=(123, 123), length=1, inclusive_range=(1, 2), allowable_values=['1', '2'], blanks=[])
-        self.fields['LANGC3F'] = nacc.uds3.Field(name='LANGC3F', typename='Num', position=(125, 125), length=1, inclusive_range=(1, 2), allowable_values=['1', '2'], blanks=[])        
+        self.fields['LANGC3F'] = nacc.uds3.Field(name='LANGC3F', typename='Num', position=(125, 125), length=1, inclusive_range=(1, 2), allowable_values=['1', '2'], blanks=[])
         self.fields['LANGC4F'] = nacc.uds3.Field(name='LANGC4F', typename='Num', position=(127, 127), length=1, inclusive_range=(1, 2), allowable_values=['1', '2'], blanks=['Blank if Question 22b FTDC4FS = 0 (No)'])
         self.fields['FTDC4FS'] = nacc.uds3.Field(name='FTDC4FS', typename='Num', position=(129, 129), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
         self.fields['FTDC4FR'] = nacc.uds3.Field(name='FTDC4FR', typename='Num', position=(131, 132), length=2, inclusive_range=None, allowable_values=['95', '96', '97', '98', '99'], blanks=['Blank if Question 22b FTDC4FS = 1 (Yes)'])

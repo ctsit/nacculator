@@ -5,23 +5,21 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-import sys
-import re
-import typing
-
 from nacc.ftld.ivp import forms as ftld_ivp_forms
 from nacc.uds3 import packet as ftld_ivp_packet
 
 
-def build_uds3_ftld_ivp_form(record):
-    # Converts REDCap CSV data into a packet (list of IVP Form objects)
+def build_uds3_ftld_ivp_form(record: dict):
+    ''' Converts REDCap CSV data into a packet (list of IVP Form objects) '''
     packet = ftld_ivp_packet.Packet()
 
     # Set up the forms..........
 
-    # This form cannot precede March 1, 2015. 
-    if (int(record['visityr'])>2015) or (int(record['visityr'])==2015 and int(record['visitmo'])>3) or \
-       (int(record['visityr'])==2015 and int(record['visitmo'])==3 and int(record['visitday'])>=1):
+    # This form cannot precede March 1, 2015.
+    if (int(record['visityr']) > 2015) or \
+        (int(record['visityr']) == 2015 and int(record['visitmo']) > 3) or \
+            (int(record['visityr']) == 2015 and int(record['visitmo']) == 3
+                and int(record['visitday']) >= 1):
         Z1X = ftld_ivp_forms.FormZ1X()
         Z1X.LANGA1   = record['langa1']
         Z1X.LANGA2   = record['langa2']

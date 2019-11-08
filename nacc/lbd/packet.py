@@ -5,9 +5,6 @@
 ###############################################################################
 
 
-# Unsure if this search function works on the "builder" file or the "forms" file. 
-# The LBD forms have different "builder" but the same "forms" files.
-
 class Packet(list):
     """
     A collection of LBD Forms

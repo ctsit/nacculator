@@ -1,6 +1,3 @@
-import re
-import sys
-import typing
 import unittest
 
 import nacc.uds3
@@ -19,25 +16,33 @@ class option():
 
 class TestBlankRulesForFTLD(unittest.TestCase):
     '''
-    These tests are designed to run ivp data fields (generated below the tests here) through the check_blanks function for the FTLD module. It is mostly concerned with making sure the "special cases" are functioning properly.
+    These tests are designed to run ivp data fields (generated below
+    the tests here) through the check_blanks function for the FTLD module.
+    It is mostly concerned with making sure the "special cases" are functioning
+    properly.
     '''
 
     def setUp(self):
         self.options = option()
 
     def test_for_filled_when_ruled_blank(self):
-        # Have it look for the langa4 error to see that general blanking rules are working (langa4 also comes before the variable (a4sub) it's dependent on)
+        # Have it look for the langa4 error to see that general blanking rules
+        # are working (langa4 also comes before the variable (a4sub)
+        # it's dependent on)
         record = make_filled_form()
         record['langa4'] = '1'
         ipacket = make_builder(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = "'LANGA4' is '1' with length '1', but should be blank: 'Blank if Question 1 A4SUB = 0 (No)'."
+        expected = ("'LANGA4' is '1' with length '1', but should be blank:"
+                    " 'Blank if Question 1 A4SUB = 0 (No)'.")
         self.assertEqual(warnings[0], expected)
 
     def test_for_single_blanking_rule_returned(self):
-        # Have it make sure that only one error is returned from a list of rules when not working with special cases (special cases need a fix in a later feature branch)
+        # Have it make sure that only one error is returned from a list of
+        # rules when not working with special cases (special cases need a
+        # fix in a later feature branch)
         record = make_filled_form()
         record['ftdcppas'] = '2'
         record['ftdppasl'] = '0'
@@ -45,22 +50,28 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = "'FTDCPPAS' is '2' with length '1', but should be blank: 'Blank if Question 1 FTDPPASL = 0 (No)'."
+        expected = ("'FTDCPPAS' is '2' with length '1', but should be blank:"
+                    " 'Blank if Question 1 FTDPPASL = 0 (No)'.")
         self.assertEqual(warnings[0], expected)
 
     def test_for_special_case_FTDCPC2F(self):
-        # One packet of questions should be left blank if FTDCPC2F has a value (anything between 95-98)
+        # One packet of questions should be left blank if FTDCPC2F has a value
+        # (anything between 95-98)
         record = make_filled_form()
         record['ftdhaird'] = '1'
         ipacket = make_builder(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = "'FTDhAIRD' is '1' with length '1', but should be blank: 'Blank if Question 0 FTDCPC2F = 95'."
+        expected = ("'FTDhAIRD' is '1' with length '1', but should be blank:"
+                    " 'Blank if Question 0 FTDCPC2F = 95'.")
         self.assertEqual(warnings[0], expected)
 
     def test_for_special_case_or2(self):
-        # Have it make sure _blanking_rule_ftld_or2 works properly (and by extension or3, or4, and or5) - This blanking rule depends on either of two possible answers to questions, along with regular blanking rules
+        # Have it make sure _blanking_rule_ftld_or2 works properly (and by
+        # extension or3, or4, and or5) - This blanking rule depends on either
+        # of two possible answers to questions, along with regular
+        # blanking rules
         record = make_filled_form()
         record['ftdmrirf'] = '0'
         record['ftdmrifa'] = '9'
@@ -69,11 +80,14 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = "'FTDMRIRF' is '0' with length '1', but should be blank: 'Blank if Question 2a FTDMRIFA = 0 (No) or 9 (Unknown)'."
+        expected = ("'FTDMRIRF' is '0' with length '1', but should be blank: "
+                    "'Blank if Question 2a FTDMRIFA = 0 (No) or 9 (Unknown)'.")
         self.assertEqual(warnings[2], expected)
 
     def test_for_special_case_FTDMRIOS(self):
-        # Have it make sure _blanking_rule_ftld_or2a works properly (and by extension or3a, or4a, and or5a) - This blanking rule has an extra condition added to the or2 rules (packet['FTDMRIOB'] != 1)
+        # Have it make sure _blanking_rule_ftld_or2a works properly -
+        # This blanking rule has an extra condition added to the or2 rules
+        # (packet['FTDMRIOB'] != 1)
         record = make_filled_form()
         record['ftdmrios'] = '1'
         record['ftdmriob'] = '0'
@@ -81,11 +95,17 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = "'FTDMRIOS' is '1                                                           ' with length '60', but should be blank: 'Blank if Question 2a11 FTDMRIOB ne 1 (Yes)'." # FTDMRIOS is a Char field, so it has a long length
+        # FTDMRIOS is a Char field with a length of 60 characters
+        expected = ("'FTDMRIOS' is"
+                    " '1                                                  "
+                    "         ' with length '60', but should be blank:"
+                    " 'Blank if Question 2a11 FTDMRIOB ne 1 (Yes)'.")
         self.assertEqual(warnings[3], expected)
 
     def test_for_special_case_FTDPABVF_0(self):
-        # Have it make sure _blanking_rule_for_others_left_blank is working by checking both 0 and False instances (it will skip if either of these is the case for two questions)
+        # Have it make sure _blanking_rule_for_others_left_blank is working by
+        # checking both 0 and False instances (it will skip if either of these
+        # is the case for two questions)
         record = make_filled_form()
         record['ftdpabvf'] = '9'
         record['ftdcppa'] = '0'
@@ -93,7 +113,8 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = "'FTDPABVF' is '9' with length '1', but should be blank: 'Blank if Question 12 FTDCPPA = 0 (No) '."
+        expected = ("'FTDPABVF' is '9' with length '1', but should be blank:"
+                    " 'Blank if Question 12 FTDCPPA = 0 (No) '.")
         self.assertEqual(warnings[0], expected)
 
     def test_for_special_case_FTDPABVF_blank(self):
@@ -104,11 +125,12 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = "'FTDPABVF' is '9' with length '1', but should be blank: 'Blank if Question 22 FTDBVFT = blank'."
+        expected = ("'FTDPABVF' is '9' with length '1', but should be blank:"
+                    " 'Blank if Question 22 FTDBVFT = blank'.")
         self.assertEqual(warnings[3], expected)
 
 
-def make_builder(record):
+def make_builder(record: dict) -> packet.Packet:
     ipacket = packet.Packet()
     form = Form()
     form.FTDIDIAG = record['ftdidiag']
@@ -134,15 +156,15 @@ def make_builder(record):
     return ipacket
 
 
-def update_header(record: dict, packet):
+def update_header(record: dict, packet: packet.Packet):
     for header in packet:
         header.PTID = record['ptid']
 
 
-def make_filled_form():
+def make_filled_form() -> dict:
     return {
         'ptid': '1',
-        #Begin variables to be tested
+        # Begin variables to be tested
         'langa4': '',  # This is a general blanking rule not in special cases
         'ftdcppas': '',  # This is a general blanking rule with two rules
         'ftdhaird': '',
@@ -159,7 +181,7 @@ def make_filled_form():
         'ftdmriob': '1',  # _blanking_rule_ftld_or2a
         'ftdcppa': '1',  # _blanking_rule_for_others_left_blank "0" condition
         'ftdbvcln': '1',
-        'ftdbvft': '3',  # _blanking_rule_for_others_left_blank "left blank" condition
+        'ftdbvft': '3',  # _blanking_rule_for_others_left_blank "" condition
     }
 
 

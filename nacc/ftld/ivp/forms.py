@@ -10,7 +10,7 @@ import nacc.uds3
 # WARNING: When generating new forms, do not overwrite this section
 from datetime import date
 
-# WARNING: When generating new forms, use CURRENT_YEAR instead of "CURRENT_YEAR"
+# WARNING: When generating new forms, use CURRENT_YEAR instead of "2014"
 # WARNING: When generating new forms, use CURRENT_YEAR-15 instead of "1999"
 CURRENT_YEAR = date.today().year
 
