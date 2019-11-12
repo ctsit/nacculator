@@ -27,6 +27,10 @@ def convert_rule_to_python(name, rule):
     :param rule: Blanking rule text
     """
 
+
+# Right now, in special cases, each special case rule contains all the blanking conditions within that single rule. So when redcap2nacc iterates through all the blanking rules, it's sent through the special cases *each time* it finds *a* blanking rule in each field. So the special cases are being printed out each time one rule is violated (because each special case rule is bring treated as the same general "multiple conditions" rule)
+# It seems like the only way to get the special cases to look like "separate" blanking rules to check_blanks would be to add some if statements that look at what the offending value actually is, and THEN go into a piece of the special case rule (like if the value is 8, return lambda packet['field'] == 8, but if the value is 9, then it's pointed to return lambda packet['field'] == 9. )
+# Do I need to do that manually or is there a way to automate it?
     special_cases = {
         'MOMAGEO': _blanking_rule_momageo,
         'FTLDSUBT': _blanking_rule_ftldsubt,
