@@ -30,6 +30,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         # are working (langa4 also comes before the variable (a4sub)
         # it's dependent on)
         record = make_filled_form()
+        record['a4sub'] = '0'
         record['langa4'] = '1'
         ipacket = make_builder(record)
         warnings = []
@@ -40,9 +41,11 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         self.assertEqual(warnings[0], expected)
 
     def test_for_single_blanking_rule_returned(self):
-        # Have it make sure that only one error is returned from a list of
-        # rules when not working with special cases (special cases need a
-        # fix in a later feature branch)
+        '''
+        Have it make sure that only one error is returned from a list of
+        rules when not working with special cases (special cases need a
+        fix in a later feature branch)
+        '''
         record = make_filled_form()
         record['ftdcppas'] = '2'
         record['ftdppasl'] = '0'
@@ -55,9 +58,12 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         self.assertEqual(warnings[0], expected)
 
     def test_for_special_case_FTDCPC2F(self):
-        # One packet of questions should be left blank if FTDCPC2F has a value
-        # (anything between 95-98)
+        '''
+        One packet of questions should be left blank if FTDCPC2F has a value
+        (anything between 95-98)
+        '''
         record = make_filled_form()
+        record['ftdcpc2f'] = '95'
         record['ftdhaird'] = '1'
         ipacket = make_builder(record)
         warnings = []
@@ -68,10 +74,12 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         self.assertEqual(warnings[0], expected)
 
     def test_for_special_case_or2(self):
-        # Have it make sure _blanking_rule_ftld_or2 works properly (and by
-        # extension or3, or4, and or5) - This blanking rule depends on either
-        # of two possible answers to questions, along with regular
-        # blanking rules
+        '''
+        Have it make sure _blanking_rule_ftld_or2 works properly (and by
+        extension or3, or4, and or5) - This blanking rule depends on either
+        of two possible answers to questions, along with regular
+        blanking rules
+        '''
         record = make_filled_form()
         record['ftdmrirf'] = '0'
         record['ftdmrifa'] = '9'
@@ -85,9 +93,11 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         self.assertEqual(warnings[2], expected)
 
     def test_for_special_case_FTDMRIOS(self):
-        # Have it make sure _blanking_rule_ftld_or2a works properly -
-        # This blanking rule has an extra condition added to the or2 rules
-        # (packet['FTDMRIOB'] != 1)
+        '''
+        Have it make sure _blanking_rule_ftld_or2a works properly -
+        This blanking rule has an extra condition added to the or2 rules
+        (packet['FTDMRIOB'] != 1)
+        '''
         record = make_filled_form()
         record['ftdmrios'] = '1'
         record['ftdmriob'] = '0'
@@ -103,9 +113,11 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         self.assertEqual(warnings[3], expected)
 
     def test_for_special_case_FTDPABVF_0(self):
-        # Have it make sure _blanking_rule_for_others_left_blank is working by
-        # checking both 0 and False instances (it will skip if either of these
-        # is the case for two questions)
+        '''
+        Have it make sure _blanking_rule_for_others_left_blank is working by
+        checking both 0 and False instances (it will skip if either of these
+        is the case for two questions)
+        '''
         record = make_filled_form()
         record['ftdpabvf'] = '9'
         record['ftdcppa'] = '0'

@@ -137,9 +137,9 @@ def main():
     # which is where the generator.py is located.
     # The values given below are what the defaults are currently set to.
 
-    data_dict_path = '/Users/s.emerson/Desktop/nacculator/nacc_ftld_excel'
+    data_dict_path = './ded_fvp'
     corrected_dict_path = './corrected/'
-    header_file = 'FTLD_ivp_ded.csv'
+    header_file = 'uds3dedheader.csv'
 
     # The "if" statement here allows for two arguments when calling
     # generator.py from the terminal.
