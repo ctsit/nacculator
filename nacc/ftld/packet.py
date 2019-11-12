@@ -7,7 +7,7 @@
 
 class Packet(list):
     """
-    A collection of LBD Forms
+    A collection of FTLD Forms
 
     This class makes it convenient to access a field, which are all uniquely
     named, regardless of which form they are in.
@@ -26,5 +26,10 @@ class Packet(list):
         """
         if key in self._cache:
             return self._cache[key]
+
+        for form in self:
+            if key in form.fields:
+                self._cache[key] = form.fields[key]
+                return self._cache[key]
 
         raise KeyError(key)
