@@ -15,7 +15,7 @@ def build_uds3_ftld_ivp_form(record: dict):
     # Set up the forms..........
 
     # This form cannot precede March 1, 2015.
-    if (int(record['visityr']) > 2015) or \
+    if not (int(record['visityr']) > 2015) or \
         (int(record['visityr']) == 2015 and int(record['visitmo']) > 3) or \
             (int(record['visityr']) == 2015 and int(record['visitmo']) == 3
                 and int(record['visitday']) >= 1):
