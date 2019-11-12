@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
 ###############################################################################
-# Copyright 2015-2016 University of Florida. All rights reserved.
+# Copyright 2015-2019 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -32,23 +31,6 @@ def header_fields():
     fields['VISITNUM'] = nacc.uds3.Field(name='VISITNUM', typename='Char', position=(37, 39), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     fields['INITIALS'] = nacc.uds3.Field(name='INITIALS', typename='Char', position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     return fields
-
-
-# The header fields in this form (and the data) had some odd capitalization patterns.
-# I have copied the case changes to the fields function from the generated class below.
-# class FormHeader(nacc.uds3.Field):
-#     def __init__(self):
-#         self.fields = header_fields()
-#         self.fields['PACKet'] = nacc.uds3.Field(name='PACKet', typename='Char', position=(1, 2), length=2, inclusive_range=None, allowable_values=[], blanks=[])
-#         self.fields['ForMID'] = nacc.uds3.Field(name='ForMID', typename='Char', position=(4, 6), length=3, inclusive_range=None, allowable_values=[], blanks=[])
-#         self.fields['ForMVer'] = nacc.uds3.Field(name='ForMVer', typename='Num', position=(8, 10), length=3, inclusive_range=None, allowable_values=['3'], blanks=[])
-#         self.fields['ADCID'] = nacc.uds3.Field(name='ADCID', typename='Num', position=(12, 13), length=2, inclusive_range=(2, 43), allowable_values=[], blanks=[])
-#         self.fields['PtID'] = nacc.uds3.Field(name='PtID', typename='Char', position=(15, 24), length=10, inclusive_range=None, allowable_values=[], blanks=[])
-#         self.fields['VISItMo'] = nacc.uds3.Field(name='VISItMo', typename='Num', position=(26, 27), length=2, inclusive_range=(1, 12), allowable_values=[], blanks=[])
-#         self.fields['VISItDAy'] = nacc.uds3.Field(name='VISItDAy', typename='Num', position=(29, 30), length=2, inclusive_range=(1, 31), allowable_values=[], blanks=[])
-#         self.fields['VISItyr'] = nacc.uds3.Field(name='VISItyr', typename='Num', position=(32, 35), length=4, inclusive_range=(2017, 2019), allowable_values=['2017', '2018', '2019'], blanks=[])
-#         self.fields['VISItNUM'] = nacc.uds3.Field(name='VISItNUM', typename='Char', position=(37, 39), length=3, inclusive_range=None, allowable_values=[], blanks=[])
-#         self.fields['INItIALS'] = nacc.uds3.Field(name='INItIALS', typename='Char', position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
 
 
 class FormB1L(nacc.uds3.FieldBag):

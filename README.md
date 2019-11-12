@@ -43,7 +43,7 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
                               Set this flag to process the filter
       -lbd                  Set this flag to process as Lewy Body Dementia data
-      -ftld                 Set this flag to prcess as Frontotemporal Lobar                                     Degeneration data
+      -ftld                 Set this flag to process as Frontotemporal Lobar                                     Degeneration data
       -file FILE            Path of the csv file to be processed.
       -meta FILTER_META     Input file for the filter metadata (in case -filter is
                               used)
@@ -56,9 +56,9 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
 
     $ redcap2nacc -np -file data.csv >data.txt
 
-**Example** - Setting LBD Flag
+**Example** - Processing LBD Follow-up visit packets:
 
-    PYTHONPATH=. ./nacc/redcap2nacc.py  -lbd -fvp -file data.csv > data.txt
+    redcap2nacc -lbd -fvp -file data.csv > data.txt
 
 Both LBD and FTLD forms can have IVP or FVP arguments.
 

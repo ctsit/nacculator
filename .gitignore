@@ -105,7 +105,6 @@ venv.bak/
 
 # End of https://www.gitignore.io/api/python
 
-.vscode/
 filters_config.cfg
 current-db-subjects.csv
 *.csv
