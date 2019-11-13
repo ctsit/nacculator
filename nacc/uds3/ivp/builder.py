@@ -707,7 +707,7 @@ def build_uds3_ivp_form(record):
     d1.CVD = record['cvd']
     d1.CVDIF = record['cvdif']
     d1.PREVSTK = record['prevstk']
-    d1.STROKDEC = record['strokedec']
+    d1.STROKDEC = record['strokdec']
     d1.STKIMAG = record['stkimag']
     d1.INFNETW = record['infnetw']
     d1.INFWMH = record['infwmh']
