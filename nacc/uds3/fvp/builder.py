@@ -22,7 +22,6 @@ def build_uds3_fvp_form(record):
         add_a3(record, packet)
     if record['fu_a4_sub'] == '1' or record['fu_a4sub'] == '1':
         add_a4(record, packet)
-    add_a5(record, packet)
     if record['fu_b1_sub'] == '1' or record['fu_b1sub'] == '1':
         add_b1(record, packet)
     add_b4(record, packet)
@@ -97,7 +96,7 @@ def add_z1_or_z1x(record, packet):
         'LANGCLS': 'fu_langcls',
         'CLSSUB': 'fu_clssub'
     }
-    for key, value in z1x_field_mapping.iteritems():
+    for key, value in z1x_field_mapping.items():
         if record[value].strip():
             setattr(z1x, key, record[value])
             z1x_filled_fields += 1
@@ -127,7 +126,7 @@ def add_z1_or_z1x(record, packet):
         'B7NOT': 'fu_b7_not',
         'B7COMM': 'fu_b7_comm'
     }
-    for key, value in z1_field_mapping.iteritems():
+    for key, value in z1_field_mapping.items():
         if record[value].strip():
             setattr(z1, key, record[value])
             z1_filled_fields += 1
@@ -765,7 +764,7 @@ def add_c1s_or_c2(record, packet):
         'UDSVERTI': 'fu_udsverti',
         'COGSTAT': 'fu_cogstat_c2'
     }
-    for key, value in c2_field_mapping.iteritems():
+    for key, value in c2_field_mapping.items():
         if record[value].strip():
             setattr(c2, key, record[value])
             c2_filled_fields += 1
@@ -821,7 +820,7 @@ def add_c1s_or_c2(record, packet):
         'UDSVERTI': 'fu_udsverti_c1', 
         'COGSTAT': 'fu_cogstat'
     }
-    for key, value in c1s_field_mapping.iteritems():
+    for key, value in c1s_field_mapping.items():
         if record[value].strip():
             setattr(c1s, key, record[value])
             c1s_filled_fields += 1
