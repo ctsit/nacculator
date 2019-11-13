@@ -569,8 +569,8 @@ def build_uds3_ivp_form(record):
     b8.MYOCLRT = record['myoclrt']
     b8.ALSFIND = record['alsfind']
     b8.GAITNPH = record['gaitnph']
-    b8.OTHNEUR = record['otherneur']
-    b8.OTHNEURX = record['otherneurx']
+    b8.OTHNEUR = record['othneur']
+    b8.OTHNEURX = record['othneurx']
     packet.append(b8)
 
     b9 = ivp_forms.FormB9()
