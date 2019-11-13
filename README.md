@@ -29,7 +29,7 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
     $ redcap2nacc -h
     usage: redcap2nacc [-h]
                        [-fvp | -ivp | -np | -m | -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}]
-                       [-lbd] [-file FILE] [-meta FILTER_META] [-ptid PTID]
+                       [-lbd | -ftld] [-file FILE] [-meta FILTER_META] [-ptid PTID]
                        [-vnum VNUM] [-vtype VTYPE]
 
     Process redcap form output to nacculator.
@@ -43,6 +43,7 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
                               Set this flag to process the filter
       -lbd                  Set this flag to process as Lewy Body Dementia data
+      -ftld                 Set this flag to process as Frontotemporal Lobar                                     Degeneration data
       -file FILE            Path of the csv file to be processed.
       -meta FILTER_META     Input file for the filter metadata (in case -filter is
                               used)
@@ -54,6 +55,12 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
 **Example** - Process a Neuropathology form:
 
     $ redcap2nacc -np -file data.csv >data.txt
+
+**Example** - Processing LBD Follow-up visit packets:
+
+    redcap2nacc -lbd -fvp -file data.csv > data.txt
+
+Both LBD and FTLD forms can have IVP or FVP arguments.
 
 **Example** - Run data through the `cleanPtid` filter:
 

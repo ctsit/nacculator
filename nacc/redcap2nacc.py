@@ -1,34 +1,39 @@
 #!/usr/bin/env python
 
 ###############################################################################
-# Copyright 2015-2016 University of Florida. All rights reserved.
+# Copyright 2015-2019 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
+import argparse
 import csv
 import re
 import sys
-import argparse
 import traceback
-
+import typing
 
 from nacc.uds3 import blanks as blanks_uds3
 from nacc.lbd import blanks as blanks_lbd
+from nacc.ftld import blanks as blanks_ftld
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
 from nacc.uds3.m import builder as m_builder
 from nacc.lbd.ivp import builder as lbd_ivp_builder
 from nacc.lbd.fvp import builder as lbd_fvp_builder
+from nacc.ftld.ivp import builder as ftld_ivp_builder
+from nacc.ftld.fvp import builder as ftld_fvp_builder
 from nacc.uds3 import filters
+from nacc.uds3 import packet as uds3_packet
+from nacc.uds3 import Field
 
 
-def check_blanks(packet, options):
+def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
+        -> typing.List:
     """
     Parses rules for when each field should be blank and then checks them
     """
-    pattern = re.compile(r"Blank if Question \d+ (\w+) (ne|=) (\d+)")
     warnings = []
 
     for form in packet:
@@ -39,24 +44,98 @@ def check_blanks(packet, options):
                       if f.blanks and not empty(f)]:
 
             for rule in field.blanks:
-                if not options.lbd: 
+                if not options.lbd and not options.ftld:
                     r = blanks_uds3.convert_rule_to_python(field.name, rule)
                     if r(packet):
                         warnings.append(
-                            "'%s' is '%s' with length '%s', but should be blank: '%s'." %
+                            "'%s' is '%s' with length '%s', but should be"
+                            " blank: '%s'." %
                             (field.name, field.value, len(field.value), rule))
 
                 if options.lbd:
                     t = blanks_lbd.convert_rule_to_python(field.name, rule)
                     if t(packet):
                         warnings.append(
-                            "'%s' is '%s' with length '%s', but should be blank: '%s'." %
+                            "'%s' is '%s' with length '%s', but should be"
+                            " blank: '%s'." %
                             (field.name, field.value, len(field.value), rule))
+
+                if options.ftld:
+                    s = blanks_ftld.convert_rule_to_python(field.name, rule)
+                    if s(packet):
+                        warnings.append(
+                            "'%s' is '%s' with length '%s', but should be"
+                            " blank: '%s'." %
+                            (field.name, field.value, len(field.value), rule))
+    return warnings
+
+
+def check_characters(packet: uds3_packet.Packet) -> typing.List:
+    """
+    Checks typename="Char" fields for any of 4 special characters: & ' " %
+    If these characters are found, throws an error and skips the ptid
+    """
+    warnings = []
+
+    for form in packet:
+        # Find all fields that have any of the forbidden characters, and
+        #   figure out which characters are present in the string.
+        # If they are found, append an error to our error file
+        #   and skip the PTID
+        for field in [f for f in form.fields.values()]:
+            if field.typename == "Char":
+                incompatible = check_for_bad_characters(field)
+
+                if incompatible:
+                    character = " ".join(incompatible)
+                    warnings.append(
+                        '\'%s\' is \'%s\', which has invalid character(s) %s .'
+                        ' This field can have any text or numbers, but cannot'
+                        ' include single quotes \', double quotes \",'
+                        ' ampersands & or percentage signs %% ' %
+                        (field.name, field.value, character))
 
     return warnings
 
 
-def check_single_select(packet):
+def check_for_bad_characters(field: Field) -> typing.List:
+    """
+    Searches the flagged fields for the special characters
+    and tallies up all instances of each character
+    """
+    incompatible = []
+
+    text = field.value
+    chars = ["'", '"', '&', '%']
+
+    if any((c in chars) for c in text):
+        quote = re.search("'", text)
+        num_quote = text.count("'")
+        dquote = re.search('"', text)
+        num_dquote = text.count('"')
+        amp = re.search('&', text)
+        num_amp = text.count("&")
+        percent = re.search('%', text)
+        num_percent = text.count("%")
+
+        incompatible = []
+        if quote:
+            quote = "'"
+            incompatible.append(quote + " (%s)" % num_quote)
+        if dquote:
+            dquote = '"'
+            incompatible.append(dquote + " (%s)" % num_dquote)
+        if amp:
+            amp = '&'
+            incompatible.append(amp + " (%s)" % num_amp)
+        if percent:
+            percent = '%'
+            incompatible.append(percent + " (%s)" % num_percent)
+
+    return incompatible
+
+
+def check_single_select(packet: uds3_packet.Packet):
     """ Checks the values of sets of interdependent questions
 
     There are some sets of questions which should function like an HTML radio
@@ -153,8 +232,6 @@ def set_blanks_to_zero(packet):
         set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
 
 
-
-
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
@@ -165,6 +242,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 packet = lbd_ivp_builder.build_uds3_lbd_ivp_form(record)
             elif options.lbd and options.fvp:
                 packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
+            elif options.ftld and options.ivp:
+                packet = ftld_ivp_builder.build_uds3_ftld_ivp_form(record)
+            elif options.ftld and options.fvp:
+                packet = ftld_fvp_builder.build_uds3_ftld_fvp_form(record)
             elif options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
             elif options.np:
@@ -176,11 +257,12 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         except Exception:
             if 'ptid' in record:
-                print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+                print("[SKIP] Error for ptid : " + str(record['ptid']),
+                      file=err)
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.lbd: 
+        if not options.np and not options.m and not options.lbd and not options.ftld:
             set_blanks_to_zero(packet)
 
         if options.m:
@@ -194,18 +276,30 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.lbd: 
+        try:
+            warnings += check_characters(packet)
+            if warnings:
+                print("[SKIP] Error for ptid : " + str(record['ptid']),
+                      file=err)
+                warn = "\n".join(map(str, warnings))
+                warn = warn.replace("\\", "")
+                print(warn, file=err)
+                continue
+        except KeyError:
+            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            traceback.print_exc()
+            continue
+
+        if not options.np and not options.m and not options.lbd and not options.ftld:
             warnings += check_single_select(packet)
 
-        if warnings:
-            print("\n".join(warnings), file=err)
-
         for form in packet:
-            
+
             try:
                 print(form, file=out)
-            except AssertionError as e:
-                print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            except AssertionError:
+                print("[SKIP] Error for ptid : " + str(record['ptid']),
+                      file=err)
                 traceback.print_exc()
                 continue
 
@@ -222,21 +316,48 @@ filters_names = {
 
 
 def parse_args(args=None):
-    parser = argparse.ArgumentParser(description='Process redcap form output to nacculator.')
+    parser = argparse.ArgumentParser(
+        description='Process redcap form output to nacculator.')
 
     option_group = parser.add_mutually_exclusive_group()
-    option_group.add_argument('-fvp', action='store_true', dest='fvp', help='Set this flag to process as fvp data')
-    option_group.add_argument('-ivp', action='store_true', dest='ivp', help='Set this flag to process as ivp data')
-    option_group.add_argument('-np', action='store_true', dest='np', help='Set this flag to process as np data')
-    option_group.add_argument('-m', action='store_true', dest='m', help='Set this flag to process as m data')
-    option_group.add_argument('-f', '--filter', action='store', dest='filter', choices=list(filters_names.keys()), help='Set this flag to process the filter')
+    option_group.add_argument(
+        '-fvp', action='store_true', dest='fvp',
+        help='Set this flag to process as fvp data')
+    option_group.add_argument(
+        '-ivp', action='store_true', dest='ivp',
+        help='Set this flag to process as ivp data')
+    option_group.add_argument(
+        '-np', action='store_true', dest='np',
+        help='Set this flag to process as np data')
+    option_group.add_argument(
+        '-m', action='store_true', dest='m',
+        help='Set this flag to process as m data')
+    option_group.add_argument(
+        '-f', '--filter', action='store', dest='filter',
+        choices=list(filters_names.keys()),
+        help='Set this flag to process the filter')
 
-    parser.add_argument('-lbd', action='store_true', dest='lbd', help='Set this flag to process as Lewy Body Dementia data')
-    parser.add_argument('-file', action='store', dest='file', help='Path of the csv file to be processed.')
-    parser.add_argument('-meta', action='store', dest='filter_meta', help='Input file for the filter metadata (in case -filter is used)')
-    parser.add_argument('-ptid', action='store', dest='ptid', help='Ptid for which you need the records')
-    parser.add_argument('-vnum', action='store', dest='vnum', help='Ptid for which you need the records')
-    parser.add_argument('-vtype', action='store', dest='vtype', help='Ptid for which you need the records')
+    parser.add_argument(
+        '-lbd', action='store_true', dest='lbd',
+        help='Set this flag to process as Lewy Body Dementia data')
+    parser.add_argument(
+        '-ftld', action='store_true', dest='ftld',
+        help='Set this flag to process as Frontotemporal Lobar Degeneration data')
+    parser.add_argument(
+        '-file', action='store', dest='file',
+        help='Path of the csv file to be processed.')
+    parser.add_argument(
+        '-meta', action='store', dest='filter_meta',
+        help='Input file for the filter metadata (in case -filter is used)')
+    parser.add_argument(
+        '-ptid', action='store', dest='ptid',
+        help='Ptid for which you need the records')
+    parser.add_argument(
+        '-vnum', action='store', dest='vnum',
+        help='Ptid for which you need the records')
+    parser.add_argument(
+        '-vtype', action='store', dest='vtype',
+        help='Ptid for which you need the records')
 
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
@@ -260,7 +381,8 @@ def main():
 
     if options.filter:
         if options.filter == "getPtid":
-            filters.filter_extract_ptid(fp, options.ptid, options.vnum, options.vtype, output)
+            filters.filter_extract_ptid(
+                fp, options.ptid, options.vnum, options.vtype, output)
         else:
             filter_method = 'filter_' + filters_names[options.filter]
             filter_func = getattr(filters, filter_method)
