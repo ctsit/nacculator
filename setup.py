@@ -31,6 +31,6 @@ setup(
     },
 
     install_requires=[
-        "cappy @ git+https://github.com/ctsit/cappy.git@1.2.1"
+        "cappy @ git+https://github.com/ctsit/cappy.git@2.0.0"
     ]
 )

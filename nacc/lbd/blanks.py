@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2016 University of Florida. All rights reserved.
+# Copyright 2015-2019 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -47,9 +47,11 @@ def convert_rule_to_python(name, rule):
     }
 
     single_value = re.compile(
-        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<value>\d+)([^-]|$)")
+        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne)"
+        r" (?P<value>\d+)([^-]|$)")
     range_values = re.compile(
-        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
+        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne)"
+        r" (?P<start>\d+)-(?P<stop>\d+)( |$)")
 
     # First, check to see if the rule is a "Special Case"
     if name in special_cases:
@@ -109,16 +111,15 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
     return should_be_blank
 
 
-
 def _blanking_rule_lbd():
     # All of these fields have the same blanking rule.
-    # Blank if Question 1 LBDeLUS, Question 2 LBHALL, Question 3 LBANXIet, and Question 4 LBAPAtHy = 0 (No)
-    return lambda packet: packet['LBDeLUS'] == 0 and packet['LBHALL'] == 0 and \
+    # Blank if Question 1 LBDeLUS, Question 2 LBHALL, Question 3 LBANXIet,
+    # and Question 4 LBAPAtHy = 0 (No)
+    return lambda packet: packet['LBDeLUS'] == 0 and \
+                          packet['LBHALL'] == 0 and \
                           packet['LBANXIet'] == 0 and packet['LBAPAtHy'] == 0
 
 
-# Pretty sure I'm going to need this rule for the LBD forms at some point, 
-# but I'm not sure which variables are involved.
 def set_zeros_to_blanks(packet):
     """ Sets specific fields to zero if they meet certain criteria """
     def set_to_blank_if_zero(*field_names):
@@ -126,18 +127,19 @@ def set_zeros_to_blanks(packet):
             field = packet[field_name]
             if field == 0:
                 field.value = ''
-    # M1 
+    # M1
     if packet['DECEASED'] == 1 or packet['DISCONT'] == 1:
-        set_to_blank_if_zero('RENURSE','RENAVAIL','RECOGIM','REJOIN','REPHYILL',
-        'REREFUSE','FTLDDISC','CHANGEMO','CHANGEDY','CHANGEYR','PROTOCOL','ACONSENT',
-        'RECOGIM','REPHYILL','NURSEMO','NURSEDY','NURSEYR','FTLDREAS','FTLDREAX')
+        set_to_blank_if_zero(
+            'RENURSE', 'RENAVAIL', 'RECOGIM', 'REJOIN', 'REPHYILL', 'REREFUSE',
+            'FTLDDISC', 'CHANGEMO', 'CHANGEDY', 'CHANGEYR', 'PROTOCOL',
+            'ACONSENT', 'RECOGIM', 'REPHYILL', 'NURSEMO', 'NURSEDY', 'NURSEYR',
+            'FTLDREAS', 'FTLDREAX')
     elif packet['DECEASED'] == 1:
-        #for just dead
+        # for just dead
         set_to_blank_if_zero('DISCONT')
     elif packet['DISCONT'] == 1:
         # for just discont
         set_to_blank_if_zero('DECEASED')
-        
 
 
 def main():

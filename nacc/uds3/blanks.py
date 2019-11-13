@@ -57,9 +57,11 @@ def convert_rule_to_python(name, rule):
     }
 
     single_value = re.compile(
-        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<value>\d+)([^-]|$)")
+        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne)"
+        r" (?P<value>\d+)([^-]|$)")
     range_values = re.compile(
-        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
+        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne)"
+        r" (?P<start>\d+)-(?P<stop>\d+)( |$)")
 
     # First, check to see if the rule is a "Special Case"
     if name in special_cases:
@@ -124,7 +126,8 @@ def _blanking_rule_dummy():
 
 
 def _blanking_rule_ftldsubt():
-    #Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1 and 14d FTLDNOS ne 1
+    # Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1
+    # and 14d FTLDNOS ne 1
     return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
                           packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
 
@@ -143,6 +146,7 @@ def _blanking_rule_momageo():
     # Blank if Question 54MOMNEUR = 9 (Unknown)
     return lambda packet: packet['MOMNEUR'] in (8, 9)
 
+
 def set_zeros_to_blanks(packet):
     """ Sets specific fields to zero if they meet certain criteria """
     def set_to_blank_if_zero(*field_names):
@@ -150,18 +154,19 @@ def set_zeros_to_blanks(packet):
             field = packet[field_name]
             if field == 0:
                 field.value = ''
-    # M1 
+    # M1
     if packet['DECEASED'] == 1 or packet['DISCONT'] == 1:
-        set_to_blank_if_zero('RENURSE','RENAVAIL','RECOGIM','REJOIN','REPHYILL',
-        'REREFUSE','FTLDDISC','CHANGEMO','CHANGEDY','CHANGEYR','PROTOCOL','ACONSENT',
-        'RECOGIM','REPHYILL','NURSEMO','NURSEDY','NURSEYR','FTLDREAS','FTLDREAX')
+        set_to_blank_if_zero(
+            'RENURSE', 'RENAVAIL', 'RECOGIM', 'REJOIN', 'REPHYILL',
+            'REREFUSE', 'FTLDDISC', 'CHANGEMO', 'CHANGEDY', 'CHANGEYR',
+            'PROTOCOL', 'ACONSENT', 'RECOGIM', 'REPHYILL', 'NURSEMO',
+            'NURSEDY', 'NURSEYR', 'FTLDREAS', 'FTLDREAX')
     elif packet['DECEASED'] == 1:
-        #for just dead
+        # for just dead
         set_to_blank_if_zero('DISCONT')
     elif packet['DISCONT'] == 1:
         # for just discont
         set_to_blank_if_zero('DECEASED')
-        
 
 
 def main():
