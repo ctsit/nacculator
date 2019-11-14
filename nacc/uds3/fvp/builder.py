@@ -13,7 +13,7 @@ def build_uds3_fvp_form(record):
     """ Converts REDCap CSV data into a packet (list of FVP Form objects) """
     packet = fvp_packet.Packet()
 
-    # Set up us the forms
+    # Set up the forms
     add_z1_or_z1x(record, packet)
     add_a1(record, packet)
     if record['fu_a2_sub'] == '1' or record['fu_a2sub'] == '1':

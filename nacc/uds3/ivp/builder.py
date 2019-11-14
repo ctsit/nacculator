@@ -15,7 +15,7 @@ def build_uds3_ivp_form(record):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
     packet = ivp_packet.Packet()
 
-    # Set up us the forms
+    # Set up the forms
     add_z1_or_z1x(record, packet)
     add_a1(record, packet)
     if record['a2_sub'] == '1' or record['a2sub'] == '1':
