@@ -8,6 +8,7 @@ from nacc.ftld import packet
 class option():
     flag = 'ftld'
     iorf = 'ivp'
+    csf = False
     lbd = False
     ftld = True
     ivp = True
