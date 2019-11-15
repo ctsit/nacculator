@@ -8,6 +8,7 @@ from nacc.ftld import packet
 class option():
     flag = 'ftld'
     iorf = 'ivp'
+    csf = False
     lbd = False
     ftld = True
     ivp = True
@@ -91,6 +92,9 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         expected = ("'FTDMRIRF' is '0' with length '1', but should be blank: "
                     "'Blank if Question 2a FTDMRIFA = 0 (No) or 9 (Unknown)'.")
         self.assertEqual(warnings[2], expected)
+        # Right now the test examines the fourth item in this list of errors
+        # because "special_cases" returns every available error when it finds
+        # that one rule is violated.
 
     def test_for_special_case_FTDMRIOS(self):
         '''
@@ -112,7 +116,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
                     " 'Blank if Question 2a11 FTDMRIOB ne 1 (Yes)'.")
         self.assertEqual(warnings[3], expected)
 
-    def test_for_special_case_FTDPABVF_0(self):
+    def test_for_FTDPABVF_0(self):
         '''
         Have it make sure _blanking_rule_for_others_left_blank is working by
         checking both 0 and False instances (it will skip if either of these
@@ -125,11 +129,11 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ("'FTDPABVF' is '9' with length '1', but should be blank:"
-                    " 'Blank if Question 12 FTDCPPA = 0 (No) '.")
-        self.assertEqual(warnings[0], expected)
+        expected = ["'FTDPABVF' is '9' with length '1', but should be blank:"
+                    " 'Blank if Question 12 FTDCPPA = 0 (No) '."]
+        self.assertEqual(warnings, expected)
 
-    def test_for_special_case_FTDPABVF_blank(self):
+    def test_for_FTDPABVF_blank(self):
         record = make_filled_form()
         record['ftdpabvf'] = '9'
         record['ftdbvft'] = ''
@@ -137,9 +141,9 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ("'FTDPABVF' is '9' with length '1', but should be blank:"
-                    " 'Blank if Question 22 FTDBVFT = blank'.")
-        self.assertEqual(warnings[3], expected)
+        expected = ["'FTDPABVF' is '9' with length '1', but should be blank:"
+                    " 'Blank if Question 22 FTDBVFT = blank'."]
+        self.assertEqual(warnings, expected)
 
 
 def make_builder(record: dict) -> packet.Packet:
