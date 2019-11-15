@@ -137,8 +137,6 @@ def convert_rule_to_python(name, rule):
         'FTDCBFOA': _blanking_rule_ftld_or5,
         'FTDCBFOS': _blanking_rule_ftld_or5a,
 
-        'FTDPABVF': _blanking_rule_for_others_left_blank,
-
     }
 
     single_value = re.compile(
@@ -147,6 +145,8 @@ def convert_rule_to_python(name, rule):
     range_values = re.compile(
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+)"
         r" *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
+    blank_value = re.compile(
+        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) blank")
 
     # First, check to see if the rule is a "Special Case"
     if name in special_cases:
@@ -163,6 +163,12 @@ def convert_rule_to_python(name, rule):
     if m:
         return _blanking_rule_check_single_value(
             m.group('key'), m.group('eq'), m.group('value'))
+
+    # Next, check to see if the rule is of the "blank if _ = blank" type
+    m = blank_value.match(rule)
+    if m:
+        return _blanking_rule_check_blank_value(
+            m.group('key'), m.group('eq'))
 
     # Finally, raise an error since we do not know how to handle the rule
     raise Exception("Could not parse Blanking rule: "+name)
@@ -206,6 +212,19 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
     return should_be_blank
 
 
+def _blanking_rule_check_blank_value(key, eq, value=None):
+    def should_be_blank(packet):
+        """ Returns True if the value should be blank according to the rule """
+        if '=' == eq:
+            return packet[key] == value
+        elif 'ne' == eq:
+            return packet[key] != value
+        else:
+            raise ValueError("'eq' must be '=' or 'ne', not '%s'." % eq)
+
+    return should_be_blank
+
+
 def _blanking_rule_ftld_q_noanswer():
     """"Blank if question not answered" questions
     with additional blanking rules"""
@@ -213,56 +232,59 @@ def _blanking_rule_ftld_q_noanswer():
 
 
 def _blanking_rule_ftld_or2():
-    # Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    # Along with other regular conditions
+    """ Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
+    Along with other regular conditions """
     return lambda packet: packet['FTDMRIFA'] in (0, 9) \
         or packet['FTDIDIAG'] == 0 or packet['FTDSMRIO'] == 0
 
 
 def _blanking_rule_ftld_or2a():
-    # Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    # This rule has an additional condition compared to the others in this form
+    """
+    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
+    This rule has an additional condition compared to
+    the others in this form """
     return lambda packet: packet['FTDMRIFA'] in (0, 9) \
         or packet['FTDIDIAG'] == 0 or packet['FTDSMRIO'] == 0 \
         or packet['FTDMRIOB'] != 1
 
 
 def _blanking_rule_ftld_or3():
+    """ See _blanking_rule_ftld_or2 for rules """
     return lambda packet: packet['FTDFDGFh'] in (0, 9) \
         or packet['FTDIDIAG'] == 0 or packet['FTDFDGPE'] == 0
 
 
 def _blanking_rule_ftld_or3a():
+    """ See _blanking_rule_ftld_or2a for rules """
     return lambda packet: packet['FTDFDGFh'] in (0, 9) \
         or packet['FTDIDIAG'] == 0 or packet['FTDFDGPE'] == 0 \
         or packet['FTDFDGOA'] != 1
 
 
 def _blanking_rule_ftld_or4():
+    """ See _blanking_rule_ftld_or2 for rules """
     return lambda packet: packet['FTDAMYVI'] in (0, 9) \
         or packet['FTDIDIAG'] == 0 or packet['FTDAMYP'] == 0
 
 
 def _blanking_rule_ftld_or4a():
+    """ See _blanking_rule_ftld_or2a for rules """
     return lambda packet: packet['FTDAMYVI'] in (0, 9) \
         or packet['FTDIDIAG'] == 0 or packet['FTDAMYP'] == 0 \
         or packet['FTDAMYOA'] != 1
 
 
 def _blanking_rule_ftld_or5():
+    """ See _blanking_rule_ftld_or2 for rules """
     return lambda packet: packet['FTDCBFVI'] in (0, 9) \
         or packet['FTDIDIAG'] == 0 or packet['FTDCBFSP'] == 0
 
 
 def _blanking_rule_ftld_or5a():
+    """ See _blanking_rule_ftld_or2a for rules """
     return lambda packet: packet['FTDCBFVI'] in (0, 9) \
         or packet['FTDIDIAG'] == 0 or packet['FTDCBFSP'] == 0 \
         or packet['FTDCBFOA'] != 1
-
-
-def _blanking_rule_for_others_left_blank():
-    return lambda packet: packet['FTDCPPA'] == 0 or packet['FTDCPPA'] == None \
-        or packet['FTDBVFT'] == 0 or packet['FTDBVFT'] == None
 
 
 def _blanking_rule_dummy():

@@ -31,24 +31,6 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
         'CSFABETA': _blanking_rule_dummy,
         'CSFPTAU': _blanking_rule_dummy,
         'CSFTTAU': _blanking_rule_dummy,
-
-        'CSFABmo': _blanking_rule_CSFABETA,
-        'CSFABDY': _blanking_rule_CSFABETA,
-        'CSFABYr': _blanking_rule_CSFABETA,
-        'CSFABmD': _blanking_rule_CSFABETA,
-        'CSFABmDX': _blanking_rule_CSFABETA_x,
-
-        'CSFPTmo': _blanking_rule_CSFPTAU,
-        'CSFPTDY': _blanking_rule_CSFPTAU,
-        'CSFPTYr': _blanking_rule_CSFPTAU,
-        'CSFPTmD': _blanking_rule_CSFPTAU,
-        'CSFPTmDX': _blanking_rule_CSFPTAU_x,
-
-        'CSFTTmo': _blanking_rule_CSFTTAU,
-        'CSFTTDY': _blanking_rule_CSFTTAU,
-        'CSFTTYr': _blanking_rule_CSFTTAU,
-        'CSFTTmD': _blanking_rule_CSFTTAU,
-        'CSFTTmDX': _blanking_rule_CSFTTAU_x,
     }
 
     single_value = re.compile(
@@ -57,6 +39,8 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
     range_values = re.compile(
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<start>\d+)-(?P<stop>\d+)( |$)")
+    blank_value = re.compile(
+        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) blank")
 
     # First, check to see if the rule is a "Special Case"
     if name in special_cases:
@@ -73,6 +57,12 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
     if m:
         return _blanking_rule_check_single_value(
             m.group('key'), m.group('eq'), m.group('value'))
+
+    # Next, check to see if the rule is of the "blank if _ = blank" type
+    m = blank_value.match(rule)
+    if m:
+        return _blanking_rule_check_blank_value(
+            m.group('key'), m.group('eq'))
 
     # Finally, raise an error since we do not know how to handle the rule
     raise Exception("Could not parse Blanking rule: "+name)
@@ -116,41 +106,21 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
     return should_be_blank
 
 
+def _blanking_rule_check_blank_value(key, eq, value=None):
+    def should_be_blank(packet):
+        """ Returns True if the value should be blank according to the rule """
+        if '=' == eq:
+            return packet[key] == value
+        elif 'ne' == eq:
+            return packet[key] != value
+        else:
+            raise ValueError("'eq' must be '=' or 'ne', not '%s'." % eq)
+
+    return should_be_blank
+
+
 def _blanking_rule_dummy():
     return lambda packet: False
-
-
-def _blanking_rule_CSFABETA():
-    """ 'Blank if Question 1a CSFABETA = blank' """
-    return lambda packet: packet['CSFABETA'] == None
-
-
-def _blanking_rule_CSFABETA_x():
-    """ 'Blank if Question 2e CSFPTmD ne 8 (Other)',
-    'Blank if Question 1a CSFABETA = blank' """
-    return lambda packet: packet['CSFABETA'] == None or packet['CSFABmD'] != 8
-
-
-def _blanking_rule_CSFPTAU():
-    """ 'Blank if Question 2a CSFPTAU = blank' """
-    return lambda packet: packet['CSFPTAU'] == None
-
-
-def _blanking_rule_CSFPTAU_x():
-    """ 'Blank if Question 2e CSFPTmD ne 8 (Other)',
-    'Blank if Question 2a CSFPTAU = blank' """
-    return lambda packet: packet['CSFPTAU'] == None or packet['CSFPTmD'] != 8
-
-
-def _blanking_rule_CSFTTAU():
-    """ Blank if Question 3a CSFTTAU = blank' """
-    return lambda packet: packet['CSFTTAU'] == None
-
-
-def _blanking_rule_CSFTTAU_x():
-    """ 'Blank if Question 3e CSFTTmD ne 8 (Other)',
-    'Blank if Question 3a CSFTTAU = blank' """
-    return lambda packet: packet['CSFTTAU'] == None or packet['CSFTTmD'] != 8
 
 
 def set_zeros_to_blanks(packet):
