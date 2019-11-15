@@ -28,7 +28,7 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
 
     $ redcap2nacc -h
     usage: redcap2nacc [-h]
-                       [-fvp | -ivp | -np | -m | -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}]
+                       [-fvp | -ivp | -np | -m | -csf | -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}]
                        [-lbd | -ftld] [-file FILE] [-meta FILTER_META] [-ptid PTID]
                        [-vnum VNUM] [-vtype VTYPE]
 
@@ -40,6 +40,7 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
       -ivp                  Set this flag to process as ivp data
       -np                   Set this flag to process as np data
       -m                    Set this flag to process as m data
+      -csf                  Set this flag to process as NACC BIDSS CSF data
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
                               Set this flag to process the filter
       -lbd                  Set this flag to process as Lewy Body Dementia data
@@ -58,7 +59,7 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
 
 **Example** - Processing LBD Follow-up visit packets:
 
-    redcap2nacc -lbd -fvp -file data.csv > data.txt
+    redcap2nacc -lbd -fvp -file data.csv >data.txt
 
 Both LBD and FTLD forms can have IVP or FVP arguments.
 
