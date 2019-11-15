@@ -16,17 +16,23 @@ class option():
 
 class TestBlankRulesForFTLD(unittest.TestCase):
     '''
-    These tests are designed to run ivp data fields (generated below
+    These tests are designed to run CSF data fields (generated below
     the tests here) through the check_blanks function for the CSF module.
     There are only two kinds of blanking rules:
     The rules for a group being blank if there is no available value for
     AB, PT, or TT assays, and the rules for specifying assay method.
+
+    In the CSF module, I introduced logic in the blanking files for handling
+    fields with rules like "blank if (previous question) = blank". This unit
+    test is concerned with making sure this new function works properly,
+    and only returns the rule that was violated (or returns both rules, if two
+    have been violated).
     '''
 
     def setUp(self):
         self.options = option()
 
-    def test_for_special_case_CSFABETA(self):
+    def test_for_CSFABETA(self):
         '''
         The whole set of questions should be left blank if CSFABETA is blank.
         '''
@@ -48,7 +54,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
                     " CSFABETA = blank'."]
         self.assertEqual(warnings, expected)
 
-    def test_for_special_case_CSFABmDX(self):
+    def test_for_single_error_CSFABmDX(self):
         ''' CSFABmDX is a field where you specify what "other"
             assay method was used. '''
         record = make_filled_form()
@@ -58,15 +64,38 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ("'CSFABmDX' is 'test                                      "
+        expected = ["'CSFABmDX' is 'test                                      "
                     "                  ' with length '60', but should be"
-                    " blank: 'Blank if Question 1e CSFABmD ne 8 (Other)'.")
-        # Right now warnings is a list of 2 warnings, because of the bug in
-        # special cases. It also returns a warning that 'csfabeta' is blank
-        # (even though it is not). So for now, this test only checks the first
-        # item for the error we are looking for instead of the whole list
-        # (which should be 1 item long).
-        self.assertEqual(warnings[0], expected)
+                    " blank: 'Blank if Question 1e CSFABmD ne 8 (Other)'."]
+        self.assertEqual(warnings, expected)
+
+    def test_for_multiple_error_CSFABmDX(self):
+        '''
+        CSFABmDX must be left blank if CSFABmD is not "other," but also
+        when CSFABETA is left blank.
+        This is testing both rules at the same time.'''
+        record = make_filled_form()
+        record['csfabeta'] = ''
+        record['csfabmo'] = ''
+        record['csfabdy'] = ''
+        record['csfabyr'] = ''
+        record['csfabmd'] = '2'
+        record['csfabmdx'] = 'test'
+        ipacket = make_builder(record)
+        warnings = []
+
+        warnings = redcap2nacc.check_blanks(ipacket, self.options)
+        expected = ["'CSFABmD' is '2' with length '1', but should be blank:"
+                    " 'Blank if Question 1a CSFABETA = blank'.",
+                    "'CSFABmDX' is 'test                                      "
+                    "                  ' with length '60', but should be"
+                    " blank: 'Blank if Question 1e CSFABmD ne 8 (Other)'.",
+                    "'CSFABmDX' is 'test                                      "
+                    "                  ' with length '60', but should be"
+                    " blank: 'Blank if Question 1a CSFABETA = blank'."]
+        # Since CSFABETA is blank, CSFABmD should technically also be blank,
+        # so the first error is also returned.
+        self.assertEqual(warnings, expected)
 
 
 def make_builder(record: dict) -> packet.Packet:

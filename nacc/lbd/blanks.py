@@ -112,12 +112,13 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
 
 
 def _blanking_rule_lbd():
-    # All of these fields have the same blanking rule.
-    # Blank if Question 1 LBDeLUS, Question 2 LBHALL, Question 3 LBANXIet,
-    # and Question 4 LBAPAtHy = 0 (No)
+    """
+    All of these fields have the same blanking rule.
+    Blank if Question 1 LBDeLUS, Question 2 LBHALL, Question 3 LBANXIet,
+    and Question 4 LBAPAtHy = 0 (No) """
     return lambda packet: packet['LBDeLUS'] == 0 and \
-                          packet['LBHALL'] == 0 and \
-                          packet['LBANXIet'] == 0 and packet['LBAPAtHy'] == 0
+        packet['LBHALL'] == 0 and \
+        packet['LBANXIet'] == 0 and packet['LBAPAtHy'] == 0
 
 
 def set_zeros_to_blanks(packet):
