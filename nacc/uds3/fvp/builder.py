@@ -12,7 +12,7 @@ from nacc.uds3 import packet as fvp_packet
 def build_uds3_fvp_form(record):
     """ Converts REDCap CSV data into a packet (list of FVP Form objects) """
     packet = fvp_packet.Packet()
-    
+
     #Set up the forms.
     a1 = fvp_forms.FormA1()
     a1.BIRTHMO   = record['fu_birthmo']
