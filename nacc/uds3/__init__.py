@@ -99,7 +99,7 @@ class Field(object):
                         raise ValueError('"%s" is unacceptable for %s' %
                                          (val, self.name))
 
-        if not self.allowable_values:
+        else:
             if val is None:
                 pass
             elif isinstance(val, str) and str(val).strip() == "":
@@ -111,6 +111,7 @@ class Field(object):
                 # to certain values (only an allowable range of values),
                 # then we need to check that the value is within that range
                 canonical = self.udstype(val)
+                assert self.inclusive_range
                 if out_of_range(canonical):
                     raise ValueError(
                         '"%s" is outside of the allowable range for %s'
