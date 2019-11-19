@@ -68,7 +68,7 @@ def generate(ded):
             field = DynamicObject()
             field.name = MethodField(record['Data Element'])
             field.order = record['Data Order']
-            field.type = record['Data type']
+            field.type = record['Data Type']
             field.length = record['Data Length']
             field.position = (int(record['Column 1']), int(record['Column 2']))
             if record['RANGE1'] not in ('', '.'):
