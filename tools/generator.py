@@ -30,7 +30,11 @@ class MethodField(str):
 def form_to_string(form, class_prefix=''):
     ''' Returns headers with "self.fields" Python tags '''
 
-    return ("class " + class_prefix + ("Form{id}(nacc.uds3.Field):\n").format(id=form.id) + indent("def __init__(self):\n") + indent("self.fields = header_fields()"))
+    return f"""
+class Form{form.id}(nacc.uds3.FieldBag):
+    def __init__(self):
+        self.fields = header_fields()
+    """.strip()
 
 
 def fields_to_strings(fields, this="self."):
@@ -48,10 +52,12 @@ def fields_to_strings(fields, this="self."):
                ).format(qualifier=this, field=field)
 
 
-def generate(ded):
+def generate(ded: str, encoding: str = 'utf-8'):
     ''' Generates Python code representing each NACC Form as classes '''
 
-    with open(ded, encoding='utf-8-sig') as stream:
+    try:
+        stream = open(ded, encoding=encoding)
+
         # Opens the specified dictionary based on the variable "header_file"
         # and creates form fields based on the headers in the first row.
         # These fields are first put into the "field" object, and then
@@ -86,6 +92,13 @@ def generate(ded):
                             if 'BLANKS' in f and record[f]]
 
         form.fields.sort(key=lambda f: f.order)
+
+    except UnicodeDecodeError as err:
+        if encoding != 'windows-1252':
+            return generate(ded, 'windows-1252')
+        raise err
+    finally:
+        stream.close()
 
     return form
 
@@ -125,9 +138,6 @@ def fields_for_records(form, fields):
 
 
 def main():
-    global data_dict_path
-    global header_file
-
     # Can take user input. The two arguments
     # you need are "data_dict_path" and "header_file" -
     # first to name the path to the directory of the ded you're running this
@@ -171,10 +181,10 @@ def main():
 
     for ded in deds:
         # First check to see if we have a correct version of the DED
-        dedpath = os.path.join(corrected_dict_path, header_file)
+        dedpath = os.path.join(corrected_dict_path, ded)
         if not os.path.isfile(dedpath):
             # If not, then we use the regular path
-            dedpath = os.path.join(data_dict_path, header_file)
+            dedpath = os.path.join(data_dict_path, ded)
 
         print("")
         form = generate(dedpath)
@@ -184,7 +194,7 @@ def main():
         # standard error
         # fields_for_records(form, sorted(form.fields, key=lambda fld: fld.position[1]))
 
-        print((form_to_string(form, 'FVP_')))
+        print(form_to_string(form))
         for field in fields_to_strings(sorted(form.fields, key=lambda fld: fld.position[1])):
             print((indent(field, 2)))
         print("")
