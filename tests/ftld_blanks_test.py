@@ -55,7 +55,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
         expected = ["'FTDCPPAS' is '2' with length '1', but should be blank:"
                     " 'Blank if Question 1 FTDPPASL = 0 (No)'."]
-        self.assertEqual(warnings[0], expected[0]) 
+        self.assertEqual(warnings[0], expected[0])
         # An error about another variable is also returned, so we are only
         # looking at the first item on the list
 
