@@ -10,7 +10,7 @@ import re
 import sys
 
 
-def convert_rule_to_python(name, rule):
+def convert_rule_to_python(name, rule: str):
     """
     Converts the text `rule` into a python function.
 
@@ -31,6 +31,7 @@ def convert_rule_to_python(name, rule):
 # Right now, in special cases, each special case rule contains all the blanking conditions within that single rule. So when redcap2nacc iterates through all the blanking rules, it's sent through the special cases *each time* it finds *a* blanking rule in each field. So the special cases are being printed out each time one rule is violated (because each special case rule is bring treated as the same general "multiple conditions" rule)
 # It seems like the only way to get the special cases to look like "separate" blanking rules to check_blanks would be to add some if statements that look at what the offending value actually is, and THEN go into a piece of the special case rule (like if the value is 8, return lambda packet['field'] == 8, but if the value is 9, then it's pointed to return lambda packet['field'] == 9. )
 # Do I need to do that manually or is there a way to automate it?
+# It seems like what I actually need to do is, for special_cases, combine all the blanking rules (like the actual extracted list) into one rule. But only one rule is imported to convert_rule_to_python at a time...
     special_cases = {
         'MOMAGEO': _blanking_rule_momageo,
         'FTLDSUBT': _blanking_rule_ftldsubt,
@@ -69,7 +70,7 @@ def convert_rule_to_python(name, rule):
 
     # First, check to see if the rule is a "Special Case"
     if name in special_cases:
-        return special_cases[name]()
+        return special_cases[name](rule)
 
     # Then, check to see if the rule is of the within-range type
     m = range_values.match(rule)
@@ -125,18 +126,18 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
     return should_be_blank
 
 
-def _blanking_rule_dummy():
+def _blanking_rule_dummy(rule):
     return lambda packet: False
 
 
-def _blanking_rule_ftldsubt():
+def _blanking_rule_ftldsubt(rule):
     # Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1
     # and 14d FTLDNOS ne 1
     return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
                           packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
 
 
-def _blanking_rule_learned():
+def _blanking_rule_learned(rule):
     # The two rules contradict each other:
     #  - Blank if Question 2a REFERSC ne 1
     #  - Blank if Question 2a REFERSC ne 2
@@ -145,10 +146,15 @@ def _blanking_rule_learned():
     return lambda packet: packet['REFERSC'] in (3, 4, 5, 6, 8, 9)
 
 
-def _blanking_rule_momageo():
-    # Blank if Question 54MOMNEUR = 8 (N/A)
-    # Blank if Question 54MOMNEUR = 9 (Unknown)
-    return lambda packet: packet['MOMNEUR'] in (8, 9)
+def _blanking_rule_momageo(rule):
+    # Blank if Question 54 MOMNEUR = 8 (N/A)
+    # Blank if Question 54 MOMNEUR = 9 (Unknown)
+    if rule == "Blank if Question 54 MOMNEUR = 8 (N/A)":
+        return lambda packet: packet['MOMNEUR'] == 8
+    elif rule == "Blank if Question 54 MOMNEUR = 9 (Unknown)":
+        return lambda packet: packet['MOMNEUR'] == 9
+    else:
+        return lambda packet: False
 
 
 def set_zeros_to_blanks(packet):
