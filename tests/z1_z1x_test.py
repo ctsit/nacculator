@@ -11,7 +11,7 @@ class TestC1SC2(unittest.TestCase):
         record = make_blank_ivp()
         record['visityr'] = '2016'
         record['a2_sub'] = '1'
-        record['b7comm'] = '1'
+        record['b7_comm'] = '1'
 
         ipacket = packet.Packet()
         ivp_builder.add_z1_or_z1x(record, ipacket)
@@ -33,7 +33,7 @@ class TestC1SC2(unittest.TestCase):
         record = make_blank_fvp()
         record['visityr'] = '2016'
         record['fu_a2_sub'] = '1'
-        record['fu_b7comm'] = '1'
+        record['fu_b7_comm'] = '1'
 
         fpacket = packet.Packet()
         fvp_builder.add_z1_or_z1x(record, fpacket)
