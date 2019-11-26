@@ -72,7 +72,7 @@ class TestCLS(unittest.TestCase):
         """If language proficiency percentages do not add to 100, create a warning.""" 
         record = make_filled_record()   
         record['eng_percentage_english'] = '20' 
-        record['eng_percentage_spanish'] = '9001'   
+        record['eng_percentage_spanish'] = '91'   
 
         ipacket = packet.Packet()
         itrap = StringIO()

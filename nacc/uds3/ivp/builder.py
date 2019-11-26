@@ -4,11 +4,9 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-from nacc.uds3 import blanks
 from nacc.uds3 import clsform
-from nacc.uds3.ivp import forms as ivp_forms
 from nacc.uds3 import packet as ivp_packet
-import sys
+from nacc.uds3.ivp import forms as ivp_forms
 
 
 def build_uds3_ivp_form(record):
@@ -583,7 +581,7 @@ def add_a5(record, packet):
         a5.ARTHUPEX = ''
         a5.ARTHLOEX = ''
         a5.ARTHSPIN = ''
-        a5.ARTHUNK = '' 
+        a5.ARTHUNK = ''
     packet.append(a5)
 
 
@@ -882,7 +880,7 @@ def add_c1s_or_c2(record, packet):
     c1s = ivp_forms.FormC1S()
     c1s_filled_fields = 0
     c1s_field_mapping = {
-        'MMSELOC': 'c1s_1a_mmseloc', 
+        'MMSELOC': 'c1s_1a_mmseloc',
         'MMSELAN': 'c1s_1a1_mmselan',
         'MMSELANX': 'c1s_1a2_mmselanx',
         'MMSEORDA': 'c1s_1b1_mmseorda',
@@ -913,7 +911,7 @@ def add_c1s_or_c2(record, packet):
         'MEMUNITS': 'c1s_9a_memunits',
         'MEMTIME': 'c1s_9b_memtime',
         'BOSTON': 'c1s_10a_boston',
-        'COGSTAT': 'c1s_11a_cogstat' 
+        'COGSTAT': 'c1s_11a_cogstat'
     }
     for key, value in c1s_field_mapping.items():
         try:
@@ -1109,6 +1107,124 @@ def add_d2(record, packet):
     d2.OTHCOND = record['othcond']
     d2.OTHCONDX = record['othcondx']
     packet.append(d2)
+
+    add_z1_or_z1x(record, packet)
+    update_header(record, packet)
+
+    return packet
+
+
+def add_c1s_or_c2(record, packet):
+    # Among C1S and C2 forms, one must be filled, one must be empty. After 2017/10/23, must be C2
+    if (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and int(record['visitmo'])>10) or \
+       (int(record['visityr'])==2017 and int(record['visitmo'])==10 and int(record['visitday'])>=23):
+        c2 = ivp_forms.FormC2()
+        c2.MOCACOMP = record['mocacomp']
+        c2.MOCAREAS = record['mocareas']
+        c2.MOCALOC = record['mocaloc']
+        c2.MOCALAN = record['mocalan']
+        c2.MOCALANX = record['mocalanx']
+        c2.MOCAVIS = record['mocavis']
+        c2.MOCAHEAR = record['mocahear']
+        c2.MOCATOTS = record['mocatots']
+        c2.MOCATRAI = record['mocatrai']
+        c2.MOCACUBE = record['mocacube']
+        c2.MOCACLOC = record['mocacloc']
+        c2.MOCACLON = record['mocaclon']
+        c2.MOCACLOH = record['mocacloh']
+        c2.MOCANAMI = record['mocanami']
+        c2.MOCAREGI = record['mocaregi']
+        c2.MOCADIGI = record['mocadigi']
+        c2.MOCALETT = record['mocalett']
+        c2.MOCASER7 = record['mocaser7']
+        c2.MOCAREPE = record['mocarepe']
+        c2.MOCAFLUE = record['mocaflue']
+        c2.MOCAABST = record['mocaabst']
+        c2.MOCARECN = record['mocarecn']
+        c2.MOCARECC = record['mocarecc']
+        c2.MOCARECR = record['mocarecr']
+        c2.MOCAORDT = record['mocaordt']
+        c2.MOCAORMO = record['mocaormo']
+        c2.MOCAORYR = record['mocaoryr']
+        c2.MOCAORDY = record['mocaordy']
+        c2.MOCAORPL = record['mocaorpl']
+        c2.MOCAORCT = record['mocaorct']
+        c2.NPSYCLOC = record['npsycloc_c2']
+        c2.NPSYLAN = record['npsylan_c2']
+        c2.NPSYLANX = record['npsylanx_c2']
+        c2.CRAFTVRS = record['craftvrs']
+        c2.CRAFTURS = record['crafturs']
+        c2.UDSBENTC = record['udsbentc']
+        c2.DIGFORCT = record['digforct']
+        c2.DIGFORSL = record['digforsl']
+        c2.DIGBACCT = record['digbacct']
+        c2.DIGBACLS = record['digbacls']
+        c2.ANIMALS = record['animals_c2']
+        c2.VEG = record['veg_c2']
+        c2.TRAILA = record['traila_c2']
+        c2.TRAILARR = record['trailarr_c2']
+        c2.TRAILALI = record['trailali_c2']
+        c2.TRAILB = record['trailb_c2']
+        c2.TRAILBRR = record['trailbrr_c2']
+        c2.TRAILBLI = record['trailbli_c2']
+        c2.CRAFTDVR = record['craftdvr']
+        c2.CRAFTDRE = record['craftdre']
+        c2.CRAFTDTI = record['craftdti']
+        c2.CRAFTCUE = record['craftcue']
+        c2.UDSBENTD = record['udsbentd']
+        c2.UDSBENRS = record['udsbenrs']
+        c2.MINTTOTS = record['minttots']
+        c2.MINTTOTW = record['minttotw']
+        c2.MINTSCNG = record['mintscng']
+        c2.MINTSCNC = record['mintscnc']
+        c2.MINTPCNG = record['mintpcng']
+        c2.MINTPCNC = record['mintpcnc']
+        c2.UDSVERFC = record['udsverfc']
+        c2.UDSVERFN = record['udsverfn']
+        c2.UDSVERNF = record['udsvernf']
+        c2.UDSVERLC = record['udsverlc']
+        c2.UDSVERLR = record['udsverlr']
+        c2.UDSVERLN = record['udsverln']
+        c2.UDSVERTN = record['udsvertn']
+        c2.UDSVERTE = record['udsverte']
+        c2.UDSVERTI = record['udsverti']
+        c2.COGSTAT = record['cogstat_c2']
+        packet.append(c2)
+    else:
+        c1s = ivp_forms.FormC1S()
+        c1s.MMSELOC = record['c1s_1a_mmseloc'] #check for blank
+        c1s.MMSELAN = record['c1s_1a1_mmselan']
+        c1s.MMSELANX = record['c1s_1a2_mmselanx']
+        c1s.MMSEORDA = record['c1s_1b1_mmseorda']
+        c1s.MMSEORLO = record['c1s_1b2_mmseorlo']
+        c1s.PENTAGON = record['c1s_1c_pentagon']
+        c1s.MMSE = record['c1s_1d_mmse']
+        c1s.NPSYCLOC = record['c1s_2_npsycloc']
+        c1s.NPSYLAN = record['c1s_2a_npsylan']
+        c1s.NPSYLANX = record['c1s_2a1_npsylanx']
+        c1s.LOGIMO = record['c1s_3amo_logimo']
+        c1s.LOGIDAY = record['c1s_3ady_logiday']
+        c1s.LOGIYR = record['c1s_3ayr_logiyr']
+        c1s.LOGIPREV = record['c1s_3a1_logiprev']
+        c1s.LOGIMEM = record['c1s_3b_logimem']
+        c1s.DIGIF = record['c1s_4a_digif']
+        c1s.DIGIFLEN = record['c1s_4b_digiflen']
+        c1s.DIGIB = record['c1s_5a_digib']
+        c1s.DIGIBLEN = record['c1s_5b_digiblen']
+        c1s.ANIMALS = record['c1s_6a_animals']
+        c1s.VEG = record['c1s_6b_veg']
+        c1s.TRAILA = record['c1s_7a_traila']
+        c1s.TRAILARR = record['c1s_7a1_trailarr']
+        c1s.TRAILALI = record['c1s_7a2_trailali']
+        c1s.TRAILB = record['c1s_7b_trailb']
+        c1s.TRAILBRR = record['c1s_7b1_trailbrr']
+        c1s.TRAILBLI = record['c1s_7b2_trailbli']
+        c1s.WAIS = record['c1s_8a_wais']
+        c1s.MEMUNITS = record['c1s_9a_memunits']
+        c1s.MEMTIME = record['c1s_9b_memtime']
+        c1s.BOSTON = record['c1s_10a_boston']
+        c1s.COGSTAT = record['c1s_11a_cogstat'] #check for blank
+        packet.append(c1s)
 
 
 def update_header(record, packet):
