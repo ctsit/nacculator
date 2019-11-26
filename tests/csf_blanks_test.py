@@ -1,8 +1,7 @@
 import unittest
 
-import nacc.uds3
 from nacc import redcap2nacc
-from nacc.uds3 import packet
+from nacc.csf.builder import build_uds3_csf_form
 
 
 class option():
@@ -32,16 +31,13 @@ class TestBlankRulesForCSF(unittest.TestCase):
     def setUp(self):
         self.options = option()
 
-    def test_for_CSFABETA(self):
+    def test_for_blank_form_when_CSFABETA(self):
         '''
         The whole set of questions should be left blank if CSFABETA is blank.
         '''
         record = make_filled_form()
         record['csfabeta'] = ''
-        # The several other values have been filled out below
-        # in "make_filled_form"
-        ipacket = make_builder(record)
-        warnings = []
+        ipacket = build_uds3_csf_form(record)
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
         expected = ["'CSFABmo' is '1 ' with length '2', but should be blank:"
@@ -60,7 +56,7 @@ class TestBlankRulesForCSF(unittest.TestCase):
         record = make_filled_form()
         record['csfabmd'] = '2'
         record['csfabmdx'] = 'test'
-        ipacket = make_builder(record)
+        ipacket = build_uds3_csf_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
@@ -81,7 +77,7 @@ class TestBlankRulesForCSF(unittest.TestCase):
         record['csfabyr'] = ''
         record['csfabmd'] = '2'
         record['csfabmdx'] = 'test'
-        ipacket = make_builder(record)
+        ipacket = build_uds3_csf_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
@@ -98,55 +94,39 @@ class TestBlankRulesForCSF(unittest.TestCase):
         self.assertEqual(warnings, expected)
 
 
-def make_builder(record: dict) -> packet.Packet:
-    ipacket = packet.Packet()
-    form = Form()
-    form.CSFABETA = record['csfabeta']
-    form.CSFABmo  = record['csfabmo']
-    form.CSFABDY  = record['csfabdy']
-    form.CSFABYr  = record['csfabyr']
-    form.CSFABmD  = record['csfabmd']
-    form.CSFABmDX = record['csfabmdx']
-    ipacket.append(form)
-
-    update_header(record, ipacket)
-
-    return ipacket
-
-
-def update_header(record: dict, packet: packet.Packet):
-    for header in packet:
-        header.PTID = record['ptid']
-
-
 def make_filled_form() -> dict:
     return {
+        # Headers
         'ptid': '1',
+        'adcid': '',
+        'visitmo': '',
+        'visitday': '',
+        'visityr': '',
+        'csflpmo': '',
+        'csflpdy': '',
+        'csflpyr': '',
+        'csfinit': '',
 
+        # CSF Data
         'csfabeta': '20.00',
         'csfabmo': '1',
         'csfabdy': '12',
         'csfabyr': '1990',
         'csfabmd': '2',
         'csfabmdx': '',
+        'csfptau': '',
+        'csfptmo': '',
+        'csfptdy': '',
+        'csfptyr': '',
+        'csfptmd': '',
+        'csfptmdx': '',
+        'csfttau': '',
+        'csfttmo': '',
+        'csfttdy': '',
+        'csfttyr': '',
+        'csfttmd': '',
+        'csfttmdx': '',
     }
-
-
-def header_fields():
-    fields = {}
-    fields['PTID'] = nacc.uds3.Field(name='PTID', typename='Char', position=(1, 10), length=10, inclusive_range=None, allowable_values=[], blanks=[])
-    return fields
-
-
-class Form(nacc.uds3.FieldBag):
-    def __init__(self):
-        self.fields = header_fields()
-        self.fields['CSFABETA'] = nacc.uds3.Field(name='CSFABETA', typename='Num', position=(41, 48), length=8, inclusive_range=('1', '2000'), allowable_values=[], blanks=['Question 1a CSFABETA is an optional data field and may be left blank.'])
-        self.fields['CSFABmo'] = nacc.uds3.Field(name='CSFABmo', typename='Num', position=(50, 51), length=2, inclusive_range=('1', '12'), allowable_values=[], blanks=['Blank if Question 1a CSFABETA = blank'])
-        self.fields['CSFABDY'] = nacc.uds3.Field(name='CSFABDY', typename='Num', position=(53, 54), length=2, inclusive_range=('1', '31'), allowable_values=[], blanks=['Blank if Question 1a CSFABETA = blank'])
-        self.fields['CSFABYr'] = nacc.uds3.Field(name='CSFABYr', typename='Num', position=(56, 59), length=4, inclusive_range=('1980', '2019'), allowable_values=[], blanks=['Blank if Question 1a CSFABETA = blank'])
-        self.fields['CSFABmD'] = nacc.uds3.Field(name='CSFABmD', typename='Num', position=(61, 61), length=1, inclusive_range=None, allowable_values=['1', '2', '8'], blanks=['Blank if Question 1a CSFABETA = blank'])
-        self.fields['CSFABmDX'] = nacc.uds3.Field(name='CSFABmDX', typename='Char', position=(63, 122), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 1e CSFABmD ne 8 (Other)', 'Blank if Question 1a CSFABETA = blank'])
 
 
 if __name__ == "__main__":

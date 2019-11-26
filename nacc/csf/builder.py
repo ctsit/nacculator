@@ -13,7 +13,7 @@ def build_uds3_csf_form(record):
     packet = csf_packet.Packet()
 
     # Set up the forms.
-    eE2 = csf_forms.FormeE2()
+    eE2 = csf_forms.FormEE2()
     eE2.CSFABETA = record['csfabeta']
     eE2.CSFABmo  = record['csfabmo']
     eE2.CSFABDY  = record['csfabdy']

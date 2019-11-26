@@ -81,7 +81,7 @@ class Field(object):
     def value(self, val):
         def out_of_range(v):
             d = decimal.Decimal(v)
-            return d < self.inclusive_range[0] or d > self.inclusive_range[1]
+            return d < int(self.inclusive_range[0]) or d > int(self.inclusive_range[1])
 
         if self.allowable_values:
             if val is None:
