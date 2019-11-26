@@ -17,10 +17,6 @@ CURRENT_YEAR = date.today().year
 ### END non-generated code
 
 
-''' the CURRENT_YEAR limitation in the inclusive_range part isn't
-actually cutting off invalid years'''
-
-
 def header_fields():
     fields = {}
     fields['ADCID'] = nacc.uds3.Field(name='ADCID', typename='Num', position=(1, 2), length=2, inclusive_range=('2', '43'), allowable_values=[], blanks=[])
@@ -35,7 +31,10 @@ def header_fields():
     return fields
 
 
-class FormeE2(nacc.uds3.FieldBag):
+class FormEE2(nacc.uds3.FieldBag):
+    """ 
+    Generated from Form eE2: https://www.alz.washington.edu/WEB/csfded.pdf
+    """
     def __init__(self):
         self.fields = header_fields()
         self.fields['CSFABETA'] = nacc.uds3.Field(name='CSFABETA', typename='Num', position=(41, 48), length=8, inclusive_range=('1', '2000'), allowable_values=[], blanks=['Question 1a CSFABETA is an optional data field and may be left blank.'])

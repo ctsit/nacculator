@@ -14,7 +14,7 @@ class option():
     fvp = False
 
 
-class TestBlankRulesForFTLD(unittest.TestCase):
+class TestBlankRulesForCSF(unittest.TestCase):
     '''
     These tests are designed to run CSF data fields (generated below
     the tests here) through the check_blanks function for the CSF module.
