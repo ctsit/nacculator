@@ -4,7 +4,9 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-"""Copyright 2015-2019 University of Florida
+"""Generates Python code that represent NACC Forms
+
+Copyright 2015-2019 University of Florida
 
 Usage: python3 tools/generator.py -h|--help
        python3 tools/generator.py <deds>
@@ -92,55 +94,61 @@ def generate(ded: str, encoding: str = "utf-8") -> DynamicObject:
     try:
         with open(ded, encoding=encoding) as stream:
             reader = csv.DictReader(stream)
-            form = DynamicObject()
-            form.fields = []
-
-            for record in reader:
-                form.packet = record["PACKET"]
-
-                form.id = os.path.basename(ded)
-                form.id = form.id.replace(f"ded{form.packet}", "")
-                form.id = form.id.replace(f".csv", "")
-
-                field = DynamicObject()
-                field.name = MethodField(record["VAR"])
-                field.order = record["DORDER"]
-
-                # TODO: Ask NACC about DTYPE. PDFs say "Num" or "Char"
-                field.type = "Num"
-                if record["DTYPE"] == "3":
-                    field.type = "Char"
-                field.length = record["FLDLENG"]
-                field.position = \
-                    (int(record["COLUMN1"]), int(record["COLUMN2"]))
-
-                field.inclusive_range = None
-                if record["RANGE"]:
-                    (start, end) = record["RANGE"].split("||")
-                    start = start.replace("current year", "CURRENT_YEAR")
-                    start = start.replace(" minus ", " - ")
-                    end = end.replace("current year", "CURRENT_YEAR")
-                    end = end.replace(" minus ", " - ")
-
-                    field.inclusive_range = (start, end)
-
-                field.allowable_codes = []
-                for code in record["VALUES"].split("||"):
-                    field.allowable_codes.append(code)
-
-                # TODO: handle acceptable MISSING values
-
-                form.fields.append(field)
-                field.blanks = [record[f] for f in reader.fieldnames
-                                if "BLANKS" in f and record[f]]
-
-            form.fields.sort(key=lambda f: f.order)
+            match = re.match(r"ded[IFT](\w\w\w?).csv", os.path.basename(ded))
+            if not match:
+                raise Exception("Cannot determine Form from filename: " + ded)
+            form_id = match[1]
+            form = generate_form(form_id, reader)
 
     except UnicodeDecodeError as err:
         if encoding != "windows-1252":
             return generate(ded, "windows-1252")
         raise err
 
+    return form
+
+
+def generate_form(form_id: str, reader: csv.DictReader) -> DynamicObject:
+    form = DynamicObject()
+    form.fields = []
+
+    for record in reader:
+        form.packet = record["PACKET"]
+        form.id = form_id
+
+        field = DynamicObject()
+        field.name = MethodField(record["VAR"])
+        field.order = record["DORDER"]
+
+        # TODO: Ask NACC about DTYPE. PDFs say "Num" or "Char"
+        field.type = "Num"
+        if record["DTYPE"] == "3":
+            field.type = "Char"
+        field.length = record["FLDLENG"]
+        field.position = \
+            (int(record["COLUMN1"]), int(record["COLUMN2"]))
+
+        field.inclusive_range = None
+        if record["RANGE"]:
+            (start, end) = record["RANGE"].split("||")
+            start = start.replace("current year", "CURRENT_YEAR")
+            start = start.replace(" minus ", " - ")
+            end = end.replace("current year", "CURRENT_YEAR")
+            end = end.replace(" minus ", " - ")
+
+            field.inclusive_range = (start, end)
+
+        field.allowable_codes = []
+        for code in record["VALUES"].split("||"):
+            field.allowable_codes.append(code)
+
+        # TODO: handle acceptable MISSING values
+
+        form.fields.append(field)
+        field.blanks = [record[f] for f in reader.fieldnames
+                        if "BLANKS" in f and record[f]]
+
+    form.fields.sort(key=lambda f: f.order)
     return form
 
 
