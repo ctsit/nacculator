@@ -3,7 +3,7 @@ egg:
 	python setup.py bdist_egg
 
 tests: ALWAYS
-	PTYHONPATH=. python -m unittest discover tests "*_test.py"
+	python -m unittest
 
 clean: ALWAYS
 	rm -rf dist/ build/ nacculator.egg-info/
