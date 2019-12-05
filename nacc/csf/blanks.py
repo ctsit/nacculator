@@ -10,7 +10,7 @@ import re
 import sys
 
 
-def convert_rule_to_python(name, rule):
+def convert_rule_to_python(name: str, rule: str) -> bool:
     """
     Converts the text `rule` into a python function.
 
@@ -28,32 +28,9 @@ def convert_rule_to_python(name, rule):
     """
 
     special_cases = {
-        'MOMAGEO': _blanking_rule_momageo,
-        'FTLDSUBT': _blanking_rule_ftldsubt,
-        'LEARNED': _blanking_rule_learned,
-        'ZIP': _blanking_rule_dummy,
-        'DECCLMOT': _blanking_rule_dummy,
-        'CRAFTDRE': _blanking_rule_dummy,
-        # Neuropath skip rules
-        'NPINF': _blanking_rule_dummy,
-        'NPHEMO': _blanking_rule_dummy,
-        'NPOLD': _blanking_rule_dummy,
-        'NPOLDD': _blanking_rule_dummy,
-        'NPFTDTAU': _blanking_rule_dummy,
-        'NPOFTD': _blanking_rule_dummy,
-        'NPNEC': _blanking_rule_dummy,
-        'NPPATH': _blanking_rule_dummy,
-        'NPPATHO': _blanking_rule_dummy,
-        'NPPATH2': _blanking_rule_dummy,
-        'NPPATH3': _blanking_rule_dummy,
-        'NPPATH6': _blanking_rule_dummy,
-        'NPPATH7': _blanking_rule_dummy,
-        'NPPATH4': _blanking_rule_dummy,
-        'NPPATH5': _blanking_rule_dummy,
-        'NPPATH8': _blanking_rule_dummy,
-        'NPPATH9': _blanking_rule_dummy,
-        'NPPATH10': _blanking_rule_dummy,
-        'NPPATH11': _blanking_rule_dummy,
+        'CSFABETA': _blanking_rule_dummy,
+        'CSFPTAU': _blanking_rule_dummy,
+        'CSFTTAU': _blanking_rule_dummy,
     }
 
     single_value = re.compile(
@@ -62,6 +39,8 @@ def convert_rule_to_python(name, rule):
     range_values = re.compile(
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<start>\d+)-(?P<stop>\d+)( |$)")
+    blank_value = re.compile(
+        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) blank")
 
     # First, check to see if the rule is a "Special Case"
     if name in special_cases:
@@ -78,6 +57,12 @@ def convert_rule_to_python(name, rule):
     if m:
         return _blanking_rule_check_single_value(
             m.group('key'), m.group('eq'), m.group('value'))
+
+    # Next, check to see if the rule is of the "blank if _ = blank" type
+    m = blank_value.match(rule)
+    if m:
+        return _blanking_rule_check_blank_value(
+            m.group('key'), m.group('eq'))
 
     # Finally, raise an error since we do not know how to handle the rule
     raise Exception("Could not parse Blanking rule: "+name)
@@ -121,30 +106,21 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
     return should_be_blank
 
 
+def _blanking_rule_check_blank_value(key, eq, value=None):
+    def should_be_blank(packet):
+        """ Returns True if the value should be blank according to the rule """
+        if '=' == eq:
+            return packet[key] == value
+        elif 'ne' == eq:
+            return packet[key] != value
+        else:
+            raise ValueError("'eq' must be '=' or 'ne', not '%s'." % eq)
+
+    return should_be_blank
+
+
 def _blanking_rule_dummy():
     return lambda packet: False
-
-
-def _blanking_rule_ftldsubt():
-    # Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1
-    # and 14d FTLDNOS ne 1
-    return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
-                          packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
-
-
-def _blanking_rule_learned():
-    # The two rules contradict each other:
-    #  - Blank if Question 2a REFERSC ne 1
-    #  - Blank if Question 2a REFERSC ne 2
-    # The intent appears to be "blank if REFERSC is 3, 4, 5, 6, 8, or 9", but
-    # that makes 6 individual blanking rules and the maximum is 5 (BLANKS1-5).
-    return lambda packet: packet['REFERSC'] in (3, 4, 5, 6, 8, 9)
-
-
-def _blanking_rule_momageo():
-    # Blank if Question 54MOMNEUR = 8 (N/A)
-    # Blank if Question 54MOMNEUR = 9 (Unknown)
-    return lambda packet: packet['MOMNEUR'] in (8, 9)
 
 
 def set_zeros_to_blanks(packet):

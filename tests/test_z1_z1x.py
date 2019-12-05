@@ -10,8 +10,8 @@ class TestC1SC2(unittest.TestCase):
         """ If header is from before April 2, 2018, the Z1 form should be added """
         record = make_blank_ivp()
         record['visityr'] = '2016'
-        record['a2sub'] = '1'
-        record['b7comm'] = '1'
+        record['a2_sub'] = '1'
+        record['b7_comm'] = '1'
 
         ipacket = packet.Packet()
         ivp_builder.add_z1_or_z1x(record, ipacket)
@@ -32,8 +32,8 @@ class TestC1SC2(unittest.TestCase):
         """ If header is from before April 2, 2018, the Z1 form should be added """
         record = make_blank_fvp()
         record['visityr'] = '2016'
-        record['fu_a2sub'] = '1'
-        record['fu_b7comm'] = '1'
+        record['fu_a2_sub'] = '1'
+        record['fu_b7_comm'] = '1'
 
         fpacket = packet.Packet()
         fvp_builder.add_z1_or_z1x(record, fpacket)
@@ -56,27 +56,27 @@ def make_blank_ivp():
         'visitday': '',
         'visityr': '',
         # Z1
-        'a2sub': '',
-        'a2not': '',
-        'a2comm': '',
-        'a3sub': '',
-        'a3not': '',
-        'a3comm': '',
-        'a4sub': '',
-        'a4not': '',
-        'a4comm': '',
-        'b1sub': '',
-        'b1not': '',
-        'b1comm': '',
-        'b5sub': '',
-        'b5not': '',
-        'b5comm': '',
-        'b6sub': '',
-        'b6not': '',
-        'b6comm': '',
-        'b7sub': '',
-        'b7not': '',
-        'b7comm': '',
+        'a2_sub': '',
+        'a2_not': '',
+        'a2_comm': '',
+        'a3_sub': '',
+        'a3_not': '',
+        'a3_comm': '',
+        'a4_sub': '',
+        'a4_not': '',
+        'a4_comm': '',
+        'b1_sub': '',
+        'b1_not': '',
+        'b1_comm': '',
+        'b5_sub': '',
+        'b5_not': '',
+        'b5_comm': '',
+        'b6_sub': '',
+        'b6_not': '',
+        'b6_comm': '',
+        'b7_sub': '',
+        'b7_not': '',
+        'b7_comm': '',
         # Z1X
         'langa1': '',
         'langa2': '',
@@ -135,27 +135,27 @@ def make_blank_fvp():
         'visitday': '',
         'visityr': '',
         # Z1
-        'fu_a2sub': '',
-        'fu_a2not': '',
-        'fu_a2comm': '',
-        'fu_a3sub': '',
-        'fu_a3not': '',
-        'fu_a3comm': '',
-        'fu_a4sub': '',
-        'fu_a4not': '',
-        'fu_a4comm': '',
-        'fu_b1sub': '',
-        'fu_b1not': '',
-        'fu_b1comm': '',
-        'fu_b5sub': '',
-        'fu_b5not': '',
-        'fu_b5comm': '',
-        'fu_b6sub': '',
-        'fu_b6not': '',
-        'fu_b6comm': '',
-        'fu_b7sub': '',
-        'fu_b7not': '',
-        'fu_b7comm': '',
+        'fu_a2_sub': '',
+        'fu_a2_not': '',
+        'fu_a2_comm': '',
+        'fu_a3_sub': '',
+        'fu_a3_not': '',
+        'fu_a3_comm': '',
+        'fu_a4_sub': '',
+        'fu_a4_not': '',
+        'fu_a4_comm': '',
+        'fu_b1_sub': '',
+        'fu_b1_not': '',
+        'fu_b1_comm': '',
+        'fu_b5_sub': '',
+        'fu_b5_not': '',
+        'fu_b5_comm': '',
+        'fu_b6_sub': '',
+        'fu_b6_not': '',
+        'fu_b6_comm': '',
+        'fu_b7_sub': '',
+        'fu_b7_not': '',
+        'fu_b7_comm': '',
         # Z1X
         'fu_langa1': '',
         'fu_langa2': '',

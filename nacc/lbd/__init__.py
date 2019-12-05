@@ -4,9 +4,8 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-# nacc.uds3
+# nacc.lbd
 import decimal
-
 
 class _UdsType(object):
     def __init__(self, length):
@@ -51,7 +50,6 @@ class Field(object):
                allowable_values is not isinstance(allowable_values, str)
 
         self.name = name
-        self.typename = typename
         self.udstype = UDS3_TYPES[typename](length)
         self.position = position
         self.length = length
@@ -59,8 +57,7 @@ class Field(object):
         # get the canonical representation for allowable values, but filter out
         # empty strings first
         self.allowable_values = [self.udstype(v)
-                                 for v in [
-                                     _f for _f in allowable_values if _f]]
+                                 for v in [_f for _f in allowable_values if _f]]
         self.blanks = blanks or []
         self.val = value
 
@@ -81,7 +78,7 @@ class Field(object):
     def value(self, val):
         def out_of_range(v):
             d = decimal.Decimal(v)
-            return d < int(self.inclusive_range[0]) or d > int(self.inclusive_range[1])
+            return d < self.inclusive_range[0] or d > self.inclusive_range[1]
 
         if self.allowable_values:
             if val is None:
@@ -99,25 +96,6 @@ class Field(object):
                         raise ValueError('"%s" is unacceptable for %s' %
                                          (val, self.name))
 
-        else:
-            if val is None:
-                pass
-            elif isinstance(val, str) and str(val).strip() == "":
-                pass
-            elif isinstance(self.udstype, Char):
-                pass
-            else:
-                # val can be None, but if it isn't, and we are NOT restricted
-                # to certain values (only an allowable range of values),
-                # then we need to check that the value is within that range
-                canonical = self.udstype(val)
-                assert self.inclusive_range
-                if out_of_range(canonical):
-                    raise ValueError(
-                        '"%s" is outside of the allowable range for %s'
-                        ' : %s - %s' % (
-                            val, self.name, self.inclusive_range[0],
-                            self.inclusive_range[1]))
         self.val = val
 
 

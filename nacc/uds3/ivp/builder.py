@@ -4,18 +4,156 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-from nacc.uds3 import blanks
 from nacc.uds3 import clsform
-import forms as ivp_forms
 from nacc.uds3 import packet as ivp_packet
-import sys
+from nacc.uds3.ivp import forms as ivp_forms
 
 
 def build_uds3_ivp_form(record):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
     packet = ivp_packet.Packet()
 
-    # Set up us the forms
+    # Set up the forms
+    add_z1_or_z1x(record, packet)
+    add_a1(record, packet)
+    if record['a2_sub'] == '1' or record['a2sub'] == '1':
+        add_a2(record, packet)
+    if record['a3_sub'] == '1' or record['a3sub'] == '1':
+        add_a3(record, packet)
+    if record['a4_sub'] == '1' or record['a4sub'] == '1':
+        add_a4(record, packet)
+    add_a5(record, packet)
+    if record['b1_sub'] == '1' or record['b1sub'] == '1':
+        add_b1(record, packet)
+    add_b4(record, packet)
+    if record['b5_sub'] == '1' or record['b5sub'] == '1':
+        add_b5(record, packet)
+    if record['b6_sub'] == '1' or record['b6sub'] == '1':
+        add_b6(record, packet)
+    if record['b7_sub'] == '1' or record['b7sub'] == '1':
+        add_b7(record, packet)
+    add_b8(record, packet)
+    add_b9(record, packet)
+    add_c1s_or_c2(record, packet)
+    add_d1(record, packet)
+    add_d2(record, packet)
+    clsform.add_cls(record, packet, ivp_forms)
+    update_header(record, packet)
+
+    return packet
+
+
+def add_z1_or_z1x(record, packet):
+    # Forms A1, A5, B4, B8, B9, C2, D1, and D2 are all REQUIRED.
+    # Fields a1sub, a5sub1, b4sub1, b8sub1, b9sub1, c2sub1, d1sub1, and d2sub1
+    # are just section separators.
+    z1x = ivp_forms.FormZ1X()
+    z1x_filled_fields = 0
+    z1x_field_mapping = {
+        'LANGA1': 'langa1',
+        'LANGA2': 'langa2',
+        'A2SUB': 'a2sub',
+        'A2NOT': 'a2not',
+        'LANGA3': 'langa3',
+        'A3SUB': 'a3sub',
+        'LANGA4': 'langa4',
+        'A4SUB': 'a4sub',
+        'A4NOT': 'a4not',
+        'LANGA5': 'langa5',
+        'LANGB1': 'langb1',
+        'B1SUB': 'b1sub',
+        'B1NOT': 'b1not',
+        'LANGB4': 'langb4',
+        'LANGB5': 'langb5',
+        'B5SUB': 'b5sub',
+        'B5NOT': 'b5not',
+        'LANGB6': 'langb6',
+        'B6SUB': 'b6sub',
+        'B6NOT': 'b6not',
+        'LANGB7': 'langb7',
+        'B7SUB': 'b7sub',
+        'B7NOT': 'b7not',
+        'LANGB8': 'langb8',
+        'LANGB9': 'langb9',
+        'LANGC2': 'langc2',
+        'LANGD1': 'langd1',
+        'LANGD2': 'langd2',
+        'LANGA3A': 'langa3a',
+        'FTDA3AFS': 'ftda3afs',
+        'FTDA3AFR': 'ftda3afr',
+        'LANGB3F': 'langb3f',
+        'LANGB9F': 'langb9f',
+        'LANGC1F': 'langc1f',
+        'LANGC2F': 'langc2f',
+        'LANGC3F': 'langc3f',
+        'LANGC4F': 'langc4f',
+        'FTDC4FS': 'ftdc4fs',
+        'FTDC4FR': 'ftdc4fr',
+        'FTDC5FS': 'ftdc5fs',
+        'FTDC5FR': 'ftdc5fr',
+        'FTDC6FS': 'ftdc6fs',
+        'FTDC6FR': 'ftdc6fr',
+        'LANGE2F': 'lange2f',
+        'LANGE3F': 'lange3f',
+        'LANGCLS': 'langcls',
+        'CLSSUB': 'clssub'
+    }
+    for key, value in z1x_field_mapping.items():
+        try:
+            if record[value].strip():
+                setattr(z1x, key, record[value])
+                z1x_filled_fields += 1
+        except KeyError:
+            pass
+
+    z1 = ivp_forms.FormZ1()
+    z1_filled_fields = 0
+    z1_field_mapping = {
+        'A2SUB': 'a2_sub',
+        'A2NOT': 'a2_not',
+        'A2COMM': 'a2_comm',
+        'A3SUB': 'a3_sub',
+        'A3NOT': 'a3_not',
+        'A3COMM': 'a3_comm',
+        'A4SUB': 'a4_sub',
+        'A4NOT': 'a4_not',
+        'A4COMM': 'a4_comm',
+        'B1SUB': 'b1_sub',
+        'B1NOT': 'b1_not',
+        'B1COMM': 'b1_comm',
+        'B5SUB': 'b5_sub',
+        'B5NOT': 'b5_not',
+        'B5COMM': 'b5_comm',
+        'B6SUB': 'b6_sub',
+        'B6NOT': 'b6_not',
+        'B6COMM': 'b6_comm',
+        'B7SUB': 'b7_sub',
+        'B7NOT': 'b7_not',
+        'B7COMM': 'b7_comm'
+    }
+    for key, value in z1_field_mapping.items():
+        try:
+            if record[value].strip():
+                setattr(z1, key, record[value])
+                z1_filled_fields += 1
+        except KeyError:
+            pass
+
+    # Prefer Z1X to Z1
+    # If both are blank, use date (Z1X after 2018/04/02)
+    if z1x_filled_fields > 0:
+        packet.insert(0, z1x)
+    elif z1_filled_fields > 0:
+        packet.insert(0, z1)
+    elif (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and \
+          int(record['visitmo'])>4) or (int(record['visityr'])==2018 and \
+          int(record['visitmo'])==4 and int(record['visitday'])>=2):
+        packet.insert(0, z1x)
+    else:
+        packet.insert(0, z1)
+
+
+def add_a1(record, packet):
     a1 = ivp_forms.FormA1()
     a1.REASON = record['reason']
     a1.REFERSC = record['refersc']
@@ -46,6 +184,8 @@ def build_uds3_ivp_form(record):
     a1.HANDED = record['handed']
     packet.append(a1)
 
+
+def add_a2(record, packet):
     a2 = ivp_forms.FormA2()
     a2.INBIRMO = record['inbirmo']
     a2.INBIRYR = record['inbiryr']
@@ -68,6 +208,8 @@ def build_uds3_ivp_form(record):
     a2.INRELY = record['inrely']
     packet.append(a2)
 
+
+def add_a3(record, packet):
     a3 = ivp_forms.FormA3()
     a3.AFFFAMM = record['afffamm']
     a3.FADMUT = record['fadmut']
@@ -345,6 +487,8 @@ def build_uds3_ivp_form(record):
     a3.KID15AGO = record['kid15ago']
     packet.append(a3)
 
+
+def add_a4(record, packet):
     # Form A4D and A4G are special in that our REDCap implementation (IVP A4)
     # combines them by asking if the subject is taking any medications (which
     # corresponds to A4G.ANYMEDS), then has 50 fields to specify each
@@ -361,6 +505,8 @@ def build_uds3_ivp_form(record):
                 a4d.DRUGID = record[key]
                 packet.append(a4d)
 
+
+def add_a5(record, packet):
     a5 = ivp_forms.FormA5()
     a5.TOBAC30 = record['tobac30']
     a5.TOBAC100 = record['tobac100']
@@ -435,9 +581,11 @@ def build_uds3_ivp_form(record):
         a5.ARTHUPEX = ''
         a5.ARTHLOEX = ''
         a5.ARTHSPIN = ''
-        a5.ARTHUNK = '' 
+        a5.ARTHUNK = ''
     packet.append(a5)
 
+
+def add_b1(record, packet):
     b1 = ivp_forms.FormB1()
     b1.HEIGHT = record['height']
     b1.WEIGHT = record['weight']
@@ -452,6 +600,8 @@ def build_uds3_ivp_form(record):
     b1.HEARWAID = record['hearwaid']
     packet.append(b1)
 
+
+def add_b4(record, packet):
     b4 = ivp_forms.FormB4()
     b4.MEMORY = record['memory']
     b4.ORIENT = record['orient']
@@ -465,6 +615,8 @@ def build_uds3_ivp_form(record):
     b4.CDRLANG = record['cdrlang']
     packet.append(b4)
 
+
+def add_b5(record, packet):
     b5 = ivp_forms.FormB5()
     b5.NPIQINF = record['npiqinf']
     b5.NPIQINFX = record['npiqinfx']
@@ -494,6 +646,8 @@ def build_uds3_ivp_form(record):
     b5.APPSEV = record['appsev']
     packet.append(b5)
 
+
+def add_b6(record, packet):
     b6 = ivp_forms.FormB6()
     b6.NOGDS = record['nogds']
     b6.SATIS = record['satis']
@@ -514,6 +668,8 @@ def build_uds3_ivp_form(record):
     b6.GDS = record['gds']
     packet.append(b6)
 
+
+def add_b7(record, packet):
     b7 = ivp_forms.FormB7()
     b7.BILLS = record['bills']
     b7.TAXES = record['taxes']
@@ -527,6 +683,8 @@ def build_uds3_ivp_form(record):
     b7.TRAVEL = record['travel']
     packet.append(b7)
 
+
+def add_b8(record, packet):
     b8 = ivp_forms.FormB8()
     b8.NORMEXAM = record['normexam']
     b8.PARKSIGN = record['parksign']
@@ -569,10 +727,12 @@ def build_uds3_ivp_form(record):
     b8.MYOCLRT = record['myoclrt']
     b8.ALSFIND = record['alsfind']
     b8.GAITNPH = record['gaitnph']
-    b8.OTHNEUR = record['otherneur']
-    b8.OTHNEURX = record['otherneurx']
+    b8.OTHNEUR = record['othneur']
+    b8.OTHNEURX = record['othneurx']
     packet.append(b8)
 
+
+def add_b9(record, packet):
     b9 = ivp_forms.FormB9()
     b9.DECSUB = record['decsub']
     b9.DECIN = record['decin']
@@ -633,10 +793,149 @@ def build_uds3_ivp_form(record):
     b9.FTLDEVAL = record['ftldeval']
     packet.append(b9)
 
-    add_c1s_or_c2(record, packet)
 
-    clsform.add_cls(record, packet, ivp_forms)
+def add_c1s_or_c2(record, packet):
+    c2 = ivp_forms.FormC2()
+    c2_filled_fields = 0
+    c2_field_mapping = {
+        'MOCACOMP': 'mocacomp',
+        'MOCAREAS': 'mocareas',
+        'MOCALOC': 'mocaloc',
+        'MOCALAN': 'mocalan',
+        'MOCALANX': 'mocalanx',
+        'MOCAVIS': 'mocavis',
+        'MOCAHEAR': 'mocahear',
+        'MOCATOTS': 'mocatots',
+        'MOCATRAI': 'mocatrai',
+        'MOCACUBE': 'mocacube',
+        'MOCACLOC': 'mocacloc',
+        'MOCACLON': 'mocaclon',
+        'MOCACLOH': 'mocacloh',
+        'MOCANAMI': 'mocanami',
+        'MOCAREGI': 'mocaregi',
+        'MOCADIGI': 'mocadigi',
+        'MOCALETT': 'mocalett',
+        'MOCASER7': 'mocaser7',
+        'MOCAREPE': 'mocarepe',
+        'MOCAFLUE': 'mocaflue',
+        'MOCAABST': 'mocaabst',
+        'MOCARECN': 'mocarecn',
+        'MOCARECC': 'mocarecc',
+        'MOCARECR': 'mocarecr',
+        'MOCAORDT': 'mocaordt',
+        'MOCAORMO': 'mocaormo',
+        'MOCAORYR': 'mocaoryr',
+        'MOCAORDY': 'mocaordy',
+        'MOCAORPL': 'mocaorpl',
+        'MOCAORCT': 'mocaorct',
+        'NPSYCLOC': 'npsycloc_c2',
+        'NPSYLAN': 'npsylan_c2',
+        'NPSYLANX': 'npsylanx_c2',
+        'CRAFTVRS': 'craftvrs',
+        'CRAFTURS': 'crafturs',
+        'UDSBENTC': 'udsbentc',
+        'DIGFORCT': 'digforct',
+        'DIGFORSL': 'digforsl',
+        'DIGBACCT': 'digbacct',
+        'DIGBACLS': 'digbacls',
+        'ANIMALS': 'animals_c2',
+        'VEG': 'veg_c2',
+        'TRAILA': 'traila_c2',
+        'TRAILARR': 'trailarr_c2',
+        'TRAILALI': 'trailali_c2',
+        'TRAILB': 'trailb_c2',
+        'TRAILBRR': 'trailbrr_c2',
+        'TRAILBLI': 'trailbli_c2',
+        'CRAFTDVR': 'craftdvr',
+        'CRAFTDRE': 'craftdre',
+        'CRAFTDTI': 'craftdti',
+        'CRAFTCUE': 'craftcue',
+        'UDSBENTD': 'udsbentd',
+        'UDSBENRS': 'udsbenrs',
+        'MINTTOTS': 'minttots',
+        'MINTTOTW': 'minttotw',
+        'MINTSCNG': 'mintscng',
+        'MINTSCNC': 'mintscnc',
+        'MINTPCNG': 'mintpcng',
+        'MINTPCNC': 'mintpcnc',
+        'UDSVERFC': 'udsverfc',
+        'UDSVERFN': 'udsverfn',
+        'UDSVERNF': 'udsvernf',
+        'UDSVERLC': 'udsverlc',
+        'UDSVERLR': 'udsverlr',
+        'UDSVERLN': 'udsverln',
+        'UDSVERTN': 'udsvertn',
+        'UDSVERTE': 'udsverte',
+        'UDSVERTI': 'udsverti',
+        'COGSTAT': 'cogstat_c2'
+    }
+    for key, value in c2_field_mapping.items():
+        try:
+            if record[value].strip():
+                setattr(c2, key, record[value])
+                c2_filled_fields += 1
+        except KeyError:
+            pass
 
+    c1s = ivp_forms.FormC1S()
+    c1s_filled_fields = 0
+    c1s_field_mapping = {
+        'MMSELOC': 'c1s_1a_mmseloc',
+        'MMSELAN': 'c1s_1a1_mmselan',
+        'MMSELANX': 'c1s_1a2_mmselanx',
+        'MMSEORDA': 'c1s_1b1_mmseorda',
+        'MMSEORLO': 'c1s_1b2_mmseorlo',
+        'PENTAGON': 'c1s_1c_pentagon',
+        'MMSE': 'c1s_1d_mmse',
+        'NPSYCLOC': 'c1s_2_npsycloc',
+        'NPSYLAN': 'c1s_2a_npsylan',
+        'NPSYLANX': 'c1s_2a1_npsylanx',
+        'LOGIMO': 'c1s_3amo_logimo',
+        'LOGIDAY': 'c1s_3ady_logiday',
+        'LOGIYR': 'c1s_3ayr_logiyr',
+        'LOGIPREV': 'c1s_3a1_logiprev',
+        'LOGIMEM': 'c1s_3b_logimem',
+        'DIGIF': 'c1s_4a_digif',
+        'DIGIFLEN': 'c1s_4b_digiflen',
+        'DIGIB': 'c1s_5a_digib',
+        'DIGIBLEN': 'c1s_5b_digiblen',
+        'ANIMALS': 'c1s_6a_animals',
+        'VEG': 'c1s_6b_veg',
+        'TRAILA': 'c1s_7a_traila',
+        'TRAILARR': 'c1s_7a1_trailarr',
+        'TRAILALI': 'c1s_7a2_trailali',
+        'TRAILB': 'c1s_7b_trailb',
+        'TRAILBRR': 'c1s_7b1_trailbrr',
+        'TRAILBLI': 'c1s_7b2_trailbli',
+        'WAIS': 'c1s_8a_wais',
+        'MEMUNITS': 'c1s_9a_memunits',
+        'MEMTIME': 'c1s_9b_memtime',
+        'BOSTON': 'c1s_10a_boston',
+        'COGSTAT': 'c1s_11a_cogstat'
+    }
+    for key, value in c1s_field_mapping.items():
+        try:
+            if record[value].strip():
+                setattr(c1s, key, record[value])
+                c1s_filled_fields += 1
+        except KeyError:
+            pass
+
+    # Prefer C2 to C1S
+    # If both are blank, use date (C2 after 2017/10/23)
+    if c2_filled_fields > 0:
+        packet.insert(0, c2)
+    elif c1s_filled_fields > 0:
+        packet.insert(0, c1s)
+    elif (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and \
+          int(record['visitmo'])>10) or (int(record['visityr'])==2017 and \
+          int(record['visitmo'])==10 and int(record['visitday'])>=23):
+        packet.insert(0, c2)
+    else:
+        packet.insert(0, c1s)
+
+
+def add_d1(record, packet):
     d1 = ivp_forms.FormD1()
     d1.DXMETHOD = record['dxmethod']
     d1.NORMCOG = record['normcog']
@@ -707,7 +1006,7 @@ def build_uds3_ivp_form(record):
     d1.CVD = record['cvd']
     d1.CVDIF = record['cvdif']
     d1.PREVSTK = record['prevstk']
-    d1.STROKDEC = record['strokedec']
+    d1.STROKDEC = record['strokdec']
     d1.STKIMAG = record['stkimag']
     d1.INFNETW = record['infnetw']
     d1.INFWMH = record['infwmh']
@@ -770,6 +1069,8 @@ def build_uds3_ivp_form(record):
     d1.COGOTH3X = record['cogoth3x']
     packet.append(d1)
 
+
+def add_d2(record, packet):
     d2 = ivp_forms.FormD2()
     d2.CANCER = record['cancer']
     d2.CANCSITE = record['cancsite']
@@ -806,7 +1107,7 @@ def build_uds3_ivp_form(record):
     d2.OTHCOND = record['othcond']
     d2.OTHCONDX = record['othcondx']
     packet.append(d2)
-    
+
     add_z1_or_z1x(record, packet)
     update_header(record, packet)
 
@@ -924,91 +1225,6 @@ def add_c1s_or_c2(record, packet):
         c1s.BOSTON = record['c1s_10a_boston']
         c1s.COGSTAT = record['c1s_11a_cogstat'] #check for blank
         packet.append(c1s)
-
-
-def add_z1_or_z1x(record, packet):
-    # Forms A1, A5, B4, B8, B9, C2, D1, and D2 are all REQUIRED.
-    # Fields a1sub, a5sub1, b4sub1, b8sub1, b9sub1, c2sub1, d1sub1, and d2sub1
-    # are just section separators.
-
-    # Among Z1 and Z1X forms, one must be filled, one must be empty. After 2018/04/02, must be Z1X
-    if (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and int(record['visitmo'])>4) or \
-        (int(record['visityr'])==2018 and int(record['visitmo'])==4 and int(record['visitday'])>=2):
-        z1x = ivp_forms.FormZ1X()
-        z1x.LANGA1 = record['langa1']
-        z1x.LANGA2 = record['langa2']
-        z1x.A2SUB = record['a2sub']
-        z1x.A2NOT = record['a2not']
-        z1x.LANGA3 = record['langa3']
-        z1x.A3SUB = record['a3sub']
-        z1x.A3NOT = record['a3not']
-        z1x.LANGA4 = record['langa4']
-        z1x.A4SUB = record['a4sub']
-        z1x.A4NOT = record['a4not']
-        z1x.LANGA5 = record['langa5']
-        z1x.LANGB1 = record['langb1']
-        z1x.B1SUB = record['b1sub']
-        z1x.B1NOT = record['b1not']
-        z1x.LANGB4 = record['langb4']
-        z1x.LANGB5 = record['langb5']
-        z1x.B5SUB = record['b5sub']
-        z1x.B5NOT = record['b5not']
-        z1x.LANGB6 = record['langb6']
-        z1x.B6SUB = record['b6sub']
-        z1x.B6NOT = record['b6not']
-        z1x.LANGB7 = record['langb7']
-        z1x.B7SUB = record['b7sub']
-        z1x.B7NOT = record['b7not']
-        z1x.LANGB8 = record['langb8']
-        z1x.LANGB9 = record['langb9']
-        z1x.LANGC2 = record['langc2']
-        z1x.LANGD1 = record['langd1']
-        z1x.LANGD2 = record['langd2']
-        z1x.LANGA3A = record['langa3a']
-        z1x.FTDA3AFS = record['ftda3afs']
-        z1x.FTDA3AFR = record['ftda3afr']
-        z1x.LANGB3F = record['langb3f']
-        z1x.LANGB9F = record['langb9f']
-        z1x.LANGC1F = record['langc1f']
-        z1x.LANGC2F = record['langc2f']
-        z1x.LANGC3F = record['langc3f']
-        z1x.LANGC4F = record['langc4f']
-        z1x.FTDC4FS = record['ftdc4fs']
-        z1x.FTDC4FR = record['ftdc4fr']
-        z1x.FTDC5FS = record['ftdc5fs']
-        z1x.FTDC5FR = record['ftdc5fr']
-        z1x.FTDC6FS = record['ftdc6fs']
-        z1x.FTDC6FR = record['ftdc6fr']
-        z1x.LANGE2F = record['lange2f']
-        z1x.LANGE3F = record['lange3f']
-        z1x.LANGCLS = record['langcls']
-        z1x.CLSSUB  = record['clssub']
-        packet.insert(0, z1x)
-
-    else:
-        z1 = ivp_forms.FormZ1()
-        z1.A2SUB = record['a2sub']
-        z1.A2NOT = record['a2not']
-        z1.A2COMM = record['a2comm']
-        z1.A3SUB = record['a3sub']
-        z1.A3NOT = record['a3not']
-        z1.A3COMM = record['a3comm']
-        z1.A4SUB = record['a4sub']
-        z1.A4NOT = record['a4not']
-        z1.A4COMM = record['a4comm']
-        z1.B1SUB = record['b1sub']
-        z1.B1NOT = record['b1not']
-        z1.B1COMM = record['b1comm']
-        z1.B5SUB = record['b5sub']
-        z1.B5NOT = record['b5not']
-        z1.B5COMM = record['b5comm']
-        z1.B6SUB = record['b6sub']
-        z1.B6NOT = record['b6not']
-        z1.B6COMM = record['b6comm']
-        z1.B7SUB = record['b7sub']
-        z1.B7NOT = record['b7not']
-        z1.B7COMM = record['b7comm']
-        packet.insert(0, z1)
 
 
 def update_header(record, packet):
