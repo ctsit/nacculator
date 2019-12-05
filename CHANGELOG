@@ -1,5 +1,31 @@
 Changelog
 =========
+
+## [1.0.0] - 2019-12-05
+### Summary
+
+Updated to Python3 and added CSF, LBD, FTLD modules.
+
+### Added
+ * Add Python version requirement (Taeber Rapczak)
+ * Add FTLD module (Samantha Emerson)
+ * Add CSF module (Samantha Emerson)
+ * Add LBD module (Samantha Emerson)
+ * Add Pull Request template (Taeber Rapczak)
+ * Add character check function for illegal characters (Samantha Emerson)
+
+### Updated
+ * Rewrite generator for Python 3 by hand (Taeber Rapczak)
+ * Convert to Python 3 (Cooper Martin)
+ * Use more nuanced method for C1 vs C2 and Z1 vs Z1X selection (Naomi Braun)
+ * Adjust z1_z1x_test unit test to account for newly changed headers (Samantha Emerson)
+ * Fix various module form errors that the new range checker found (Samantha Emerson)
+ * Fix copyright, version number, tools, and tests organization. (Taeber Rapczak)
+ * Correct IVP D1 headers (Naomi Braun)
+ * Correct IVP B8 headers (Naomi Braun)
+ * Adjust blanking rules to account for 'blank if not answered' statements and add groundwork for some fields with recursive blanking rules (Samantha Emerson)
+
+
 ## [0.7.1] - 2019-09-26
 ### Summary
 
