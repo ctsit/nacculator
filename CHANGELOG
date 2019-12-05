@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## [1.0.1] - 2019-12-05
+### Summary
+
+Fixed broken build process for setup.py.
+
+
 ## [1.0.0] - 2019-12-05
 ### Summary
 

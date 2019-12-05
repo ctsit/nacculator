@@ -6,7 +6,7 @@
 
 from setuptools import setup, find_packages
 
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 setup(
     name="nacculator",
@@ -32,7 +32,7 @@ setup(
 
     install_requires=[
         "cappy @ git+https://github.com/ctsit/cappy.git@2.0.0"
-    ]
+    ],
 
     python_requires=">=3.6.0",
 )

@@ -234,7 +234,7 @@ This is not exhaustive, but here is an explanation of some important files.
 * `tools/generator.py`:
     generates Python objects based on NACC Data Element Dictionaries in CSV.
 
-* `run_filters.py` and `run_filters.sh`:
+* `tools/preprocess/run_filters.py` and `tools/preprocess/run_filters.sh`:
     pulls data from REDCap based on the settings found in `nacculator_cfg.ini`
     (for .py) and `filters_config.cfg` (for .sh).
 
