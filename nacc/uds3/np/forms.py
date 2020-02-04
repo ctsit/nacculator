@@ -16,12 +16,14 @@ CURRENT_YEAR = date.today().year
 
 ### END non-generated code
 
+
 def header_fields():
     fields = {}
     fields['FORMVER'] = nacc.uds3.Field(name='FORMVER', typename='Num', position=(906, 907), length=2, inclusive_range=(10, 10), allowable_values=[], blanks=[])
-    fields['ADCID'] = nacc.uds3.Field(name='ADCID', typename='Num', position=(1, 2), length=2, inclusive_range=(2, 38), allowable_values=[], blanks=[])
+    fields['ADCID'] = nacc.uds3.Field(name='ADCID', typename='Num', position=(1, 2), length=2, inclusive_range=(2, 43), allowable_values=[], blanks=[])
     fields['PTID'] = nacc.uds3.Field(name='PTID', typename='Char', position=(4, 13), length=10, inclusive_range=None, allowable_values=[], blanks=[])
     return fields
+
 
 class FormNP(nacc.uds3.FieldBag):
     def __init__(self):
@@ -35,7 +37,7 @@ class FormNP(nacc.uds3.FieldBag):
         self.fields['NPDODMO'] = nacc.uds3.Field(name='NPDODMO', typename='Num', position=(43, 44), length=2, inclusive_range=(1, 12), allowable_values=[], blanks=[])
         self.fields['NPDODDY'] = nacc.uds3.Field(name='NPDODDY', typename='Num', position=(46, 47), length=2, inclusive_range=(1, 31), allowable_values=[], blanks=[])
         self.fields['NPDODYR'] = nacc.uds3.Field(name='NPDODYR', typename='Num', position=(49, 52), length=4, inclusive_range=(1984, CURRENT_YEAR), allowable_values=[], blanks=[])
-        self.fields['NPPMIH'] = nacc.uds3.Field(name='NPPMIH', typename='Num', position=(54, 57), length=4, inclusive_range=(0,98.9), allowable_values=['99.9'], blanks=[])
+        self.fields['NPPMIH'] = nacc.uds3.Field(name='NPPMIH', typename='Num', position=(54, 57), length=4, inclusive_range=(0, 98.9), allowable_values=['99.9'], blanks=[])
         self.fields['NPFIX'] = nacc.uds3.Field(name='NPFIX', typename='Num', position=(59, 59), length=1, inclusive_range=(1, 2), allowable_values=['7'], blanks=[])
         self.fields['NPFIXX'] = nacc.uds3.Field(name='NPFIXX', typename='Char', position=(61, 90), length=30, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 8 NPFIX ne 7 (Other)'])
         self.fields['NPWBRWT'] = nacc.uds3.Field(name='NPWBRWT', typename='Num', position=(92, 95), length=4, inclusive_range=(100, 2500), allowable_values=['9999'], blanks=[])
