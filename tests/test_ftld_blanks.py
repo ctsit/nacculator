@@ -71,12 +71,9 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ("'FTDhAIRD' is '1' with length '1', but should be blank:"
-                    " 'Blank if Question 0 FTDCPC2F = 95'.")
-        self.assertEqual(warnings[0], expected)
-        # Right now the test examines the fourth item in this list of errors
-        # because "special_cases" returns every available error when it finds
-        # that one rule is violated.
+        expected = ["'FTDhAIRD' is '1' with length '1', but should be blank:"
+                    " 'Blank if Question 0 FTDCPC2F = 95'."]
+        self.assertEqual(warnings, expected)
 
     def test_for_special_case_or2(self):
         '''
@@ -93,10 +90,10 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ("'FTDMRIRF' is '0' with length '1', but should be blank: "
+        expected = ["'FTDMRIRF' is '0' with length '1', but should be blank: "
                     "'Blank if Question 2a, FTDMRIFA, = 0 (No) or 9"
-                    " (Unknown)'.")
-        self.assertEqual(warnings[2], expected)
+                    " (Unknown)'."]
+        self.assertEqual(warnings, expected)
 
     def test_for_special_case_FTDMRIOS(self):
         '''
@@ -112,11 +109,11 @@ class TestBlankRulesForFTLD(unittest.TestCase):
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
         # FTDMRIOS is a Char field with a length of 60 characters
-        expected = ("'FTDMRIOS' is"
+        expected = ["'FTDMRIOS' is"
                     " '1                                                  "
                     "         ' with length '60', but should be blank:"
-                    " 'Blank if Question 2a11 FTDMRIOB ne 1 (Yes)'.")
-        self.assertEqual(warnings[3], expected)
+                    " 'Blank if Question 2a11 FTDMRIOB ne 1 (Yes)'."]
+        self.assertEqual(warnings, expected)
 
     def test_for_FTDPABVF_0(self):
         '''
