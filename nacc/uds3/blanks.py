@@ -28,7 +28,6 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
     """
 
     special_cases = {
-        'MOMAGEO': _blanking_rule_momageo,
         'FTLDSUBT': _blanking_rule_ftldsubt,
         'LEARNED': _blanking_rule_learned,
         'ZIP': _blanking_rule_dummy,
@@ -65,7 +64,7 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
 
     # First, check to see if the rule is a "Special Case"
     if name in special_cases:
-        return special_cases[name]()
+        return special_cases[name](rule)
 
     # Then, check to see if the rule is of the within-range type
     m = range_values.match(rule)
@@ -121,30 +120,24 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
     return should_be_blank
 
 
-def _blanking_rule_dummy():
+def _blanking_rule_dummy(rule):
     return lambda packet: False
 
 
-def _blanking_rule_ftldsubt():
+def _blanking_rule_ftldsubt(rule):
     # Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1
     # and 14d FTLDNOS ne 1
     return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
                           packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
 
 
-def _blanking_rule_learned():
+def _blanking_rule_learned(rule):
     # The two rules contradict each other:
     #  - Blank if Question 2a REFERSC ne 1
     #  - Blank if Question 2a REFERSC ne 2
     # The intent appears to be "blank if REFERSC is 3, 4, 5, 6, 8, or 9", but
     # that makes 6 individual blanking rules and the maximum is 5 (BLANKS1-5).
     return lambda packet: packet['REFERSC'] in (3, 4, 5, 6, 8, 9)
-
-
-def _blanking_rule_momageo():
-    # Blank if Question 54MOMNEUR = 8 (N/A)
-    # Blank if Question 54MOMNEUR = 9 (Unknown)
-    return lambda packet: packet['MOMNEUR'] in (8, 9)
 
 
 def set_zeros_to_blanks(packet):
