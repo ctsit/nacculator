@@ -64,7 +64,7 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
 
     # First, check to see if the rule is a "Special Case"
     if name in special_cases:
-        return special_cases[name](rule)
+        return special_cases[name]()
 
     # Then, check to see if the rule is of the within-range type
     m = range_values.match(rule)
@@ -120,18 +120,18 @@ def _blanking_rule_check_within_range(key, eq, start, stop):
     return should_be_blank
 
 
-def _blanking_rule_dummy(rule):
+def _blanking_rule_dummy():
     return lambda packet: False
 
 
-def _blanking_rule_ftldsubt(rule):
+def _blanking_rule_ftldsubt():
     # Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1
     # and 14d FTLDNOS ne 1
     return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
                           packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
 
 
-def _blanking_rule_learned(rule):
+def _blanking_rule_learned():
     # The two rules contradict each other:
     #  - Blank if Question 2a REFERSC ne 1
     #  - Blank if Question 2a REFERSC ne 2
