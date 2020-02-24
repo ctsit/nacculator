@@ -1,6 +1,29 @@
 Changelog
 =========
 
+## [1.1.0] - 2020-02-24
+### Summary
+
+Change the blanking rule special cases to add specificity to error message and added statement to split function to handle Neuropathology forms.
+
+### Added
+ * Add allowable_values to lbd forms.py files to reflect nacc's lbd data element dictionary (Samantha Emerson)
+ * Add type hinting to convert_rule_to_python in each module's blanks file (Samantha Emerson)
+ * Add if/else logic to blanking rules special cases to single out the violated rule, adjust unit tests to account for new code (Samantha Emerson)
+ * Add 'Blank if question not answered' regex to ftld blanks file to reduce special cases (Samantha Emerson)
+ * Add neuropathology statement to split_ivp_fvp.sh file, delint files in np folder (Samantha Emerson)
+
+### Changed
+ * Change field '54MOMNEUR' to '5a4 MOMNEUR' to reflect NACC's uds3 ivp ded and remove unnecessary special case from uds3 blanks (Samantha Emerson)
+ * Update copyright date in np forms and builder (Samantha Emerson)
+ * Update both fvp and ivp DIGFORSL and DIGBACLS fields to include 0 in the allowable_values (Samantha Emerson)
+ * Update uds3 fvp forms.py to correct an error in TRAILA and TRAILB allowable_values (Samantha Emerson)
+ * Update uds3 ivp and fvp forms.py to reflect changes in nacc forms since 2015 (Samantha Emerson)
+ * Update uds3 fvp forms.py to include 1florida id number in range (Samantha Emerson)
+
+### Removed
+ * Remove unnecessary arguments from uds3 blanks special cases (Samantha Emerson)
+
 ## [1.0.1] - 2019-12-05
 ### Summary
 

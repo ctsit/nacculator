@@ -1,10 +1,9 @@
 ###############################################################################
-# Copyright 2015-2016 University of Florida. All rights reserved.
+# Copyright 2015-2020 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-from nacc.uds3 import blanks
 from nacc.uds3.np import forms as np_forms
 from nacc.uds3 import packet as np_packet
 
@@ -165,6 +164,7 @@ def build_uds3_np_form(record):
 
     update_header(record, packet)
     return packet
+
 
 def update_header(record, packet):
     for header in packet:
