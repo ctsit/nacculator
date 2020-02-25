@@ -20,6 +20,7 @@ from nacc.csf import blanks as blanks_csf
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
+from nacc.uds3.tfp import builder as tfp_builder
 from nacc.uds3.m import builder as m_builder
 from nacc.lbd.ivp import builder as lbd_ivp_builder
 from nacc.lbd.fvp import builder as lbd_fvp_builder
@@ -264,6 +265,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 packet = np_builder.build_uds3_np_form(record)
             elif options.fvp:
                 packet = fvp_builder.build_uds3_fvp_form(record)
+            elif options.tfp:
+                packet = tfp_builder.build_uds3_tfp_form(record)
             elif options.m:
                 packet = m_builder.build_uds3_m_form(record)
 
@@ -339,6 +342,9 @@ def parse_args(args=None):
         '-ivp', action='store_true', dest='ivp',
         help='Set this flag to process as ivp data')
     option_group.add_argument(
+        '-tfp', action='store_true', dest='tfp',
+        help='Set this flag to process as tfp data')
+    option_group.add_argument(
         '-np', action='store_true', dest='np',
         help='Set this flag to process as np data')
     option_group.add_argument(
@@ -378,7 +384,7 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.np or options.m or options.csf or options.filter):
+    if not (options.ivp or options.fvp or options.tfp or options.np or options.m or options.csf or options.filter):
         options.ivp = True
 
     return options

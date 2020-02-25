@@ -4,9 +4,9 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-from nacc.uds3 import blanks
-import forms as tfp_forms
+from nacc.uds3.tfp import forms as tfp_forms
 from nacc.uds3 import packet as tfp_packet
+
 
 def build_uds3_tfp_form(record):
     """ Converts REDCap CSV data into a packet (list of TFP Form objects) """
@@ -639,27 +639,27 @@ def build_uds3_tfp_form(record):
     packet.append(d2)
     #  z1 was replaced by z1x
     z1x = tfp_forms.FormZ1X()
-    z1x.LANGT1 = record['tele_langt1_z1x']
-    z1x.LANGA1 = record['tele_langa1_z1x']
-    z1x.LANGA2 = record['tele_langa2_z1x']
-    z1x.LANGA3 = record['tele_langa3_z1x']
-    z1x.A3SUB = record['tele_a3sub_z1x']
-    z1x.A3NOT = record['tele_a3not_z1x']
-    z1x.LANGA4 = record['tele_langa4_z1x']
-    z1x.A4SUB = record['tele_a4sub_z1x']
-    z1x.A4NOT = record['tele_a4not_z1x']
-    z1x.LANGB4 = record['tele_langb4_z1x']
-    z1x.LANGB5 = record['tele_langb5_z1x']
-    z1x.B5SUB = record['tele_b5sub_z1x']
-    z1x.B5NOT = record['tele_b5not_z1x']
-    z1x.LANGB7 = record['tele_langb7_z1x']
-    z1x.B7SUB = record['tele_b7sub_z1x']
-    z1x.B7NOT = record['tele_b7not_z1x']
-    z1x.LANGB9 = record['tele_langb9_z1x']
-    z1x.LANGD1 = record['tele_langd1_z1x']
-    z1x.LANGD2 = record['tele_langd2_z1x']
-    z1x.LANGCLS = record['tele_langcls_z1x']
-    z1x.CLSSUB = record['tele_clssub_z1x']
+    z1x.LANGT1 = record['tele_langt1']
+    z1x.LANGA1 = record['tele_langa1']
+    z1x.LANGA2 = record['tele_langa2']
+    z1x.LANGA3 = record['tele_langa3']
+    z1x.A3SUB = record['tele_a3sub']
+    z1x.A3NOT = record['tele_a3not']
+    z1x.LANGA4 = record['tele_langa4']
+    z1x.A4SUB = record['tele_a4sub']
+    z1x.A4NOT = record['tele_a4not']
+    z1x.LANGB4 = record['tele_langb4']
+    z1x.LANGB5 = record['tele_langb5']
+    z1x.B5SUB = record['tele_b5sub']
+    z1x.B5NOT = record['tele_b5not']
+    z1x.LANGB7 = record['tele_langb7']
+    z1x.B7SUB = record['tele_b7sub']
+    z1x.B7NOT = record['tele_b7not']
+    z1x.LANGB9 = record['tele_langb9']
+    z1x.LANGD1 = record['tele_langd1']
+    z1x.LANGD2 = record['tele_langd2']
+    z1x.LANGCLS = record['tele_langcls']
+    z1x.CLSSUB = record['tele_clssub']
     packet.append(z1x)
 
     update_header(record, packet)
