@@ -675,19 +675,18 @@ class FormD2(nacc.uds3.FieldBag):
 class FormZ1(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
-        self.fields['LANGT1'] = nacc.uds3.Field(name='LANGT1', typename='Num', position=(45, 45), length=1, inclusive_range=(1, 2), allowable_values=['2', '1'], blanks=[])
-        self.fields['A3SUB'] = nacc.uds3.Field(name='A3SUB', typename='Num', position=(53, 53), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
-        self.fields['A3NOT'] = nacc.uds3.Field(name='A3NOT', typename='Num', position=(55, 56), length=2, inclusive_range=(95, 98), allowable_values=['98', '97', '96', '95'], blanks=['Blank if Question 4b A3SUB = 1 (Yes)'])
-        self.fields['A3COMM'] = nacc.uds3.Field(name='A3COMM', typename='Char', position=(55, 114), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 4b A3SUB = 1 (Yes)'])
-        self.fields['A4SUB'] = nacc.uds3.Field(name='A4SUB', typename='Num', position=(116, 116), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
-        self.fields['A4NOT'] = nacc.uds3.Field(name='A4NOT', typename='Num', position=(118, 119), length=2, inclusive_range=(95, 98), allowable_values=['98', '97', '96', '95'], blanks=['Blank if Question 5b A4SUB= 0 (No)'])
-        self.fields['A4COMM'] = nacc.uds3.Field(name='A4COMM', typename='Char', position=(120, 179), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 5b A4SUB = 1 (Yes)'])
-        self.fields['B5SUB'] = nacc.uds3.Field(name='B5SUB', typename='Num', position=(181, 181), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
-        self.fields['B5NOT'] = nacc.uds3.Field(name='B5NOT', typename='Num', position=(183, 184), length=2, inclusive_range=(95, 98), allowable_values=['98', '97', '96', '95'], blanks=['Blank if Question 7b B5SUB = 1 (Yes)'])
-        self.fields['B5COMM'] = nacc.uds3.Field(name='B5COMM', typename='Char', position=(186, 245), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 7b B5SUB = 1 (Yes)'])
-        self.fields['B7SUB'] = nacc.uds3.Field(name='B7SUB', typename='Num', position=(247, 247), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
-        self.fields['B7NOT'] = nacc.uds3.Field(name='B7NOT', typename='Num', position=(249, 250), length=2, inclusive_range=(95, 98), allowable_values=['98', '97', '96', '95'], blanks=['Blank if Question 8b B7SUB = 1 (Yes)'])
-        self.fields['B7COMM'] = nacc.uds3.Field(name='B7COMM', typename='Char', position=(252, 311), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 8b B7SUB = 1 (Yes)'])
+        self.fields['A3SUB'] = nacc.uds3.Field(name='A3SUB', typename='Num', position=(45, 45), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
+        self.fields['A3NOT'] = nacc.uds3.Field(name='A3NOT', typename='Num', position=(47, 48), length=2, inclusive_range=(95, 98), allowable_values=['98', '97', '96', '95'], blanks=['Blank if Question 4b A3SUB = 1 (Yes)'])
+        self.fields['A3COMM'] = nacc.uds3.Field(name='A3COMM', typename='Char', position=(50, 109), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 4b A3SUB = 1 (Yes)'])
+        self.fields['A4SUB'] = nacc.uds3.Field(name='A4SUB', typename='Num', position=(111, 111), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
+        self.fields['A4NOT'] = nacc.uds3.Field(name='A4NOT', typename='Num', position=(113, 114), length=2, inclusive_range=(95, 98), allowable_values=['98', '97', '96', '95'], blanks=['Blank if Question 5b A4SUB = 1 (Yes)'])
+        self.fields['A4COMM'] = nacc.uds3.Field(name='A4COMM', typename='Char', position=(116, 175), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 5b A4SUB = 1 (Yes)'])
+        self.fields['B5SUB'] = nacc.uds3.Field(name='B5SUB', typename='Num', position=(177, 177), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
+        self.fields['B5NOT'] = nacc.uds3.Field(name='B5NOT', typename='Num', position=(179, 180), length=2, inclusive_range=(95, 98), allowable_values=['98', '97', '96', '95'], blanks=['Blank if Question 7b B5SUB = 1 (Yes)'])
+        self.fields['B5COMM'] = nacc.uds3.Field(name='B5COMM', typename='Char', position=(182, 241), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 7b B5SUB = 1 (Yes)'])
+        self.fields['B7SUB'] = nacc.uds3.Field(name='B7SUB', typename='Num', position=(243, 243), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
+        self.fields['B7NOT'] = nacc.uds3.Field(name='B7NOT', typename='Num', position=(245, 246), length=2, inclusive_range=(95, 98), allowable_values=['98', '97', '96', '95'], blanks=['Blank if Question 8b B7SUB = 1 (Yes)'])
+        self.fields['B7COMM'] = nacc.uds3.Field(name='B7COMM', typename='Char', position=(248, 307), length=60, inclusive_range=(), allowable_values=[], blanks=['Blank if Question 8b B7SUB = 1 (Yes)'])
 
 
 class FormZ1X(nacc.uds3.FieldBag):
