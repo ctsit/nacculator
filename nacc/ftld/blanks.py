@@ -10,7 +10,7 @@ import re
 import sys
 
 
-def convert_rule_to_python(name, rule):
+def convert_rule_to_python(name: str, rule: str) -> bool:
     """
     Converts the text `rule` into a python function.
 
@@ -29,64 +29,6 @@ def convert_rule_to_python(name, rule):
 
     special_cases = {
         'FTDCPC2F': _blanking_rule_dummy,  # "Blank if form completed"
-
-        'FTDhAIRD': _blanking_rule_ftld_q_noanswer,
-        'FTDSPIT': _blanking_rule_ftld_q_noanswer,
-        'FTDNOSE': _blanking_rule_ftld_q_noanswer,
-        'FTDCOAGE': _blanking_rule_ftld_q_noanswer,
-        'FTDCRY': _blanking_rule_ftld_q_noanswer,
-        'FTDCUT': _blanking_rule_ftld_q_noanswer,
-        'FTDYTRIP': _blanking_rule_ftld_q_noanswer,
-        'FTDEATP': _blanking_rule_ftld_q_noanswer,
-        'FTDTELLA': _blanking_rule_ftld_q_noanswer,
-        'FTDOPIN': _blanking_rule_ftld_q_noanswer,
-        'FTDLAUGh': _blanking_rule_ftld_q_noanswer,
-        'FTDShIRT': _blanking_rule_ftld_q_noanswer,
-        'FTDKEEPM': _blanking_rule_ftld_q_noanswer,
-        'FTDPICKN': _blanking_rule_ftld_q_noanswer,
-        'FTDOVER': _blanking_rule_ftld_q_noanswer,
-        'FTDEATR': _blanking_rule_ftld_q_noanswer,
-        'FTDhAIRL': _blanking_rule_ftld_q_noanswer,
-        'FTDShIRW': _blanking_rule_ftld_q_noanswer,
-        'FTDMOVE': _blanking_rule_ftld_q_noanswer,
-        'FTDhUGS': _blanking_rule_ftld_q_noanswer,
-        'FTDLOUD': _blanking_rule_ftld_q_noanswer,
-        'FTDLOST': _blanking_rule_ftld_q_noanswer,
-
-        'FTDWORKU': _blanking_rule_dummy,
-        'FTDMIST': _blanking_rule_dummy,
-        'FTDCRIT': _blanking_rule_dummy,
-        'FTDWORR': _blanking_rule_dummy,
-        'FTDBAD': _blanking_rule_dummy,
-        'FTDPOOR': _blanking_rule_dummy,
-        'FTDFFEAR': _blanking_rule_dummy,
-        'FTDFEEL': _blanking_rule_dummy,
-        'FTDDIFF': _blanking_rule_dummy,
-        'FTDSORR': _blanking_rule_dummy,
-        'FTDSIDE': _blanking_rule_dummy,
-        'FTDADVAN': _blanking_rule_dummy,
-        'FTDIMAG': _blanking_rule_dummy,
-        'FTDMISF': _blanking_rule_dummy,
-        'FTDWASTE': _blanking_rule_dummy,
-        'FTDPITY': _blanking_rule_dummy,
-        'FTDQTOUC': _blanking_rule_dummy,
-        'FTDSIDES': _blanking_rule_dummy,
-        'FTDSOFTh': _blanking_rule_dummy,
-        'FTDUPSET': _blanking_rule_dummy,
-        'FTDCRITI': _blanking_rule_dummy,
-        'FTDALTER': _blanking_rule_dummy,
-        'FTDEMOT': _blanking_rule_dummy,
-        'FTDACROS': _blanking_rule_dummy,
-        'FTDCONV': _blanking_rule_dummy,
-        'FTDINTUI': _blanking_rule_dummy,
-        'FTDJOKE': _blanking_rule_dummy,
-        'FTDIMAGP': _blanking_rule_dummy,
-        'FTDINAPP': _blanking_rule_dummy,
-        'FTDChBEh': _blanking_rule_dummy,
-        'FTDADBEh': _blanking_rule_dummy,
-        'FTDLYING': _blanking_rule_dummy,
-        'FTDGOODF': _blanking_rule_dummy,
-        'FTDREGUL': _blanking_rule_dummy,
 
         'FTDMRIRF': _blanking_rule_ftld_or2,
         'FTDMRILF': _blanking_rule_ftld_or2,
@@ -147,10 +89,12 @@ def convert_rule_to_python(name, rule):
         r" *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
     blank_value = re.compile(
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) blank")
+    not_answered = re.compile(
+        r"Blank if question not answered")
 
     # First, check to see if the rule is a "Special Case"
     if name in special_cases:
-        return special_cases[name]()
+        return special_cases[name](rule)
 
     # Then, check to see if the rule is of the within-range type
     m = range_values.match(rule)
@@ -169,6 +113,12 @@ def convert_rule_to_python(name, rule):
     if m:
         return _blanking_rule_check_blank_value(
             m.group('key'), m.group('eq'))
+
+    # For the FTLD forms, we need to also check to see if
+    # "Blank if question not answered" is included in the blanking rules
+    m = not_answered.match(rule)
+    if m:
+        return lambda packet: False
 
     # Finally, raise an error since we do not know how to handle the rule
     raise Exception("Could not parse Blanking rule: "+name)
@@ -225,69 +175,115 @@ def _blanking_rule_check_blank_value(key, eq, value=None):
     return should_be_blank
 
 
-def _blanking_rule_ftld_q_noanswer():
-    """"Blank if question not answered" questions
-    with additional blanking rules"""
-    return lambda packet: packet['FTDCPC2F'] in (95, 96, 97, 98)
-
-
-def _blanking_rule_ftld_or2():
+def _blanking_rule_ftld_or2(rule):
     """ Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
     Along with other regular conditions """
-    return lambda packet: packet['FTDMRIFA'] in (0, 9) \
-        or packet['FTDIDIAG'] == 0 or packet['FTDSMRIO'] == 0
+    if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
+        return lambda packet: packet['FTDIDIAG'] == 0
+    elif rule == 'Blank if Question 2 FTDSMRIO = 0 (No)':
+        return lambda packet: packet['FTDSMRIO'] == 0
+    elif rule == 'Blank if Question 2a, FTDMRIFA, = 0 (No) or 9 (Unknown)':
+        return lambda packet: packet['FTDMRIFA'] in (0, 9)
+    else:
+        return lambda packet: False
 
 
-def _blanking_rule_ftld_or2a():
+def _blanking_rule_ftld_or2a(rule):
     """
     Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
     This rule has an additional condition compared to
     the others in this form """
-    return lambda packet: packet['FTDMRIFA'] in (0, 9) \
-        or packet['FTDIDIAG'] == 0 or packet['FTDSMRIO'] == 0 \
-        or packet['FTDMRIOB'] != 1
+    if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
+        return lambda packet: packet['FTDIDIAG'] == 0
+    elif rule == 'Blank if Question 2 FTDSMRIO = 0 (No)':
+        return lambda packet: packet['FTDSMRIO'] == 0
+    elif rule == 'Blank if Question 2a, FTDMRIFA, = 0 (No) or 9 (Unknown)':
+        return lambda packet: packet['FTDMRIFA'] in (0, 9)
+    elif rule == 'Blank if Question 2a11 FTDMRIOB ne 1 (Yes)':
+        return lambda packet: packet['FTDMRIOB'] != 1
+    else:
+        return lambda packet: False
 
 
-def _blanking_rule_ftld_or3():
+def _blanking_rule_ftld_or3(rule):
     """ See _blanking_rule_ftld_or2 for rules """
-    return lambda packet: packet['FTDFDGFh'] in (0, 9) \
-        or packet['FTDIDIAG'] == 0 or packet['FTDFDGPE'] == 0
+    if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
+        return lambda packet: packet['FTDIDIAG'] == 0
+    elif rule == 'Blank if Question 3 FTDFDGPE = 0 (No)':
+        return lambda packet: packet['FTDFDGPE'] == 0
+    elif rule == 'Blank if Question 3a FTDFDGFh = 0 (No) or 9 (Unknown)':
+        return lambda packet: packet['FTDFDGFh'] in (0, 9)
+    else:
+        return lambda packet: False
 
 
-def _blanking_rule_ftld_or3a():
+def _blanking_rule_ftld_or3a(rule):
     """ See _blanking_rule_ftld_or2a for rules """
-    return lambda packet: packet['FTDFDGFh'] in (0, 9) \
-        or packet['FTDIDIAG'] == 0 or packet['FTDFDGPE'] == 0 \
-        or packet['FTDFDGOA'] != 1
+    if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
+        return lambda packet: packet['FTDIDIAG'] == 0
+    elif rule == 'Blank if Question 3 FTDFDGPE = 0 (No)':
+        return lambda packet: packet['FTDFDGPE'] == 0
+    elif rule == 'Blank if Question 3a FTDFDGFh = 0 (No) or 9 (Unknown)':
+        return lambda packet: packet['FTDFDGFh'] in (0, 9)
+    elif rule == 'Blank if Question 3a11, FTDFDGOA, ne 1 (Yes)':
+        return lambda packet: packet['FTDFDGOA'] != 1
+    else:
+        return lambda packet: False
 
 
-def _blanking_rule_ftld_or4():
+def _blanking_rule_ftld_or4(rule):
     """ See _blanking_rule_ftld_or2 for rules """
-    return lambda packet: packet['FTDAMYVI'] in (0, 9) \
-        or packet['FTDIDIAG'] == 0 or packet['FTDAMYP'] == 0
+    if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
+        return lambda packet: packet['FTDIDIAG'] == 0
+    elif rule == 'Blank if Question 4 FTDAMYP = 0 (No)':
+        return lambda packet: packet['FTDAMYP'] == 0
+    elif rule == 'Blank if Question 4a FTDAMYVI = 0 (No) or 9 (Unknown)':
+        return lambda packet: packet['FTDAMYVI'] in (0, 9)
+    else:
+        return lambda packet: False
 
 
-def _blanking_rule_ftld_or4a():
+def _blanking_rule_ftld_or4a(rule):
     """ See _blanking_rule_ftld_or2a for rules """
-    return lambda packet: packet['FTDAMYVI'] in (0, 9) \
-        or packet['FTDIDIAG'] == 0 or packet['FTDAMYP'] == 0 \
-        or packet['FTDAMYOA'] != 1
+    if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
+        return lambda packet: packet['FTDIDIAG'] == 0
+    elif rule == 'Blank if Question 4 FTDAMYP = 0 (No)':
+        return lambda packet: packet['FTDAMYP'] == 0
+    elif rule == 'Blank if Question 4a FTDAMYVI = 0 (No) or 9 (Unknown)':
+        return lambda packet: packet['FTDAMYVI'] in (0, 9)
+    elif rule == 'Blank if Question 4a11, FTDAMYOA, ne 1 (Yes)':
+        return lambda packet: packet['FTDAMYOA'] != 1
+    else:
+        return lambda packet: False
 
 
-def _blanking_rule_ftld_or5():
+def _blanking_rule_ftld_or5(rule):
     """ See _blanking_rule_ftld_or2 for rules """
-    return lambda packet: packet['FTDCBFVI'] in (0, 9) \
-        or packet['FTDIDIAG'] == 0 or packet['FTDCBFSP'] == 0
+    if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
+        return lambda packet: packet['FTDIDIAG'] == 0
+    elif rule == 'Blank if Question 5 FTDCBFSP = 0 (No)':
+        return lambda packet: packet['FTDCBFSP'] == 0
+    elif rule == 'Blank if Question 5a FTDCBFVI = 0 (No) or 9 (Unknown)':
+        return lambda packet: packet['FTDCBFVI'] in (0, 9)
+    else:
+        return lambda packet: False
 
 
-def _blanking_rule_ftld_or5a():
+def _blanking_rule_ftld_or5a(rule):
     """ See _blanking_rule_ftld_or2a for rules """
-    return lambda packet: packet['FTDCBFVI'] in (0, 9) \
-        or packet['FTDIDIAG'] == 0 or packet['FTDCBFSP'] == 0 \
-        or packet['FTDCBFOA'] != 1
+    if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
+        return lambda packet: packet['FTDIDIAG'] == 0
+    elif rule == 'Blank if Question 5 FTDCBFSP = 0 (No)':
+        return lambda packet: packet['FTDCBFSP'] == 0
+    elif rule == 'Blank if Question 5a FTDCBFVI = 0 (No) or 9 (Unknown)':
+        return lambda packet: packet['FTDCBFVI'] in (0, 9)
+    elif rule == 'Blank if Question 5a11, FTDCBFOA, ne 1 (Yes)':
+        return lambda packet: packet['FTDCBFOA'] != 1
+    else:
+        return lambda packet: False
 
 
-def _blanking_rule_dummy():
+def _blanking_rule_dummy(rule):
     return lambda packet: False
 
 
