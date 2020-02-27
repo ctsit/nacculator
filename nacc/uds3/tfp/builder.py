@@ -702,9 +702,9 @@ def add_z1_or_z1x(record, packet):
         packet.insert(0, z1x)
     elif z1_filled_fields > 0:
         packet.insert(0, z1)
-    elif (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and \
-          int(record['visitmo'])>4) or (int(record['visityr'])==2018 and \
-          int(record['visitmo'])==4 and int(record['visitday'])>=2):
+    elif (int(record['visityr']) > 2018) or (int(record['visityr']) == 2018
+          and int(record['visitmo']) > 4) or (int(record['visityr']) == 2018
+          and int(record['visitmo']) == 4 and int(record['visitday']) >= 2):
         packet.insert(0, z1x)
     else:
         packet.insert(0, z1)
