@@ -13,6 +13,8 @@ def build_uds3_tfp_form(record):
     packet = tfp_packet.Packet()
 
     # Set up the forms
+    add_z1_or_z1x(record, packet)
+
     t1 = tfp_forms.FormT1()
     t1.TELCOG = record['telcog']
     t1.TELILL = record['telill']
@@ -637,33 +639,76 @@ def build_uds3_tfp_form(record):
     d2.OTHCOND = record['tele_othcond']
     d2.OTHCONDX = record['tele_othcondx']
     packet.append(d2)
-    #  z1 was replaced by z1x
-    z1x = tfp_forms.FormZ1X()
-    z1x.LANGT1 = record['tele_langt1']
-    z1x.LANGA1 = record['tele_langa1']
-    z1x.LANGA2 = record['tele_langa2']
-    z1x.LANGA3 = record['tele_langa3']
-    z1x.A3SUB = record['tele_a3sub']
-    z1x.A3NOT = record['tele_a3not']
-    z1x.LANGA4 = record['tele_langa4']
-    z1x.A4SUB = record['tele_a4sub']
-    z1x.A4NOT = record['tele_a4not']
-    z1x.LANGB4 = record['tele_langb4']
-    z1x.LANGB5 = record['tele_langb5']
-    z1x.B5SUB = record['tele_b5sub']
-    z1x.B5NOT = record['tele_b5not']
-    z1x.LANGB7 = record['tele_langb7']
-    z1x.B7SUB = record['tele_b7sub']
-    z1x.B7NOT = record['tele_b7not']
-    z1x.LANGB9 = record['tele_langb9']
-    z1x.LANGD1 = record['tele_langd1']
-    z1x.LANGD2 = record['tele_langd2']
-    z1x.LANGCLS = record['tele_langcls']
-    z1x.CLSSUB = record['tele_clssub']
-    packet.append(z1x)
 
     update_header(record, packet)
     return packet
+
+
+def add_z1_or_z1x(record, packet):
+    z1x = tfp_forms.FormZ1X()
+    z1x_filled_fields = 0
+    z1x_field_mapping = {
+        'LANGT1': 'tele_langt1',
+        'LANGA1': 'tele_langa1',
+        'LANGA2': 'tele_langa2',
+        'LANGA3': 'tele_langa3',
+        'A3SUB': 'tele_a3sub',
+        'A3NOT': 'tele_a3not',
+        'LANGA4': 'tele_langa4',
+        'A4SUB': 'tele_a4sub',
+        'A4NOT': 'tele_a4not',
+        'LANGB4': 'tele_langb4',
+        'LANGB5': 'tele_langb5',
+        'B5SUB': 'tele_b5sub',
+        'B5NOT': 'tele_b5not',
+        'LANGB7': 'tele_langb7',
+        'B7SUB': 'tele_b7sub',
+        'B7NOT': 'tele_b7not',
+        'LANGB9': 'tele_langb9',
+        'LANGD1': 'tele_langd1',
+        'LANGD2': 'tele_langd2',
+        'LANGCLS': 'tele_langcls',
+        'CLSSUB': 'tele_clssub'
+    }
+    for key, value in z1x_field_mapping.items():
+        if record[value].strip():
+            setattr(z1x, key, record[value])
+            z1x_filled_fields += 1
+
+    z1 = tfp_forms.FormZ1()
+    z1_filled_fields = 0
+    z1_field_mapping = {
+        'A3SUB': 'tele_a3_sub',
+        'A3NOT': 'tele_a3_not',
+        'A3COMM': 'tele_a3_comm',
+        'A4SUB': 'tele_a4_sub',
+        'A4NOT': 'tele_a4_not',
+        'A4COMM': 'tele_a4_comm',
+        'B5SUB': 'tele_b5_sub',
+        'B5NOT': 'tele_b5_not',
+        'B5COMM': 'tele_b5_comm',
+        'B7SUB': 'tele_b7_sub',
+        'B7NOT': 'tele_b7_not',
+        'B7COMM': 'tele_b7_comm'
+    }
+    for key, value in z1_field_mapping.items():
+        if record[value].strip():
+            setattr(z1, key, record[value])
+            z1_filled_fields += 1
+
+    # Prefer Z1X to Z1
+    # If both are blank, use date (Z1X after 2018/04/02)
+    if z1x_filled_fields > 0:
+        packet.insert(0, z1x)
+    elif z1_filled_fields > 0:
+        packet.insert(0, z1)
+    elif (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and \
+          int(record['visitmo'])>4) or (int(record['visityr'])==2018 and \
+          int(record['visitmo'])==4 and int(record['visitday'])>=2):
+        packet.insert(0, z1x)
+    else:
+        packet.insert(0, z1)
+
 
 def update_header(record, packet):
     for header in packet:
