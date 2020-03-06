@@ -24,6 +24,8 @@ from nacc.uds3.tfp import builder as tfp_builder
 from nacc.uds3.m import builder as m_builder
 from nacc.lbd.ivp import builder as lbd_ivp_builder
 from nacc.lbd.fvp import builder as lbd_fvp_builder
+from nacc.lbd.v3_1.ivp import builder as lbd_short_ivp_builder
+from nacc.lbd.v3_1.fvp import builder as lbd_short_fvp_builder
 from nacc.ftld.ivp import builder as ftld_ivp_builder
 from nacc.ftld.fvp import builder as ftld_fvp_builder
 from nacc.csf import builder as csf_builder
@@ -313,10 +315,14 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         print("[START] ptid : " + str(record['ptid']), file=err)
         try:
-            if options.lbd and options.ivp:
+            if options.lbd and options.ivp and not options.sv:
                 packet = lbd_ivp_builder.build_uds3_lbd_ivp_form(record)
-            elif options.lbd and options.fvp:
+            elif options.lbd and options.fvp and not options.sv:
                 packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
+            elif options.lbd and options.ivp and options.sv:
+                packet = lbd_short_ivp_builder.build_uds3_lbd_short_ivp_form(record)
+            elif options.lbd and options.fvp and options.sv:
+                packet = lbd_short_fvp_builder.build_uds3_lbd_short_fvp_form(record)
             elif options.ftld and options.ivp:
                 packet = ftld_ivp_builder.build_uds3_ftld_ivp_form(record)
             elif options.ftld and options.fvp:
@@ -417,6 +423,9 @@ def parse_args(args=None):
         '-m', action='store_true', dest='m',
         help='Set this flag to process as m data')
     option_group.add_argument(
+        '-sv', action='store_true', dest='m',
+        help='Set this flag to process as lbd short version data')
+    option_group.add_argument(
         '-f', '--filter', action='store', dest='filter',
         choices=list(filters_names.keys()),
         help='Set this flag to process the filter')
@@ -450,8 +459,8 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.tfp or options.np or
-            options.m or options.csf or options.filter):
+    if not (options.ivp or options.fvp or options.tfp or options.np or 
+            options.m or options.sv or options.csf or options.filter):
         options.ivp = True
 
     return options
