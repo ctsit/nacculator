@@ -8,7 +8,7 @@ from nacc.lbd.v3_1.fvp import forms as lbd_short_fvp_forms
 from nacc.uds3 import packet as lbd_short_fvp_packet
 
 
-def build_uds3_lbd_fvp_form(record):
+def build_lbd_short_fvp_form(record):
     ''' Converts REDCap CSV data into a packet (list of FVP Form objects) '''
     packet = lbd_short_fvp_packet.Packet()
 

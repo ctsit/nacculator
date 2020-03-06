@@ -316,19 +316,19 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         print("[START] ptid : " + str(record['ptid']), file=err)
         try:
             if options.lbd and options.ivp and not options.sv:
-                packet = lbd_ivp_builder.build_uds3_lbd_ivp_form(record)
+                packet = lbd_ivp_builder.build_lbd_ivp_form(record)
             elif options.lbd and options.fvp and not options.sv:
-                packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
+                packet = lbd_fvp_builder.build_lbd_fvp_form(record)
             elif options.lbd and options.ivp and options.sv:
-                packet = lbd_short_ivp_builder.build_uds3_lbd_short_ivp_form(record)
+                packet = lbd_short_ivp_builder.build_lbd_short_ivp_form(record)
             elif options.lbd and options.fvp and options.sv:
-                packet = lbd_short_fvp_builder.build_uds3_lbd_short_fvp_form(record)
+                packet = lbd_short_fvp_builder.build_lbd_short_fvp_form(record)
             elif options.ftld and options.ivp:
-                packet = ftld_ivp_builder.build_uds3_ftld_ivp_form(record)
+                packet = ftld_ivp_builder.build_ftld_ivp_form(record)
             elif options.ftld and options.fvp:
-                packet = ftld_fvp_builder.build_uds3_ftld_fvp_form(record)
+                packet = ftld_fvp_builder.build_ftld_fvp_form(record)
             elif options.csf:
-                packet = csf_builder.build_uds3_csf_form(record)
+                packet = csf_builder.build_csf_form(record)
             elif options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
             elif options.np:
