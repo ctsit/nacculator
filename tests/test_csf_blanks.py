@@ -1,7 +1,7 @@
 import unittest
 
 from nacc import redcap2nacc
-from nacc.csf.builder import build_uds3_csf_form
+from nacc.csf.builder import build_csf_form
 
 
 class option():
@@ -37,7 +37,7 @@ class TestBlankRulesForCSF(unittest.TestCase):
         '''
         record = make_filled_form()
         record['csfabeta'] = ''
-        ipacket = build_uds3_csf_form(record)
+        ipacket = build_csf_form(record)
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
         expected = ["'CSFABmo' is '1 ' with length '2', but should be blank:"
@@ -56,7 +56,7 @@ class TestBlankRulesForCSF(unittest.TestCase):
         record = make_filled_form()
         record['csfabmd'] = '2'
         record['csfabmdx'] = 'test'
-        ipacket = build_uds3_csf_form(record)
+        ipacket = build_csf_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
@@ -77,7 +77,7 @@ class TestBlankRulesForCSF(unittest.TestCase):
         record['csfabyr'] = ''
         record['csfabmd'] = '2'
         record['csfabmdx'] = 'test'
-        ipacket = build_uds3_csf_form(record)
+        ipacket = build_csf_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
