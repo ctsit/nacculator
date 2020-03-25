@@ -57,8 +57,8 @@ the `-file` flag._
 
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
                               Set this flag to process the filter
-      -lbd                  Set this flag to process as Lewy Body Dementia data
-      -lbdsv                Set this flag to process as Lewy Body Dementia short version data
+      -lbd                  Set this flag to process as Lewy Body Dementia data (FORMVER = 3)
+      -lbdsv                Set this flag to process as Lewy Body Dementia short version data (FORMVER = 3.1)
       -ftld                 Set this flag to process as Frontotemporal Lobar Degeneration data
 
       -file FILE            Path of the csv file to be processed.
@@ -76,7 +76,7 @@ the `-file` flag._
 
     redcap2nacc -lbd -fvp -file data.csv >data.txt
 
-Both LBD and FTLD forms can have IVP or FVP arguments.
+Both LBD / LBDSV and FTLD forms can have IVP or FVP arguments.
 
 **Example** - Run data through the `cleanPtid` filter:
 
