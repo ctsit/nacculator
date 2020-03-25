@@ -315,13 +315,13 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         print("[START] ptid : " + str(record['ptid']), file=err)
         try:
-            if options.lbd and options.ivp and not options.sv:
+            if options.lbd and options.ivp:
                 packet = lbd_ivp_builder.build_lbd_ivp_form(record)
-            elif options.lbd and options.fvp and not options.sv:
+            elif options.lbd and options.fvp:
                 packet = lbd_fvp_builder.build_lbd_fvp_form(record)
-            elif options.lbd and options.ivp and options.sv:
+            elif options.lbdsv and options.ivp:
                 packet = lbd_short_ivp_builder.build_lbd_short_ivp_form(record)
-            elif options.lbd and options.fvp and options.sv:
+            elif options.lbdsv and options.fvp:
                 packet = lbd_short_fvp_builder.build_lbd_short_fvp_form(record)
             elif options.ftld and options.ivp:
                 packet = ftld_ivp_builder.build_ftld_ivp_form(record)
@@ -348,7 +348,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             continue
 
         if not options.np and not options.m and not options.tfp and not \
-                options.lbd and not options.ftld and not options.csf:
+            options.lbd and not options.lbdsv and not options.ftld and not \
+            options.csf:
             set_blanks_to_zero(packet)
 
         if options.m:
@@ -377,7 +378,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             continue
 
         if not options.np and not options.m and not options.lbd and not \
-                options.ftld and not options.csf:
+            options.lbdsv and not options.ftld and not options.csf:
             warnings += check_single_select(packet)
 
         for form in packet:
@@ -423,9 +424,6 @@ def parse_args(args=None):
         '-m', action='store_true', dest='m',
         help='Set this flag to process as m data')
     option_group.add_argument(
-        '-sv', action='store_true', dest='m',
-        help='Set this flag to process as lbd short version data')
-    option_group.add_argument(
         '-f', '--filter', action='store', dest='filter',
         choices=list(filters_names.keys()),
         help='Set this flag to process the filter')
@@ -433,6 +431,9 @@ def parse_args(args=None):
     parser.add_argument(
         '-lbd', action='store_true', dest='lbd',
         help='Set this flag to process as Lewy Body Dementia data')
+    parser.add_argument(
+        '-lbdsv', action='store_true', dest='lbdsv',
+        help='Set this flag to process as Lewy Body Dementia short version data')
     parser.add_argument(
         '-ftld', action='store_true', dest='ftld',
         help='Set this flag to process as Frontotemporal Lobar'
@@ -460,7 +461,7 @@ def parse_args(args=None):
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
     if not (options.ivp or options.fvp or options.tfp or options.np or 
-            options.m or options.sv or options.csf or options.filter):
+            options.m or options.csf or options.filter):
         options.ivp = True
 
     return options
