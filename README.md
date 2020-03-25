@@ -54,10 +54,13 @@ the `-file` flag._
       -np                   Set this flag to process as Neuropathology data
       -m                    Set this flag to process as Milestone data
       -csf                  Set this flag to process as NACC BIDSS CSF data
+
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
                               Set this flag to process the filter
       -lbd                  Set this flag to process as Lewy Body Dementia data
+      -lbdsv                Set this flag to process as Lewy Body Dementia short version data
       -ftld                 Set this flag to process as Frontotemporal Lobar Degeneration data
+
       -file FILE            Path of the csv file to be processed.
       -meta FILTER_META     Input file for the filter metadata (in case -filter is used)
       -ptid PTID            Ptid for which you need the records
