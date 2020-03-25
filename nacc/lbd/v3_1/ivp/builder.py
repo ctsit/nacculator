@@ -31,7 +31,6 @@ def build_lbd_short_ivp_form(record):
     B1L.LBSDZStU = record['LBSDZStU'.lower()]
     B1L.LBSDZStN = record['LBSDZStN'.lower()]
     B1L.LBSFAINt = record['LBSFAINt'.lower()]
-    B1L.LBSPSyM  = record['LBSPSyM'.lower()]
     B1L.LBPSyAGe = record['LBPSyAGe'.lower()]
     B1L.LBSStNSy = record['LBSStNSy'.lower()]
     B1L.LBSITSy = record['LBSITSy'.lower()]
@@ -385,7 +384,7 @@ def update_header(record, packet):
     for header in packet:
         header.PACKET = "IL"
         header.FORMID = header.form_name
-        header.FORMVER = 3
+        header.FORMVER = 3.1
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
         header.VISITMO = record['visitmo']
