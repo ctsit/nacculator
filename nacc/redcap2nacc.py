@@ -146,6 +146,41 @@ def check_for_bad_characters(field: Field) -> typing.List:
     return incompatible
 
 
+def check_redcap_event(options, record) -> bool:
+    """
+    Determines if the record's redcap_event_name matches the options flag
+    """
+    if options.lbd and options.ivp:
+        event_name = 'initial_visit' # might want to use a regex or grep instead of exact match (like in split_ivp_fvp.sh) to catch all followup visit arms. lbd and ftld data should be in a separate csv altogether, else the ivps are going to have the same event name. discuss this with kevin.
+    elif options.lbd and options.fvp:
+        event_name = 'followup_visit'
+    elif options.ftld and options.ivp:
+        event_name = 'initial_visit'
+    elif options.ftld and options.fvp:
+        event_name = 'followup_visit'
+    elif options.csf:
+        event_name = 'csf_'# (separate csv file? is this its own event or part of a visit packet? it's not in redcap, and i didn't make the test project longitudinal so there is no redcap_event_name)
+    elif options.ivp:
+        event_name = 'initial_visit'
+    elif options.np:
+        event_name = 'neuropath'
+    elif options.fvp:
+        event_name = 'followup_visit'
+    elif options.tfp:
+        event_name = 'telephone_followup'# this one isn't actually part of redcap yet
+    elif options.m:
+        event_name = 'milestone'
+
+    # compare event_name with redcap_event_name in record
+    # if they don't match, then reject the record (printed statement unnecessary)
+    redcap_event = record['redcap_event_name']
+
+    # use a re.match to check that redcap_event contains event_name
+    event_match = re.search(event_name, redcap_event)
+    
+    return event_match
+
+
 def check_single_select(packet: uds3_packet.Packet):
     """ Checks the values of sets of interdependent questions
 
@@ -247,6 +282,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
     for record in reader:
+        event_match = check_redcap_event(options, record)
+        if not event_match:
+            continue
+
         print("[START] ptid : " + str(record['ptid']), file=err)
         try:
             if options.lbd and options.ivp:
