@@ -35,7 +35,7 @@ def build_lbd_short_fvp_form(record):
     B1L.LBSStNSy = record['fu_LBSStNSy'.lower()]
     B1L.LBSITSy = record['fu_LBSITSy'.lower()]
     B1L.LBSStNDI = record['fu_LBSStNDI'.lower()]
-    B1L.LBSSITDI = record['fu_LBSITDI'.lower()]
+    B1L.LBSITDI = record['fu_LBSITDI'.lower()]
     B1L.LBSStNHt = record['fu_LBSStNHt'.lower()]
     B1L.LBSITHR = record['fu_LBSITHR'.lower()]
     B1L.LBSAGerM = record['fu_LBSAGerM'.lower()]
