@@ -148,7 +148,8 @@ def check_for_bad_characters(field: Field) -> typing.List:
 
 def check_redcap_event(options, record) -> bool:
     """
-    Determines if the record's redcap_event_name and filled forms match the options flag
+    Determines if the record's redcap_event_name and filled forms match the
+    options flag
     """
     if options.lbd and options.ivp:
         event_name = 'initial_visit'
@@ -156,15 +157,13 @@ def check_redcap_event(options, record) -> bool:
         if (form_match_lbd == '0' or form_match_lbd == ''):
             event_match = False
             return event_match
-        # might want to use a regex or grep instead of exact match (like in split_ivp_fvp.sh) to catch all followup visit arms. lbd and ftld data should be in a separate csv altogether, else the ivps are going to have the same event name. discuss this with kevin.
-        # it's ok if they have the same event name because the variable names are what matter when printing data. if it's looking for lbd initial visit data then it's going to search initial_visit for the lbd variables and ignore all the other ones, so you still end up with a row with all (and only) the correct processed data
     elif options.lbd and options.fvp:
         event_name = 'followup_visit'
         form_match_lbd = record['lbd_fvp_b1l_complete']
         if (form_match_lbd == '0' or form_match_lbd == ''):
             event_match = False
             return event_match
-    # TODO: add options for lbdsv (lbd short version) (this one can currently be easily filtered by formver 3.1)
+    # TODO: add options for lbdsv (lbd short version)
     elif options.ftld and options.ivp:
         event_name = 'initial_visit'
         form_match_ftld = record['ftld_ivp_a3a_complete']
@@ -177,14 +176,17 @@ def check_redcap_event(options, record) -> bool:
         if (form_match_ftld == '0' or form_match_ftld == ''):
             event_match = False
             return event_match
-    elif options.csf:
-        event_name = 'csf_'
-        # (separate csv file? is this its own event or part of a visit packet? it's not in redcap, and i didn't make the test project longitudinal so there is no redcap_event_name)
+    # TODO: uncomment -csf option if/when it is added to the full ADRC project.
+    # Right now it is a single non-longitudinal form in a REDCap project with
+    # no redcap_event_names.
+    # elif options.csf:
+    #     event_name = 'csf_'
     elif options.ivp:
         event_name = 'initial_visit'
         form_match_z1 = record['ivp_z1_complete']
         form_match_z1x = record['ivp_z1x_complete']
-        if (form_match_z1 == '0' or form_match_z1 == '') and (form_match_z1x == '0' or form_match_z1x == ''):
+        if (form_match_z1 == '0' or form_match_z1 == '') and \
+                (form_match_z1x == '0' or form_match_z1x == ''):
             event_match = False
             return event_match
     elif options.np:
@@ -193,23 +195,19 @@ def check_redcap_event(options, record) -> bool:
         event_name = 'followup_visit'
         form_match_z1 = record['fvp_z1_complete']
         form_match_z1x = record['fvp_z1x_complete']
-        if (form_match_z1 == '0' or form_match_z1 == '') and (form_match_z1x == '0' or form_match_z1x == ''):
+        if (form_match_z1 == '0' or form_match_z1 == '') and \
+                (form_match_z1x == '0' or form_match_z1x == ''):
             event_match = False
             return event_match
     elif options.tfp:
         event_name = 'telephone_followup'
-        # this one isn't actually part of redcap yet
     elif options.m:
         event_name = 'milestone'
 
     # compare event_name with redcap_event_name in record
-    # if they don't match, then reject the record (printed statement unnecessary)
+    # if they don't match, then reject the record (without printed statement)
     redcap_event = record['redcap_event_name']
-
-    # use a re.match to check that redcap_event contains event_name
     event_match = re.search(event_name, redcap_event)
-
-# event_match might need to be a string instead of boolean, in order to specify which packet we are using (depending on how the packet gets sorted due to event_name and which forms have data)? or my return method needs to be a little more complex?
     return event_match
 
 
@@ -314,9 +312,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
     for record in reader:
-        event_match = check_redcap_event(options, record)
-        if not event_match:
-            continue
+        if not options.csf:
+            event_match = check_redcap_event(options, record)
+            if not event_match:
+                continue
 
         print("[START] ptid : " + str(record['ptid']), file=err)
         try:
@@ -348,7 +347,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.tfp and not options.lbd and not options.ftld and not options.csf:
+        if not options.np and not options.m and not options.tfp and not \
+                options.lbd and not options.ftld and not options.csf:
             set_blanks_to_zero(packet)
 
         if options.m:
@@ -376,7 +376,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.lbd and not options.ftld and not options.csf:
+        if not options.np and not options.m and not options.lbd and not \
+                options.ftld and not options.csf:
             warnings += check_single_select(packet)
 
         for form in packet:
@@ -455,7 +456,8 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.tfp or options.np or options.m or options.csf or options.filter):
+    if not (options.ivp or options.fvp or options.tfp or options.np or
+            options.m or options.csf or options.filter):
         options.ivp = True
 
     return options
