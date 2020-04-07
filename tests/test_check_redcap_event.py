@@ -4,7 +4,6 @@ from nacc.redcap2nacc import check_redcap_event
 
 
 class option():
-    # flag = 'ivp'
     lbd = False
     ftld = False
     csf = False
@@ -27,7 +26,7 @@ class TestRedcapEvent(unittest.TestCase):
         Checks that the -ivp flag with no other options returns the correct visit (not LBD IVP or FTLD IVP).
         '''
         self.options.ivp = True
-        record = {'redcap_event_name': 'initial_visit_year_arm_1'}
+        record = {'redcap_event_name': 'initial_visit_year_arm_1', 'ivp_z1_complete': '', 'ivp_z1x_complete': '2'}
         result = check_redcap_event(self.options, record)
         self.assertTrue(result)
 
@@ -36,7 +35,7 @@ class TestRedcapEvent(unittest.TestCase):
         Checks that the initial_visit is not returned when the -ivp flag is not set.
         '''
         self.options.fvp = True
-        record = {'redcap_event_name': 'initial_visit_year_arm_1'}
+        record = {'redcap_event_name': 'initial_visit_year_arm_1', 'fvp_z1_complete': '', 'fvp_z1x_complete': ''}
         result = check_redcap_event(self.options, record)
         self.assertFalse(result)
 
@@ -46,7 +45,7 @@ class TestRedcapEvent(unittest.TestCase):
         '''
         self.options.ivp = True
         self.options.lbd = True
-        record = {'redcap_event_name': 'initial_visit_year_arm_1'}
+        record = {'redcap_event_name': 'initial_visit_year_arm_1', 'lbd_ivp_b1l_complete': '2'}
         result = check_redcap_event(self.options, record)
         self.assertTrue(result)
 
