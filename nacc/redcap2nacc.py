@@ -204,8 +204,6 @@ def check_redcap_event(options, record) -> bool:
     elif options.m:
         event_name = 'milestone'
 
-    # compare event_name with redcap_event_name in record
-    # if they don't match, then reject the record (without printed statement)
     redcap_event = record['redcap_event_name']
     event_match = re.search(event_name, redcap_event)
     return event_match

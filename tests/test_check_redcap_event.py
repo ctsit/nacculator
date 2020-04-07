@@ -58,6 +58,20 @@ class TestRedcapEvent(unittest.TestCase):
         result = check_redcap_event(self.options, record)
         self.assertTrue(result)
 
+    def test_for_not_multiple_flags(self):
+        '''
+        Checks that -ivp alone is not returned with options like -lbd -ivp.
+        '''
+        self.options.ivp = True
+        record = {'redcap_event_name': 'initial_visit_year_arm_1',
+                  'ivp_z1_complete': '', 'ivp_z1x_complete': '',
+                  'lbd_ivp_b1l_complete': '2'}
+        incorrect = check_redcap_event(self.options, record)
+
+        self.options.lbd = True
+        result = check_redcap_event(self.options, record)
+        self.assertNotEqual(incorrect, result)
+
 
 if __name__ == "__main__":
     unittest.main()
