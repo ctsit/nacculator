@@ -298,8 +298,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
     for record in reader:
-    # Right now the csf form is a single non-longitudinal form in a
-    # separate REDCap project with no redcap_event_name.
+        # Right now the csf form is a single non-longitudinal form in a
+        # separate REDCap project with no redcap_event_name.
         if not options.csf:
             event_match = check_redcap_event(options, record)
             if not event_match:
