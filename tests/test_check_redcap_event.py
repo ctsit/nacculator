@@ -15,7 +15,7 @@ class option():
 
 class TestRedcapEvent(unittest.TestCase):
     '''
-    These tests are meant to ensure that the test_redcap_event function is
+    These tests are meant to ensure that the check_redcap_event function is
     properly distinguishing between REDCap events in an imported CSV of various
     records. Ideally, redcap2nacc should only be outputting PTIDs with the
     redcap_event_name specified by the options flag (-ivp, -ldb, et cetera) and

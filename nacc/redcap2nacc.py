@@ -154,58 +154,46 @@ def check_redcap_event(options, record) -> bool:
     if options.lbd and options.ivp:
         event_name = 'initial_visit'
         form_match_lbd = record['lbd_ivp_b1l_complete']
-        if (form_match_lbd == '0' or form_match_lbd == ''):
-            event_match = False
-            return event_match
+        if form_match_lbd in ['0', '']:
+            return False
     elif options.lbd and options.fvp:
         event_name = 'followup_visit'
         form_match_lbd = record['lbd_fvp_b1l_complete']
-        if (form_match_lbd == '0' or form_match_lbd == ''):
-            event_match = False
-            return event_match
+        if form_match_lbd in ['0', '']:
+            return False
     # TODO: add options for lbdsv (lbd short version)
     elif options.ftld and options.ivp:
         event_name = 'initial_visit'
         form_match_ftld = record['ftld_ivp_a3a_complete']
-        if (form_match_ftld == '0' or form_match_ftld == ''):
-            event_match = False
-            return event_match
+        if form_match_ftld in ['0', '']:
+            return False
     elif options.ftld and options.fvp:
         event_name = 'followup_visit'
         form_match_ftld = record['ftld_fvp_a3a_complete']
-        if (form_match_ftld == '0' or form_match_ftld == ''):
-            event_match = False
-            return event_match
-    # TODO: uncomment -csf option if/when it is added to the full ADRC project.
-    # Right now it is a single non-longitudinal form in a REDCap project with
-    # no redcap_event_names.
-    # elif options.csf:
-    #     event_name = 'csf_'
+        if form_match_ftld in ['0', '']:
+            return False
     elif options.ivp:
         event_name = 'initial_visit'
         form_match_z1 = record['ivp_z1_complete']
         form_match_z1x = record['ivp_z1x_complete']
-        if (form_match_z1 == '0' or form_match_z1 == '') and \
-                (form_match_z1x == '0' or form_match_z1x == ''):
-            event_match = False
-            return event_match
-    elif options.np:
-        event_name = 'neuropath'
+        if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
+            return False
     elif options.fvp:
         event_name = 'followup_visit'
         form_match_z1 = record['fvp_z1_complete']
         form_match_z1x = record['fvp_z1x_complete']
-        if (form_match_z1 == '0' or form_match_z1 == '') and \
-                (form_match_z1x == '0' or form_match_z1x == ''):
-            event_match = False
-            return event_match
+        if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
+            return False
+    # TODO: add -csf option if/when it is added to the full ADRC project.
+    elif options.np:
+        event_name = 'neuropath'
     elif options.tfp:
         event_name = 'telephone_followup'
     elif options.m:
         event_name = 'milestone'
 
     redcap_event = record['redcap_event_name']
-    event_match = re.search(event_name, redcap_event)
+    event_match = event_name in redcap_event
     return event_match
 
 
@@ -310,6 +298,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
     for record in reader:
+    # Right now the csf form is a single non-longitudinal form in a
+    # separate REDCap project with no redcap_event_name.
         if not options.csf:
             event_match = check_redcap_event(options, record)
             if not event_match:
