@@ -188,7 +188,7 @@ def check_redcap_event(options, record) -> bool:
     elif options.np:
         event_name = 'neuropath'
     elif options.tfp:
-        event_name = 'telephone_followup'
+        event_name = 'telephone'
     elif options.m:
         event_name = 'milestone'
 
