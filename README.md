@@ -28,7 +28,7 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
 
     $ redcap2nacc -h
     usage: redcap2nacc [-h]
-                       [-fvp | -ivp | -np | -m | -csf | -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}]
+                       [-fvp | -ivp | -tfp | -np | -m | -csf | -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}]
                        [-lbd | -ftld] [-file FILE] [-meta FILTER_META] [-ptid PTID]
                        [-vnum VNUM] [-vtype VTYPE]
 
@@ -38,6 +38,7 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
       -h, --help            show this help message and exit
       -fvp                  Set this flag to process as fvp data
       -ivp                  Set this flag to process as ivp data
+      -tfp                  Set this flag to process as telephone follow-up data
       -np                   Set this flag to process as np data
       -m                    Set this flag to process as m data
       -csf                  Set this flag to process as NACC BIDSS CSF data

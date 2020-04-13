@@ -1,12 +1,12 @@
 ###############################################################################
-# Copyright 2015-2019 University of Florida. All rights reserved.
+# Copyright 2015-2020 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
 from setuptools import setup, find_packages
 
-VERSION="1.0.1"
+VERSION="1.2.0"
 
 setup(
     name="nacculator",
