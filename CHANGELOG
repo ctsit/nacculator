@@ -1,6 +1,19 @@
 Changelog
 =========
 
+## [1.2.0] - 2020-04-13
+### Summary
+
+Add TFP capability to NACCulator, remove the need for the split_ivp_fvp.sh file.
+
+### Added
+ * Added internal logic to differentiate visit packets in one csv (Samantha Emerson)
+ * Added support for Telephone Followup Packets (-tfp flag) (Samantha Emerson and Cooper Martin)
+
+### Changed
+* Update ADCID range in milestone forms.py (Samantha Emerson)
+* Update README file (Samantha Emerson)
+
 ## [1.1.0] - 2020-02-24
 ### Summary
 
