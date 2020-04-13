@@ -146,6 +146,57 @@ def check_for_bad_characters(field: Field) -> typing.List:
     return incompatible
 
 
+def check_redcap_event(options, record) -> bool:
+    """
+    Determines if the record's redcap_event_name and filled forms match the
+    options flag
+    """
+    if options.lbd and options.ivp:
+        event_name = 'initial_visit'
+        form_match_lbd = record['lbd_ivp_b1l_complete']
+        if form_match_lbd in ['0', '']:
+            return False
+    elif options.lbd and options.fvp:
+        event_name = 'followup_visit'
+        form_match_lbd = record['lbd_fvp_b1l_complete']
+        if form_match_lbd in ['0', '']:
+            return False
+    # TODO: add options for lbdsv (lbd short version)
+    elif options.ftld and options.ivp:
+        event_name = 'initial_visit'
+        form_match_ftld = record['ftld_ivp_a3a_complete']
+        if form_match_ftld in ['0', '']:
+            return False
+    elif options.ftld and options.fvp:
+        event_name = 'followup_visit'
+        form_match_ftld = record['ftld_fvp_a3a_complete']
+        if form_match_ftld in ['0', '']:
+            return False
+    elif options.ivp:
+        event_name = 'initial_visit'
+        form_match_z1 = record['ivp_z1_complete']
+        form_match_z1x = record['ivp_z1x_complete']
+        if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
+            return False
+    elif options.fvp:
+        event_name = 'followup_visit'
+        form_match_z1 = record['fvp_z1_complete']
+        form_match_z1x = record['fvp_z1x_complete']
+        if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
+            return False
+    # TODO: add -csf option if/when it is added to the full ADRC project.
+    elif options.np:
+        event_name = 'neuropath'
+    elif options.tfp:
+        event_name = 'telephone'
+    elif options.m:
+        event_name = 'milestone'
+
+    redcap_event = record['redcap_event_name']
+    event_match = event_name in redcap_event
+    return event_match
+
+
 def check_single_select(packet: uds3_packet.Packet):
     """ Checks the values of sets of interdependent questions
 
@@ -247,6 +298,13 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
     for record in reader:
+        # Right now the csf form is a single non-longitudinal form in a
+        # separate REDCap project with no redcap_event_name.
+        if not options.csf:
+            event_match = check_redcap_event(options, record)
+            if not event_match:
+                continue
+
         print("[START] ptid : " + str(record['ptid']), file=err)
         try:
             if options.lbd and options.ivp:
@@ -277,7 +335,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.tfp and not options.lbd and not options.ftld and not options.csf:
+        if not options.np and not options.m and not options.tfp and not \
+                options.lbd and not options.ftld and not options.csf:
             set_blanks_to_zero(packet)
 
         if options.m:
@@ -305,7 +364,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.lbd and not options.ftld and not options.csf:
+        if not options.np and not options.m and not options.lbd and not \
+                options.ftld and not options.csf:
             warnings += check_single_select(packet)
 
         for form in packet:
@@ -384,7 +444,8 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.tfp or options.np or options.m or options.csf or options.filter):
+    if not (options.ivp or options.fvp or options.tfp or options.np or
+            options.m or options.csf or options.filter):
         options.ivp = True
 
     return options

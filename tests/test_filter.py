@@ -325,7 +325,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 110003,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
 110004,followup_visit_yea_arm_1,3,99,1,1,2019,002,ABC,2
 '''.strip()
-        
+
         fix_header_dict = {
             'ptid' : 'PTID',
             'visitmo' : 'VisitMo',
@@ -336,12 +336,12 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         actual = []
         with io.StringIO(redcap_data) as data, \
                 io.StringIO("") as results:
-                
+
             filters.filter_fix_headers_do(data, fix_header_dict, results)
 
         # Reset the file position indicator so DictReader reads from the
         # beginning of the results "file".
-        
+
             results.seek(0)
             reader = csv.reader(results)
             actual = next(reader)
