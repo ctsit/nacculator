@@ -264,7 +264,7 @@ Before running the generator, read the warnings in the `./nacc/uds3/ivp/forms.py
     $ edit nacc/uds3/ivp/forms.py
 
 _Note: execute `generator.py` from the same folder as the `corrected`
-folder, which should contain any "corrected" DEDs.
+folder, which should contain any "corrected" DEDs._
 
 
 ### Resources
