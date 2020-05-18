@@ -240,18 +240,6 @@ This is not exhaustive, but here is an explanation of some important files.
     (for .py) and `filters_config.cfg` (for .sh).
 
 
-### Generating New Forms
-
-**Warning: read the warnings in the `./nacc/uds3/ivp/forms.py` first!**
-
-_Note: executing `generator.py` from within tools is an important step as the
-script assumes any corrected DEDs are stored under a folder in the current
-working directory called `corrected`._
-
-    $ python3 tools/generator.py tools/uds3/ded/csv/ >nacc/uds3/ivp/forms.py
-    $ edit nacc/uds3/ivp/forms.py
-
-
 ### Testing
 
 To run all the tests:
@@ -262,6 +250,21 @@ To run all the tests:
 To run only the tests in a file:
 
     $ python3 tests/WHICHEVER_test.py
+
+
+### Generating Forms
+
+**Warning: the generator is currently broken due to changes in the CSV format.**
+
+You only need to generate forms when there are new DEDs from the NACC.
+
+Before running the generator, read the warnings in the `./nacc/uds3/ivp/forms.py` first.
+
+    $ python3 tools/generator.py tools/uds3/ded/csv/ >nacc/uds3/ivp/forms.py
+    $ edit nacc/uds3/ivp/forms.py
+
+_Note: execute `generator.py` from the same folder as the `corrected`
+folder, which should contain any "corrected" DEDs.
 
 
 ### Resources
