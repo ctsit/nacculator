@@ -4,6 +4,7 @@ from nacc.uds3 import packet
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.fvp import builder as fvp_builder
 
+
 class TestC1SC2(unittest.TestCase):
 
     def test_c1s_added_to_ivp_when_filled(self):
@@ -49,6 +50,7 @@ class TestC1SC2(unittest.TestCase):
         fpacket = packet.Packet()
         fvp_builder.add_c1s_or_c2(record, fpacket)
         self.assertEqual(fpacket['MOCACOMP'], '1')
+
 
 def make_blank_ivp():
     return {
@@ -291,6 +293,7 @@ def make_blank_fvp():
         'fu_cogstat_c2': ''
 
     }
+
 
 if __name__ == "__main__":
     unittest.main()

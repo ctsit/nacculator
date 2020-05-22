@@ -4,6 +4,7 @@ from nacc.uds3 import packet
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.fvp import builder as fvp_builder
 
+
 class TestC1SC2(unittest.TestCase):
 
     def test_z1_added_to_ivp_when_filled(self):
@@ -49,6 +50,7 @@ class TestC1SC2(unittest.TestCase):
         fpacket = packet.Packet()
         fvp_builder.add_z1_or_z1x(record, fpacket)
         self.assertEqual(fpacket['LANGA1'], '1')
+
 
 def make_blank_ivp():
     return {
@@ -209,6 +211,7 @@ def make_blank_fvp():
         'fu_clssub': '',
         'fvp_z1x_complete': '2'
     }
+
 
 if __name__ == "__main__":
     unittest.main()
