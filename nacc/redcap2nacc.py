@@ -174,7 +174,10 @@ def check_redcap_event(options, record) -> bool:
             return False
     elif options.ivp:
         event_name = 'initial_visit'
-        form_match_z1 = record['ivp_z1_complete']
+        try:
+            form_match_z1 = record['ivp_z1_complete']
+        except KeyError:
+            form_match_z1 = ''
         form_match_z1x = record['ivp_z1x_complete']
         if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
             return False
