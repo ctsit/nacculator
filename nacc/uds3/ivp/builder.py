@@ -154,12 +154,9 @@ def add_z1_or_z1x(record, packet):
             'B7COMM': 'b7_comm'
         }
         for key, value in z1_field_mapping.items():
-            try:
-                if record[value].strip():
-                    setattr(z1, key, record[value])
-                    z1_filled_fields += 1
-            except KeyError:
-                pass
+            if record[value].strip():
+                setattr(z1, key, record[value])
+                z1_filled_fields += 1
     except KeyError:
         z1_filled_fields = 0
 

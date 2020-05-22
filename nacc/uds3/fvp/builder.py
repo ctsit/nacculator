@@ -15,21 +15,38 @@ def build_uds3_fvp_form(record):
     # Set up the forms
     add_z1_or_z1x(record, packet)
     add_a1(record, packet)
-    if record['fu_a2_sub'] == '1' or record['fu_a2sub'] == '1':
-        add_a2(record, packet)
-    if record['fu_a3_sub'] == '1' or record['fu_a3sub'] == '1':
-        add_a3(record, packet)
-    if record['fu_a4_sub'] == '1' or record['fu_a4sub'] == '1':
-        add_a4(record, packet)
-    if record['fu_b1_sub'] == '1' or record['fu_b1sub'] == '1':
-        add_b1(record, packet)
-    add_b4(record, packet)
-    if record['fu_b5_sub'] == '1' or record['fu_b5sub'] == '1':
-        add_b5(record, packet)
-    if record['fu_b6_sub'] == '1' or record['fu_b6sub'] == '1':
-        add_b6(record, packet)
-    if record['fu_b7_sub'] == '1' or record['fu_b7sub'] == '1':
-        add_b7(record, packet)
+    if record['ivp_z1x_complete'] is not None:
+        if record['fu_a2sub'] == '1':
+            add_a2(record, packet)
+        if record['fu_a3sub'] == '1':
+            add_a3(record, packet)
+        if record['fu_a4sub'] == '1':
+            add_a4(record, packet)
+        if record['fu_b1sub'] == '1':
+            add_b1(record, packet)
+        add_b4(record, packet)
+        if record['fu_b5sub'] == '1':
+            add_b5(record, packet)
+        if record['fu_b6sub'] == '1':
+            add_b6(record, packet)
+        if record['fu_b7sub'] == '1':
+            add_b7(record, packet)
+    elif record['fvp_z1_complete'] is not None:
+        if record['fu_a2_sub'] == '1':
+            add_a2(record, packet)
+        if record['fu_a3_sub'] == '1':
+            add_a3(record, packet)
+        if record['fu_a4_sub'] == '1':
+            add_a4(record, packet)
+        if record['fu_b1_sub'] == '1':
+            add_b1(record, packet)
+        add_b4(record, packet)
+        if record['fu_b5_sub'] == '1':
+            add_b5(record, packet)
+        if record['fu_b6_sub'] == '1':
+            add_b6(record, packet)
+        if record['fu_b7_sub'] == '1':
+            add_b7(record, packet)
     add_b8(record, packet)
     add_b9(record, packet)
     add_c1s_or_c2(record, packet)
@@ -100,35 +117,39 @@ def add_z1_or_z1x(record, packet):
             setattr(z1x, key, record[value])
             z1x_filled_fields += 1
 
-    z1 = fvp_forms.FormZ1()
-    z1_filled_fields = 0
-    z1_field_mapping = {
-        'A2SUB': 'fu_a2_sub',
-        'A2NOT': 'fu_a2_not',
-        'A2COMM': 'fu_a2_comm',
-        'A3SUB': 'fu_a3_sub',
-        'A3NOT': 'fu_a3_not',
-        'A3COMM': 'fu_a3_comm',
-        'A4SUB': 'fu_a4_sub',
-        'A4NOT': 'fu_a4_not',
-        'A4COMM': 'fu_a4_comm',
-        'B1SUB': 'fu_b1_sub',
-        'B1NOT': 'fu_b1_not',
-        'B1COMM': 'fu_b1_comm',
-        'B5SUB': 'fu_b5_sub',
-        'B5NOT': 'fu_b5_not',
-        'B5COMM': 'fu_b5_comm',
-        'B6SUB': 'fu_b6_sub',
-        'B6NOT': 'fu_b6_not',
-        'B6COMM': 'fu_b6_comm',
-        'B7SUB': 'fu_b7_sub',
-        'B7NOT': 'fu_b7_not',
-        'B7COMM': 'fu_b7_comm'
-    }
-    for key, value in z1_field_mapping.items():
-        if record[value].strip():
-            setattr(z1, key, record[value])
-            z1_filled_fields += 1
+    try:
+        z1_present = record['fvp_z1_complete']
+        z1 = fvp_forms.FormZ1()
+        z1_filled_fields = 0
+        z1_field_mapping = {
+            'A2SUB': 'fu_a2_sub',
+            'A2NOT': 'fu_a2_not',
+            'A2COMM': 'fu_a2_comm',
+            'A3SUB': 'fu_a3_sub',
+            'A3NOT': 'fu_a3_not',
+            'A3COMM': 'fu_a3_comm',
+            'A4SUB': 'fu_a4_sub',
+            'A4NOT': 'fu_a4_not',
+            'A4COMM': 'fu_a4_comm',
+            'B1SUB': 'fu_b1_sub',
+            'B1NOT': 'fu_b1_not',
+            'B1COMM': 'fu_b1_comm',
+            'B5SUB': 'fu_b5_sub',
+            'B5NOT': 'fu_b5_not',
+            'B5COMM': 'fu_b5_comm',
+            'B6SUB': 'fu_b6_sub',
+            'B6NOT': 'fu_b6_not',
+            'B6COMM': 'fu_b6_comm',
+            'B7SUB': 'fu_b7_sub',
+            'B7NOT': 'fu_b7_not',
+            'B7COMM': 'fu_b7_comm'
+        }
+        for key, value in z1_field_mapping.items():
+            if record[value].strip():
+                setattr(z1, key, record[value])
+                z1_filled_fields += 1
+    except KeyError:
+        z1_filled_fields = 0
 
     # Prefer Z1X to Z1
     # If both are blank, use date (Z1X after 2018/04/02)

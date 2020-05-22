@@ -77,6 +77,7 @@ def make_blank_ivp():
         'b7_sub': '',
         'b7_not': '',
         'b7_comm': '',
+        'ivp_z1_complete': '2',
         # Z1X
         'langa1': '',
         'langa2': '',
@@ -125,7 +126,8 @@ def make_blank_ivp():
         'lange2f': '',
         'lange3f': '',
         'langcls': '',
-        'clssub': ''
+        'clssub': '',
+        'ivp_z1x_complete': '2'
     }
 
 
@@ -156,6 +158,7 @@ def make_blank_fvp():
         'fu_b7_sub': '',
         'fu_b7_not': '',
         'fu_b7_comm': '',
+        'fvp_z1_complete': '2',
         # Z1X
         'fu_langa1': '',
         'fu_langa2': '',
@@ -203,7 +206,8 @@ def make_blank_fvp():
         'fu_lange2f': '',
         'fu_lange3f': '',
         'fu_langcls': '',
-        'fu_clssub': ''
+        'fu_clssub': '',
+        'fvp_z1x_complete': '2'
     }
 
 if __name__ == "__main__":
