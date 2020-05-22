@@ -789,61 +789,65 @@ def add_c1s_or_c2(record, packet):
             setattr(c2, key, record[value])
             c2_filled_fields += 1
 
-    c1s = fvp_forms.FormC1S()
-    c1s_filled_fields = 0
-    c1s_field_mapping = {
-        'MMSECOMP': 'fu_mmsecomp',
-        'MMSEREAS': 'fu_mmsereas',
-        'MMSELOC': 'fu_mmseloc',
-        'MMSELAN': 'fu_mmselan',
-        'MMSELANX': 'fu_mmselanx',
-        'MMSEVIS': 'fu_mmsevis',
-        'MMSEHEAR':  'fu_mmsehear',
-        'MMSEORDA': 'fu_mmseorda',
-        'MMSEORLO': 'fu_mmseorlo',
-        'PENTAGON': 'fu_pentagon',
-        'MMSE': 'fu_mmse',
-        'NPSYCLOC': 'fu_npsycloc',
-        'NPSYLAN': 'fu_npsylan',
-        'NPSYLANX': 'fu_npsylanx',
-        'LOGIMO': 'fu_logimo',
-        'LOGIDAY': 'fu_logiday', 
-        'LOGIYR': 'fu_logiyr', 
-        'LOGIPREV': 'fu_logiprev',
-        'LOGIMEM': 'fu_logimem',
-        'UDSBENTC': 'fu_udsbentc_c1', 
-        'DIGIF': 'fu_digif',
-        'DIGIFLEN': 'fu_digiflen',
-        'DIGIB': 'fu_digib',
-        'DIGIBLEN': 'fu_digiblen',
-        'ANIMALS': 'fu_animals',
-        'VEG': 'fu_veg',
-        'TRAILA': 'fu_traila',
-        'TRAILARR': 'fu_trailarr',
-        'TRAILALI': 'fu_trailali',
-        'TRAILB': 'fu_trailb',
-        'TRAILBRR': 'fu_trailbrr',
-        'TRAILBLI': 'fu_trailbli',
-        'MEMUNITS': 'fu_memunits',
-        'MEMTIME': 'fu_memtime',
-        'UDSBENTD': 'fu_udsbentd_c1', 
-        'UDSBENRS': 'fu_udsbenrs_c1', 
-        'BOSTON': 'fu_boston',
-        'UDSVERFC': 'fu_udsverfc_c1', 
-        'UDSVERFN': 'fu_udsverfn_c1', 
-        'UDSVERNF': 'fu_udsvernf_c1', 
-        'UDSVERLC': 'fu_udsverlc_c1', 
-        'UDSVERLR': 'fu_udsverlr_c1', 
-        'UDSVERLN': 'fu_udsverln_c1', 
-        'UDSVERTN': 'fu_udsvertn_c1', 
-        'UDSVERTE': 'fu_udsverte_c1', 
-        'UDSVERTI': 'fu_udsverti_c1', 
-        'COGSTAT': 'fu_cogstat'
-    }
-    for key, value in c1s_field_mapping.items():
-        if record[value].strip():
-            setattr(c1s, key, record[value])
-            c1s_filled_fields += 1
+    try:
+        c1s_present = record['fvp_c1s_complete']
+        c1s = fvp_forms.FormC1S()
+        c1s_filled_fields = 0
+        c1s_field_mapping = {
+            'MMSECOMP': 'fu_mmsecomp',
+            'MMSEREAS': 'fu_mmsereas',
+            'MMSELOC': 'fu_mmseloc',
+            'MMSELAN': 'fu_mmselan',
+            'MMSELANX': 'fu_mmselanx',
+            'MMSEVIS': 'fu_mmsevis',
+            'MMSEHEAR':  'fu_mmsehear',
+            'MMSEORDA': 'fu_mmseorda',
+            'MMSEORLO': 'fu_mmseorlo',
+            'PENTAGON': 'fu_pentagon',
+            'MMSE': 'fu_mmse',
+            'NPSYCLOC': 'fu_npsycloc',
+            'NPSYLAN': 'fu_npsylan',
+            'NPSYLANX': 'fu_npsylanx',
+            'LOGIMO': 'fu_logimo',
+            'LOGIDAY': 'fu_logiday', 
+            'LOGIYR': 'fu_logiyr', 
+            'LOGIPREV': 'fu_logiprev',
+            'LOGIMEM': 'fu_logimem',
+            'UDSBENTC': 'fu_udsbentc_c1', 
+            'DIGIF': 'fu_digif',
+            'DIGIFLEN': 'fu_digiflen',
+            'DIGIB': 'fu_digib',
+            'DIGIBLEN': 'fu_digiblen',
+            'ANIMALS': 'fu_animals',
+            'VEG': 'fu_veg',
+            'TRAILA': 'fu_traila',
+            'TRAILARR': 'fu_trailarr',
+            'TRAILALI': 'fu_trailali',
+            'TRAILB': 'fu_trailb',
+            'TRAILBRR': 'fu_trailbrr',
+            'TRAILBLI': 'fu_trailbli',
+            'MEMUNITS': 'fu_memunits',
+            'MEMTIME': 'fu_memtime',
+            'UDSBENTD': 'fu_udsbentd_c1', 
+            'UDSBENRS': 'fu_udsbenrs_c1', 
+            'BOSTON': 'fu_boston',
+            'UDSVERFC': 'fu_udsverfc_c1', 
+            'UDSVERFN': 'fu_udsverfn_c1', 
+            'UDSVERNF': 'fu_udsvernf_c1', 
+            'UDSVERLC': 'fu_udsverlc_c1', 
+            'UDSVERLR': 'fu_udsverlr_c1', 
+            'UDSVERLN': 'fu_udsverln_c1', 
+            'UDSVERTN': 'fu_udsvertn_c1', 
+            'UDSVERTE': 'fu_udsverte_c1', 
+            'UDSVERTI': 'fu_udsverti_c1', 
+            'COGSTAT': 'fu_cogstat'
+        }
+        for key, value in c1s_field_mapping.items():
+            if record[value].strip():
+                setattr(c1s, key, record[value])
+                c1s_filled_fields += 1
+    except KeyError:
+        c1s_filled_fields = 0
 
     # Prefer C2 to C1S
     # If both are blank, use date (C2 after 2017/10/23)

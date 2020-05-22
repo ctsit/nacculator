@@ -88,6 +88,7 @@ def make_blank_ivp():
         'c1s_9b_memtime': '',
         'c1s_10a_boston': '',
         'c1s_11a_cogstat': '',
+        'ivp_c1s_complete': '2',
         # C2
         'mocacomp': '',
         'mocareas': '',
@@ -216,6 +217,7 @@ def make_blank_fvp():
         'fu_udsverte_c1': '',
         'fu_udsverti_c1': '',
         'fu_cogstat': '',
+        'fvp_c1s_complete': '2',
         # C2
         'fu_mocacomp': '',
         'fu_mocareas': '',

@@ -898,49 +898,53 @@ def add_c1s_or_c2(record, packet):
         except KeyError:
             pass
 
-    c1s = ivp_forms.FormC1S()
-    c1s_filled_fields = 0
-    c1s_field_mapping = {
-        'MMSELOC': 'c1s_1a_mmseloc',
-        'MMSELAN': 'c1s_1a1_mmselan',
-        'MMSELANX': 'c1s_1a2_mmselanx',
-        'MMSEORDA': 'c1s_1b1_mmseorda',
-        'MMSEORLO': 'c1s_1b2_mmseorlo',
-        'PENTAGON': 'c1s_1c_pentagon',
-        'MMSE': 'c1s_1d_mmse',
-        'NPSYCLOC': 'c1s_2_npsycloc',
-        'NPSYLAN': 'c1s_2a_npsylan',
-        'NPSYLANX': 'c1s_2a1_npsylanx',
-        'LOGIMO': 'c1s_3amo_logimo',
-        'LOGIDAY': 'c1s_3ady_logiday',
-        'LOGIYR': 'c1s_3ayr_logiyr',
-        'LOGIPREV': 'c1s_3a1_logiprev',
-        'LOGIMEM': 'c1s_3b_logimem',
-        'DIGIF': 'c1s_4a_digif',
-        'DIGIFLEN': 'c1s_4b_digiflen',
-        'DIGIB': 'c1s_5a_digib',
-        'DIGIBLEN': 'c1s_5b_digiblen',
-        'ANIMALS': 'c1s_6a_animals',
-        'VEG': 'c1s_6b_veg',
-        'TRAILA': 'c1s_7a_traila',
-        'TRAILARR': 'c1s_7a1_trailarr',
-        'TRAILALI': 'c1s_7a2_trailali',
-        'TRAILB': 'c1s_7b_trailb',
-        'TRAILBRR': 'c1s_7b1_trailbrr',
-        'TRAILBLI': 'c1s_7b2_trailbli',
-        'WAIS': 'c1s_8a_wais',
-        'MEMUNITS': 'c1s_9a_memunits',
-        'MEMTIME': 'c1s_9b_memtime',
-        'BOSTON': 'c1s_10a_boston',
-        'COGSTAT': 'c1s_11a_cogstat'
-    }
-    for key, value in c1s_field_mapping.items():
-        try:
-            if record[value].strip():
-                setattr(c1s, key, record[value])
-                c1s_filled_fields += 1
-        except KeyError:
-            pass
+    try:
+        c1s_present = record['ivp_c1s_complete']
+        c1s = ivp_forms.FormC1S()
+        c1s_filled_fields = 0
+        c1s_field_mapping = {
+            'MMSELOC': 'c1s_1a_mmseloc',
+            'MMSELAN': 'c1s_1a1_mmselan',
+            'MMSELANX': 'c1s_1a2_mmselanx',
+            'MMSEORDA': 'c1s_1b1_mmseorda',
+            'MMSEORLO': 'c1s_1b2_mmseorlo',
+            'PENTAGON': 'c1s_1c_pentagon',
+            'MMSE': 'c1s_1d_mmse',
+            'NPSYCLOC': 'c1s_2_npsycloc',
+            'NPSYLAN': 'c1s_2a_npsylan',
+            'NPSYLANX': 'c1s_2a1_npsylanx',
+            'LOGIMO': 'c1s_3amo_logimo',
+            'LOGIDAY': 'c1s_3ady_logiday',
+            'LOGIYR': 'c1s_3ayr_logiyr',
+            'LOGIPREV': 'c1s_3a1_logiprev',
+            'LOGIMEM': 'c1s_3b_logimem',
+            'DIGIF': 'c1s_4a_digif',
+            'DIGIFLEN': 'c1s_4b_digiflen',
+            'DIGIB': 'c1s_5a_digib',
+            'DIGIBLEN': 'c1s_5b_digiblen',
+            'ANIMALS': 'c1s_6a_animals',
+            'VEG': 'c1s_6b_veg',
+            'TRAILA': 'c1s_7a_traila',
+            'TRAILARR': 'c1s_7a1_trailarr',
+            'TRAILALI': 'c1s_7a2_trailali',
+            'TRAILB': 'c1s_7b_trailb',
+            'TRAILBRR': 'c1s_7b1_trailbrr',
+            'TRAILBLI': 'c1s_7b2_trailbli',
+            'WAIS': 'c1s_8a_wais',
+            'MEMUNITS': 'c1s_9a_memunits',
+            'MEMTIME': 'c1s_9b_memtime',
+            'BOSTON': 'c1s_10a_boston',
+            'COGSTAT': 'c1s_11a_cogstat'
+        }
+        for key, value in c1s_field_mapping.items():
+            try:
+                if record[value].strip():
+                    setattr(c1s, key, record[value])
+                    c1s_filled_fields += 1
+            except KeyError:
+                pass
+    except KeyError:
+        c1s_filled_fields = 0
 
     # Prefer C2 to C1S
     # If both are blank, use date (C2 after 2017/10/23)
@@ -1212,40 +1216,43 @@ def add_c1s_or_c2(record, packet):
         c2.COGSTAT = record['cogstat_c2']
         packet.append(c2)
     else:
-        c1s = ivp_forms.FormC1S()
-        c1s.MMSELOC = record['c1s_1a_mmseloc'] #check for blank
-        c1s.MMSELAN = record['c1s_1a1_mmselan']
-        c1s.MMSELANX = record['c1s_1a2_mmselanx']
-        c1s.MMSEORDA = record['c1s_1b1_mmseorda']
-        c1s.MMSEORLO = record['c1s_1b2_mmseorlo']
-        c1s.PENTAGON = record['c1s_1c_pentagon']
-        c1s.MMSE = record['c1s_1d_mmse']
-        c1s.NPSYCLOC = record['c1s_2_npsycloc']
-        c1s.NPSYLAN = record['c1s_2a_npsylan']
-        c1s.NPSYLANX = record['c1s_2a1_npsylanx']
-        c1s.LOGIMO = record['c1s_3amo_logimo']
-        c1s.LOGIDAY = record['c1s_3ady_logiday']
-        c1s.LOGIYR = record['c1s_3ayr_logiyr']
-        c1s.LOGIPREV = record['c1s_3a1_logiprev']
-        c1s.LOGIMEM = record['c1s_3b_logimem']
-        c1s.DIGIF = record['c1s_4a_digif']
-        c1s.DIGIFLEN = record['c1s_4b_digiflen']
-        c1s.DIGIB = record['c1s_5a_digib']
-        c1s.DIGIBLEN = record['c1s_5b_digiblen']
-        c1s.ANIMALS = record['c1s_6a_animals']
-        c1s.VEG = record['c1s_6b_veg']
-        c1s.TRAILA = record['c1s_7a_traila']
-        c1s.TRAILARR = record['c1s_7a1_trailarr']
-        c1s.TRAILALI = record['c1s_7a2_trailali']
-        c1s.TRAILB = record['c1s_7b_trailb']
-        c1s.TRAILBRR = record['c1s_7b1_trailbrr']
-        c1s.TRAILBLI = record['c1s_7b2_trailbli']
-        c1s.WAIS = record['c1s_8a_wais']
-        c1s.MEMUNITS = record['c1s_9a_memunits']
-        c1s.MEMTIME = record['c1s_9b_memtime']
-        c1s.BOSTON = record['c1s_10a_boston']
-        c1s.COGSTAT = record['c1s_11a_cogstat'] #check for blank
-        packet.append(c1s)
+        try:
+            c1s = ivp_forms.FormC1S()
+            c1s.MMSELOC = record['c1s_1a_mmseloc'] #check for blank
+            c1s.MMSELAN = record['c1s_1a1_mmselan']
+            c1s.MMSELANX = record['c1s_1a2_mmselanx']
+            c1s.MMSEORDA = record['c1s_1b1_mmseorda']
+            c1s.MMSEORLO = record['c1s_1b2_mmseorlo']
+            c1s.PENTAGON = record['c1s_1c_pentagon']
+            c1s.MMSE = record['c1s_1d_mmse']
+            c1s.NPSYCLOC = record['c1s_2_npsycloc']
+            c1s.NPSYLAN = record['c1s_2a_npsylan']
+            c1s.NPSYLANX = record['c1s_2a1_npsylanx']
+            c1s.LOGIMO = record['c1s_3amo_logimo']
+            c1s.LOGIDAY = record['c1s_3ady_logiday']
+            c1s.LOGIYR = record['c1s_3ayr_logiyr']
+            c1s.LOGIPREV = record['c1s_3a1_logiprev']
+            c1s.LOGIMEM = record['c1s_3b_logimem']
+            c1s.DIGIF = record['c1s_4a_digif']
+            c1s.DIGIFLEN = record['c1s_4b_digiflen']
+            c1s.DIGIB = record['c1s_5a_digib']
+            c1s.DIGIBLEN = record['c1s_5b_digiblen']
+            c1s.ANIMALS = record['c1s_6a_animals']
+            c1s.VEG = record['c1s_6b_veg']
+            c1s.TRAILA = record['c1s_7a_traila']
+            c1s.TRAILARR = record['c1s_7a1_trailarr']
+            c1s.TRAILALI = record['c1s_7a2_trailali']
+            c1s.TRAILB = record['c1s_7b_trailb']
+            c1s.TRAILBRR = record['c1s_7b1_trailbrr']
+            c1s.TRAILBLI = record['c1s_7b2_trailbli']
+            c1s.WAIS = record['c1s_8a_wais']
+            c1s.MEMUNITS = record['c1s_9a_memunits']
+            c1s.MEMTIME = record['c1s_9b_memtime']
+            c1s.BOSTON = record['c1s_10a_boston']
+            c1s.COGSTAT = record['c1s_11a_cogstat'] #check for blank
+            packet.append(c1s)
+        except KeyError:
+            pass
 
 
 def update_header(record, packet):
