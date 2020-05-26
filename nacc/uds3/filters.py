@@ -75,7 +75,7 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
             completed_subjs[nacc_subj_id].append(nacc_visit_num)
 
     for redcap_packet in redcap_packet_list:
-        # if they exist in completed subjs (same id and visit num) 
+        # if they exist in completed subjs (same id and visit num)
         # then remove them.
         rc_ptid = redcap_packet['ptid']
         rc_event = redcap_packet['redcap_event_name']
@@ -126,17 +126,17 @@ def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
 
 
 @validate
-def filter_fix_headers(input_file, header_mapping, output_file):	           
-    return filter_fix_headers_do(input_file, header_mapping, output_file)	    
+def filter_fix_headers(input_file, header_mapping, output_file):
+    return filter_fix_headers_do(input_file, header_mapping, output_file)
 
 
-def filter_fix_headers_do(input_ptr, header_dictionary, output_ptr):        	
-    csv_reader = csv.reader(input_ptr)	                                        
-    csv_writer = csv.writer(output_ptr)	                                            
-    headers = next(csv_reader)                                                            
-    fixed_headers = list(map(lambda header: header_dictionary.get(header,header), headers))	    
-    csv_writer.writerow(fixed_headers)	                                                         
-    csv_writer.writerows([row for row in csv_reader])	                                            
+def filter_fix_headers_do(input_ptr, header_dictionary, output_ptr):
+    csv_reader = csv.reader(input_ptr)
+    csv_writer = csv.writer(output_ptr)
+    headers = next(csv_reader)
+    fixed_headers = list(map(lambda header: header_dictionary.get(header, header), headers))
+    csv_writer.writerow(fixed_headers)
+    csv_writer.writerows([row for row in csv_reader])
     return
 
 
@@ -156,9 +156,9 @@ def filter_remove_ptid_do(input_ptr, filter_diction, output_ptr):
         prog = re.compile(regex_exp)
         if record['ptid'] in bad_ptids_list:
             print('Removed ptid : ' + record['ptid'], file=sys.stderr)
-        elif record['ptid'] in good_ptids_list:     
+        elif record['ptid'] in good_ptids_list:
             output.writerow(record)
-        elif prog.match(record['ptid'])!=None:
+        elif prog.match(record['ptid']) != None:
             output.writerow(record)
         else:
             print('Removed ptid : ' + record['ptid'], file=sys.stderr)
@@ -177,7 +177,7 @@ def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
 
 
 def _invalid_date(record):
-    return (record['visitmo']=='' or record['visitday']=='' or record['visityr']=='')
+    return (record['visitmo'] == '' or record['visitday'] == '' or record['visityr'] == '')
 
 
 def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defaultCheck=False):
@@ -189,11 +189,11 @@ def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defa
         for col_name in list(keysDict.keys()):
             if col_name in list(record.keys()):
                 if blankCheck and (len(record[col_name]) > 0) and (record[col_name] != keysDict[col_name]):
-                        record[col_name] = keysDict[col_name]
-                        count += 1
+                    record[col_name] = keysDict[col_name]
+                    count += 1
                 elif defaultCheck and len(record[col_name]) == 0:
-                        record[col_name] = keysDict[col_name]
-                        count += 1
+                    record[col_name] = keysDict[col_name]
+                    count += 1
         output.writerow(record)
         print('Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) + ' fields.', file=sys.stderr)
     return
@@ -203,7 +203,7 @@ def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defa
 def filter_fix_visitdate(input_ptr, filter_meta, output_ptr):
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
-    write_headers(reader,output)
+    write_headers(reader, output)
     for record in reader:
         if record['visitnum']:
             record['visitnum'] = int_or_string(record['visitnum'])
@@ -261,7 +261,7 @@ def filter_csv_ptid(Ptid, record):
         return record
 
 
-def load_special_case_ptid(case_name,filter_config):
+def load_special_case_ptid(case_name, filter_config):
     try:
         ptids_string = filter_config[case_name]
         li = list(ptids_string.split(","))

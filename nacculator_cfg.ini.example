@@ -4,6 +4,9 @@
 token: Your REDCAP Token
 redcap_server: Your Redcap Server
 
+[adcid]
+ADCID: Your ADC ID
+
 #[filters] - Each section is named after the corresponding function name
 #in filters.py
 [filter_clean_ptid]
