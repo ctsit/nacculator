@@ -162,7 +162,7 @@ def add_z1_or_z1x(record, packet):
           int(record['visitmo'])==4 and int(record['visitday'])>=2):
         packet.insert(0, z1x)
     else:
-        packet.insert(0, z1)
+        pass
 
 
 def add_a1(record, packet):
@@ -860,7 +860,7 @@ def add_c1s_or_c2(record, packet):
           int(record['visitmo'])==10 and int(record['visitday'])>=23):
         packet.insert(0, c2)
     else:
-        packet.insert(0, c1s)
+        pass
 
 
 def add_d1(record, packet):
