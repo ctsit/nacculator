@@ -4,13 +4,16 @@
 token: Your REDCAP Token
 redcap_server: Your Redcap Server
 
-[adcid]
-ADCID: Your ADC ID
-
 #[filters] - Each section is named after the corresponding function name
 #in filters.py
+[filter_fill_default]
+adcid: Your ADC ID
+
+# Uncomment filters that you intend to use
 [filter_clean_ptid]
 filepath: path/to/current-db-subjects.csv
+
+# [filter_replace_drug_id]
 
 [filter_fix_headers]
 # Write in format:
@@ -22,8 +25,14 @@ fu_otherneur: fu_othneur
 fu_otherneurx: fu_othneurx
 fu_strokedec: fu_strokdec
 
+# [filter_update_field]
+
+# [filter_fix_visitdate]
+
 [filter_remove_ptid]
 ptid_format: 11\d.*
 #enter ptid in form of ptid,ptid,ptid,ext... (no spaces)
 bad_ptid: 
 good_ptid:
+
+# [filter_eliminate_empty_date]

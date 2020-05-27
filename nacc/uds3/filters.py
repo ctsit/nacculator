@@ -6,12 +6,6 @@ import fileinput
 import configparser
 
 from collections import defaultdict
-# This dictionary contains the keys used in the config
-fill_default_values = {'nogds': 0,
-                       'adcid': 41,
-                       'formver': 3}
-
-fill_non_blank_values = {'adcid': '41'}
 
 
 def validate(func):
@@ -214,12 +208,26 @@ def filter_fix_visitdate(input_ptr, filter_meta, output_ptr):
 
 @validate
 def filter_fill_default(input_ptr, filter_meta, output_ptr):
-    fill_value_of_fields(input_ptr, output_ptr, fill_default_values, defaultCheck=True)
+    fill_value_of_fields(input_ptr, output_ptr, fill_default_values(filter_meta), defaultCheck=True)
+
+
+def fill_default_values(config):
+    # This dictionary contains the keys used in the config
+    adcid = config['adcid']
+    fill_default_values = {'nogds': 0,
+                           'adcid': adcid,
+                           'formver': 3}
+    return fill_default_values
 
 
 @validate
 def filter_update_field(input_ptr, filter_meta, output_ptr):
-    fill_value_of_fields(input_ptr, output_ptr, fill_non_blank_values, blankCheck=True)
+    fill_value_of_fields(input_ptr, output_ptr, fill_non_blank_values(filter_meta), blankCheck=True)
+
+
+def fill_non_blank_values(config):
+    fill_non_blank_values = config['adcid']
+    return fill_non_blank_values
 
 
 def filter_extract_ptid(input_ptr, Ptid, visit_num, visit_type, output_ptr):

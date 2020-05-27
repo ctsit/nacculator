@@ -8,6 +8,7 @@ from nacc.uds3.fvp import forms as fvp_forms
 from nacc.uds3 import clsform
 from nacc.uds3 import packet as fvp_packet
 
+
 def build_uds3_fvp_form(record):
     """ Converts REDCap CSV data into a packet (list of FVP Form objects) """
     packet = fvp_packet.Packet()
@@ -118,7 +119,6 @@ def add_z1_or_z1x(record, packet):
             z1x_filled_fields += 1
 
     try:
-        z1_present = record['fvp_z1_complete']
         z1 = fvp_forms.FormZ1()
         z1_filled_fields = 0
         z1_field_mapping = {
@@ -157,9 +157,9 @@ def add_z1_or_z1x(record, packet):
         packet.insert(0, z1x)
     elif z1_filled_fields > 0:
         packet.insert(0, z1)
-    elif (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and \
-          int(record['visitmo'])>4) or (int(record['visityr'])==2018 and \
-          int(record['visitmo'])==4 and int(record['visitday'])>=2):
+    elif (int(record['visityr']) > 2018) or (int(record['visityr']) == 2018 and
+          int(record['visitmo']) > 4) or (int(record['visityr']) == 2018 and
+          int(record['visitmo']) == 4 and int(record['visitday']) >= 2):
         packet.insert(0, z1x)
     else:
         pass
@@ -790,7 +790,6 @@ def add_c1s_or_c2(record, packet):
             c2_filled_fields += 1
 
     try:
-        c1s_present = record['fvp_c1s_complete']
         c1s = fvp_forms.FormC1S()
         c1s_filled_fields = 0
         c1s_field_mapping = {
@@ -855,9 +854,9 @@ def add_c1s_or_c2(record, packet):
         packet.insert(0, c2)
     elif c1s_filled_fields > 0:
         packet.insert(0, c1s)
-    elif (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and \
-          int(record['visitmo'])>10) or (int(record['visityr'])==2017 and \
-          int(record['visitmo'])==10 and int(record['visitday'])>=23):
+    elif (int(record['visityr']) > 2017) or (int(record['visityr']) == 2017 and
+          int(record['visitmo']) > 10) or (int(record['visityr']) == 2017 and
+          int(record['visitmo']) == 10 and int(record['visitday']) >= 23):
         packet.insert(0, c2)
     else:
         pass

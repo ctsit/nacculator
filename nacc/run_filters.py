@@ -65,6 +65,7 @@ def run_all_filters(folder_name, config):
         output_path = os.path.join(folder_name, "proper_visitdate.csv")
         with open(output_path, 'w') as output_ptr, open(input_path, 'r') as input_ptr:
             filter_fix_visitdate(input_ptr, config, output_ptr)
+
         print("--------------Removing Unnecessary Records--------------------", file=sys.stderr)
         input_path = os.path.join(folder_name, "proper_visitdate.csv")
         output_path = os.path.join(folder_name, "CleanedPtid_Update.csv")

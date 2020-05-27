@@ -27,7 +27,7 @@ setup(
     entry_points={
         "console_scripts": [
             "redcap2nacc = nacc.redcap2nacc:main",
-            "run_filters = tools.preprocess.run_filters:main"
+            "nacculator_filters = nacc.run_filters:main"
         ]
     },
 
