@@ -50,6 +50,10 @@ def build_uds3_ivp_form(record):
             add_b6(record, packet)
         if record['b7_sub'] == '1':
             add_b7(record, packet)
+    else:
+        print("ptid " + str(record['ptid']) + ": No Z1X or Z1 form found.", file=err)
+        add_a5(record, packet)
+        add_b4(record, packet)
 
     add_b8(record, packet)
     add_b9(record, packet)

@@ -59,9 +59,6 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
     output = csv.DictWriter(output_ptr, None)
     write_headers(redcap_packet_list, output)
 
-    followup_visit = re.compile("followup.*")
-    initial_visit = re.compile("initial.*")
-
     # TODO: Deal with M Flag in Current_db.csv.
 
     completed_subjs = defaultdict(list)
@@ -76,10 +73,6 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
         # if they exist in completed subjs (same id and visit num)
         # then remove them.
         rc_ptid = redcap_packet['ptid']
-        rc_event = redcap_packet['redcap_event_name']
-        if not (initial_visit.match(rc_event) or followup_visit.match(rc_event)):
-            print('Eliminated ptid : ' + rc_ptid + " Event Name : " + redcap_packet['redcap_event_name'] + " NOT INIT OR FOLLOWUP", file=sys.stderr)
-            continue
 
         if redcap_packet['visitnum']:
             rc_visit_num = int_or_string(redcap_packet['visitnum'], -1)
