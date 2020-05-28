@@ -4,35 +4,49 @@
 token: Your REDCAP Token
 redcap_server: Your Redcap Server
 
-#[filters] - Each section is named after the corresponding function name
-#in filters.py
-[filter_fill_default]
-adcid: Your ADC ID
+# [filters] - Each section is named after the corresponding function name
+# in filters.py
+# Comment out filters that you do not intend to use with # in front of
+# the filter name and each line within that section.
 
-# Uncomment filters that you intend to use
 [filter_clean_ptid]
+# Filters out subjects with PTIDs and visitnums that are already cleared to
+# NACC's "Current Database"
 filepath: path/to/current-db-subjects.csv
 
-# [filter_replace_drug_id]
+[filter_replace_drug_id]
+# Automatically adds the "d" prefix for each drug ID in Form A4.
+present: yes
 
-[filter_fix_headers]
+# [filter_fix_headers]
+# Corrects REDCap-exported headers that do not match NACC's DEDs.
 # Write in format:
 # old_header: corrected_header
-c1s_2a_npsylan: c1s_2_npsycloc
-c1s_2a_npsylanx: c1s_2a_npsylan
-b6s_2a1_npsylanx: c1s_2a1_npsylanx
-fu_otherneur: fu_othneur
-fu_otherneurx: fu_othneurx
-fu_strokedec: fu_strokdec
 
-# [filter_update_field]
+[filter_fill_default]
+# Fills fields that are typically left blank in REDCap: 
+# adcid, nogds (automatically enters 0 if the field is blank), and formver = 3)
+adcid: Your ADC ID
 
-# [filter_fix_visitdate]
+[filter_update_field]
+# Replaces the ADCID if it was previously filled in the REDCap export.
+adcid: Your ADC ID
+
+[filter_fix_visitdate]
+# Ensures that REDCap's 'visitnum' field is always an integer.
+present: yes
 
 [filter_remove_ptid]
+# Removes PTIDs that are not in NACC's "Current Database"
+# but still should be skipped, such as test PTIDs.
+# ptid_format specifies which ptids should be *kept*.
 ptid_format: 11\d.*
-#enter ptid in form of ptid,ptid,ptid,ext... (no spaces)
+# bad_ptid notes the exceptions to ptid_format that should still be removed.
+# enter ptid in form of ptid,ptid,ptid,ext... (no spaces)
 bad_ptid: 
-good_ptid:
+# good_ptid notes the exceptions that don't fit ptid_format but should be kept.
+good_ptid: 
 
-# [filter_eliminate_empty_date]
+[filter_eliminate_empty_date]
+# Removes PTIDs that are missing information in their visit date.
+present: yes

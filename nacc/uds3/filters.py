@@ -44,10 +44,14 @@ def int_or_string(value, default=-1):
 
 @validate
 def filter_clean_ptid(input_ptr, filter_config, output_ptr):
-    filepath = filter_config['filepath']
-    with open(filepath, 'r') as nacc_packet_file:
-        output = filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr)
-        return output
+    if filter_config:
+        filepath = filter_config['filepath']
+        with open(filepath, 'r') as nacc_packet_file:
+            output = filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr)
+            return output
+    else:
+        skip_filter(input_ptr, output_ptr)
+        return
 
 
 def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
@@ -100,6 +104,14 @@ def write_headers(reader, output):
 
 @validate
 def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
+    if filter_meta:
+        filter_replace_drug_id_do(input_ptr, output_ptr)
+    else:
+        skip_filter(input_ptr, output_ptr)
+        return
+
+
+def filter_replace_drug_id_do(input_ptr, output_ptr):
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -118,10 +130,13 @@ def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
         print('Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) + ' fields.', file=sys.stderr)
     return
 
-
 @validate
 def filter_fix_headers(input_file, header_mapping, output_file):
-    return filter_fix_headers_do(input_file, header_mapping, output_file)
+    if header_mapping:
+        return filter_fix_headers_do(input_file, header_mapping, output_file)
+    else:
+        skip_filter(input_file, output_file)
+        return
 
 
 def filter_fix_headers_do(input_ptr, header_dictionary, output_ptr):
@@ -136,7 +151,11 @@ def filter_fix_headers_do(input_ptr, header_dictionary, output_ptr):
 
 @validate
 def filter_remove_ptid(input_ptr, filter_config, output_ptr):
-    return filter_remove_ptid_do(input_ptr, filter_config, output_ptr)
+    if filter_config:
+        return filter_remove_ptid_do(input_ptr, filter_config, output_ptr)
+    else:
+        skip_filter(input_ptr, output_ptr)
+        return
 
 
 def filter_remove_ptid_do(input_ptr, filter_diction, output_ptr):
@@ -160,6 +179,14 @@ def filter_remove_ptid_do(input_ptr, filter_diction, output_ptr):
 
 @validate
 def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
+    if filter_meta:
+        filter_eliminate_empty_date_do(input_ptr, output_ptr)
+    else:
+        skip_filter(input_ptr, output_ptr)
+        return
+
+
+def filter_eliminate_empty_date_do(input_ptr, output_ptr):
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -193,8 +220,26 @@ def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defa
     return
 
 
+def skip_filter(input_ptr, output_ptr):
+    reader = csv.DictReader(input_ptr)
+    output = csv.DictWriter(output_ptr, None)
+    write_headers(reader, output)
+    for record in reader:
+        output.writerow(record)
+    print('Filter skipped.', file=sys.stderr)
+    return
+
+
 @validate
 def filter_fix_visitdate(input_ptr, filter_meta, output_ptr):
+    if filter_meta:
+        filter_fix_visitdate_do(input_ptr, output_ptr)
+    else:
+        skip_filter(input_ptr, output_ptr)
+        return
+
+
+def filter_fix_visitdate_do(input_ptr, output_ptr):
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -205,15 +250,21 @@ def filter_fix_visitdate(input_ptr, filter_meta, output_ptr):
         output.writerow(record)
     return
 
-
 @validate
 def filter_fill_default(input_ptr, filter_meta, output_ptr):
-    fill_value_of_fields(input_ptr, output_ptr, fill_default_values(filter_meta), defaultCheck=True)
+    if filter_meta:
+        fill_value_of_fields(input_ptr, output_ptr, fill_default_values(filter_meta), defaultCheck=True)
+    else:
+        skip_filter(input_ptr, output_ptr)
+        return
 
 
 def fill_default_values(config):
     # This dictionary contains the keys used in the config
-    adcid = config['adcid']
+    try:
+        adcid = config['adcid']
+    except KeyError:
+        adcid = ''
     fill_default_values = {'nogds': 0,
                            'adcid': adcid,
                            'formver': 3}
@@ -222,11 +273,18 @@ def fill_default_values(config):
 
 @validate
 def filter_update_field(input_ptr, filter_meta, output_ptr):
-    fill_value_of_fields(input_ptr, output_ptr, fill_non_blank_values(filter_meta), blankCheck=True)
+    if filter_meta:
+        fill_value_of_fields(input_ptr, output_ptr, fill_non_blank_values(filter_meta), blankCheck=True)
+    else:
+        skip_filter(input_ptr, output_ptr)
 
 
 def fill_non_blank_values(config):
-    fill_non_blank_values = config['adcid']
+    try:
+        adcid = config['adcid']
+    except KeyError:
+        adcid = ''
+    fill_non_blank_values = {'adcid': adcid}
     return fill_non_blank_values
 
 
