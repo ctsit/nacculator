@@ -12,16 +12,28 @@ _Note:_ NACCulator _**requires Python 3.**_
 HOW TO Convert from REDCap to NACC
 ----------------------------------
 
-Once the project data is exported from REDCap to the CSV file `data.csv`, run:
+To install NACCulator, run:
 
     $ pip3 install git+https://github.com/ctsit/nacculator.git
+
+Once the project data is exported from REDCap to the CSV file `data.csv`, run:
+
     $ redcap2nacc <data.csv >data.txt
 
 This command will work only in the simplest case; UDS3 IVP data only.
-If there are no errors, then submit the `data.txt` file to NACC.
+Nacculator will automatically skip PTIDs with errors, so the output `data.txt`
+file will be ready to submit to NACC.
+In order to properly filter the data in the csv, nacculator is expecting that
+REDCap visits (denoted by `redcap_event_name`) contain certain keywords:
+    "initial_visit" for initial visit packets
+    "followup_visit" for all followups
+    "milestone" for milestone packets
+    "neuropath" for neuropathology packets
+    "telephone" for telephone followup packets
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input is
-expected to be from `STDIN` unless a file is specified using the `-file` flag._
+expected to be from `STDIN` (the command line) unless a file is specified using
+the `-file` flag._
 
 
 ### Usage
@@ -36,11 +48,11 @@ expected to be from `STDIN` unless a file is specified using the `-file` flag._
 
     optional arguments:
       -h, --help            show this help message and exit
-      -fvp                  Set this flag to process as fvp data
-      -ivp                  Set this flag to process as ivp data
-      -tfp                  Set this flag to process as telephone follow-up data
-      -np                   Set this flag to process as np data
-      -m                    Set this flag to process as m data
+      -fvp                  Set this flag to process as FVP data
+      -ivp                  Set this flag to process as IVP data
+      -tfp                  Set this flag to process as Telephone Followup Packet data
+      -np                   Set this flag to process as Neuropathology data
+      -m                    Set this flag to process as Milestone data
       -csf                  Set this flag to process as NACC BIDSS CSF data
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
                               Set this flag to process the filter
@@ -73,10 +85,12 @@ HOW TO Filter Data Using NACCulator
 -----------------------------------
 
 If your data is not clean enough to be processed by NACCulator, there are some
-built in functions to clean (read transform) the data.
+built in functions to clean (read: transform) the data.
 
 In order to properly use the filters, the first step is to check and validate
-that `nacculator_cfg.ini` has the proper settings for the filter to run.
+that `nacculator_cfg.ini` has the proper settings for the filter to run. In
+order to create this file, find the `nacculator_cfg.ini.example` file and
+remove the `.example` portion, and then fill in your center's information.
 The config file contains sections with in-code filter function name. Each of
 these sections contains elements necessary for the filter to run.
 The filters described below will discuss what is required, if anything.
@@ -112,12 +126,12 @@ the example above shows.
   This filter requires a section in the config called `filter_fix_headers` with
   as many keys as needed to replace the necessary columns. See example below.
   This filter fixes the column names of any column found in the filter mapping.
-  This filter does not check for any data. It always replaces the column names
+  This filter does not check for any data. It only replaces the column names
   if found.
 
-  Currently, below replacements are used:
+  For example, the configuration would look like this:
 
-      config:
+      [filter_fix_headers]
       c1s_2a_npsylan: c1s_2_npsycloc
       c1s_2a_npsylanx: c1s_2a_npsylan
       b6s_2a1_npsylanx: c1s_2a1_npsylanx
@@ -132,17 +146,14 @@ the example above shows.
   predefined values. Below are the current defaults :
 
       nogds    -> 0
-      arthupex -> 0
-      arthloex -> 0
-      arthspin -> 0
-      arthunk  -> 0
+      formver  -> 3
 
-  *If field is blank, always it will be updated to default value.*
+  *If field is blank, it will be updated to default value.*
 
 * **updateField**
 
-  This filter is used to update non blank fields. Currently, only `adcid` is
-  updated to 41.
+  This filter is used to update fields that already had a value in the REDCap
+  export. Currently, only `adcid` is updated to 41.
 
 * **removePtid**
 
@@ -150,6 +161,7 @@ the example above shows.
   This filter requires a section in the config called `filter_remove_ptid` with
   a single key called `ptid_format`. The value for that key is a regex string
   to match ptids that are to be kept.
+  11\d.* keeps all PTIDs that fit the format 11xxxx, such as 110001.
 
   This filter is used to remove ptids that may have a different set of ids for a
   different study, or help limit which ids show up in the final result.
@@ -165,8 +177,9 @@ the example above shows.
 
 * **getPtid**
 
-    This filter is used to get information about a single PatientID.
-    You need to use the `-ptid` flag to specify the patient ID.
+    This filter is used to get information about a single PatientID and is not
+    present in the config file. You need to use the `-ptid` flag to specify the
+    patient ID.
     You can use the `-vnum` to get the records with particular visit number and
     Patient ID or use `-vtype` to get records with particular visit type and
     Patient ID.
@@ -180,28 +193,26 @@ Example Workflow
 Once you have edited the `nacculator_cfg.ini` file with your API token and
 desired filters, you can get a filtered CSV file of the REDCap data with:
 
-    $ python3 run_filters.py nacculator_cfg.ini
+    $ nacculator_filters nacculator_cfg.ini
 
-This will create a run folder (`$run_folder`) with the current date that
-contains the csv and each iteration of filter, ending with `final_update.csv`.
-
-Next, you will need to split apart the IVP and FVP visits:
-
-    $ bash split_ivp_fvp.sh $run_folder/final_update.csv
+This will create a run folder labeled with the current date 
+(`$run_CURRENT-DATE`) that contains the csv and each iteration of filter,
+ending with `final_update.csv`.
 
 The resulting files will not be in the run folder created by `run_filters.py`.
-They will be in the base directory. You can move them if you would like to, but
-you will need to modify the filepaths in the following commands.
+They will be in the base directory. The filepaths in the following commands are
+modified so that the output is deposited in your `$run_CURRENT-DATE` folder.
 
-Next, you will need to run the actual `redcap2nacc` program to produced the
-fixed width text file for NACC. As you have split the IVP and FVP visits, you
-will run the program twice, using each flag once.
+Next, you will need to run the actual `redcap2nacc` program to produce the
+fixed width text file for NACC. One type of flag can be used at a time, so the
+program must be run twice.
 
-    $ redcap2nacc -ivp <initial_visits.csv >$run_folder/iv_nacc_complete.txt 2>$run_folder/ivp_errors.txt
-    $ redcap2nacc -fvp <followup_visits.csv >$run_folder/fv_nacc_complete.txt 2>$run_folder/fvp_errors.txt
+    $ redcap2nacc -ivp < run_(ENTER-CURRENT-DATE)/final_Update.csv > run_(ENTER-CURRENT-DATE)/iv_nacc_complete.txt 2>run_(ENTER-CURRENT-DATE)/ivp_errors.txt
+    $ redcap2nacc -fvp < run_(ENTER-CURRENT-DATE)/final_Update.csv > run_(ENTER-CURRENT-DATE)/fv_nacc_complete.txt 2>run_(ENTER-CURRENT-DATE)/fvp_errors.txt
 
-This will place the text files in the run folder created earlier, as well as a
-log of the run which will have any errors encountered.
+This will place the text files (`iv_nacc_complete.txt`) in the run folder
+created earlier, as well as a log of the run that contains any found errors
+(`ivp_errors.txt`).
 
 
 Development
@@ -234,8 +245,13 @@ This is not exhaustive, but here is an explanation of some important files.
 
 * `tools/generator.py`:
     generates Python objects based on NACC Data Element Dictionaries in CSV.
+    Used by developers to update the existing forms.py files as necessary.
 
-* `tools/preprocess/run_filters.py` and `tools/preprocess/run_filters.sh`:
+* `nacculator_cfg.ini`:
+    configuration file for the filters, built from `nacculator_cfg.ini.example`
+    in the root `nacculator/` directory.
+
+* `nacc/run_filters.py` and `tools/preprocess/run_filters.sh`:
     pulls data from REDCap based on the settings found in `nacculator_cfg.ini`
     (for .py) and `filters_config.cfg` (for .sh).
 
@@ -244,7 +260,7 @@ This is not exhaustive, but here is an explanation of some important files.
 
 To run all the tests:
 
-    $ make tests
+    $ python3 -m unittest
 
 
 To run only the tests in a file:
@@ -256,9 +272,11 @@ To run only the tests in a file:
 
 **Warning: the generator is currently broken due to changes in the CSV format.**
 
-You only need to generate forms when there are new DEDs from the NACC.
+You only need to generate forms when there are new DEDs from the NACC. The
+NACCulator install includes the current forms automatically.
 
-Before running the generator, read the warnings in the `./nacc/uds3/ivp/forms.py` first.
+Before running the generator, read the warnings in `./nacc/uds3/ivp/forms.py`
+first.
 
     $ python3 tools/generator.py tools/uds3/ded/csv/ >nacc/uds3/ivp/forms.py
     $ edit nacc/uds3/ivp/forms.py
@@ -269,4 +287,6 @@ folder, which should contain any "corrected" DEDs._
 
 ### Resources
 
-* UDS3 FVP forms: https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/
+* UDS3 forms: https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/UDS3csvded.html
+* NACC forms and documentation: https://www.alz.washington.edu/NONMEMBER/NACCFormsAndDoc.html
+* UDS submission site: https://www.alz.washington.edu/MEMBER/sitesub.htm
