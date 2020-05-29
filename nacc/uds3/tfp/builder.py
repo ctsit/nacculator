@@ -675,26 +675,29 @@ def add_z1_or_z1x(record, packet):
             setattr(z1x, key, record[value])
             z1x_filled_fields += 1
 
-    z1 = tfp_forms.FormZ1()
-    z1_filled_fields = 0
-    z1_field_mapping = {
-        'A3SUB': 'tele_a3_sub',
-        'A3NOT': 'tele_a3_not',
-        'A3COMM': 'tele_a3_comm',
-        'A4SUB': 'tele_a4_sub',
-        'A4NOT': 'tele_a4_not',
-        'A4COMM': 'tele_a4_comm',
-        'B5SUB': 'tele_b5_sub',
-        'B5NOT': 'tele_b5_not',
-        'B5COMM': 'tele_b5_comm',
-        'B7SUB': 'tele_b7_sub',
-        'B7NOT': 'tele_b7_not',
-        'B7COMM': 'tele_b7_comm'
-    }
-    for key, value in z1_field_mapping.items():
-        if record[value].strip():
-            setattr(z1, key, record[value])
-            z1_filled_fields += 1
+    try:
+        z1 = tfp_forms.FormZ1()
+        z1_filled_fields = 0
+        z1_field_mapping = {
+            'A3SUB': 'tele_a3_sub',
+            'A3NOT': 'tele_a3_not',
+            'A3COMM': 'tele_a3_comm',
+            'A4SUB': 'tele_a4_sub',
+            'A4NOT': 'tele_a4_not',
+            'A4COMM': 'tele_a4_comm',
+            'B5SUB': 'tele_b5_sub',
+            'B5NOT': 'tele_b5_not',
+            'B5COMM': 'tele_b5_comm',
+            'B7SUB': 'tele_b7_sub',
+            'B7NOT': 'tele_b7_not',
+            'B7COMM': 'tele_b7_comm'
+        }
+        for key, value in z1_field_mapping.items():
+            if record[value].strip():
+                setattr(z1, key, record[value])
+                z1_filled_fields += 1
+    except KeyError:
+        z1_filled_fields = 0
 
     # Prefer Z1X to Z1
     # If both are blank, use date (Z1X after 2018/04/02)
@@ -707,7 +710,7 @@ def add_z1_or_z1x(record, packet):
           and int(record['visitmo']) == 4 and int(record['visitday']) >= 2):
         packet.insert(0, z1x)
     else:
-        packet.insert(0, z1)
+        pass
 
 
 def update_header(record, packet):
