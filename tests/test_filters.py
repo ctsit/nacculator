@@ -345,7 +345,9 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
             results.seek(0)
             reader = csv.reader(results)
             actual = next(reader)
-        expected = ['PTID', 'redcap_event_name', 'formver', 'ADCid', 'VisitMo', 'visitday', 'visityr', 'visitnum', 'Initials', 'header_complete']
+        expected = ['PTID', 'redcap_event_name', 'formver', 'ADCid', 'VisitMo',
+                    'visitday', 'visityr', 'visitnum', 'Initials',
+                    'header_complete']
         self.assertListEqual(actual, expected)
 
     def test_filter_replace_drug_id(self):

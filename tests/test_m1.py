@@ -11,7 +11,8 @@ class TestM1(unittest.TestCase):
     def test_m1_death_date_accept(self):
         """ death date format interpreter accept correct dates """
         date = ['12/12/2012', '12-12-2012', '2012/12/12', '2012-12-12']
-        date_parsed = ['12', '12', '2012', '12', '12', '2012', '12', '12', '2012', '12', '12', '2012']
+        date_parsed = ['12', '12', '2012', '12', '12', '2012', '12', '12',
+                       '2012', '12', '12', '2012']
         record = make_blank_m()
         out = []
         for x in date:
@@ -19,13 +20,15 @@ class TestM1(unittest.TestCase):
             record['DEATHMO'] = m_builder.parse_date(x, 'M')
             record['DEATHDY'] = m_builder.parse_date(x, 'D')
             record['DEATHYR'] = m_builder.parse_date(x, 'Y')
-            out += [str(record['DEATHMO']), str(record['DEATHDY']), str(record['DEATHYR'])]
+            out += [str(record['DEATHMO']), str(record['DEATHDY']),
+                    str(record['DEATHYR'])]
         self.assertEqual(date_parsed, out)
 
     def test_m1_death_date_reject(self):
         """ death date format interpreter rejects wrong dates """
         date = ['12/12/2012', '12-1212', '12/2012/12', '2012-12-12']
-        date_parsed = ['12', '12', '2012', '12', '12', '2012', '12', '12', '2012', '12', '12', '2012']
+        date_parsed = ['12', '12', '2012', '12', '12', '2012', '12', '12',
+                       '2012', '12', '12', '2012']
         record = make_blank_m()
         out = []
         with self.assertRaises(ValueError):
@@ -34,7 +37,8 @@ class TestM1(unittest.TestCase):
                 record['DEATHMO'] = m_builder.parse_date(x, 'M')
                 record['DEATHDY'] = m_builder.parse_date(x, 'D')
                 record['DEATHYR'] = m_builder.parse_date(x, 'Y')
-                out += [str(record['DEATHMO']), str(record['DEATHDY']), str(record['DEATHYR'])]
+                out += [str(record['DEATHMO']), str(record['DEATHDY']),
+                        str(record['DEATHYR'])]
         self.assertNotEqual(date_parsed, out)
 
     @unittest.skip("'0' is outside of the inclusive_range for 'FTLDREAS', 'FTLDREAX' should be left blank if FTLDREAS is filled regardless of 'DECEASED' or 'DISCONT' status")
@@ -139,6 +143,7 @@ def make_blank_m():
         'DISCYR': '',
         'DROPREAS': '',
     }
+
 
 def make_filled_m():
     # default dead

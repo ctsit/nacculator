@@ -2,7 +2,6 @@ import sys
 import csv
 import re
 
-import fileinput
 import configparser
 
 from collections import defaultdict
@@ -77,11 +76,15 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
         if redcap_packet['visitnum']:
             rc_visit_num = int_or_string(redcap_packet['visitnum'], -1)
         else:
-            print('Eliminated ptid : ' + rc_ptid + " Event Name : " + redcap_packet['redcap_event_name'] + " MISSING VISIT NUM", file=sys.stderr)
+            print('Eliminated ptid : ' + rc_ptid + " Event Name : " +
+                  redcap_packet['redcap_event_name'] + " MISSING VISIT NUM",
+                  file=sys.stderr)
             continue
         if rc_ptid in completed_subjs:
             if rc_visit_num in completed_subjs[rc_ptid]:
-                print('Eliminated ptid : ' + rc_ptid + " Event Name : " + redcap_packet['redcap_event_name'] + " IN CURRENT", file=sys.stderr)
+                print('Eliminated ptid : ' + rc_ptid + " Event Name : " +
+                      redcap_packet['redcap_event_name'] + " IN CURRENT",
+                      file=sys.stderr)
                 continue
         output.writerow(redcap_packet)
     return output
@@ -120,8 +123,10 @@ def filter_replace_drug_id_do(input_ptr, output_ptr):
                         record[col_name] = 'd' + col_value[1:]
                         count += 1
         output.writerow(record)
-        print('Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) + ' fields.', file=sys.stderr)
+        print('Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) +
+              ' fields.', file=sys.stderr)
     return
+
 
 @validate
 def filter_fix_headers(input_file, header_mapping, output_file):
@@ -191,10 +196,12 @@ def filter_eliminate_empty_date_do(input_ptr, output_ptr):
 
 
 def _invalid_date(record):
-    return (record['visitmo'] == '' or record['visitday'] == '' or record['visityr'] == '')
+    return (record['visitmo'] == '' or record['visitday'] == '' or
+            record['visityr'] == '')
 
 
-def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defaultCheck=False):
+def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False,
+                         defaultCheck=False):
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -209,7 +216,8 @@ def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False, defa
                     record[col_name] = keysDict[col_name]
                     count += 1
         output.writerow(record)
-        print('Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) + ' fields.', file=sys.stderr)
+        print('Processed ptid : ' + record['ptid'] + ' Updated ' + str(count) +
+              ' fields.', file=sys.stderr)
     return
 
 
@@ -242,6 +250,7 @@ def filter_fix_visitdate_do(input_ptr, output_ptr):
         print('Processed ptid : ' + record['ptid'], file=sys.stderr)
         output.writerow(record)
     return
+
 
 @validate
 def filter_fill_default(input_ptr, filter_meta, output_ptr):

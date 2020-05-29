@@ -57,10 +57,9 @@ the `-file` flag._
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
                               Set this flag to process the filter
       -lbd                  Set this flag to process as Lewy Body Dementia data
-      -ftld                 Set this flag to process as Frontotemporal Lobar                                     Degeneration data
+      -ftld                 Set this flag to process as Frontotemporal Lobar Degeneration data
       -file FILE            Path of the csv file to be processed.
-      -meta FILTER_META     Input file for the filter metadata (in case -filter is
-                              used)
+      -meta FILTER_META     Input file for the filter metadata (in case -filter is used)
       -ptid PTID            Ptid for which you need the records
       -vnum VNUM            Ptid for which you need the records
       -vtype VTYPE          Ptid for which you need the records
@@ -103,7 +102,8 @@ the example above shows.
   This filter requires a section in the config called `filter_clean_ptid`. This
   section will contain a single key `filepath` which will point to a csv file
   of ptids to be removed. All the records whose ptid with same packet and visit
-  num found in the passed meta file will be discarded in the output file.
+  num found in the passed meta file will be discarded in the output file. This
+  filter also removes events that lack a visit number in REDCap.
 
   Example meta file:
 
@@ -153,7 +153,7 @@ the example above shows.
 * **updateField**
 
   This filter is used to update fields that already had a value in the REDCap
-  export. Currently, only `adcid` is updated to 41.
+  export. Currently, only `adcid` is updated.
 
 * **removePtid**
 
@@ -163,8 +163,8 @@ the example above shows.
   to match ptids that are to be kept.
   11\d.* keeps all PTIDs that fit the format 11xxxx, such as 110001.
 
-  This filter is used to remove ptids that may have a different set of ids for a
-  different study, or help limit which ids show up in the final result.
+  This filter is used to remove ptids that may have a different set of ids for
+  a different study, or help limit which ids show up in the final result.
 
       config:
       ptid_format: 11\d.*
@@ -196,8 +196,8 @@ desired filters, you can get a filtered CSV file of the REDCap data with:
     $ nacculator_filters nacculator_cfg.ini
 
 This will create a run folder labeled with the current date 
-(`$run_CURRENT-DATE`) that contains the csv and each iteration of filter,
-ending with `final_update.csv`.
+(`$run_CURRENT-DATE`) (for example, `run_01-01-2000`) that contains the csv and
+each iteration of filter, ending with `final_update.csv`.
 
 The resulting files will not be in the run folder created by `run_filters.py`.
 They will be in the base directory. The filepaths in the following commands are
@@ -207,8 +207,8 @@ Next, you will need to run the actual `redcap2nacc` program to produce the
 fixed width text file for NACC. One type of flag can be used at a time, so the
 program must be run twice.
 
-    $ redcap2nacc -ivp < run_(ENTER-CURRENT-DATE)/final_Update.csv > run_(ENTER-CURRENT-DATE)/iv_nacc_complete.txt 2>run_(ENTER-CURRENT-DATE)/ivp_errors.txt
-    $ redcap2nacc -fvp < run_(ENTER-CURRENT-DATE)/final_Update.csv > run_(ENTER-CURRENT-DATE)/fv_nacc_complete.txt 2>run_(ENTER-CURRENT-DATE)/fvp_errors.txt
+    $ redcap2nacc -ivp < $run_CURRENT-DATE/final_Update.csv > $run_CURRENT-DATE/iv_nacc_complete.txt 2> $run_CURRENT-DATE/ivp_errors.txt
+    $ redcap2nacc -fvp < $run_CURRENT-DATE/final_Update.csv > $run_CURRENT-DATE/fv_nacc_complete.txt 2> $run_CURRENT-DATE/fvp_errors.txt
 
 This will place the text files (`iv_nacc_complete.txt`) in the run folder
 created earlier, as well as a log of the run that contains any found errors
@@ -272,7 +272,7 @@ To run only the tests in a file:
 
 **Warning: the generator is currently broken due to changes in the CSV format.**
 
-You only need to generate forms when there are new DEDs from the NACC. The
+You only need to generate forms when there are new DEDs from NACC. The
 NACCulator install includes the current forms automatically.
 
 Before running the generator, read the warnings in `./nacc/uds3/ivp/forms.py`

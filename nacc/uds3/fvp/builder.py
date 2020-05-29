@@ -4,12 +4,14 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
+import sys
+
 from nacc.uds3.fvp import forms as fvp_forms
 from nacc.uds3 import clsform
 from nacc.uds3 import packet as fvp_packet
 
 
-def build_uds3_fvp_form(record):
+def build_uds3_fvp_form(record, err=sys.stderr):
     """ Converts REDCap CSV data into a packet (list of FVP Form objects) """
     packet = fvp_packet.Packet()
 
@@ -49,7 +51,8 @@ def build_uds3_fvp_form(record):
         if record['fu_b7_sub'] == '1':
             add_b7(record, packet)
     else:
-        print("ptid " + str(record['ptid']) + ": No Z1X or Z1 form found.", file=err)
+        print("ptid " + str(record['ptid']) +
+              ": No Z1X or Z1 form found.", file=err)
         add_b4(record, packet)
 
     add_b8(record, packet)

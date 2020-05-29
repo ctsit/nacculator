@@ -69,7 +69,10 @@ class TestCLS(unittest.TestCase):
         ftrap.close()
 
     def test_cls_proficiency_not_100_has_warning(self):
-        """If language proficiency percentages do not add to 100, create a warning."""
+        """
+        If language proficiency percentages do not add to 100,
+        create a warning.
+        """
         record = make_filled_record()
         record['eng_percentage_english'] = '20'
         record['eng_percentage_spanish'] = '91'
@@ -82,7 +85,7 @@ class TestCLS(unittest.TestCase):
 
         fpacket = packet.Packet()
         ftrap = StringIO()
-        clsform.add_cls(record, ipacket, ivp_forms, ftrap)
+        clsform.add_cls(record, fpacket, fvp_forms, ftrap)
         assert ftrap.getvalue() == "[WARNING] language proficiency percentages do not equal 100 for PTID : unknown\n"
         ftrap.close()
 
@@ -102,7 +105,7 @@ class TestCLS(unittest.TestCase):
             clsform.add_cls(record, fpacket, fvp_forms)
 
     def test_cls_form_marked_complete(self):
-        """If the completed CLS form is not marked complete, raise."""
+        """ If the completed CLS form is not marked complete, raise. """
         record = make_filled_record()
         record['form_cls_linguistic_history_of_subject_complete'] = '0 or 1'
 

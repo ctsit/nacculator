@@ -8,7 +8,9 @@ from nacc.uds3.fvp import builder as fvp_builder
 class TestC1SC2(unittest.TestCase):
 
     def test_c1s_added_to_ivp_when_filled(self):
-        """ If header is from before October 23, 2017, the C1S form should be added """
+        """
+        If header is from before October 23, 2017, the C1S form should be added
+        """
         record = make_blank_ivp()
         record['visityr'] = '2016'
         record['c1s_1a_mmseloc'] = '1'
@@ -19,7 +21,9 @@ class TestC1SC2(unittest.TestCase):
         self.assertEqual(ipacket['MMSELOC'], '1')
 
     def test_c2_added_to_ivp_when_filled(self):
-        """ If header is from after October 23, 2017, the C2 form should be added """
+        """
+        If header is from after October 23, 2017, the C2 form should be added
+        """
         record = make_blank_ivp()
         record['visityr'] = '2018'
         record['mocacomp'] = '1'
@@ -30,7 +34,9 @@ class TestC1SC2(unittest.TestCase):
         self.assertEqual(ipacket['MOCACOMP'], '1')
 
     def test_c1s_added_to_fvp_when_filled(self):
-        """ If header is from before October 23, 2017, the C1S form should be added """
+        """
+        If header is from before October 23, 2017, the C1S form should be added
+        """
         record = make_blank_fvp()
         record['visityr'] = '2016'
         record['fu_mmsecomp'] = '1'
@@ -41,7 +47,9 @@ class TestC1SC2(unittest.TestCase):
         self.assertEqual(fpacket['MMSECOMP'], '1')
 
     def test_c2_added_to_fvp_when_filled(self):
-        """ If header is from after October 23, 2017, the C2 form should be added """
+        """
+        If header is from after October 23, 2017, the C2 form should be added
+        """
         record = make_blank_fvp()
         record['visityr'] = '2018'
         record['fu_mocacomp'] = '1'

@@ -4,12 +4,14 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
+import sys
+
 from nacc.uds3 import clsform
 from nacc.uds3 import packet as ivp_packet
 from nacc.uds3.ivp import forms as ivp_forms
 
 
-def build_uds3_ivp_form(record):
+def build_uds3_ivp_form(record, err=sys.stderr):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
     packet = ivp_packet.Packet()
 
@@ -51,7 +53,8 @@ def build_uds3_ivp_form(record):
         if record['b7_sub'] == '1':
             add_b7(record, packet)
     else:
-        print("ptid " + str(record['ptid']) + ": No Z1X or Z1 form found.", file=err)
+        print("ptid " + str(record['ptid']) +
+              ": No Z1X or Z1 form found.", file=err)
         add_a5(record, packet)
         add_b4(record, packet)
 
@@ -129,7 +132,8 @@ def add_z1_or_z1x(record, packet):
         except KeyError:
             pass
 
-    # Check if Z1 form is present in REDCap project. If it is not present, do not map the fields and simply mark z1_filled_fields as 0.
+    # Check if Z1 form is present in REDCap project. If it is not present,
+    # do not map the fields and simply mark z1_filled_fields as 0.
     try:
         z1 = ivp_forms.FormZ1()
         z1_filled_fields = 0

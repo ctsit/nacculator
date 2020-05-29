@@ -1,9 +1,7 @@
 import os
 import sys
 import csv
-import json
 import datetime
-import time
 import nacc
 import configparser
 from cappy import API

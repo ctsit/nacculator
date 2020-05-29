@@ -24,9 +24,9 @@ def build_uds3_m_form(record):
     m.REREFUSE = record['m1_2b___3']
     m.RENAVAIL = record['m1_2b___4']
     m.RENURSE  = record['m1_2b___5']
-    m.NURSEMO  = parse_date(record['m1_2b1'],'M')
-    m.NURSEDY  = parse_date(record['m1_2b1'],'D')
-    m.NURSEYR  = parse_date(record['m1_2b1'],'Y')
+    m.NURSEMO  = parse_date(record['m1_2b1'], 'M')
+    m.NURSEDY  = parse_date(record['m1_2b1'], 'D')
+    m.NURSEYR  = parse_date(record['m1_2b1'], 'Y')
     m.REJOIN   = record['m1_2b___6']
     m.FTLDDISC = record['m1_3']
     m.FTLDREAS = record['m1_3a']
@@ -55,14 +55,14 @@ def update_header(record, packet):
         header.FORMVER = 3
         header.ADCID = 41  # record['ABCID']
         header.PTID = record['ptid']
-        header.VISITMO =  parse_date(record['m1_form_date'], 'M')
+        header.VISITMO  = parse_date(record['m1_form_date'], 'M')
         header.VISITDAY = parse_date(record['m1_form_date'], 'D')
-        header.VISITYR =  parse_date(record['m1_form_date'], 'Y')
+        header.VISITYR  = parse_date(record['m1_form_date'], 'Y')
         header.INITIALS = ''  # record['INITIALS'] Note not in RedCap
 
 
 # parse
-def parse_date(date,DMY_choice):   
+def parse_date(date, DMY_choice):
     ymd = re.compile('\d\d\d\d[-\/]\d\d[-\/]\d\d')
     mdy = re.compile('\d\d[-\/]\d\d[-\/]\d\d\d\d')
     dub = re.compile('\d\d')
