@@ -709,8 +709,6 @@ def add_z1_or_z1x(record, packet):
           and int(record['visitmo']) > 4) or (int(record['visityr']) == 2018
           and int(record['visitmo']) == 4 and int(record['visitday']) >= 2):
         packet.insert(0, z1x)
-    else:
-        pass
 
 
 def update_header(record, packet):
