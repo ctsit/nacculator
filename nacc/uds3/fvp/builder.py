@@ -18,7 +18,7 @@ def build_uds3_fvp_form(record, err=sys.stderr):
     # Set up the forms
     add_z1_or_z1x(record, packet)
     add_a1(record, packet)
-    if record['ivp_z1x_complete'] is not None:
+    if record['fvp_z1x_complete'] in ['1', '2']:
         if record['fu_a2sub'] == '1':
             add_a2(record, packet)
         if record['fu_a3sub'] == '1':
@@ -34,7 +34,7 @@ def build_uds3_fvp_form(record, err=sys.stderr):
             add_b6(record, packet)
         if record['fu_b7sub'] == '1':
             add_b7(record, packet)
-    elif record['fvp_z1_complete'] is not None:
+    elif record['fvp_z1_complete'] in ['1', '2']:
         if record['fu_a2_sub'] == '1':
             add_a2(record, packet)
         if record['fu_a3_sub'] == '1':
