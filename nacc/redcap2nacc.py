@@ -275,7 +275,7 @@ def set_blanks_to_zero(packet):
         set_to_zero_if_blank(
             'PSPCBS', 'EYEPSP', 'DYSPSP', 'AXIALPSP', 'GAITPSP', 'APRAXSP',
             'APRAXL', 'APRAXR', 'CORTSENL', 'CORTSENR', 'ATAXL', 'ATAXR',
-            'ALIENLML', 'ALIENLMR', 'DYSTONL', 'DYSTONR')
+            'ALIENLML', 'ALIENLMR', 'DYSTONL', 'DYSTONR', 'MYOCLLT', 'MYOCLRT')
 
     # D1 4.
     if packet['DEMENTED'] == 1:

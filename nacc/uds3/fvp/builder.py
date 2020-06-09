@@ -645,6 +645,8 @@ def add_b8(record, packet):
     b8.ALIENLMR  = record['fu_alienlmr']
     b8.DYSTONL   = record['fu_dystonl']
     b8.DYSTONR   = record['fu_dystonr']
+    b8.MYOCLLT   = record['fu_myocllt']
+    b8.MYOCLRT   = record['fu_myoclrt']
     b8.ALSFIND   = record['fu_alsfind']
     b8.GAITNPH   = record['fu_gaitnph']
     b8.OTHNEUR   = record['fu_othneur']
