@@ -4,7 +4,9 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-"""Copyright 2015-2019 University of Florida
+"""Generates Python code that represent NACC Forms
+
+Copyright 2015-2019 University of Florida
 
 Usage: python3 tools/generator.py -h|--help
        python3 tools/generator.py <deds>
@@ -20,9 +22,8 @@ as CSV files.
   corrections  Path to the directory containing manually corrected DED CSVs
                If unspecified, checking for corrected CSVs is skipped.
 
-Note: the CSV versions of the DEDs are found on the NACC website with the form.
-For example, UDS3 FVP Form A1 is at:
-    https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/uds3dedA1FVP.csv
+Note: the CSV versions of the DEDs are found on the NACC website with the form:
+    https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/UDS3csvded.html
 """
 
 import csv
@@ -60,16 +61,20 @@ class MethodField(str):
 def fields_to_strings(fields, this="self.") -> typing.Iterable[str]:
     """ Returns fields as a Python variable declaration """
     for field in fields:
+        inclusive_range = field.inclusive_range
+        if inclusive_range:
+            inclusive_range = f"({inclusive_range[0]}, {inclusive_range[1]})"
+
         code = (
             '{qualifier}fields["{field.name}"] = nacc.uds3.Field('
             'name="{field.name}", '
             'typename="{field.type}", '
             'position={field.position}, '
             'length={field.length}, '
-            'inclusive_range={field.inclusive_range}, '
+            'inclusive_range={inclusive_range}, '
             'allowable_values={field.allowable_codes}, '
             'blanks={field.blanks})'
-        ).format(qualifier=this, field=field)
+        ).format(qualifier=this, field=field, inclusive_range=inclusive_range)
         yield code
 
 
@@ -83,50 +88,108 @@ class Form{form.id}(nacc.uds3.FieldBag):
     """.strip()
 
 
-def generate(ded: str, encoding: str = "utf-8"):
+def generate(ded: str, encoding: str = "utf-8") -> DynamicObject:
     """ Generates Python code representing each NACC Form as a class """
 
     try:
         with open(ded, encoding=encoding) as stream:
             reader = csv.DictReader(stream)
-            form = DynamicObject()
-            form.fields = []
-
-            for record in reader:
-                form.packet = record["Packet"]
-                form.id = record["Form ID"]
-
-                field = DynamicObject()
-                field.name = MethodField(record["Data Element"])
-                field.order = record["Data Order"]
-                field.type = record["Data Type"]
-                field.length = record["Data Length"]
-                field.position = \
-                    (int(record["Column 1"]), int(record["Column 2"]))
-                if record["RANGE1"] not in ("", "."):
-                    field.inclusive_range = \
-                        (int(record["RANGE1"]), int(record["RANGE2"]))
-                else:
-                    field.inclusive_range = None
-
-                field.allowable_codes = []
-                for key, code in record.items():
-                    if not code or code == ".":
-                        continue
-                    if not re.match(r"^VAL\d\d?$", str(key)):
-                        continue
-                    field.allowable_codes.append(code)
-
-                form.fields.append(field)
-                field.blanks = [record[f] for f in reader.fieldnames
-                                if "BLANKS" in f and record[f]]
-
-            form.fields.sort(key=lambda f: f.order)
+            match = re.match(r"ded[IFT](\w\w\w?).csv", os.path.basename(ded))
+            if not match:
+                raise Exception("Cannot determine Form from filename: " + ded)
+            form_id = match[1]
+            form = generate_form(form_id, reader)
 
     except UnicodeDecodeError as err:
         if encoding != "windows-1252":
             return generate(ded, "windows-1252")
         raise err
+
+    return form
+
+
+def generate_form(form_id: str, reader: csv.DictReader) -> DynamicObject:
+    form = DynamicObject()
+    form.fields = []
+
+    for record in reader:
+        form.packet = record["PACKET"]
+        form.id = form_id
+
+        field = DynamicObject()
+        field.name = MethodField(record["VAR"])
+        field.order = record["DORDER"]
+
+        # TODO: Ask NACC about DTYPE. PDFs say "Num" or "Char"
+        field.type = "Num"
+        if record["DTYPE"] == "3":
+            field.type = "Char"
+        field.length = record["FLDLENG"]
+        field.position = \
+            (int(record["COLUMN1"]), int(record["COLUMN2"]))
+
+        field.inclusive_range = None
+        if record["RANGE"]:
+            (start, end) = record["RANGE"].split("||")
+            start = start.replace("current year", "CURRENT_YEAR")
+            start = start.replace(" minus ", " - ")
+            end = end.replace("current year", "CURRENT_YEAR")
+            end = end.replace(" minus ", " - ")
+
+            field.inclusive_range = (start, end)
+
+        field.allowable_codes = []
+        for code in record["VALUES"].split("||"):
+            field.allowable_codes.append(code)
+
+        # TODO: handle acceptable MISSING values
+
+        form.fields.append(field)
+        field.blanks = [record[f] for f in reader.fieldnames
+                        if "BLANKS" in f and record[f]]
+
+    form.fields.sort(key=lambda f: f.order)
+    return form
+
+
+def generate_header(path: str) -> DynamicObject:
+    with open(path) as stream:
+        reader = csv.DictReader(stream)
+        form = DynamicObject()
+        form.fields = []
+
+        for record in reader:
+            form.packet = record["Packet"]
+            form.id = record["Form ID"]
+
+            field = DynamicObject()
+            field.name = MethodField(record["Data Element"])
+            field.order = record["Data Order"]
+            field.type = record["Data Type"]
+            field.length = record["Data Length"]
+            field.position = \
+                (int(record["Column 1"]), int(record["Column 2"]))
+            if record["RANGE1"] not in ("", "."):
+                (start, end) = (record["RANGE1"], record["RANGE2"])
+                if end == "2014":
+                    end = "CURRENT_YEAR"
+                field.inclusive_range = (start, end)
+            else:
+                field.inclusive_range = None
+
+            field.allowable_codes = []
+            for key, code in record.items():
+                if not code or code == ".":
+                    continue
+                if not re.match(r"^VAL\d\d?$", str(key)):
+                    continue
+                    field.allowable_codes.append(code)
+
+            form.fields.append(field)
+            field.blanks = [record[f] for f in reader.fieldnames
+                            if "BLANKS" in f and record[f]]
+
+        form.fields.sort(key=lambda f: f.order)
 
     return form
 
@@ -167,17 +230,23 @@ def main():
     # Search deds_path for CSV files, excluding the ded_header.
     deds = [filename for filename in os.listdir(deds_path)
             if filename.endswith(".csv") and filename != ded_header]
+    deds = sorted(deds)
 
     # Generate the Python module starting with the preamble, then the common
     # header fields, and finally the classes which represents the Forms.
     print("""# Generated using the NACCulator form generator tool.
+from datetime import date
+
 import nacc.uds3
+
+
+CURRENT_YEAR = date.today().year
 
 
 def header_fields():
     fields = {}""")
 
-    header = generate(os.path.join(deds_path, ded_header))
+    header = generate_header(os.path.join(deds_path, ded_header))
     fields = sort_by_starting_position(header.fields)
     fields = fields_to_strings(fields, this="")
     for field in fields:
