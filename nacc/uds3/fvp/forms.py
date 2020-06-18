@@ -593,7 +593,7 @@ class FormC1S(nacc.uds3.FieldBag):
         self.fields['LOGIMO'] = nacc.uds3.Field(name='LOGIMO', typename='Num', position=(196, 197), length=2, inclusive_range=(0, 12), allowable_values=['88'], blanks=[])
         self.fields['LOGIDAY'] = nacc.uds3.Field(name='LOGIDAY', typename='Num', position=(199, 200), length=2, inclusive_range=(1, 31), allowable_values=['88'], blanks=[])
         self.fields['LOGIYR'] = nacc.uds3.Field(name='LOGIYR', typename='Num', position=(202, 205), length=4, inclusive_range=(2005, CURRENT_YEAR), allowable_values=['8888'], blanks=[])
-        self.fields['LOGIPREV'] = nacc.uds3.Field(name='LOGIPREV', typename='Num', position=(207, 208), length=2, inclusive_range=(0, 25), allowable_values=['88'], blanks=[])
+        self.fields['LOGIPREV'] = nacc.uds3.Field(name='LOGIPREV', typename='Num', position=(207, 208), length=2, inclusive_range=(0, 25), allowable_values=['88', '99'], blanks=[])
         self.fields['LOGIMEM'] = nacc.uds3.Field(name='LOGIMEM', typename='Num', position=(210, 211), length=2, inclusive_range=(0, 25), allowable_values=['96', '95', '98', '97'], blanks=[])
         self.fields['UDSBENTC'] = nacc.uds3.Field(name='UDSBENTC', typename='Num', position=(213, 214), length=2, inclusive_range=(0, 17), allowable_values=['96', '95', '98', '97'], blanks=[])
         self.fields['DIGIF'] = nacc.uds3.Field(name='DIGIF', typename='Num', position=(216, 217), length=2, inclusive_range=(0, 12), allowable_values=['96', '95', '98', '97'], blanks=[])
