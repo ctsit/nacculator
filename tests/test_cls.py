@@ -52,9 +52,9 @@ class TestCLS(unittest.TestCase):
         self.assertEqual(len(fpacket), 1, "Expected packet to have CLS")
 
     def test_partial_cls_has_warning(self):
-        """Partially completed CLS should create a warning."""    
-        record = make_filled_record()   
-        record['eng_preferred_language'] = ' '  # Make form partially complete. 
+        """Partially completed CLS should create a warning."""
+        record = make_filled_record()
+        record['eng_preferred_language'] = ' '  # Make form partially complete.
 
         ipacket = packet.Packet()
         itrap = StringIO()
@@ -68,11 +68,14 @@ class TestCLS(unittest.TestCase):
         assert ftrap.getvalue() == "[WARNING] CLS form is incomplete for PTID: unknown\n"
         ftrap.close()
 
-    def test_cls_proficiency_not_100_has_warning(self):    
-        """If language proficiency percentages do not add to 100, create a warning.""" 
-        record = make_filled_record()   
-        record['eng_percentage_english'] = '20' 
-        record['eng_percentage_spanish'] = '91'   
+    def test_cls_proficiency_not_100_has_warning(self):
+        """
+        If language proficiency percentages do not add to 100,
+        create a warning.
+        """
+        record = make_filled_record()
+        record['eng_percentage_english'] = '20'
+        record['eng_percentage_spanish'] = '91'
 
         ipacket = packet.Packet()
         itrap = StringIO()
@@ -82,7 +85,7 @@ class TestCLS(unittest.TestCase):
 
         fpacket = packet.Packet()
         ftrap = StringIO()
-        clsform.add_cls(record, ipacket, ivp_forms, ftrap)
+        clsform.add_cls(record, fpacket, fvp_forms, ftrap)
         assert ftrap.getvalue() == "[WARNING] language proficiency percentages do not equal 100 for PTID : unknown\n"
         ftrap.close()
 
@@ -102,7 +105,7 @@ class TestCLS(unittest.TestCase):
             clsform.add_cls(record, fpacket, fvp_forms)
 
     def test_cls_form_marked_complete(self):
-        """If the completed CLS form is not marked complete, raise."""
+        """ If the completed CLS form is not marked complete, raise. """
         record = make_filled_record()
         record['form_cls_linguistic_history_of_subject_complete'] = '0 or 1'
 
@@ -113,6 +116,7 @@ class TestCLS(unittest.TestCase):
         fpacket = packet.Packet()
         with self.assertRaises(Exception):
             clsform.add_cls(record, fpacket, fvp_forms)
+
 
 def make_blank_record():
     return {

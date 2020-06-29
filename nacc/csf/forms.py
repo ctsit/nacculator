@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2019 University of Florida. All rights reserved.
+# Copyright 2015-2020 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -32,7 +32,7 @@ def header_fields():
 
 
 class FormEE2(nacc.uds3.FieldBag):
-    """ 
+    """
     Generated from Form eE2: https://www.alz.washington.edu/WEB/csfded.pdf
     """
     def __init__(self):

@@ -63,7 +63,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         actual = []
         with io.StringIO(redcap_data) as data, \
                 io.StringIO("") as results:
-            filters.filter_eliminate_empty_date(data, '', results)
+            filters.filter_eliminate_empty_date_do(data, results)
 
             results.seek(0)
             reader = csv.DictReader(results)
@@ -120,7 +120,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         actual = []
         with io.StringIO(redcap_data) as data, \
                 io.StringIO("") as results:
-            filters.filter_fix_visitdate(data, '', results)
+            filters.filter_fix_visitdate_do(data, results)
 
             results.seek(0)
             reader = csv.DictReader(results)
@@ -327,10 +327,10 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
 '''.strip()
 
         fix_header_dict = {
-            'ptid' : 'PTID',
-            'visitmo' : 'VisitMo',
-            'adcid' : 'ADCid',
-            'initials' : 'Initials'
+            'ptid': 'PTID',
+            'visitmo': 'VisitMo',
+            'adcid': 'ADCid',
+            'initials': 'Initials'
         }
 
         actual = []
@@ -345,12 +345,15 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
             results.seek(0)
             reader = csv.reader(results)
             actual = next(reader)
-        expected = ['PTID','redcap_event_name','formver','ADCid','VisitMo','visitday','visityr','visitnum','Initials','header_complete']
+        expected = ['PTID', 'redcap_event_name', 'formver', 'ADCid', 'VisitMo',
+                    'visitday', 'visityr', 'visitnum', 'Initials',
+                    'header_complete']
         self.assertListEqual(actual, expected)
 
     def test_filter_replace_drug_id(self):
         '''
-        `test_filter_replace_drug_id` should replace drug id in the record, and print the processed ptid and number of updated fields.
+        `test_filter_replace_drug_id` should replace drug id in the record,
+        and print the processed ptid and number of updated fields.
         '''
 
         redcap_data = '''
@@ -366,7 +369,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         with io.StringIO(redcap_data) as data, \
                 io.StringIO("") as results:
 
-            filters.filter_replace_drug_id(data,'', results)
+            filters.filter_replace_drug_id_do(data, results)
 
             # Reset the file position indicator so DictReader reads from the
             # beginning of the results "file".
@@ -380,3 +383,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         self.assertListEqual(filter_out_1, expected_1)
         expected_2 = ['d11111', 'd22222', 'd22222', '']
         self.assertListEqual(filter_out_2, expected_2)
+
+
+if __name__ == "__main__":
+    unittest.main()
