@@ -1,6 +1,35 @@
 Changelog
 =========
 
+## [1.3.0] - 2020-06-30
+### Summary
+
+This versioin reflects changes to have NACCulator be more compatiable with more centers. We removed some hard coded variables for the 1Florida ADRC. 
+There were changes to how the deprecated Z1 and C1S forms are handled as well as updates to tests for new functionality in the program. 
+
+### Added 
+ * Added Z1 skipping to TFP builder (Samantha Emerson)
+ * Added tests for new functionality on skip logic and CSV formats (Samantha Emerson)
+ * Add run_filters.py to setup.py installation (Samantha Emerson)
+ * Add C1S form skip to uds ivp and fvp builders (Samantha Emerson)
+ * Add Z1 form skipping to uds3 fvp (Samantha Emerson)
+ * Add Z1 form skipping to nacculator uds3 ivp (Samantha Emerson)
+
+ ### Changed
+ * Complete filter adjustments and repair associated unit tests (Samantha Emerson)
+
+ ### Removed
+ * Remove filter that removes all events that are not uds3 initial or followup (Samantha Emerson)
+
+ ### Updated
+ * Update and revise README (Samantha Emerson)
+ * Fix typos in IVP and FVP builder files
+ * Modify form C1S allowable_values for LOGIPREV (Samantha Emerson)
+ * Edit filters to accept any AD center's PTID from their config file (Samantha Emerson)
+ * Update README.md (Taeber Rapczak)
+ * Move Generating Forms to minimize confusion (Taeber Rapczak)
+ * Update generator to handle new CSV DED format (Taeber Rapczak)
+
 ## [1.2.0] - 2020-04-13
 ### Summary
 
