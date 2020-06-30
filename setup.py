@@ -6,7 +6,7 @@
 
 from setuptools import setup, find_packages
 
-VERSION="1.2.0"
+VERSION = "1.2.0"
 
 setup(
     name="nacculator",
@@ -21,12 +21,13 @@ setup(
     keywords=["REDCap", "NACC", "UDS", "Clinical data"],
     download_url="https://github.com/ctsit/nacculator/releases/tag/" + VERSION,
 
-    package_dir = {'nacc': 'nacc'},
-    packages = find_packages(),
+    package_dir={'nacc': 'nacc'},
+    packages=find_packages(),
 
     entry_points={
         "console_scripts": [
-            "redcap2nacc = nacc.redcap2nacc:main"
+            "redcap2nacc = nacc.redcap2nacc:main",
+            "nacculator_filters = nacc.run_filters:main"
         ]
     },
 

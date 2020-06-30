@@ -131,17 +131,17 @@ def check_for_bad_characters(field: Field) -> typing.List:
 
         incompatible = []
         if quote:
-            quote = "'"
-            incompatible.append(quote + " (%s)" % num_quote)
+            quote_char = "'"
+            incompatible.append(quote_char + " (%s)" % num_quote)
         if dquote:
-            dquote = '"'
-            incompatible.append(dquote + " (%s)" % num_dquote)
+            dquote_char = '"'
+            incompatible.append(dquote_char + " (%s)" % num_dquote)
         if amp:
-            amp = '&'
-            incompatible.append(amp + " (%s)" % num_amp)
+            amp_char = '&'
+            incompatible.append(amp_char + " (%s)" % num_amp)
         if percent:
-            percent = '%'
-            incompatible.append(percent + " (%s)" % num_percent)
+            percent_char = '%'
+            incompatible.append(percent_char + " (%s)" % num_percent)
 
     return incompatible
 
@@ -174,13 +174,19 @@ def check_redcap_event(options, record) -> bool:
             return False
     elif options.ivp:
         event_name = 'initial_visit'
-        form_match_z1 = record['ivp_z1_complete']
+        try:
+            form_match_z1 = record['ivp_z1_complete']
+        except KeyError:
+            form_match_z1 = ''
         form_match_z1x = record['ivp_z1x_complete']
         if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
             return False
     elif options.fvp:
         event_name = 'followup_visit'
-        form_match_z1 = record['fvp_z1_complete']
+        try:
+            form_match_z1 = record['fvp_z1_complete']
+        except KeyError:
+            form_match_z1 = ''
         form_match_z1x = record['fvp_z1x_complete']
         if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
             return False
@@ -208,25 +214,25 @@ def check_single_select(packet: uds3_packet.Packet):
     warnings = list()
 
     # D1 4
-    fields = ('AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
-    if not exclusive(packet, fields):
+    fields_4 = ('AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
+    if not exclusive(packet, fields_4):
         warnings.append('For Form D1, Question 4, there is unexpectedly more '
                         'than one syndrome indicated as "Present".')
 
     # D1 5
-    fields = ('MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
-    if not exclusive(packet, fields):
+    fields_5 = ('MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
+    if not exclusive(packet, fields_5):
         warnings.append('For Form D1, Question 5, there is unexpectedly more '
                         'than one syndrome indicated as "Present".')
 
     # D1 11-39
-    fields = ('ALZDISIF', 'LBDIF', 'MSAIF', 'PSPIF', 'CORTIF', 'FTLDMOIF',
+    fields_11_39 = ('ALZDISIF', 'LBDIF', 'MSAIF', 'PSPIF', 'CORTIF', 'FTLDMOIF',
               'FTLDNOIF', 'FTLDSUBX', 'CVDIF', 'ESSTREIF', 'DOWNSIF', 'HUNTIF',
               'PRIONIF', 'BRNINJIF', 'HYCEPHIF', 'EPILEPIF', 'NEOPIF', 'HIVIF',
               'OTHCOGIF', 'DEPIF', 'BIPOLDIF', 'SCHIZOIF', 'ANXIETIF',
               'DELIRIF', 'PTSDDXIF', 'OTHPSYIF', 'ALCDEMIF', 'IMPSUBIF',
               'DYSILLIF', 'MEDSIF', 'COGOTHIF', 'COGOTH2F', 'COGOTH3F')
-    if not exclusive(packet, fields):
+    if not exclusive(packet, fields_11_39):
         warnings.append('For Form D1, Questions 11-39, there is unexpectedly '
                         'more than one Primary cause selected.')
 
@@ -269,7 +275,7 @@ def set_blanks_to_zero(packet):
         set_to_zero_if_blank(
             'PSPCBS', 'EYEPSP', 'DYSPSP', 'AXIALPSP', 'GAITPSP', 'APRAXSP',
             'APRAXL', 'APRAXR', 'CORTSENL', 'CORTSENR', 'ATAXL', 'ATAXR',
-            'ALIENLML', 'ALIENLMR', 'DYSTONL', 'DYSTONR')
+            'ALIENLML', 'ALIENLMR', 'DYSTONL', 'DYSTONR', 'MYOCLLT', 'MYOCLRT')
 
     # D1 4.
     if packet['DEMENTED'] == 1:

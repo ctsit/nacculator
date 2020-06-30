@@ -4,34 +4,60 @@
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
+import sys
+
 from nacc.uds3 import clsform
 from nacc.uds3 import packet as ivp_packet
 from nacc.uds3.ivp import forms as ivp_forms
 
 
-def build_uds3_ivp_form(record):
+def build_uds3_ivp_form(record, err=sys.stderr):
     """ Converts REDCap CSV data into a packet (list of IVP Form objects) """
     packet = ivp_packet.Packet()
 
     # Set up the forms
     add_z1_or_z1x(record, packet)
     add_a1(record, packet)
-    if record['a2_sub'] == '1' or record['a2sub'] == '1':
-        add_a2(record, packet)
-    if record['a3_sub'] == '1' or record['a3sub'] == '1':
-        add_a3(record, packet)
-    if record['a4_sub'] == '1' or record['a4sub'] == '1':
-        add_a4(record, packet)
-    add_a5(record, packet)
-    if record['b1_sub'] == '1' or record['b1sub'] == '1':
-        add_b1(record, packet)
-    add_b4(record, packet)
-    if record['b5_sub'] == '1' or record['b5sub'] == '1':
-        add_b5(record, packet)
-    if record['b6_sub'] == '1' or record['b6sub'] == '1':
-        add_b6(record, packet)
-    if record['b7_sub'] == '1' or record['b7sub'] == '1':
-        add_b7(record, packet)
+    if record['ivp_z1x_complete'] in ['1', '2']:
+        if record['a2sub'] == '1':
+            add_a2(record, packet)
+        if record['a3sub'] == '1':
+            add_a3(record, packet)
+        if record['a4sub'] == '1':
+            add_a4(record, packet)
+        add_a5(record, packet)
+        if record['b1sub'] == '1':
+            add_b1(record, packet)
+        add_b4(record, packet)
+        if record['b5sub'] == '1':
+            add_b5(record, packet)
+        if record['b6sub'] == '1':
+            add_b6(record, packet)
+        if record['b7sub'] == '1':
+            add_b7(record, packet)
+    elif record['ivp_z1_complete'] in ['1', '2']:
+        if record['a2_sub'] == '1':
+            add_a2(record, packet)
+        if record['a3_sub'] == '1':
+            add_a3(record, packet)
+        if record['a4_sub'] == '1':
+            add_a4(record, packet)
+        add_a5(record, packet)
+        if record['b1_sub'] == '1':
+            add_b1(record, packet)
+        add_b4(record, packet)
+        if record['b5_sub'] == '1':
+            add_b5(record, packet)
+        if record['b6_sub'] == '1':
+            add_b6(record, packet)
+        if record['b7_sub'] == '1':
+            add_b7(record, packet)
+    else:
+        print("ptid " + str(record['ptid']) +
+              ": No Z1X or Z1 form found.", file=err)
+        add_a5(record, packet)
+        add_b4(record, packet)
+
     add_b8(record, packet)
     add_b9(record, packet)
     add_c1s_or_c2(record, packet)
@@ -106,38 +132,40 @@ def add_z1_or_z1x(record, packet):
         except KeyError:
             pass
 
-    z1 = ivp_forms.FormZ1()
-    z1_filled_fields = 0
-    z1_field_mapping = {
-        'A2SUB': 'a2_sub',
-        'A2NOT': 'a2_not',
-        'A2COMM': 'a2_comm',
-        'A3SUB': 'a3_sub',
-        'A3NOT': 'a3_not',
-        'A3COMM': 'a3_comm',
-        'A4SUB': 'a4_sub',
-        'A4NOT': 'a4_not',
-        'A4COMM': 'a4_comm',
-        'B1SUB': 'b1_sub',
-        'B1NOT': 'b1_not',
-        'B1COMM': 'b1_comm',
-        'B5SUB': 'b5_sub',
-        'B5NOT': 'b5_not',
-        'B5COMM': 'b5_comm',
-        'B6SUB': 'b6_sub',
-        'B6NOT': 'b6_not',
-        'B6COMM': 'b6_comm',
-        'B7SUB': 'b7_sub',
-        'B7NOT': 'b7_not',
-        'B7COMM': 'b7_comm'
-    }
-    for key, value in z1_field_mapping.items():
-        try:
+    # Check if Z1 form is present in REDCap project. If it is not present,
+    # do not map the fields and simply mark z1_filled_fields as 0.
+    try:
+        z1 = ivp_forms.FormZ1()
+        z1_filled_fields = 0
+        z1_field_mapping = {
+            'A2SUB': 'a2_sub',
+            'A2NOT': 'a2_not',
+            'A2COMM': 'a2_comm',
+            'A3SUB': 'a3_sub',
+            'A3NOT': 'a3_not',
+            'A3COMM': 'a3_comm',
+            'A4SUB': 'a4_sub',
+            'A4NOT': 'a4_not',
+            'A4COMM': 'a4_comm',
+            'B1SUB': 'b1_sub',
+            'B1NOT': 'b1_not',
+            'B1COMM': 'b1_comm',
+            'B5SUB': 'b5_sub',
+            'B5NOT': 'b5_not',
+            'B5COMM': 'b5_comm',
+            'B6SUB': 'b6_sub',
+            'B6NOT': 'b6_not',
+            'B6COMM': 'b6_comm',
+            'B7SUB': 'b7_sub',
+            'B7NOT': 'b7_not',
+            'B7COMM': 'b7_comm'
+        }
+        for key, value in z1_field_mapping.items():
             if record[value].strip():
                 setattr(z1, key, record[value])
                 z1_filled_fields += 1
-        except KeyError:
-            pass
+    except KeyError:
+        z1_filled_fields = 0
 
     # Prefer Z1X to Z1
     # If both are blank, use date (Z1X after 2018/04/02)
@@ -145,12 +173,10 @@ def add_z1_or_z1x(record, packet):
         packet.insert(0, z1x)
     elif z1_filled_fields > 0:
         packet.insert(0, z1)
-    elif (int(record['visityr'])>2018) or (int(record['visityr'])==2018 and \
-          int(record['visitmo'])>4) or (int(record['visityr'])==2018 and \
-          int(record['visitmo'])==4 and int(record['visitday'])>=2):
+    elif (int(record['visityr']) > 2018) or (int(record['visityr']) == 2018 and
+          int(record['visitmo']) > 4) or (int(record['visityr']) == 2018 and
+          int(record['visitmo']) == 4 and int(record['visitday']) >= 2):
         packet.insert(0, z1x)
-    else:
-        packet.insert(0, z1)
 
 
 def add_a1(record, packet):
@@ -877,49 +903,52 @@ def add_c1s_or_c2(record, packet):
         except KeyError:
             pass
 
-    c1s = ivp_forms.FormC1S()
-    c1s_filled_fields = 0
-    c1s_field_mapping = {
-        'MMSELOC': 'c1s_1a_mmseloc',
-        'MMSELAN': 'c1s_1a1_mmselan',
-        'MMSELANX': 'c1s_1a2_mmselanx',
-        'MMSEORDA': 'c1s_1b1_mmseorda',
-        'MMSEORLO': 'c1s_1b2_mmseorlo',
-        'PENTAGON': 'c1s_1c_pentagon',
-        'MMSE': 'c1s_1d_mmse',
-        'NPSYCLOC': 'c1s_2_npsycloc',
-        'NPSYLAN': 'c1s_2a_npsylan',
-        'NPSYLANX': 'c1s_2a1_npsylanx',
-        'LOGIMO': 'c1s_3amo_logimo',
-        'LOGIDAY': 'c1s_3ady_logiday',
-        'LOGIYR': 'c1s_3ayr_logiyr',
-        'LOGIPREV': 'c1s_3a1_logiprev',
-        'LOGIMEM': 'c1s_3b_logimem',
-        'DIGIF': 'c1s_4a_digif',
-        'DIGIFLEN': 'c1s_4b_digiflen',
-        'DIGIB': 'c1s_5a_digib',
-        'DIGIBLEN': 'c1s_5b_digiblen',
-        'ANIMALS': 'c1s_6a_animals',
-        'VEG': 'c1s_6b_veg',
-        'TRAILA': 'c1s_7a_traila',
-        'TRAILARR': 'c1s_7a1_trailarr',
-        'TRAILALI': 'c1s_7a2_trailali',
-        'TRAILB': 'c1s_7b_trailb',
-        'TRAILBRR': 'c1s_7b1_trailbrr',
-        'TRAILBLI': 'c1s_7b2_trailbli',
-        'WAIS': 'c1s_8a_wais',
-        'MEMUNITS': 'c1s_9a_memunits',
-        'MEMTIME': 'c1s_9b_memtime',
-        'BOSTON': 'c1s_10a_boston',
-        'COGSTAT': 'c1s_11a_cogstat'
-    }
-    for key, value in c1s_field_mapping.items():
-        try:
-            if record[value].strip():
-                setattr(c1s, key, record[value])
-                c1s_filled_fields += 1
-        except KeyError:
-            pass
+    try:
+        c1s = ivp_forms.FormC1S()
+        c1s_filled_fields = 0
+        c1s_field_mapping = {
+            'MMSELOC': 'c1s_1a_mmseloc',
+            'MMSELAN': 'c1s_1a1_mmselan',
+            'MMSELANX': 'c1s_1a2_mmselanx',
+            'MMSEORDA': 'c1s_1b1_mmseorda',
+            'MMSEORLO': 'c1s_1b2_mmseorlo',
+            'PENTAGON': 'c1s_1c_pentagon',
+            'MMSE': 'c1s_1d_mmse',
+            'NPSYCLOC': 'c1s_2_npsycloc',
+            'NPSYLAN': 'c1s_2a_npsylan',
+            'NPSYLANX': 'c1s_2a1_npsylanx',
+            'LOGIMO': 'c1s_3amo_logimo',
+            'LOGIDAY': 'c1s_3ady_logiday',
+            'LOGIYR': 'c1s_3ayr_logiyr',
+            'LOGIPREV': 'c1s_3a1_logiprev',
+            'LOGIMEM': 'c1s_3b_logimem',
+            'DIGIF': 'c1s_4a_digif',
+            'DIGIFLEN': 'c1s_4b_digiflen',
+            'DIGIB': 'c1s_5a_digib',
+            'DIGIBLEN': 'c1s_5b_digiblen',
+            'ANIMALS': 'c1s_6a_animals',
+            'VEG': 'c1s_6b_veg',
+            'TRAILA': 'c1s_7a_traila',
+            'TRAILARR': 'c1s_7a1_trailarr',
+            'TRAILALI': 'c1s_7a2_trailali',
+            'TRAILB': 'c1s_7b_trailb',
+            'TRAILBRR': 'c1s_7b1_trailbrr',
+            'TRAILBLI': 'c1s_7b2_trailbli',
+            'WAIS': 'c1s_8a_wais',
+            'MEMUNITS': 'c1s_9a_memunits',
+            'MEMTIME': 'c1s_9b_memtime',
+            'BOSTON': 'c1s_10a_boston',
+            'COGSTAT': 'c1s_11a_cogstat'
+        }
+        for key, value in c1s_field_mapping.items():
+            try:
+                if record[value].strip():
+                    setattr(c1s, key, record[value])
+                    c1s_filled_fields += 1
+            except KeyError:
+                pass
+    except KeyError:
+        c1s_filled_fields = 0
 
     # Prefer C2 to C1S
     # If both are blank, use date (C2 after 2017/10/23)
@@ -927,12 +956,10 @@ def add_c1s_or_c2(record, packet):
         packet.insert(0, c2)
     elif c1s_filled_fields > 0:
         packet.insert(0, c1s)
-    elif (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and \
-          int(record['visitmo'])>10) or (int(record['visityr'])==2017 and \
-          int(record['visitmo'])==10 and int(record['visitday'])>=23):
+    elif (int(record['visityr']) > 2017) or (int(record['visityr']) == 2017 and
+          int(record['visitmo']) > 10) or (int(record['visityr']) == 2017 and
+          int(record['visitmo']) == 10 and int(record['visitday']) >= 23):
         packet.insert(0, c2)
-    else:
-        packet.insert(0, c1s)
 
 
 def add_d1(record, packet):
@@ -1107,124 +1134,6 @@ def add_d2(record, packet):
     d2.OTHCOND = record['othcond']
     d2.OTHCONDX = record['othcondx']
     packet.append(d2)
-
-    add_z1_or_z1x(record, packet)
-    update_header(record, packet)
-
-    return packet
-
-
-def add_c1s_or_c2(record, packet):
-    # Among C1S and C2 forms, one must be filled, one must be empty. After 2017/10/23, must be C2
-    if (int(record['visityr'])>2017) or (int(record['visityr'])==2017 and int(record['visitmo'])>10) or \
-       (int(record['visityr'])==2017 and int(record['visitmo'])==10 and int(record['visitday'])>=23):
-        c2 = ivp_forms.FormC2()
-        c2.MOCACOMP = record['mocacomp']
-        c2.MOCAREAS = record['mocareas']
-        c2.MOCALOC = record['mocaloc']
-        c2.MOCALAN = record['mocalan']
-        c2.MOCALANX = record['mocalanx']
-        c2.MOCAVIS = record['mocavis']
-        c2.MOCAHEAR = record['mocahear']
-        c2.MOCATOTS = record['mocatots']
-        c2.MOCATRAI = record['mocatrai']
-        c2.MOCACUBE = record['mocacube']
-        c2.MOCACLOC = record['mocacloc']
-        c2.MOCACLON = record['mocaclon']
-        c2.MOCACLOH = record['mocacloh']
-        c2.MOCANAMI = record['mocanami']
-        c2.MOCAREGI = record['mocaregi']
-        c2.MOCADIGI = record['mocadigi']
-        c2.MOCALETT = record['mocalett']
-        c2.MOCASER7 = record['mocaser7']
-        c2.MOCAREPE = record['mocarepe']
-        c2.MOCAFLUE = record['mocaflue']
-        c2.MOCAABST = record['mocaabst']
-        c2.MOCARECN = record['mocarecn']
-        c2.MOCARECC = record['mocarecc']
-        c2.MOCARECR = record['mocarecr']
-        c2.MOCAORDT = record['mocaordt']
-        c2.MOCAORMO = record['mocaormo']
-        c2.MOCAORYR = record['mocaoryr']
-        c2.MOCAORDY = record['mocaordy']
-        c2.MOCAORPL = record['mocaorpl']
-        c2.MOCAORCT = record['mocaorct']
-        c2.NPSYCLOC = record['npsycloc_c2']
-        c2.NPSYLAN = record['npsylan_c2']
-        c2.NPSYLANX = record['npsylanx_c2']
-        c2.CRAFTVRS = record['craftvrs']
-        c2.CRAFTURS = record['crafturs']
-        c2.UDSBENTC = record['udsbentc']
-        c2.DIGFORCT = record['digforct']
-        c2.DIGFORSL = record['digforsl']
-        c2.DIGBACCT = record['digbacct']
-        c2.DIGBACLS = record['digbacls']
-        c2.ANIMALS = record['animals_c2']
-        c2.VEG = record['veg_c2']
-        c2.TRAILA = record['traila_c2']
-        c2.TRAILARR = record['trailarr_c2']
-        c2.TRAILALI = record['trailali_c2']
-        c2.TRAILB = record['trailb_c2']
-        c2.TRAILBRR = record['trailbrr_c2']
-        c2.TRAILBLI = record['trailbli_c2']
-        c2.CRAFTDVR = record['craftdvr']
-        c2.CRAFTDRE = record['craftdre']
-        c2.CRAFTDTI = record['craftdti']
-        c2.CRAFTCUE = record['craftcue']
-        c2.UDSBENTD = record['udsbentd']
-        c2.UDSBENRS = record['udsbenrs']
-        c2.MINTTOTS = record['minttots']
-        c2.MINTTOTW = record['minttotw']
-        c2.MINTSCNG = record['mintscng']
-        c2.MINTSCNC = record['mintscnc']
-        c2.MINTPCNG = record['mintpcng']
-        c2.MINTPCNC = record['mintpcnc']
-        c2.UDSVERFC = record['udsverfc']
-        c2.UDSVERFN = record['udsverfn']
-        c2.UDSVERNF = record['udsvernf']
-        c2.UDSVERLC = record['udsverlc']
-        c2.UDSVERLR = record['udsverlr']
-        c2.UDSVERLN = record['udsverln']
-        c2.UDSVERTN = record['udsvertn']
-        c2.UDSVERTE = record['udsverte']
-        c2.UDSVERTI = record['udsverti']
-        c2.COGSTAT = record['cogstat_c2']
-        packet.append(c2)
-    else:
-        c1s = ivp_forms.FormC1S()
-        c1s.MMSELOC = record['c1s_1a_mmseloc'] #check for blank
-        c1s.MMSELAN = record['c1s_1a1_mmselan']
-        c1s.MMSELANX = record['c1s_1a2_mmselanx']
-        c1s.MMSEORDA = record['c1s_1b1_mmseorda']
-        c1s.MMSEORLO = record['c1s_1b2_mmseorlo']
-        c1s.PENTAGON = record['c1s_1c_pentagon']
-        c1s.MMSE = record['c1s_1d_mmse']
-        c1s.NPSYCLOC = record['c1s_2_npsycloc']
-        c1s.NPSYLAN = record['c1s_2a_npsylan']
-        c1s.NPSYLANX = record['c1s_2a1_npsylanx']
-        c1s.LOGIMO = record['c1s_3amo_logimo']
-        c1s.LOGIDAY = record['c1s_3ady_logiday']
-        c1s.LOGIYR = record['c1s_3ayr_logiyr']
-        c1s.LOGIPREV = record['c1s_3a1_logiprev']
-        c1s.LOGIMEM = record['c1s_3b_logimem']
-        c1s.DIGIF = record['c1s_4a_digif']
-        c1s.DIGIFLEN = record['c1s_4b_digiflen']
-        c1s.DIGIB = record['c1s_5a_digib']
-        c1s.DIGIBLEN = record['c1s_5b_digiblen']
-        c1s.ANIMALS = record['c1s_6a_animals']
-        c1s.VEG = record['c1s_6b_veg']
-        c1s.TRAILA = record['c1s_7a_traila']
-        c1s.TRAILARR = record['c1s_7a1_trailarr']
-        c1s.TRAILALI = record['c1s_7a2_trailali']
-        c1s.TRAILB = record['c1s_7b_trailb']
-        c1s.TRAILBRR = record['c1s_7b1_trailbrr']
-        c1s.TRAILBLI = record['c1s_7b2_trailbli']
-        c1s.WAIS = record['c1s_8a_wais']
-        c1s.MEMUNITS = record['c1s_9a_memunits']
-        c1s.MEMTIME = record['c1s_9b_memtime']
-        c1s.BOSTON = record['c1s_10a_boston']
-        c1s.COGSTAT = record['c1s_11a_cogstat'] #check for blank
-        packet.append(c1s)
 
 
 def update_header(record, packet):

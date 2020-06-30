@@ -4,10 +4,13 @@ from nacc.uds3 import packet
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.fvp import builder as fvp_builder
 
+
 class TestC1SC2(unittest.TestCase):
 
     def test_c1s_added_to_ivp_when_filled(self):
-        """ If header is from before October 23, 2017, the C1S form should be added """
+        """
+        If header is from before October 23, 2017, the C1S form should be added
+        """
         record = make_blank_ivp()
         record['visityr'] = '2016'
         record['c1s_1a_mmseloc'] = '1'
@@ -18,7 +21,9 @@ class TestC1SC2(unittest.TestCase):
         self.assertEqual(ipacket['MMSELOC'], '1')
 
     def test_c2_added_to_ivp_when_filled(self):
-        """ If header is from after October 23, 2017, the C2 form should be added """
+        """
+        If header is from after October 23, 2017, the C2 form should be added
+        """
         record = make_blank_ivp()
         record['visityr'] = '2018'
         record['mocacomp'] = '1'
@@ -29,7 +34,9 @@ class TestC1SC2(unittest.TestCase):
         self.assertEqual(ipacket['MOCACOMP'], '1')
 
     def test_c1s_added_to_fvp_when_filled(self):
-        """ If header is from before October 23, 2017, the C1S form should be added """
+        """
+        If header is from before October 23, 2017, the C1S form should be added
+        """
         record = make_blank_fvp()
         record['visityr'] = '2016'
         record['fu_mmsecomp'] = '1'
@@ -40,7 +47,9 @@ class TestC1SC2(unittest.TestCase):
         self.assertEqual(fpacket['MMSECOMP'], '1')
 
     def test_c2_added_to_fvp_when_filled(self):
-        """ If header is from after October 23, 2017, the C2 form should be added """
+        """
+        If header is from after October 23, 2017, the C2 form should be added
+        """
         record = make_blank_fvp()
         record['visityr'] = '2018'
         record['fu_mocacomp'] = '1'
@@ -49,6 +58,7 @@ class TestC1SC2(unittest.TestCase):
         fpacket = packet.Packet()
         fvp_builder.add_c1s_or_c2(record, fpacket)
         self.assertEqual(fpacket['MOCACOMP'], '1')
+
 
 def make_blank_ivp():
     return {
@@ -88,6 +98,7 @@ def make_blank_ivp():
         'c1s_9b_memtime': '',
         'c1s_10a_boston': '',
         'c1s_11a_cogstat': '',
+        'ivp_c1s_complete': '2',
         # C2
         'mocacomp': '',
         'mocareas': '',
@@ -216,6 +227,7 @@ def make_blank_fvp():
         'fu_udsverte_c1': '',
         'fu_udsverti_c1': '',
         'fu_cogstat': '',
+        'fvp_c1s_complete': '2',
         # C2
         'fu_mocacomp': '',
         'fu_mocareas': '',
@@ -289,6 +301,7 @@ def make_blank_fvp():
         'fu_cogstat_c2': ''
 
     }
+
 
 if __name__ == "__main__":
     unittest.main()
