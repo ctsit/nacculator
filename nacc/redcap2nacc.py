@@ -163,15 +163,24 @@ def check_redcap_event(options, record) -> bool:
         form_match_lbd = record['lbd_fvp_b1l_complete']
         if form_match_lbd in ['0', '']:
             return False
-    # TODO: add options for lbdsv (lbd short version)
+    elif options.lbdsv and options.ivp:
+        event_name = 'initial_visit'
+        form_match_lbd = record['lbd_ivp_b1l_complete']
+        if form_match_lbd in ['0', '']:
+            return False
+    elif options.lbdsv and options.fvp:
+        event_name = 'followup_visit'
+        form_match_lbd = record['lbd_fvp_b1l_complete']
+        if form_match_lbd in ['0', '']:
+            return False
     elif options.ftld and options.ivp:
         event_name = 'initial_visit'
-        form_match_ftld = record['ftld_ivp_a3a_complete']
+        form_match_ftld = record['ftld_present']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ftld and options.fvp:
         event_name = 'followup_visit'
-        form_match_ftld = record['ftld_fvp_a3a_complete']
+        form_match_ftld = record['fu_ftld_present']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ivp:
@@ -215,6 +224,7 @@ def check_single_select(packet: uds3_packet.Packet):
     """
     warnings = list()
 
+    # TODO: get these checks actually working.
     # D1 4
     fields_4 = ('AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
     if not exclusive(packet, fields_4):
@@ -460,7 +470,7 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.tfp or options.np or 
+    if not (options.ivp or options.fvp or options.tfp or options.np or
             options.m or options.csf or options.filter):
         options.ivp = True
 
