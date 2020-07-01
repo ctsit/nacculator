@@ -25,10 +25,10 @@ Nacculator will automatically skip PTIDs with errors, so the output `data.txt`
 file will be ready to submit to NACC.
 In order to properly filter the data in the csv, nacculator is expecting that
 REDCap visits (denoted by `redcap_event_name`) contain certain keywords:
-    "initial_visit" for initial visit packets
-    "followup_visit" for all followups
-    "milestone" for milestone packets
-    "neuropath" for neuropathology packets
+    "initial_visit" for initial visit packets,
+    "followup_visit" for all followups,
+    "milestone" for milestone packets,
+    "neuropath" for neuropathology packets,
     "telephone" for telephone followup packets
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input is
