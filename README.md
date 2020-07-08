@@ -194,7 +194,7 @@ Example Workflow
 ----------------
 
 Once you have edited the `nacculator_cfg.ini` file with your API token and
-desired filters, you can get a filtered CSV file of the REDCap data with:
+desired filters, you can get a filtered CSV file of the raw REDCap data with:
 
     $ nacculator_filters nacculator_cfg.ini
 
@@ -208,7 +208,7 @@ modified so that the output is deposited in your `$run_CURRENT-DATE` folder.
 
 Next, you will need to run the actual `redcap2nacc` program to produce the
 fixed width text file for NACC. One type of flag can be used at a time, so the
-program must be run twice.
+program must be run once for each type of packet.
 
     $ redcap2nacc -ivp < $run_CURRENT-DATE/final_Update.csv > $run_CURRENT-DATE/iv_nacc_complete.txt 2> $run_CURRENT-DATE/ivp_errors.txt
     $ redcap2nacc -fvp < $run_CURRENT-DATE/final_Update.csv > $run_CURRENT-DATE/fv_nacc_complete.txt 2> $run_CURRENT-DATE/fvp_errors.txt
