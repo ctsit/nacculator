@@ -20,7 +20,7 @@ CURRENT_YEAR = date.today().year
 def header_fields():
     fields = {}
     fields['FORMVER'] = nacc.uds3.Field(name='FORMVER', typename='Num', position=(906, 907), length=2, inclusive_range=(10, 10), allowable_values=[], blanks=[])
-    fields['ADCID'] = nacc.uds3.Field(name='ADCID', typename='Num', position=(1, 2), length=2, inclusive_range=(2, 43), allowable_values=[], blanks=[])
+    fields['ADCID'] = nacc.uds3.Field(name='ADCID', typename='Num', position=(1, 2), length=2, inclusive_range=(1, 43), allowable_values=[], blanks=[])
     fields['PTID'] = nacc.uds3.Field(name='PTID', typename='Char', position=(4, 13), length=10, inclusive_range=None, allowable_values=[], blanks=[])
     return fields
 
