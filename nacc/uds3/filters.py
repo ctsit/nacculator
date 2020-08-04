@@ -109,6 +109,7 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
                             break
                 else:
                     continue
+                output.writerow(redcap_packet)
         else:
             output.writerow(redcap_packet)
     return output
