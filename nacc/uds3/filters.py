@@ -73,20 +73,44 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
         # then remove them.
         rc_ptid = redcap_packet['ptid']
 
-        if redcap_packet['visitnum']:
-            rc_visit_num = int_or_string(redcap_packet['visitnum'], -1)
-        else:
-            print('Eliminated ptid : ' + rc_ptid + " Event Name : " +
-                  redcap_packet['redcap_event_name'] + " MISSING VISIT NUM",
-                  file=sys.stderr)
-            continue
         if rc_ptid in completed_subjs:
-            if rc_visit_num in completed_subjs[rc_ptid]:
-                print('Eliminated ptid : ' + rc_ptid + " Event Name : " +
-                      redcap_packet['redcap_event_name'] + " IN CURRENT",
-                      file=sys.stderr)
-                continue
-        output.writerow(redcap_packet)
+            for nacc_ptid in completed_subjs:
+                if nacc_ptid == rc_ptid:
+                    if redcap_packet['visitnum']:
+                        rc_visit_num = int_or_string(redcap_packet['visitnum'], -1)
+                    elif nacc_packet['Packet type'] == 'M':
+                        if ('milestone_5' or 'arm_1e') in redcap_packet['redcap_event_name']:
+                            rc_visit_num = 'M5'
+                        elif ('milestone_4' or 'arm_1d') in redcap_packet['redcap_event_name']:
+                            rc_visit_num = 'M4'
+                        elif ('milestone_3' or 'arm_1c') in redcap_packet['redcap_event_name']:
+                            rc_visit_num = 'M3'
+                        elif ('milestone_2' or 'arm_1b') in redcap_packet['redcap_event_name']:
+                            rc_visit_num = 'M2'
+                        elif ('milestone_1' or 'arm_1a') in redcap_packet['redcap_event_name']:
+                            rc_visit_num = 'M1'
+                        else:
+                            rc_visit_num = ''
+                            print('Eliminated ptid : ' + rc_ptid + " Event Name : " +
+                                redcap_packet['redcap_event_name'] + " MISSING VISIT NUM",
+                                file=sys.stderr)
+                            break
+                    else:
+                        rc_visit_num = ''
+                        print('Eliminated ptid : ' + rc_ptid + " Event Name : " +
+                            redcap_packet['redcap_event_name'] + " MISSING VISIT NUM",
+                            file=sys.stderr)
+                        continue
+                    if rc_ptid in completed_subjs:
+                        if rc_visit_num in completed_subjs[rc_ptid]:
+                            print('Eliminated ptid : ' + rc_ptid + " Event Name : " +
+                                redcap_packet['redcap_event_name'] + " IN CURRENT",
+                                file=sys.stderr)
+                            break
+                else:
+                    continue
+        else:
+            output.writerow(redcap_packet)
     return output
 
 
@@ -221,16 +245,6 @@ def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False,
     return
 
 
-def skip_filter(input_ptr, output_ptr):
-    reader = csv.DictReader(input_ptr)
-    output = csv.DictWriter(output_ptr, None)
-    write_headers(reader, output)
-    for record in reader:
-        output.writerow(record)
-    print('Filter skipped.', file=sys.stderr)
-    return
-
-
 @validate
 def filter_fix_visitdate(input_ptr, filter_meta, output_ptr):
     if filter_meta:
@@ -288,6 +302,16 @@ def fill_non_blank_values(config):
         adcid = ''
     fill_non_blank_values = {'adcid': adcid}
     return fill_non_blank_values
+
+
+def skip_filter(input_ptr, output_ptr):
+    reader = csv.DictReader(input_ptr)
+    output = csv.DictWriter(output_ptr, None)
+    write_headers(reader, output)
+    for record in reader:
+        output.writerow(record)
+    print('Filter skipped.', file=sys.stderr)
+    return
 
 
 def filter_extract_ptid(input_ptr, Ptid, visit_num, visit_type, output_ptr):
