@@ -43,6 +43,11 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
         # Find all fields that:
         #   1) have blanking rules; and
         #   2) aren't blank.
+        formid = ""
+        try:
+            formid = " in form %s" % (form.fields['FORMID'].value)
+        except KeyError:
+            pass
         for field in [f for f in form.fields.values()
                       if f.blanks and not empty(f)]:
 
@@ -51,33 +56,33 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
                     r = blanks_uds3.convert_rule_to_python(field.name, rule)
                     if r(packet):
                         warnings.append(
-                            "'%s' is '%s' with length '%s', but should be"
+                            "%s%s is '%s' with length '%s', but should be"
                             " blank: '%s'." %
-                            (field.name, field.value, len(field.value), rule))
+                            (field.name, formid, field.value, len(field.value), rule))
 
                 if options.lbd:
                     t = blanks_lbd.convert_rule_to_python(field.name, rule)
                     if t(packet):
                         warnings.append(
-                            "'%s' is '%s' with length '%s', but should be"
+                            "%s%s is '%s' with length '%s', but should be"
                             " blank: '%s'." %
-                            (field.name, field.value, len(field.value), rule))
+                            (field.name, formid, field.value, len(field.value), rule))
 
                 if options.ftld:
                     s = blanks_ftld.convert_rule_to_python(field.name, rule)
                     if s(packet):
                         warnings.append(
-                            "'%s' is '%s' with length '%s', but should be"
+                            "%s%s is '%s' with length '%s', but should be"
                             " blank: '%s'." %
-                            (field.name, field.value, len(field.value), rule))
+                            (field.name, formid, field.value, len(field.value), rule))
 
                 if options.csf:
                     q = blanks_csf.convert_rule_to_python(field.name, rule)
                     if q(packet):
                         warnings.append(
-                            "'%s' is '%s' with length '%s', but should be"
+                            "%s%s is '%s' with length '%s', but should be"
                             " blank: '%s'." %
-                            (field.name, field.value, len(field.value), rule))
+                            (field.name, formid, field.value, len(field.value), rule))
     return warnings
 
 
@@ -99,12 +104,17 @@ def check_characters(packet: uds3_packet.Packet) -> typing.List:
 
                 if incompatible:
                     character = " ".join(incompatible)
+                    formid = ""
+                    try:
+                        formid = " in form %s" % (form.fields['FORMID'].value)
+                    except KeyError:
+                        pass
                     warnings.append(
-                        '\'%s\' is \'%s\', which has invalid character(s) %s .'
+                        '%s%s is \'%s\', which has invalid character(s) %s .'
                         ' This field can have any text or numbers, but cannot'
                         ' include single quotes \', double quotes \",'
                         ' ampersands & or percentage signs %% ' %
-                        (field.name, field.value, character))
+                        (field.name, formid, field.value, character))
 
     return warnings
 
@@ -358,16 +368,17 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         try:
             warnings += check_characters(packet)
-            if warnings:
-                print("[SKIP] Error for ptid : " + str(record['ptid']),
-                      file=err)
-                warn = "\n".join(map(str, warnings))
-                warn = warn.replace("\\", "")
-                print(warn, file=err)
-                continue
         except KeyError:
             print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             traceback.print_exc()
+            continue
+
+        if warnings:
+            print("[SKIP] Error for ptid : " + str(record['ptid']),
+                    file=err)
+            warn = "\n".join(map(str, warnings))
+            warn = warn.replace("\\", "")
+            print(warn, file=err)
             continue
 
         if not options.np and not options.m and not options.lbd and not \

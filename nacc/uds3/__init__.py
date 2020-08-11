@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2019 University of Florida. All rights reserved.
+# Copyright 2015-2020 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -97,7 +97,7 @@ class Field(object):
                 if canonical not in self.allowable_values:
                     if not isinstance(self.udstype, Num) or \
                             out_of_range(canonical):
-                        raise ValueError('"%s" is unacceptable for %s' %
+                        raise ValueError('"%s" is either not a number or out of range for %s' %
                                          (val, self.name))
 
         else:
@@ -173,10 +173,15 @@ class FieldBag(object):
         for field in list(self.fields.values()):
             value = field.value
             start, end = field.position
+            formid = ""
+            try:
+                formid = " in form {}".format(self.fields['FORMID'].value)
+            except KeyError:
+                pass
             start -= 1
             end -= 1
             assert len(value) == end - start + 1, \
-                "Length of field {} with value {} is not valid. {} != {}".format(field.name, value, len(value), end - start + 1)
+                "Length of field {}{} with value \"{}\" is not valid. {} != {}".format(field.name, formid, value, len(value), end - start + 1)
             buf[start:start + len(value)] = value.encode('ascii')
 
         assert len(buf) == orig_buf_size, field.name + ": buffer changed size!"

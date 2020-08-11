@@ -13,6 +13,13 @@ def build_uds3_csf_form(record):
     packet = csf_packet.Packet()
 
     # Set up the forms.
+    add_eE2(record, packet)
+    update_header(record, packet)
+
+    return packet
+
+
+def add_eE2(record, packet):
     eE2 = csf_forms.FormEE2()
     eE2.CSFABETA = record['csfabeta']
     eE2.CSFABmo  = record['csfabmo']
@@ -34,14 +41,10 @@ def build_uds3_csf_form(record):
     eE2.CSFTTmDX = record['csfttmdx']
     packet.append(eE2)
 
-    update_header(record, packet)
-    return packet
-
 
 def update_header(record, packet):
     for header in packet:
         # header.PACKET = "CSF"
-        # header.FORMID = header.form_name
         # header.FORMVER = 1
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
