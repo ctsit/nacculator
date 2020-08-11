@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ###############################################################################
-# Copyright 2015-2019 University of Florida. All rights reserved.
+# Copyright 2015-2020 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -39,7 +39,7 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
     """
     Parses rules for when each field should be blank and then checks them
     """
-    warnings = []
+    warnings: list = []
 
     for form in packet:
         # Find all fields that:
@@ -57,34 +57,33 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
                 if not options.lbd and not options.ftld and not options.csf:
                     r = blanks_uds3.convert_rule_to_python(field.name, rule)
                     if r(packet):
-                        warnings.append(
-                            "%s%s is '%s' with length '%s', but should be"
-                            " blank: '%s'." %
-                            (field.name, formid, field.value, len(field.value), rule))
+                        blank_warnings(warnings, field.name, formid,
+                                       field.value, len(field.value), rule)
 
                 if options.lbd:
                     t = blanks_lbd.convert_rule_to_python(field.name, rule)
                     if t(packet):
-                        warnings.append(
-                            "%s%s is '%s' with length '%s', but should be"
-                            " blank: '%s'." %
-                            (field.name, formid, field.value, len(field.value), rule))
+                        blank_warnings(warnings, field.name, formid,
+                                       field.value, len(field.value), rule)
 
                 if options.ftld:
                     s = blanks_ftld.convert_rule_to_python(field.name, rule)
                     if s(packet):
-                        warnings.append(
-                            "%s%s is '%s' with length '%s', but should be"
-                            " blank: '%s'." %
-                            (field.name, formid, field.value, len(field.value), rule))
+                        blank_warnings(warnings, field.name, formid,
+                                       field.value, len(field.value), rule)
 
                 if options.csf:
                     q = blanks_csf.convert_rule_to_python(field.name, rule)
                     if q(packet):
-                        warnings.append(
-                            "%s%s is '%s' with length '%s', but should be"
-                            " blank: '%s'." %
-                            (field.name, formid, field.value, len(field.value), rule))
+                        blank_warnings(warnings, field.name, formid,
+                                       field.value, len(field.value), rule)
+    return warnings
+
+
+def blank_warnings(warnings, fieldname, formid, value, length, rule):
+    warnings.append(
+        "%s%s is '%s' with length '%s', but should be blank: '%s'." %
+        (fieldname, formid, value, length, rule))
     return warnings
 
 
@@ -126,7 +125,7 @@ def check_for_bad_characters(field: Field) -> typing.List:
     Searches the flagged fields for the special characters
     and tallies up all instances of each character
     """
-    incompatible = []
+    incompatible: list = []
 
     text = field.value
     chars = ["'", '"', '&', '%']
@@ -248,12 +247,13 @@ def check_single_select(packet: uds3_packet.Packet):
                         'than one syndrome indicated as "Present".')
 
     # D1 11-39
-    fields_11_39 = ('ALZDISIF', 'LBDIF', 'MSAIF', 'PSPIF', 'CORTIF', 'FTLDMOIF',
-              'FTLDNOIF', 'FTLDSUBX', 'CVDIF', 'ESSTREIF', 'DOWNSIF', 'HUNTIF',
-              'PRIONIF', 'BRNINJIF', 'HYCEPHIF', 'EPILEPIF', 'NEOPIF', 'HIVIF',
-              'OTHCOGIF', 'DEPIF', 'BIPOLDIF', 'SCHIZOIF', 'ANXIETIF',
-              'DELIRIF', 'PTSDDXIF', 'OTHPSYIF', 'ALCDEMIF', 'IMPSUBIF',
-              'DYSILLIF', 'MEDSIF', 'COGOTHIF', 'COGOTH2F', 'COGOTH3F')
+    fields_11_39 = ('ALZDISIF', 'LBDIF', 'MSAIF', 'PSPIF', 'CORTIF',
+                    'FTLDMOIF', 'FTLDNOIF', 'FTLDSUBX', 'CVDIF', 'ESSTREIF',
+                    'DOWNSIF', 'HUNTIF', 'PRIONIF', 'BRNINJIF', 'HYCEPHIF',
+                    'EPILEPIF', 'NEOPIF', 'HIVIF', 'OTHCOGIF', 'DEPIF',
+                    'BIPOLDIF', 'SCHIZOIF', 'ANXIETIF', 'DELIRIF', 'PTSDDXIF',
+                    'OTHPSYIF', 'ALCDEMIF', 'IMPSUBIF', 'DYSILLIF', 'MEDSIF',
+                    'COGOTHIF', 'COGOTH2F', 'COGOTH3F')
     if not exclusive(packet, fields_11_39):
         warnings.append('For Form D1, Questions 11-39, there is unexpectedly '
                         'more than one Primary cause selected.')
@@ -392,7 +392,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         if warnings:
             print("[SKIP] Error for ptid : " + str(record['ptid']),
-                    file=err)
+                  file=err)
             warn = "\n".join(map(str, warnings))
             warn = warn.replace("\\", "")
             print(warn, file=err)

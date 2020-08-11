@@ -46,8 +46,8 @@ def filter_clean_ptid(input_ptr, filter_config, output_ptr):
     if filter_config:
         filepath = filter_config['filepath']
         with open(filepath, 'r') as nacc_packet_file:
-            output = filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr)
-            return output
+            out = filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr)
+            return out
     else:
         skip_filter(input_ptr, output_ptr)
         return
@@ -63,7 +63,8 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
     completed_subjs = defaultdict(list)
     nacc_packet_list = csv.DictReader(nacc_packet_file)
     for nacc_packet in nacc_packet_list:
-        if nacc_packet['Status'].lower() == "current" or nacc_packet['Status'].lower() == "certified":
+        if nacc_packet['Status'].lower() == "current" \
+          or nacc_packet['Status'].lower() == "certified":
             nacc_subj_id = nacc_packet['Patient ID']
             nacc_visit_num = int_or_string(nacc_packet['Visit Num'])
             completed_subjs[nacc_subj_id].append(nacc_visit_num)
@@ -72,6 +73,7 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
         # if they exist in completed subjs (same id and visit num)
         # then remove them.
         rc_ptid = redcap_packet['ptid']
+        rc_event = redcap_packet['redcap_event_name']
 
         if rc_ptid in completed_subjs:
             for nacc_ptid in completed_subjs:
@@ -79,33 +81,33 @@ def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
                     if redcap_packet['visitnum']:
                         rc_visit_num = int_or_string(redcap_packet['visitnum'], -1)
                     elif nacc_packet['Packet type'] == 'M':
-                        if ('milestone_5' or 'arm_1e') in redcap_packet['redcap_event_name']:
+                        if ('milestone_5' or 'arm_1e') in rc_event:
                             rc_visit_num = 'M5'
-                        elif ('milestone_4' or 'arm_1d') in redcap_packet['redcap_event_name']:
+                        elif ('milestone_4' or 'arm_1d') in rc_event:
                             rc_visit_num = 'M4'
-                        elif ('milestone_3' or 'arm_1c') in redcap_packet['redcap_event_name']:
+                        elif ('milestone_3' or 'arm_1c') in rc_event:
                             rc_visit_num = 'M3'
-                        elif ('milestone_2' or 'arm_1b') in redcap_packet['redcap_event_name']:
+                        elif ('milestone_2' or 'arm_1b') in rc_event:
                             rc_visit_num = 'M2'
-                        elif ('milestone_1' or 'arm_1a') in redcap_packet['redcap_event_name']:
+                        elif ('milestone_1' or 'arm_1a') in rc_event:
                             rc_visit_num = 'M1'
                         else:
                             rc_visit_num = ''
-                            print('Eliminated ptid : ' + rc_ptid + " Event Name : " +
-                                redcap_packet['redcap_event_name'] + " MISSING VISIT NUM",
-                                file=sys.stderr)
+                            print('Eliminated ptid : ' + rc_ptid +
+                                  " Event Name : " + rc_event +
+                                  " MISSING VISIT NUM", file=sys.stderr)
                             break
                     else:
                         rc_visit_num = ''
-                        print('Eliminated ptid : ' + rc_ptid + " Event Name : " +
-                            redcap_packet['redcap_event_name'] + " MISSING VISIT NUM",
-                            file=sys.stderr)
+                        print('Eliminated ptid : ' + rc_ptid +
+                              " Event Name : " + rc_event +
+                              " MISSING VISIT NUM", file=sys.stderr)
                         continue
                     if rc_ptid in completed_subjs:
                         if rc_visit_num in completed_subjs[rc_ptid]:
-                            print('Eliminated ptid : ' + rc_ptid + " Event Name : " +
-                                redcap_packet['redcap_event_name'] + " IN CURRENT",
-                                file=sys.stderr)
+                            print('Eliminated ptid : ' + rc_ptid +
+                                  " Event Name : " + rc_event + " IN CURRENT",
+                                  file=sys.stderr)
                             break
                 else:
                     continue
@@ -166,7 +168,8 @@ def filter_fix_headers_do(input_ptr, header_dictionary, output_ptr):
     csv_reader = csv.reader(input_ptr)
     csv_writer = csv.writer(output_ptr)
     headers = next(csv_reader)
-    fixed_headers = list(map(lambda header: header_dictionary.get(header, header), headers))
+    fixed_headers = list(map(lambda header:
+                             header_dictionary.get(header, header), headers))
     csv_writer.writerow(fixed_headers)
     csv_writer.writerows([row for row in csv_reader])
     return
@@ -234,7 +237,8 @@ def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False,
         count = 0
         for col_name in list(keysDict.keys()):
             if col_name in list(record.keys()):
-                if blankCheck and (len(record[col_name]) > 0) and (record[col_name] != keysDict[col_name]):
+                if blankCheck and (len(record[col_name]) > 0) and \
+                  (record[col_name] != keysDict[col_name]):
                     record[col_name] = keysDict[col_name]
                     count += 1
                 elif defaultCheck and len(record[col_name]) == 0:
@@ -321,21 +325,26 @@ def filter_extract_ptid(input_ptr, Ptid, visit_num, visit_type, output_ptr):
     write_headers(reader, output)
 
     if(visit_num and visit_type):
-        filtered = [row for row in reader if filter_csv_all(Ptid, visit_num, visit_type, row)]
+        filtered = [row for row in reader if
+                    filter_csv_all(Ptid, visit_num, visit_type, row)]
 
     elif(not visit_num and visit_type):
-        filtered = [row for row in reader if filter_csv_vtype(Ptid, visit_type, row)]
+        filtered = [row for row in reader if
+                    filter_csv_vtype(Ptid, visit_type, row)]
 
     elif(not visit_type and visit_num):
-        filtered = [row for row in reader if filter_csv_vnum(Ptid, visit_num, row)]
+        filtered = [row for row in reader if
+                    filter_csv_vnum(Ptid, visit_num, row)]
 
     elif(not visit_type and not visit_num):
-        filtered = [row for row in reader if filter_csv_ptid(Ptid, row)]
+        filtered = [row for row in reader if
+                    filter_csv_ptid(Ptid, row)]
     output.writerows(filtered)
 
 
 def filter_csv_all(Ptid, visit_num, visit_type, record):
-    if record['ptid'] == Ptid and record['visitnum'].lstrip("0") == visit_num and (re.search(visit_type, record['redcap_event_name'])):
+    if record['ptid'] == Ptid and record['visitnum'].lstrip("0") == visit_num \
+      and (re.search(visit_type, record['redcap_event_name'])):
         return record
 
 
