@@ -97,8 +97,8 @@ class Field(object):
                 if canonical not in self.allowable_values:
                     if not isinstance(self.udstype, Num) or \
                             out_of_range(canonical):
-                        raise ValueError('"%s" is either not a number or out of range for %s' %
-                                         (val, self.name))
+                        raise ValueError('"%s" is either not a number or out'
+                                         ' of range for %s' % (val, self.name))
 
         else:
             if val is None:
@@ -173,15 +173,15 @@ class FieldBag(object):
         for field in list(self.fields.values()):
             value = field.value
             start, end = field.position
-            formid = ""
+            formid = ''
             try:
-                formid = " in form {}".format(self.fields['FORMID'].value)
+                formid = ' in form %s' % (self.fields['FORMID'].value)
             except KeyError:
                 pass
             start -= 1
             end -= 1
             assert len(value) == end - start + 1, \
-                "Length of field {}{} with value \"{}\" is not valid. {} != {}".format(field.name, formid, value, len(value), end - start + 1)
+                'Length of field %s%s with value "%s" is not valid. %s != %s' % (field.name, formid, value, len(value), end - start + 1)
             buf[start:start + len(value)] = value.encode('ascii')
 
         assert len(buf) == orig_buf_size, field.name + ": buffer changed size!"

@@ -2,7 +2,6 @@ import os
 import sys
 import csv
 import datetime
-import nacc
 import configparser
 from cappy import API
 from nacc.uds3.filters import *
