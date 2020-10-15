@@ -22,6 +22,12 @@ present: yes
 # Corrects REDCap-exported headers that do not match NACC's DEDs.
 # Write in format:
 # old_header: corrected_header
+otherneur: othneur
+otherneurx: othneurx
+strokedec: strokdec
+fu_otherneur: fu_othneur
+fu_otherneurx: fu_othneurx
+fu_strokedec: fu_strokdec
 
 [filter_fill_default]
 # Fills fields that are typically left blank in REDCap: 
