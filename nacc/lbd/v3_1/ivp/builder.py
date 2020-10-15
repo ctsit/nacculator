@@ -1,16 +1,16 @@
 ###############################################################################
-# Copyright 2015-2019 University of Florida. All rights reserved.
+# Copyright 2015-2020 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
 
-from nacc.lbd.ivp import forms as lbd_ivp_forms
-from nacc.uds3 import packet as lbd_ivp_packet
+from nacc.lbd.v3_1.ivp import forms as lbd_short_ivp_forms
+from nacc.uds3 import packet as lbd_short_ivp_packet
 
 
-def build_lbd_ivp_form(record):
+def build_lbd_short_ivp_form(record):
     ''' Converts REDCap CSV data into a packet (list of IVP Form objects) '''
-    packet = lbd_ivp_packet.Packet()
+    packet = lbd_short_ivp_packet.Packet()
 
     # Set up the forms..........
 
@@ -21,47 +21,32 @@ def build_lbd_ivp_form(record):
                 and int(record['visitday']) >= 1):
         raise ValueError('Visit date cannot precede June 1, 2017.')
 
-    B1L = lbd_ivp_forms.FormB1L()
+    B1L = lbd_short_ivp_forms.FormB1L()
     B1L.LBSSALIV = record['LBSSALIV'.lower()]
     B1L.LBSSWALL = record['LBSSWALL'.lower()]
-    B1L.LBSINSeX = record['LBSINSeX'.lower()]
-    B1L.LBSPrSeX = record['LBSPrSeX'.lower()]
-    B1L.LBSWeIGH = record['LBSWeIGH'.lower()]
     B1L.LBSSMeLL = record['LBSSMeLL'.lower()]
     B1L.LBSSWeAt = record['LBSSWeAT'.lower()]
-    B1L.LBStoLCD = record['LBStoLCD'.lower()]
-    B1L.LBStoLHt = record['LBStoLHt'.lower()]
-    B1L.LBSDBVIS = record['LBSDBVIS'.lower()]
     B1L.LBSCoNSt = record['LBSCoNSt'.lower()]
-    B1L.LBSHDStL = record['LBSHDStL'.lower()]
-    B1L.LBSLSStL = record['LBSLSStL'.lower()]
     B1L.LBSUBLAD = record['LBSUBLAD'.lower()]
-    B1L.LBSUStrM = record['LBSUStrM'.lower()]
-    B1L.LBSUPASS = record['LBSUPASS'.lower()]
     B1L.LBSDZStU = record['LBSDZStU'.lower()]
     B1L.LBSDZStN = record['LBSDZStN'.lower()]
     B1L.LBSFAINt = record['LBSFAINt'.lower()]
-    B1L.LBSPSyM  = record['LBSPSyM'.lower()]
     B1L.LBPSyAGe = record['LBPSyAGe'.lower()]
-    B1L.LBSSUPSy = record['LBSSUPSy'.lower()]
-    B1L.LBSSUPDI = record['LBSSUPDI'.lower()]
-    B1L.LBSSUPHt = record['LBSSUPHt'.lower()]
     B1L.LBSStNSy = record['LBSStNSy'.lower()]
+    B1L.LBSITSy = record['LBSITSy'.lower()]
     B1L.LBSStNDI = record['LBSStNDI'.lower()]
+    B1L.LBSITDI = record['LBSITDI'.lower()]
     B1L.LBSStNHt = record['LBSStNHt'.lower()]
+    B1L.LBSITHR = record['LBSITHR'.lower()]
     B1L.LBSAGerM = record['LBSAGerM'.lower()]
     B1L.LBSAGeSM = record['LBSAGeSM'.lower()]
     B1L.LBSAGeGt = record['LBSAGeGt'.lower()]
     B1L.LBSAGeFL = record['LBSAGeFL'.lower()]
     B1L.LBSAGetr = record['LBSAGetr'.lower()]
     B1L.LBSAGeBr = record['LBSAGeBr'.lower()]
-    B1L.LBSSCLAU = record['LBSSCLAU'.lower()]
-    B1L.LBSSCLVr = record['LBSSCLVr'.lower()]
-    B1L.LBSSCLot = record['LBSSCLot'.lower()]
-    B1L.LBSSCor  = record['LBSSCor'.lower()]
     packet.append(B1L)
 
-    B2L = lbd_ivp_forms.FormB2L()
+    B2L = lbd_short_ivp_forms.FormB2L()
     B2L.LBUDSPCH = record['LBUDSPCH'.lower()]
     B2L.LBUDSALV = record['LBUDSALV'.lower()]
     B2L.LBUDSWAL = record['LBUDSWAL'.lower()]
@@ -77,7 +62,7 @@ def build_lbd_ivp_form(record):
     B2L.LBUDSeNS = record['LBUDSeNS'.lower()]
     packet.append(B2L)
 
-    B3L = lbd_ivp_forms.FormB3L()
+    B3L = lbd_short_ivp_forms.FormB3L()
     B3L.LBUMSPCH = record['LBUMSPCH'.lower()]
     B3L.LBUMSPCX = record['LBUMSPCX'.lower()]
     B3L.LBUMFACe = record['LBUMFACe'.lower()]
@@ -136,7 +121,7 @@ def build_lbd_ivp_form(record):
     B3L.LBUMHNyX = record['LBUMHNyX'.lower()]
     packet.append(B3L)
 
-    B4L = lbd_ivp_forms.FormB4L()
+    B4L = lbd_short_ivp_forms.FormB4L()
     B4L.LBDeLUS  = record['LBDeLUS'.lower()]
     B4L.LBDHUrt  = record['LBDHUrt'.lower()]
     B4L.LBDSteAL = record['LBDSteAL'.lower()]
@@ -147,9 +132,6 @@ def build_lbd_ivp_form(record):
     B4L.LBDABAND = record['LBDABAND'.lower()]
     B4L.LBDPreS  = record['LBDPreS'.lower()]
     B4L.LBDotHer = record['LBDotHer'.lower()]
-    B4L.LBDeLFrQ = record['LBDeLFrQ'.lower()]
-    B4L.LBDeLSeV = record['LBDeLSeV'.lower()]
-    B4L.LBDeLDSt = record['LBDeLDSt'.lower()]
     B4L.LBHALL   = record['LBHALL'.lower()]
     B4L.LBHVoICe = record['LBHVoICe'.lower()]
     B4L.LBHPeoPL = record['LBHPeoPL'.lower()]
@@ -158,9 +140,6 @@ def build_lbd_ivp_form(record):
     B4L.LBHFeeL  = record['LBHFeeL'.lower()]
     B4L.LBHtASte = record['LBHtASte'.lower()]
     B4L.LBHotSeN = record['LBHotSeN'.lower()]
-    B4L.LBHALFrQ = record['LBHALFrQ'.lower()]
-    B4L.LBHALSeV = record['LBHALSeV'.lower()]
-    B4L.LBHALDSt = record['LBHALDSt'.lower()]
     B4L.LBANXIet = record['LBANXIet'.lower()]
     B4L.LBANeVNt = record['LBANeVNt'.lower()]
     B4L.LBANreLX = record['LBANreLX'.lower()]
@@ -169,9 +148,6 @@ def build_lbd_ivp_form(record):
     B4L.LBANPLAC = record['LBANPLAC'.lower()]
     B4L.LBANSePr = record['LBANSePr'.lower()]
     B4L.LBANotHr = record['LBANotHr'.lower()]
-    B4L.LBANXFrQ = record['LBANXFrQ'.lower()]
-    B4L.LBANXSeV = record['LBANXSeV'.lower()]
-    B4L.LBANXDSt = record['LBANXDSt'.lower()]
     B4L.LBAPAtHy = record['LBAPAtHy'.lower()]
     B4L.LBAPSPNt = record['LBAPSPNt'.lower()]
     B4L.LBAPCoNV = record['LBAPCoNV'.lower()]
@@ -180,43 +156,16 @@ def build_lbd_ivp_form(record):
     B4L.LBAPINt  = record['LBAPINt'.lower()]
     B4L.LBAPFAML = record['LBAPFAML'.lower()]
     B4L.LBAPINtr = record['LBAPINtr'.lower()]
-    B4L.LBAPotH  = record['LBAPotH'.lower()]
-    B4L.LBAPAFrQ = record['LBAPAFrQ'.lower()]
-    B4L.LBAPASeV = record['LBAPASeV'.lower()]
-    B4L.LBAPADSt = record['LBAPADSt'.lower()]
-    B4L.LBDoPAM  = record['LBDoPAM'.lower()]
-    B4L.LBDAGe   = record['LBDAGe'.lower()]
-    B4L.LBDDrUG1 = record['LBDDrUG1'.lower()]
-    B4L.LBDDoSe1 = record['LBDDoSe1'.lower()]
-    B4L.LBDAGe2  = record['LBDAGe2'.lower()]
-    B4L.LBDDrUG2 = record['LBDDrUG2'.lower()]
-    B4L.LBDDoSe2 = record['LBDDoSe2'.lower()]
-    B4L.LBDeLAGe = record['LBDeLAGe'.lower()]
-    B4L.LBDeLMeD = record['LBDeLMeD'.lower()]
-    B4L.LBDeLMD1 = record['LBDeLMD1'.lower()]
-    B4L.LBDeLMD2 = record['LBDeLMD2'.lower()]
-    B4L.LBHALAGe = record['LBHALAGe'.lower()]
-    B4L.LBHALMeD = record['LBHALMeD'.lower()]
-    B4L.LBHALMD1 = record['LBHALMD1'.lower()]
-    B4L.LBHALMD2 = record['LBHALMD2'.lower()]
-    B4L.LBANXAGe = record['LBANXAGe'.lower()]
-    B4L.LBANXMeD = record['LBANXMeD'.lower()]
-    B4L.LBANXMD1 = record['LBANXMD1'.lower()]
-    B4L.LBANXMD2 = record['LBANXMD2'.lower()]
-    B4L.LBAPAAGe = record['LBAPAAGe'.lower()]
-    B4L.LBAPAMeD = record['LBAPAMeD'.lower()]
-    B4L.LBAPAMD1 = record['LBAPAMD1'.lower()]
-    B4L.LBAPAMD2 = record['LBAPAMD2'.lower()]
     packet.append(B4L)
 
-    B5L = lbd_ivp_forms.FormB5L()
+    B5L = lbd_short_ivp_forms.FormB5L()
     B5L.LBMLtHrG = record['LBMLtHrG'.lower()]
     B5L.LBMSLeeP = record['LBMSLeeP'.lower()]
     B5L.LBMDISrG = record['LBMDISrG'.lower()]
     B5L.LBMStAre = record['LBMStAre'.lower()]
     packet.append(B5L)
 
-    B6L = lbd_ivp_forms.FormB6L()
+    B6L = lbd_short_ivp_forms.FormB6L()
     B6L.LBSPCGIM = record['LBSPCGIM'.lower()]
     B6L.LBSPDrM  = record['LBSPDrM'.lower()]
     B6L.LBSPyrS  = record['LBSPyrS'.lower()]
@@ -238,7 +187,7 @@ def build_lbd_ivp_form(record):
     B6L.LBSPALrt = record['LBSPALrt'.lower()]
     packet.append(B6L)
 
-    B7L = lbd_ivp_forms.FormB7L()
+    B7L = lbd_short_ivp_forms.FormB7L()
     B7L.LBSCLIV  = record['LBSCLIV'.lower()]
     B7L.LBSCSLP  = record['LBSCSLP'.lower()]
     B7L.LBSCBeHV = record['LBSCBeHV'.lower()]
@@ -261,23 +210,7 @@ def build_lbd_ivp_form(record):
     B7L.LBSCALrt = record['LBSCALrt'.lower()]
     packet.append(B7L)
 
-    B8L = lbd_ivp_forms.FormB8L()
-    B8L.PACoGIMP = record['PACoGIMP'.lower()]
-    B8L.PANSFALL = record['PANSFALL'.lower()]
-    B8L.PANSWKoF = record['PANSWKoF'.lower()]
-    B8L.PANSLyAW = record['PANSLyAW'.lower()]
-    B8L.PANSWKer = record['PANSWKer'.lower()]
-    B8L.PANSLttL = record['PANSLttL'.lower()]
-    B8L.SCPArAte = record['SCPArAte'.lower()]
-    B8L.PADSUNeX = record['PADSUNeX'.lower()]
-    B8L.PADSSItP = record['PADSSItP'.lower()]
-    B8L.PADSWAtV = record['PADSWAtV'.lower()]
-    B8L.PADStALK = record['PADStALK'.lower()]
-    B8L.PADSAWDy = record['PADSAWDy'.lower()]
-    B8L.PADSFLDy = record['PADSFLDy'.lower()]
-    packet.append(B8L)
-
-    B9L = lbd_ivp_forms.FormB9L()
+    B9L = lbd_short_ivp_forms.FormB9L()
     B9L.CoNSFALL = record['CoNSFALL'.lower()]
     B9L.CoNSWKoF = record['CoNSWKoF'.lower()]
     B9L.CoNSLyAW = record['CoNSLyAW'.lower()]
@@ -290,16 +223,9 @@ def build_lbd_ivp_form(record):
     B9L.CoDStALK = record['CoDStALK'.lower()]
     B9L.CoDSAWDy = record['CoDSAWDy'.lower()]
     B9L.CoDSFLDy = record['CoDSFLDy'.lower()]
-    B9L.SCCoFrSt = record['SCCoFrSt'.lower()]
-    B9L.SCCoAGeN = record['SCCoAGeN'.lower()]
-    B9L.SCCoAGeD = record['SCCoAGeD'.lower()]
-    B9L.SCCoCoMP = record['SCCoCoMP'.lower()]
-    B9L.SCCoSCVr = record['SCCoSCVr'.lower()]
-    B9L.SCCootH  = record['SCCootH'.lower()]
-    B9L.SCCoSCor = record['SCCoSCor'.lower()]
     packet.append(B9L)
 
-    C1L = lbd_ivp_forms.FormC1L()
+    C1L = lbd_short_ivp_forms.FormC1L()
     C1L.LBNSWorD = record['LBNSWorD'.lower()]
     C1L.LBNSCoLr = record['LBNSCoLr'.lower()]
     C1L.LBNSCLWD = record['LBNSCLWD'.lower()]
@@ -309,7 +235,7 @@ def build_lbd_ivp_form(record):
     C1L.LBNPPArD = record['LBNPPArD'.lower()]
     packet.append(C1L)
 
-    D1L = lbd_ivp_forms.FormD1L()
+    D1L = lbd_short_ivp_forms.FormD1L()
     D1L.LBCDSCoG = record['LBCDSCoG'.lower()]
     D1L.LBCCMeM  = record['LBCCMeM'.lower()]
     D1L.LBCCLANG = record['LBCCLANG'.lower()]
@@ -348,7 +274,7 @@ def build_lbd_ivp_form(record):
     D1L.LBCoGDX  = record['LBCoGDX'.lower()]
     packet.append(D1L)
 
-    E1L = lbd_ivp_forms.FormE1L()
+    E1L = lbd_short_ivp_forms.FormE1L()
     E1L.LBGLrrK2 = record['LBGLrrK2'.lower()]
     E1L.LBGLrKIS = record['LBGLrKIS'.lower()]
     E1L.LBGPArK2 = record['LBGPArK2'.lower()]
@@ -366,7 +292,7 @@ def build_lbd_ivp_form(record):
     E1L.LBGotHX  = record['LBGotHX'.lower()]
     packet.append(E1L)
 
-    E2L = lbd_ivp_forms.FormE2L()
+    E2L = lbd_short_ivp_forms.FormE2L()
     E2L.LBISMrI  = record['LBISMrI'.lower()]
     E2L.LBISMMo  = record['LBISMMo'.lower()]
     E2L.LBISMDy  = record['LBISMDy'.lower()]
@@ -433,61 +359,19 @@ def build_lbd_ivp_form(record):
     E2L.LBIDSABN = record['LBIDSABN'.lower()]
     packet.append(E2L)
 
-    E3L = lbd_ivp_forms.FormE3L()
+    E3L = lbd_short_ivp_forms.FormE3L()
     E3L.LBoPoLyS = record['LBoPoLyS'.lower()]
-    E3L.LBoPoSMo = record['LBoPoSMo'.lower()]
-    E3L.LBoPoSDy = record['LBoPoSDy'.lower()]
-    E3L.LBoPoSyr = record['LBoPoSyr'.lower()]
     E3L.LBoPoPoS = record['LBoPoPoS'.lower()]
     E3L.LBoPoAVL = record['LBoPoAVL'.lower()]
     E3L.LBoCMIBG = record['LBoCMIBG'.lower()]
-    E3L.LBoCMMo  = record['LBoCMMo'.lower()]
-    E3L.LBoCMDy  = record['LBoCMDy'.lower()]
-    E3L.LBoCMyr  = record['LBoCMyr'.lower()]
     E3L.LBoCMPoS = record['LBoCMPoS'.lower()]
     E3L.LBoCMAVL = record['LBoCMAVL'.lower()]
     E3L.LBoANoS  = record['LBoANoS'.lower()]
-    E3L.LBoANMo  = record['LBoANMo'.lower()]
-    E3L.LBoANDy  = record['LBoANDy'.lower()]
-    E3L.LBoANyr  = record['LBoANyr'.lower()]
     E3L.LBoANPoS = record['LBoANPoS'.lower()]
     E3L.LBoANAVL = record['LBoANAVL'.lower()]
     E3L.LBoANVer = record['LBoANVer'.lower()]
     E3L.LBoANotH = record['LBoANotH'.lower()]
-    E3L.LBoeeG   = record['LBOeeG'.lower()]
-    E3L.LBoeGMo  = record['LBoeGMo'.lower()]
-    E3L.LBoeGDy  = record['LBoeGDy'.lower()]
-    E3L.LBoeGyr  = record['LBoeGyr'.lower()]
-    E3L.LBoeGPoS = record['LBoeGPoS'.lower()]
-    E3L.LBoeGAVL = record['LBoeGAVL'.lower()]
-    E3L.LBoMSLt  = record['LBoMSLt'.lower()]
-    E3L.LBoMSMo  = record['LBoMSMo'.lower()]
-    E3L.LBoMSDy  = record['LBoMSDy'.lower()]
-    E3L.LBoMSyr  = record['LBoMSyr'.lower()]
-    E3L.LBoMSPoS = record['LBoMSPoS'.lower()]
-    E3L.LBoMSAVL = record['LBoMSAVL'.lower()]
-    E3L.LBotILt  = record['LBotILt'.lower()]
-    E3L.LBotLMo  = record['LBotLMo'.lower()]
-    E3L.LBotLDy  = record['LBotLDY'.lower()]
-    E3L.LBotLyr  = record['LBotLyr'.lower()]
-    E3L.LBotLPoS = record['LBotLPoS'.lower()]
-    E3L.LBotLAVL = record['LBotLAVL'.lower()]
-    E3L.LBoQSArt = record['LBoQSArt'.lower()]
-    E3L.LBoQSMo  = record['LBoQSMo'.lower()]
-    E3L.LBoQSDy  = record['LBoQSDy'.lower()]
-    E3L.LBoQSyr  = record['LBoQSyr'.lower()]
-    E3L.LBoQSPoS = record['LBoQSPoS'.lower()]
-    E3L.LBoSGAVL = record['LBoSGAVL'.lower()]
-    E3L.LBotHerM = record['LBotHerM'.lower()]
-    E3L.LBotHMo  = record['LBotHMo'.lower()]
-    E3L.LBotHDy  = record['LBotHDy'.lower()]
-    E3L.LBotHyr  = record['LBotHyr'.lower()]
-    E3L.LBotHPoS = record['LBotHPoS'.lower()]
-    E3L.LBotHAVL = record['LBotHAVL'.lower()]
     E3L.LBoCGAIt = record['LBoCGAIt'.lower()]
-    E3L.LBoCGMo  = record['LBoCGMo'.lower()]
-    E3L.LBoCGDy  = record['LBoCGDy'.lower()]
-    E3L.LBoCGyr  = record['LBoCGyr'.lower()]
     E3L.LBoCGPoS = record['LBoCGPoS'.lower()]
     E3L.LBoCGAVL = record['LBoCGAVL'.lower()]
     packet.append(E3L)
@@ -500,7 +384,7 @@ def update_header(record, packet):
     for header in packet:
         header.PACKET = "IL"
         header.FORMID = header.form_name
-        header.FORMVER = 3
+        header.FORMVER = 3.1
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
         header.VISITMO = record['visitmo']

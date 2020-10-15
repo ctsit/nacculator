@@ -8,7 +8,7 @@ from nacc.csf import forms as csf_forms
 from nacc.uds3 import packet as csf_packet
 
 
-def build_uds3_csf_form(record):
+def build_csf_form(record):
     """ Converts REDCap CSV data into a packet (list of CSF Module objects) """
     packet = csf_packet.Packet()
 

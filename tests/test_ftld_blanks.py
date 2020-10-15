@@ -1,7 +1,7 @@
 import unittest
 
 from nacc import redcap2nacc
-from nacc.ftld.ivp.builder import build_uds3_ftld_ivp_form
+from nacc.ftld.ivp.builder import build_ftld_ivp_form
 
 
 class option():
@@ -32,7 +32,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record = make_filled_form()
         record['a4sub'] = '0'
         record['langa4'] = '1'
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
@@ -51,7 +51,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record['ftdcppa'] = ''
         record['ftdpabvf'] = ''
         record['ftdppasl'] = '0'
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
@@ -67,7 +67,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record = make_filled_form()
         record['ftdcpc2f'] = '95'
         record['ftdhaird'] = '1'
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
@@ -86,7 +86,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record['ftdmrirf'] = '0'
         record['ftdmrifa'] = '9'
         record['ftdmriob'] = ''
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
@@ -104,7 +104,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record = make_filled_form()
         record['ftdmrios'] = '1'
         record['ftdmriob'] = '0'
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
@@ -124,7 +124,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record = make_filled_form()
         record['ftdpabvf'] = '9'
         record['ftdcppa'] = '0'
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
@@ -136,7 +136,7 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record = make_filled_form()
         record['ftdpabvf'] = '9'
         record['ftdbvft'] = ''
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)

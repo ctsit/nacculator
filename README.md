@@ -25,10 +25,10 @@ Nacculator will automatically skip PTIDs with errors, so the output `data.txt`
 file will be ready to submit to NACC.
 In order to properly filter the data in the csv, nacculator is expecting that
 REDCap visits (denoted by `redcap_event_name`) contain certain keywords:
-    "initial_visit" for initial visit packets
-    "followup_visit" for all followups
-    "milestone" for milestone packets
-    "neuropath" for neuropathology packets
+    "initial_visit" for initial visit packets,
+    "followup_visit" for all followups,
+    "milestone" for milestone packets,
+    "neuropath" for neuropathology packets,
     "telephone" for telephone followup packets
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input is
@@ -54,10 +54,13 @@ the `-file` flag._
       -np                   Set this flag to process as Neuropathology data
       -m                    Set this flag to process as Milestone data
       -csf                  Set this flag to process as NACC BIDSS CSF data
+
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
                               Set this flag to process the filter
-      -lbd                  Set this flag to process as Lewy Body Dementia data
+      -lbd                  Set this flag to process as Lewy Body Dementia data (FORMVER = 3)
+      -lbdsv                Set this flag to process as Lewy Body Dementia short version data (FORMVER = 3.1)
       -ftld                 Set this flag to process as Frontotemporal Lobar Degeneration data
+
       -file FILE            Path of the csv file to be processed.
       -meta FILTER_META     Input file for the filter metadata (in case -filter is used)
       -ptid PTID            Ptid for which you need the records
@@ -73,7 +76,7 @@ the `-file` flag._
 
     redcap2nacc -lbd -fvp -file data.csv >data.txt
 
-Both LBD and FTLD forms can have IVP or FVP arguments.
+Both LBD / LBDSV and FTLD forms can have IVP or FVP arguments.
 
 **Example** - Run data through the `cleanPtid` filter:
 
@@ -191,7 +194,7 @@ Example Workflow
 ----------------
 
 Once you have edited the `nacculator_cfg.ini` file with your API token and
-desired filters, you can get a filtered CSV file of the REDCap data with:
+desired filters, you can get a filtered CSV file of the raw REDCap data with:
 
     $ nacculator_filters nacculator_cfg.ini
 
@@ -205,7 +208,7 @@ modified so that the output is deposited in your `$run_CURRENT-DATE` folder.
 
 Next, you will need to run the actual `redcap2nacc` program to produce the
 fixed width text file for NACC. One type of flag can be used at a time, so the
-program must be run twice.
+program must be run once for each type of packet.
 
     $ redcap2nacc -ivp < $run_CURRENT-DATE/final_Update.csv > $run_CURRENT-DATE/iv_nacc_complete.txt 2> $run_CURRENT-DATE/ivp_errors.txt
     $ redcap2nacc -fvp < $run_CURRENT-DATE/final_Update.csv > $run_CURRENT-DATE/fv_nacc_complete.txt 2> $run_CURRENT-DATE/fvp_errors.txt

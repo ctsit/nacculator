@@ -8,7 +8,7 @@ from nacc.ftld.ivp import forms as ftld_ivp_forms
 from nacc.uds3 import packet as ftld_ivp_packet
 
 
-def build_uds3_ftld_ivp_form(record: dict):
+def build_ftld_ivp_form(record: dict):
     ''' Converts REDCap CSV data into a packet (list of IVP Form objects) '''
     packet = ftld_ivp_packet.Packet()
 

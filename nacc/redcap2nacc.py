@@ -24,6 +24,8 @@ from nacc.uds3.tfp import builder as tfp_builder
 from nacc.uds3.m import builder as m_builder
 from nacc.lbd.ivp import builder as lbd_ivp_builder
 from nacc.lbd.fvp import builder as lbd_fvp_builder
+from nacc.lbd.v3_1.ivp import builder as lbd_short_ivp_builder
+from nacc.lbd.v3_1.fvp import builder as lbd_short_fvp_builder
 from nacc.ftld.ivp import builder as ftld_ivp_builder
 from nacc.ftld.fvp import builder as ftld_fvp_builder
 from nacc.csf import builder as csf_builder
@@ -161,15 +163,24 @@ def check_redcap_event(options, record) -> bool:
         form_match_lbd = record['lbd_fvp_b1l_complete']
         if form_match_lbd in ['0', '']:
             return False
-    # TODO: add options for lbdsv (lbd short version)
+    elif options.lbdsv and options.ivp:
+        event_name = 'initial_visit'
+        form_match_lbd = record['lbd_ivp_b1l_complete']
+        if form_match_lbd in ['0', '']:
+            return False
+    elif options.lbdsv and options.fvp:
+        event_name = 'followup_visit'
+        form_match_lbd = record['lbd_fvp_b1l_complete']
+        if form_match_lbd in ['0', '']:
+            return False
     elif options.ftld and options.ivp:
         event_name = 'initial_visit'
-        form_match_ftld = record['ftld_ivp_a3a_complete']
+        form_match_ftld = record['ftld_present']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ftld and options.fvp:
         event_name = 'followup_visit'
-        form_match_ftld = record['ftld_fvp_a3a_complete']
+        form_match_ftld = record['fu_ftld_present']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ivp:
@@ -213,6 +224,7 @@ def check_single_select(packet: uds3_packet.Packet):
     """
     warnings = list()
 
+    # TODO: get these checks actually working.
     # D1 4
     fields_4 = ('AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
     if not exclusive(packet, fields_4):
@@ -314,15 +326,19 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         print("[START] ptid : " + str(record['ptid']), file=err)
         try:
             if options.lbd and options.ivp:
-                packet = lbd_ivp_builder.build_uds3_lbd_ivp_form(record)
+                packet = lbd_ivp_builder.build_lbd_ivp_form(record)
             elif options.lbd and options.fvp:
-                packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
+                packet = lbd_fvp_builder.build_lbd_fvp_form(record)
+            elif options.lbdsv and options.ivp:
+                packet = lbd_short_ivp_builder.build_lbd_short_ivp_form(record)
+            elif options.lbdsv and options.fvp:
+                packet = lbd_short_fvp_builder.build_lbd_short_fvp_form(record)
             elif options.ftld and options.ivp:
-                packet = ftld_ivp_builder.build_uds3_ftld_ivp_form(record)
+                packet = ftld_ivp_builder.build_ftld_ivp_form(record)
             elif options.ftld and options.fvp:
-                packet = ftld_fvp_builder.build_uds3_ftld_fvp_form(record)
+                packet = ftld_fvp_builder.build_ftld_fvp_form(record)
             elif options.csf:
-                packet = csf_builder.build_uds3_csf_form(record)
+                packet = csf_builder.build_csf_form(record)
             elif options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
             elif options.np:
@@ -342,7 +358,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             continue
 
         if not options.np and not options.m and not options.tfp and not \
-                options.lbd and not options.ftld and not options.csf:
+            options.lbd and not options.lbdsv and not options.ftld and not \
+            options.csf:
             set_blanks_to_zero(packet)
 
         if options.m:
@@ -371,7 +388,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             continue
 
         if not options.np and not options.m and not options.lbd and not \
-                options.ftld and not options.csf:
+            options.lbdsv and not options.ftld and not options.csf:
             warnings += check_single_select(packet)
 
         for form in packet:
@@ -424,6 +441,9 @@ def parse_args(args=None):
     parser.add_argument(
         '-lbd', action='store_true', dest='lbd',
         help='Set this flag to process as Lewy Body Dementia data')
+    parser.add_argument(
+        '-lbdsv', action='store_true', dest='lbdsv',
+        help='Set this flag to process as Lewy Body Dementia short version data')
     parser.add_argument(
         '-ftld', action='store_true', dest='ftld',
         help='Set this flag to process as Frontotemporal Lobar'
