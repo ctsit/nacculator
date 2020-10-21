@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ###############################################################################
-# Copyright 2015-2019 University of Florida. All rights reserved.
+# Copyright 2015-2020 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -24,6 +24,8 @@ from nacc.uds3.tfp import builder as tfp_builder
 from nacc.uds3.m import builder as m_builder
 from nacc.lbd.ivp import builder as lbd_ivp_builder
 from nacc.lbd.fvp import builder as lbd_fvp_builder
+from nacc.lbd.v3_1.ivp import builder as lbd_short_ivp_builder
+from nacc.lbd.v3_1.fvp import builder as lbd_short_fvp_builder
 from nacc.ftld.ivp import builder as ftld_ivp_builder
 from nacc.ftld.fvp import builder as ftld_fvp_builder
 from nacc.csf import builder as csf_builder
@@ -37,12 +39,17 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
     """
     Parses rules for when each field should be blank and then checks them
     """
-    warnings = []
+    warnings: list = []
 
     for form in packet:
         # Find all fields that:
         #   1) have blanking rules; and
         #   2) aren't blank.
+        formid = ""
+        try:
+            formid = " in form %s" % (form.fields['FORMID'].value)
+        except KeyError:
+            pass
         for field in [f for f in form.fields.values()
                       if f.blanks and not empty(f)]:
 
@@ -50,34 +57,33 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
                 if not options.lbd and not options.ftld and not options.csf:
                     r = blanks_uds3.convert_rule_to_python(field.name, rule)
                     if r(packet):
-                        warnings.append(
-                            "'%s' is '%s' with length '%s', but should be"
-                            " blank: '%s'." %
-                            (field.name, field.value, len(field.value), rule))
+                        blank_warnings(warnings, field.name, formid,
+                                       field.value, len(field.value), rule)
 
                 if options.lbd:
                     t = blanks_lbd.convert_rule_to_python(field.name, rule)
                     if t(packet):
-                        warnings.append(
-                            "'%s' is '%s' with length '%s', but should be"
-                            " blank: '%s'." %
-                            (field.name, field.value, len(field.value), rule))
+                        blank_warnings(warnings, field.name, formid,
+                                       field.value, len(field.value), rule)
 
                 if options.ftld:
                     s = blanks_ftld.convert_rule_to_python(field.name, rule)
                     if s(packet):
-                        warnings.append(
-                            "'%s' is '%s' with length '%s', but should be"
-                            " blank: '%s'." %
-                            (field.name, field.value, len(field.value), rule))
+                        blank_warnings(warnings, field.name, formid,
+                                       field.value, len(field.value), rule)
 
                 if options.csf:
                     q = blanks_csf.convert_rule_to_python(field.name, rule)
                     if q(packet):
-                        warnings.append(
-                            "'%s' is '%s' with length '%s', but should be"
-                            " blank: '%s'." %
-                            (field.name, field.value, len(field.value), rule))
+                        blank_warnings(warnings, field.name, formid,
+                                       field.value, len(field.value), rule)
+    return warnings
+
+
+def blank_warnings(warnings, fieldname, formid, value, length, rule):
+    warnings.append(
+        "%s%s is '%s' with length '%s', but should be blank: '%s'." %
+        (fieldname, formid, value, length, rule))
     return warnings
 
 
@@ -99,12 +105,17 @@ def check_characters(packet: uds3_packet.Packet) -> typing.List:
 
                 if incompatible:
                     character = " ".join(incompatible)
+                    formid = ""
+                    try:
+                        formid = " in form %s" % (form.fields['FORMID'].value)
+                    except KeyError:
+                        pass
                     warnings.append(
-                        '\'%s\' is \'%s\', which has invalid character(s) %s .'
+                        '%s%s is \'%s\', which has invalid character(s) %s .'
                         ' This field can have any text or numbers, but cannot'
                         ' include single quotes \', double quotes \",'
                         ' ampersands & or percentage signs %% ' %
-                        (field.name, field.value, character))
+                        (field.name, formid, field.value, character))
 
     return warnings
 
@@ -114,7 +125,7 @@ def check_for_bad_characters(field: Field) -> typing.List:
     Searches the flagged fields for the special characters
     and tallies up all instances of each character
     """
-    incompatible = []
+    incompatible: list = []
 
     text = field.value
     chars = ["'", '"', '&', '%']
@@ -161,15 +172,24 @@ def check_redcap_event(options, record) -> bool:
         form_match_lbd = record['lbd_fvp_b1l_complete']
         if form_match_lbd in ['0', '']:
             return False
-    # TODO: add options for lbdsv (lbd short version)
+    elif options.lbdsv and options.ivp:
+        event_name = 'initial_visit'
+        form_match_lbd = record['lbd_ivp_b1l_complete']
+        if form_match_lbd in ['0', '']:
+            return False
+    elif options.lbdsv and options.fvp:
+        event_name = 'followup_visit'
+        form_match_lbd = record['lbd_fvp_b1l_complete']
+        if form_match_lbd in ['0', '']:
+            return False
     elif options.ftld and options.ivp:
         event_name = 'initial_visit'
-        form_match_ftld = record['ftld_ivp_a3a_complete']
+        form_match_ftld = record['ftld_present']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ftld and options.fvp:
         event_name = 'followup_visit'
-        form_match_ftld = record['ftld_fvp_a3a_complete']
+        form_match_ftld = record['fu_ftld_present']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ivp:
@@ -213,6 +233,7 @@ def check_single_select(packet: uds3_packet.Packet):
     """
     warnings = list()
 
+    # TODO: get these checks actually working.
     # D1 4
     fields_4 = ('AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
     if not exclusive(packet, fields_4):
@@ -226,12 +247,13 @@ def check_single_select(packet: uds3_packet.Packet):
                         'than one syndrome indicated as "Present".')
 
     # D1 11-39
-    fields_11_39 = ('ALZDISIF', 'LBDIF', 'MSAIF', 'PSPIF', 'CORTIF', 'FTLDMOIF',
-              'FTLDNOIF', 'FTLDSUBX', 'CVDIF', 'ESSTREIF', 'DOWNSIF', 'HUNTIF',
-              'PRIONIF', 'BRNINJIF', 'HYCEPHIF', 'EPILEPIF', 'NEOPIF', 'HIVIF',
-              'OTHCOGIF', 'DEPIF', 'BIPOLDIF', 'SCHIZOIF', 'ANXIETIF',
-              'DELIRIF', 'PTSDDXIF', 'OTHPSYIF', 'ALCDEMIF', 'IMPSUBIF',
-              'DYSILLIF', 'MEDSIF', 'COGOTHIF', 'COGOTH2F', 'COGOTH3F')
+    fields_11_39 = ('ALZDISIF', 'LBDIF', 'MSAIF', 'PSPIF', 'CORTIF',
+                    'FTLDMOIF', 'FTLDNOIF', 'FTLDSUBX', 'CVDIF', 'ESSTREIF',
+                    'DOWNSIF', 'HUNTIF', 'PRIONIF', 'BRNINJIF', 'HYCEPHIF',
+                    'EPILEPIF', 'NEOPIF', 'HIVIF', 'OTHCOGIF', 'DEPIF',
+                    'BIPOLDIF', 'SCHIZOIF', 'ANXIETIF', 'DELIRIF', 'PTSDDXIF',
+                    'OTHPSYIF', 'ALCDEMIF', 'IMPSUBIF', 'DYSILLIF', 'MEDSIF',
+                    'COGOTHIF', 'COGOTH2F', 'COGOTH3F')
     if not exclusive(packet, fields_11_39):
         warnings.append('For Form D1, Questions 11-39, there is unexpectedly '
                         'more than one Primary cause selected.')
@@ -314,15 +336,19 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         print("[START] ptid : " + str(record['ptid']), file=err)
         try:
             if options.lbd and options.ivp:
-                packet = lbd_ivp_builder.build_uds3_lbd_ivp_form(record)
+                packet = lbd_ivp_builder.build_lbd_ivp_form(record)
             elif options.lbd and options.fvp:
-                packet = lbd_fvp_builder.build_uds3_lbd_fvp_form(record)
+                packet = lbd_fvp_builder.build_lbd_fvp_form(record)
+            elif options.lbdsv and options.ivp:
+                packet = lbd_short_ivp_builder.build_lbd_short_ivp_form(record)
+            elif options.lbdsv and options.fvp:
+                packet = lbd_short_fvp_builder.build_lbd_short_fvp_form(record)
             elif options.ftld and options.ivp:
-                packet = ftld_ivp_builder.build_uds3_ftld_ivp_form(record)
+                packet = ftld_ivp_builder.build_ftld_ivp_form(record)
             elif options.ftld and options.fvp:
-                packet = ftld_fvp_builder.build_uds3_ftld_fvp_form(record)
+                packet = ftld_fvp_builder.build_ftld_fvp_form(record)
             elif options.csf:
-                packet = csf_builder.build_uds3_csf_form(record)
+                packet = csf_builder.build_csf_form(record)
             elif options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
             elif options.np:
@@ -342,7 +368,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             continue
 
         if not options.np and not options.m and not options.tfp and not \
-                options.lbd and not options.ftld and not options.csf:
+            options.lbd and not options.lbdsv and not options.ftld and not \
+            options.csf:
             set_blanks_to_zero(packet)
 
         if options.m:
@@ -358,20 +385,21 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         try:
             warnings += check_characters(packet)
-            if warnings:
-                print("[SKIP] Error for ptid : " + str(record['ptid']),
-                      file=err)
-                warn = "\n".join(map(str, warnings))
-                warn = warn.replace("\\", "")
-                print(warn, file=err)
-                continue
         except KeyError:
             print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             traceback.print_exc()
             continue
 
+        if warnings:
+            print("[SKIP] Error for ptid : " + str(record['ptid']),
+                  file=err)
+            warn = "\n".join(map(str, warnings))
+            warn = warn.replace("\\", "")
+            print(warn, file=err)
+            continue
+
         if not options.np and not options.m and not options.lbd and not \
-                options.ftld and not options.csf:
+            options.lbdsv and not options.ftld and not options.csf:
             warnings += check_single_select(packet)
 
         for form in packet:
@@ -424,6 +452,9 @@ def parse_args(args=None):
     parser.add_argument(
         '-lbd', action='store_true', dest='lbd',
         help='Set this flag to process as Lewy Body Dementia data')
+    parser.add_argument(
+        '-lbdsv', action='store_true', dest='lbdsv',
+        help='Set this flag to process as Lewy Body Dementia short version data')
     parser.add_argument(
         '-ftld', action='store_true', dest='ftld',
         help='Set this flag to process as Frontotemporal Lobar'

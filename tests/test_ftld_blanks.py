@@ -1,7 +1,7 @@
 import unittest
 
 from nacc import redcap2nacc
-from nacc.ftld.ivp.builder import build_uds3_ftld_ivp_form
+from nacc.ftld.ivp.builder import build_ftld_ivp_form
 
 
 class option():
@@ -32,12 +32,12 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record = make_filled_form()
         record['a4sub'] = '0'
         record['langa4'] = '1'
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ["'LANGA4' is '1' with length '1', but should be blank:"
-                    " 'Blank if Question 4b A4SUB = 0 (No)'."]
+        expected = ["LANGA4 in form Z1X is '1' with length '1', but should be"
+                    " blank: 'Blank if Question 4b A4SUB = 0 (No)'."]
         self.assertEqual(warnings, expected)
 
     def test_for_single_blanking_rule_returned(self):
@@ -51,12 +51,12 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record['ftdcppa'] = ''
         record['ftdpabvf'] = ''
         record['ftdppasl'] = '0'
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ["'FTDCPPAS' is '2' with length '1', but should be blank:"
-                    " 'Blank if Question 1 FTDPPASL = 0 (No)'."]
+        expected = ["FTDCPPAS in form B9F is '2' with length '1', but should"
+                    " be blank: 'Blank if Question 1 FTDPPASL = 0 (No)'."]
         self.assertEqual(warnings, expected)
 
     def test_for_special_case_FTDCPC2F(self):
@@ -67,12 +67,12 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record = make_filled_form()
         record['ftdcpc2f'] = '95'
         record['ftdhaird'] = '1'
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ["'FTDhAIRD' is '1' with length '1', but should be blank:"
-                    " 'Blank if Question 0 FTDCPC2F = 95'."]
+        expected = ["FTDhAIRD in form C2F is '1' with length '1', but should"
+                    " be blank: 'Blank if Question 0 FTDCPC2F = 95'."]
         self.assertEqual(warnings, expected)
 
     def test_for_special_case_or2(self):
@@ -86,12 +86,12 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record['ftdmrirf'] = '0'
         record['ftdmrifa'] = '9'
         record['ftdmriob'] = ''
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ["'FTDMRIRF' is '0' with length '1', but should be blank: "
-                    "'Blank if Question 2a, FTDMRIFA, = 0 (No) or 9"
+        expected = ["FTDMRIRF in form E3F is '0' with length '1', but should"
+                    " be blank: 'Blank if Question 2a, FTDMRIFA, = 0 (No) or 9"
                     " (Unknown)'."]
         self.assertEqual(warnings, expected)
 
@@ -104,12 +104,12 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record = make_filled_form()
         record['ftdmrios'] = '1'
         record['ftdmriob'] = '0'
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
         # FTDMRIOS is a Char field with a length of 60 characters
-        expected = ["'FTDMRIOS' is"
+        expected = ["FTDMRIOS in form E3F is"
                     " '1                                                  "
                     "         ' with length '60', but should be blank:"
                     " 'Blank if Question 2a11 FTDMRIOB ne 1 (Yes)'."]
@@ -124,24 +124,24 @@ class TestBlankRulesForFTLD(unittest.TestCase):
         record = make_filled_form()
         record['ftdpabvf'] = '9'
         record['ftdcppa'] = '0'
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ["'FTDPABVF' is '9' with length '1', but should be blank:"
-                    " 'Blank if Question 12 FTDCPPA = 0 (No) '."]
+        expected = ["FTDPABVF in form B9F is '9' with length '1', but should"
+                    " be blank: 'Blank if Question 12 FTDCPPA = 0 (No) '."]
         self.assertEqual(warnings, expected)
 
     def test_for_FTDPABVF_blank(self):
         record = make_filled_form()
         record['ftdpabvf'] = '9'
         record['ftdbvft'] = ''
-        ipacket = build_uds3_ftld_ivp_form(record)
+        ipacket = build_ftld_ivp_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ["'FTDPABVF' is '9' with length '1', but should be blank:"
-                    " 'Blank if Question 22 FTDBVFT = blank'."]
+        expected = ["FTDPABVF in form B9F is '9' with length '1', but should"
+                    " be blank: 'Blank if Question 22 FTDBVFT = blank'."]
         self.assertEqual(warnings, expected)
 
 
