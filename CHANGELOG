@@ -1,15 +1,26 @@
 Changelog
 =========
+## [1.4.0] - 2020-10-21
+### Summary
+
+This version adds the LBD short version, updates the cappy dependency, and
+quality of life updates for CLS forms optional, expanding the range on ADC
+IDs to 99, filters to accept milestone packets, and wording for error logging
+to point out the form in error.
+
+### added
+ * Add documentation, update filters.py, add details to error logging
+ * Add logic to make the CLS form optional in the input csv
 
 ## [1.3.0] - 2020-06-30
 ### Summary
 
-This versioin reflects changes to have NACCulator be more compatiable with more centers. We removed some hard coded variables for the 1Florida ADRC. 
-There were changes to how the deprecated Z1 and C1S forms are handled as well as updates to tests for new functionality in the program. 
+This version reflects changes to have NACCulator be more compatible with more centers. We removed some hard coded variables for the 1Florida ADRC.
+There were changes to how the deprecated Z1 and C1S forms are handled as well qas updates to tests for new functionality in the program.
 
-### Added 
- * Added Z1 skipping to TFP builder (Samantha Emerson)
- * Added tests for new functionality on skip logic and CSV formats (Samantha Emerson)
+### Added
+ * Add Z1 skipping to TFP builder (Samantha Emerson)
+ * Add tests for new functionality on skip logic and CSV formats (Samantha Emerson)
  * Add run_filters.py to setup.py installation (Samantha Emerson)
  * Add C1S form skip to uds ivp and fvp builders (Samantha Emerson)
  * Add Z1 form skipping to uds3 fvp (Samantha Emerson)
