@@ -1,7 +1,7 @@
 import unittest
 
 from nacc import redcap2nacc
-from nacc.csf.builder import build_uds3_csf_form
+from nacc.csf.builder import build_csf_form
 
 
 class option():
@@ -37,15 +37,15 @@ class TestBlankRulesForCSF(unittest.TestCase):
         '''
         record = make_filled_form()
         record['csfabeta'] = ''
-        ipacket = build_uds3_csf_form(record)
+        ipacket = build_csf_form(record)
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ["'CSFABmo' is '1 ' with length '2', but should be blank:"
-                    " 'Blank if Question 1a CSFABETA = blank'.", "'CSFABDY' is"
+        expected = ["CSFABmo is '1 ' with length '2', but should be blank:"
+                    " 'Blank if Question 1a CSFABETA = blank'.", "CSFABDY is"
                     " '12' with length '2', but should be blank: 'Blank if"
-                    " Question 1a CSFABETA = blank'.", "'CSFABYr' is '1990'"
+                    " Question 1a CSFABETA = blank'.", "CSFABYr is '1990'"
                     " with length '4', but should be blank: 'Blank if Question"
-                    " 1a CSFABETA = blank'.", "'CSFABmD' is '2' with length"
+                    " 1a CSFABETA = blank'.", "CSFABmD is '2' with length"
                     " '1', but should be blank: 'Blank if Question 1a"
                     " CSFABETA = blank'."]
         self.assertEqual(warnings, expected)
@@ -56,11 +56,11 @@ class TestBlankRulesForCSF(unittest.TestCase):
         record = make_filled_form()
         record['csfabmd'] = '2'
         record['csfabmdx'] = 'test'
-        ipacket = build_uds3_csf_form(record)
+        ipacket = build_csf_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ["'CSFABmDX' is 'test                                      "
+        expected = ["CSFABmDX is 'test                                      "
                     "                  ' with length '60', but should be"
                     " blank: 'Blank if Question 1e CSFABmD ne 8 (Other)'."]
         self.assertEqual(warnings, expected)
@@ -77,16 +77,16 @@ class TestBlankRulesForCSF(unittest.TestCase):
         record['csfabyr'] = ''
         record['csfabmd'] = '2'
         record['csfabmdx'] = 'test'
-        ipacket = build_uds3_csf_form(record)
+        ipacket = build_csf_form(record)
         warnings = []
 
         warnings = redcap2nacc.check_blanks(ipacket, self.options)
-        expected = ["'CSFABmD' is '2' with length '1', but should be blank:"
+        expected = ["CSFABmD is '2' with length '1', but should be blank:"
                     " 'Blank if Question 1a CSFABETA = blank'.",
-                    "'CSFABmDX' is 'test                                      "
+                    "CSFABmDX is 'test                                      "
                     "                  ' with length '60', but should be"
                     " blank: 'Blank if Question 1e CSFABmD ne 8 (Other)'.",
-                    "'CSFABmDX' is 'test                                      "
+                    "CSFABmDX is 'test                                      "
                     "                  ' with length '60', but should be"
                     " blank: 'Blank if Question 1a CSFABETA = blank'."]
         # Since CSFABETA is blank, CSFABmD should technically also be blank,

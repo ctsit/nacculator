@@ -60,7 +60,10 @@ def build_uds3_fvp_form(record, err=sys.stderr):
     add_c1s_or_c2(record, packet)
     add_d1(record, packet)
     add_d2(record, packet)
-    clsform.add_cls(record, packet, fvp_forms)
+    try:
+        clsform.add_cls(record, packet, fvp_forms)
+    except KeyError:
+        pass
     update_header(record, packet)
 
     return packet

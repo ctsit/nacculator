@@ -25,10 +25,10 @@ Nacculator will automatically skip PTIDs with errors, so the output `data.txt`
 file will be ready to submit to NACC.
 In order to properly filter the data in the csv, nacculator is expecting that
 REDCap visits (denoted by `redcap_event_name`) contain certain keywords:
-    "initial_visit" for initial visit packets
-    "followup_visit" for all followups
-    "milestone" for milestone packets
-    "neuropath" for neuropathology packets
+    "initial_visit" for initial visit packets,
+    "followup_visit" for all followups,
+    "milestone" for milestone packets,
+    "neuropath" for neuropathology packets,
     "telephone" for telephone followup packets
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input is
@@ -54,10 +54,13 @@ the `-file` flag._
       -np                   Set this flag to process as Neuropathology data
       -m                    Set this flag to process as Milestone data
       -csf                  Set this flag to process as NACC BIDSS CSF data
+
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
                               Set this flag to process the filter
-      -lbd                  Set this flag to process as Lewy Body Dementia data
+      -lbd                  Set this flag to process as Lewy Body Dementia data (FORMVER = 3)
+      -lbdsv                Set this flag to process as Lewy Body Dementia short version data (FORMVER = 3.1)
       -ftld                 Set this flag to process as Frontotemporal Lobar Degeneration data
+
       -file FILE            Path of the csv file to be processed.
       -meta FILTER_META     Input file for the filter metadata (in case -filter is used)
       -ptid PTID            Ptid for which you need the records
@@ -73,7 +76,7 @@ the `-file` flag._
 
     redcap2nacc -lbd -fvp -file data.csv >data.txt
 
-Both LBD and FTLD forms can have IVP or FVP arguments.
+Both LBD / LBDSV and FTLD forms can have IVP or FVP arguments.
 
 **Example** - Run data through the `cleanPtid` filter:
 
@@ -100,10 +103,11 @@ the example above shows.
 
   **Filter config required**
   This filter requires a section in the config called `filter_clean_ptid`. This
-  section will contain a single key `filepath` which will point to a csv file
-  of ptids to be removed. All the records whose ptid with same packet and visit
-  num found in the passed meta file will be discarded in the output file. This
-  filter also removes events that lack a visit number in REDCap.
+  section will contain a single key `filepath` which will point to a csv 
+  (usually called `current-db-subjects.csv`) file of ptids to be removed. All 
+  the records whose ptid with same packet and visit num found in the passed 
+  meta file will be discarded in the output file. This filter also removes 
+  events that lack a visit number in REDCap.
 
   Example meta file:
 
@@ -187,11 +191,34 @@ the example above shows.
         $ redcap2nacc -f getPtid -ptid $SOME_PATIENT_ID -vnum $SOME_VISIT_NUM -vtype $SOMEVISIT_TYPE <data.csv >data.txt
 
 
+HOW TO Acquire current-db-subjects.csv for the filters
+------------------------------------------------------
+
+This file is a csv that determines which of your center's PTIDs are already
+present in NACC's current database using the patient's PTID, the packet type
+(ivp or fvp, etc), the visit number, and the status (working or current). In
+order to get it, you need to use the contents of
+`tools/preprocess/get_subject_list.js`. The script is meant to be run on the
+"Finalize Data" page of the NACC UDS3 upload system.
+
+Navigate to "Finalize Data" and right-click anywhere on the page. Select
+"Inspect" or "Inspect element" to open the browser's Inspect panel. Click on
+the "Console" tab and copy/paste the contents of `get_subject_list.js` into the
+console. Then, press the "Enter" or "Return" key on your keyboard. This will
+collect all of the PTIDs in your center's Working and Current databases into a
+csv called `current-db-subjects.csv` in your Downloads folder. You may then
+move it to whatever location you specified in your `nacculator_cfg.ini` file.
+
+The csv is used by the filter_clean_ptid filter to identify and cull all
+packets already in NACC's Current database from your input csv. It is used to
+make nacculator run faster for very large databases.
+
+
 Example Workflow
 ----------------
 
 Once you have edited the `nacculator_cfg.ini` file with your API token and
-desired filters, you can get a filtered CSV file of the REDCap data with:
+desired filters, you can get a filtered CSV file of the raw REDCap data with:
 
     $ nacculator_filters nacculator_cfg.ini
 
@@ -199,13 +226,14 @@ This will create a run folder labeled with the current date
 (`$run_CURRENT-DATE`) (for example, `run_01-01-2000`) that contains the csv and
 each iteration of filter, ending with `final_update.csv`.
 
-The resulting files will not be in the run folder created by `run_filters.py`.
-They will be in the base directory. The filepaths in the following commands are
-modified so that the output is deposited in your `$run_CURRENT-DATE` folder.
+Note: The files created by `redcap2nacc` will not be in the run folder created
+by `run_filters.py`. They will be in the base directory. The filepaths in the
+following commands are modified so that the output is deposited in your
+`$run_CURRENT-DATE` folder.
 
 Next, you will need to run the actual `redcap2nacc` program to produce the
 fixed width text file for NACC. One type of flag can be used at a time, so the
-program must be run twice.
+program must be run once for each type of packet.
 
     $ redcap2nacc -ivp < $run_CURRENT-DATE/final_Update.csv > $run_CURRENT-DATE/iv_nacc_complete.txt 2> $run_CURRENT-DATE/ivp_errors.txt
     $ redcap2nacc -fvp < $run_CURRENT-DATE/final_Update.csv > $run_CURRENT-DATE/fv_nacc_complete.txt 2> $run_CURRENT-DATE/fvp_errors.txt

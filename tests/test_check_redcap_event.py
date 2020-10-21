@@ -5,6 +5,7 @@ from nacc.redcap2nacc import check_redcap_event
 
 class option():
     lbd = False
+    lbdsv = False
     ftld = False
     csf = False
     np = False

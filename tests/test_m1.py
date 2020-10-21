@@ -41,7 +41,7 @@ class TestM1(unittest.TestCase):
                         str(record['DEATHYR'])]
         self.assertNotEqual(date_parsed, out)
 
-    @unittest.skip("'0' is outside of the inclusive_range for 'FTLDREAS', 'FTLDREAX' should be left blank if FTLDREAS is filled regardless of 'DECEASED' or 'DISCONT' status")
+    # Some of these fields cannot be 0 (outside of inclusive_range), so this will test for the fields that are marked "1" for a ticked checkbox and "0" if left blank in REDCap. The others will correctly be caught as a regular violated blanking rule, since they must be filled by hand
     def test_m1_blank_if_dead(self):
         ''' If dead should be blank '''
         packet = m_packet.Packet()
@@ -50,7 +50,7 @@ class TestM1(unittest.TestCase):
         m.DECEASED = '1'
         m.CHANGEMO = '02'
         m.CHANGEDY = '28'
-        m.CHANGEYR = '2008'
+        m.CHANGEYR = '2015'
         m.PROTOCOL = '2'
         m.ACONSENT = '0'
         m.RECOGIM = '0'
@@ -60,8 +60,8 @@ class TestM1(unittest.TestCase):
         m.RENURSE = '0'
         m.REJOIN = '0'
         m.FTLDDISC = '0'
-        m.FTLDREAS = '0'
-        m.FTLDREAX = '0'
+        m.FTLDREAS = '1'
+        m.FTLDREAX = ''  # a char field
         m.DISCONT = '0'
         packet.append(m)
         blanks.set_zeros_to_blanks(packet)
@@ -73,9 +73,9 @@ class TestM1(unittest.TestCase):
         self.assertEqual(packet['RENAVAIL'], '')
         self.assertEqual(packet['FTLDDISC'], '')
         self.assertEqual(packet['AUTOPSY'], '')
-        self.assertEqual(packet['FTLDREAS'], '')
+        self.assertEqual(packet['FTLDREAX'], '')
 
-    @unittest.skip("'0' is outside of the inclusive_range for 'FTLDREAS', 'FTLDREAX' should be left blank if FTLDREAS is filled regardless of 'DECEASED' or 'DISCONT' status")
+    # Some of these fields cannot be 0 (outside of inclusive_range), so this will test for the fields that are marked "1" for a ticked checkbox and "0" if left blank in REDCap. The others will correctly be caught as a regular violated blanking rule, since they must be filled by hand
     def test_m1_blank_if_discont(self):
         ''' If discontinued should be blank '''
         packet = m_packet.Packet()
@@ -85,7 +85,7 @@ class TestM1(unittest.TestCase):
         m.DECEASED = '0'
         m.CHANGEMO = '02'
         m.CHANGEDY = '28'
-        m.CHANGEYR = '2008'
+        m.CHANGEYR = '2015'
         m.PROTOCOL = '2'
         m.ACONSENT = '0'
         m.RECOGIM = '0'
@@ -95,8 +95,8 @@ class TestM1(unittest.TestCase):
         m.RENURSE = '0'
         m.REJOIN = '0'
         m.FTLDDISC = '0'
-        m.FTLDREAS = '0'
-        m.FTLDREAX = '0'
+        m.FTLDREAS = '1'
+        m.FTLDREAX = ''  # a char field
         packet.append(m)
         blanks.set_zeros_to_blanks(packet)
 
@@ -107,7 +107,7 @@ class TestM1(unittest.TestCase):
         self.assertEqual(packet['RENAVAIL'], '')
         self.assertEqual(packet['FTLDDISC'], '')
         self.assertEqual(packet['AUTOPSY'], '')
-        self.assertEqual(packet['FTLDREAS'], '')
+        self.assertEqual(packet['FTLDREAX'], '')
 
 
 def make_blank_m():
