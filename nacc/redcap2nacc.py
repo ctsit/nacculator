@@ -163,37 +163,37 @@ def check_redcap_event(options, record) -> bool:
     options flag
     """
     if options.lbd and options.ivp:
-        event_name = 'initial_visit'
+        event_name = 'initial'
         form_match_lbd = record['lbd_ivp_b1l_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbd and options.fvp:
-        event_name = 'followup_visit'
+        event_name = 'follow'
         form_match_lbd = record['lbd_fvp_b1l_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbdsv and options.ivp:
-        event_name = 'initial_visit'
+        event_name = 'initial'
         form_match_lbd = record['lbd_ivp_b1l_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbdsv and options.fvp:
-        event_name = 'followup_visit'
+        event_name = 'follow'
         form_match_lbd = record['lbd_fvp_b1l_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.ftld and options.ivp:
-        event_name = 'initial_visit'
+        event_name = 'initial'
         form_match_ftld = record['ftld_present']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ftld and options.fvp:
-        event_name = 'followup_visit'
+        event_name = 'follow'
         form_match_ftld = record['fu_ftld_present']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ivp:
-        event_name = 'initial_visit'
+        event_name = 'initial'
         try:
             form_match_z1 = record['ivp_z1_complete']
         except KeyError:
@@ -202,7 +202,7 @@ def check_redcap_event(options, record) -> bool:
         if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
             return False
     elif options.fvp:
-        event_name = 'followup_visit'
+        event_name = 'follow'
         try:
             form_match_z1 = record['fvp_z1_complete']
         except KeyError:
