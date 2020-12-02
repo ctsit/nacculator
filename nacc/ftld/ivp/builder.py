@@ -105,6 +105,7 @@ def add_z1x(record, packet):
     Z1X.CLSSUB   = record['clssub']
     packet.insert(0, Z1X)
 
+
 def add_a3a(record, packet):
     A3a = ftld_ivp_forms.FormA3a()
     A3a.FTDRELCO = record['ftdrelco']
@@ -114,6 +115,7 @@ def add_a3a(record, packet):
     A3a.FTDSLEAR = record['ftdslear']
     A3a.FTDCOMME = record['ftdcomme']
     packet.append(A3a)
+
 
 def add_b3f(record, packet):
     B3F = ftld_ivp_forms.FormB3F()
@@ -126,6 +128,7 @@ def add_b3f(record, packet):
     B3F.FTDGTYPG = record['ftdgtypg']
     B3F.FTDGTYPX = record['ftdgtypx']
     packet.append(B3F)
+
 
 def add_b9f(record, packet):
     B9F = ftld_ivp_forms.FormB9F()
@@ -157,6 +160,7 @@ def add_b9f(record, packet):
     B9F.FTDPABVF = record['ftdpabvf']
     packet.append(B9F)
 
+
 def add_c1f(record, packet):
     C1F = ftld_ivp_forms.FormC1F()
     C1F.FTDWORRC = record['ftdworrc']
@@ -185,6 +189,7 @@ def add_c1f(record, packet):
     C1F.FTDREASR = record['ftdreasr']
     C1F.FTDREAPR = record['ftdreapr']
     packet.append(C1F)
+
 
 def add_c2f(record, packet):
     C2F = ftld_ivp_forms.FormC2F()
@@ -216,6 +221,7 @@ def add_c2f(record, packet):
     C2F.FTDSNTOS = record['ftdsntos']
     C2F.FTDSNRAT = record['ftdsnrat']
     packet.append(C2F)
+
 
 def add_c3f(record, packet):
     C3F = ftld_ivp_forms.FormC3F()
@@ -273,6 +279,7 @@ def add_c3f(record, packet):
     C3F.FTDLENGT = record['ftdlengt']
     packet.append(C3F)
 
+
 def add_c4f(record, packet):
     C4F = ftld_ivp_forms.FormC4F()
     C4F.FTDCPC4F = record['ftdcpc4f']
@@ -285,6 +292,7 @@ def add_c4f(record, packet):
     C4F.FTDFFEAR = record['ftdffear']
     C4F.FTDBIST  = record['ftdbist']
     packet.append(C4F)
+
 
 def add_c5f(record, packet):
     C5F = ftld_ivp_forms.FormC5F()
@@ -311,6 +319,7 @@ def add_c5f(record, packet):
     C5F.FTDIRIPT = record['ftdiript']
     packet.append(C5F)
 
+
 def add_c6f(record, packet):
     C6F = ftld_ivp_forms.FormC6F()
     C6F.FTDCPC6F = record['ftdcpc6f']
@@ -331,6 +340,7 @@ def add_c6f(record, packet):
     C6F.FTDSPSCR = record['ftdspscr']
     C6F.FTDRSMST = record['ftdrsmst']
     packet.append(C6F)
+
 
 def add_e2f(record, packet):
     E2F = ftld_ivp_forms.FormE2F()
@@ -381,6 +391,7 @@ def add_e2f(record, packet):
     E2F.FTDOTANO = record['ftdotano']
     E2F.FTDOTANS = record['ftdotans']
     packet.append(E2F)
+
 
 def add_e3f(record, packet):
     E3F = ftld_ivp_forms.FormE3F()
@@ -444,7 +455,6 @@ def add_e3f(record, packet):
     E3F.FTDOThI  = record['ftdothi']
     E3F.FTDOThIS = record['ftdothis']
     packet.append(E3F)
-
 
 
 def update_header(record, packet):
