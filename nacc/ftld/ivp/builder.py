@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2019 University of Florida. All rights reserved.
+# Copyright 2015-2020 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -43,7 +43,7 @@ def build_ftld_ivp_form(record: dict, err=sys.stderr):
             add_c6f(record, packet)
     else:
         print("ptid " + str(record['ptid']) +
-              ": No Z1X or Z1 form found.", file=err)
+              ": No Z1X form found.", file=err)
     add_e2f(record, packet)
     add_e3f(record, packet)
     update_header(record, packet)

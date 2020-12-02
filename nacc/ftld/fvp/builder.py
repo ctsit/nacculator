@@ -1,14 +1,16 @@
 ###############################################################################
-# Copyright 2015-2019 University of Florida. All rights reserved.
+# Copyright 2015-2020 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
+
+import sys
 
 from nacc.ftld.fvp import forms as ftld_fvp_forms
 from nacc.uds3 import packet as ftld_fvp_packet
 
 
-def build_ftld_fvp_form(record: dict):
+def build_ftld_fvp_form(record: dict, err=sys.stderr):
     ''' Converts REDCap CSV data into a packet (list of FVP Form objects) '''
     packet = ftld_fvp_packet.Packet()
 
@@ -21,6 +23,35 @@ def build_ftld_fvp_form(record: dict):
                 and int(record['visitday']) >= 1):
         raise ValueError('Form date cannot precede March 1, 2015.')
 
+    add_z1x(record, packet)
+    # Forms B3F, B9F, C1F, C2F, C3F, E2F, and E3F are REQUIRED.
+    # Forms A3A, C4F, C5F, and C6F are OPTIONAL and must be specifically
+    # marked as present for nacculator to process them
+    if record['ivp_z1x_complete'] in ['1', '2']:
+        if record['ftda3afs'] == '1':
+            add_a3a(record, packet)
+        add_b3f(record, packet)
+        add_b9f(record, packet)
+        add_c1f(record, packet)
+        add_c2f(record, packet)
+        add_c3f(record, packet)
+        if record['ftdc4fs'] == '1':
+            add_c4f(record, packet)
+        if record['ftdc5fs'] == '1':
+            add_c5f(record, packet)
+        if record['ftdc6fs'] == '1':
+            add_c6f(record, packet)
+    else:
+        print("ptid " + str(record['ptid']) +
+              ": No Z1X form found.", file=err)
+    add_e2f(record, packet)
+    add_e3f(record, packet)
+    update_header(record, packet)
+
+    return packet
+
+
+def add_z1x(record, packet):
     Z1X = ftld_fvp_forms.FormZ1X()
     Z1X.LANGA1   = record['fu_langa1']
     Z1X.LANGA2   = record['fu_langa2']
@@ -71,8 +102,10 @@ def build_ftld_fvp_form(record: dict):
     Z1X.LANGE3F  = record['fu_lange3f']
     Z1X.LANGCLS  = record['fu_langcls']
     Z1X.CLSSUB   = record['fu_clssub']
-    packet.append(Z1X)
+    packet.insert(0, Z1X)
 
+
+def add_a3a(record, packet):
     A3a = ftld_fvp_forms.FormA3a()
     A3a.FTDRELCO = record['fu_ftdrelco']
     A3a.FTDSIBBY = record['fu_ftdsibby']
@@ -82,6 +115,8 @@ def build_ftld_fvp_form(record: dict):
     A3a.FTDCOMME = record['fu_ftdcomme']
     packet.append(A3a)
 
+
+def add_b3f(record, packet):
     B3F = ftld_fvp_forms.FormB3F()
     B3F.FTDLTFAS = record['fu_ftdltfas']
     B3F.FTDLIMB  = record['fu_ftdlimb']
@@ -93,6 +128,8 @@ def build_ftld_fvp_form(record: dict):
     B3F.FTDGTYPX = record['fu_ftdgtypx']
     packet.append(B3F)
 
+
+def add_b9f(record, packet):
     B9F = ftld_fvp_forms.FormB9F()
     B9F.FTDPPASL = record['fu_ftdppasl']
     B9F.FTDPPAPO = record['fu_ftdppapo']
@@ -122,6 +159,8 @@ def build_ftld_fvp_form(record: dict):
     B9F.FTDPABVF = record['fu_ftdpabvf']
     packet.append(B9F)
 
+
+def add_c1f(record, packet):
     C1F = ftld_fvp_forms.FormC1F()
     C1F.FTDWORRC = record['fu_ftdworrc']
     C1F.FTDWORRS = record['fu_ftdworrs']
@@ -150,6 +189,8 @@ def build_ftld_fvp_form(record: dict):
     C1F.FTDREAPR = record['fu_ftdreapr']
     packet.append(C1F)
 
+
+def add_c2f(record, packet):
     C2F = ftld_fvp_forms.FormC2F()
     C2F.FTDCPC2F = record['fu_ftdcpc2f']
     C2F.FTDhAIRD = record['fu_ftdhaird']
@@ -180,6 +221,8 @@ def build_ftld_fvp_form(record: dict):
     C2F.FTDSNRAT = record['fu_ftdsnrat']
     packet.append(C2F)
 
+
+def add_c3f(record, packet):
     C3F = ftld_fvp_forms.FormC3F()
     C3F.FTDSELF  = record['fu_ftdself']
     C3F.FTDBADLY = record['fu_ftdbadly']
@@ -235,6 +278,8 @@ def build_ftld_fvp_form(record: dict):
     C3F.FTDLENGT = record['fu_ftdlengt']
     packet.append(C3F)
 
+
+def add_c4f(record, packet):
     C4F = ftld_fvp_forms.FormC4F()
     C4F.FTDCPC4F = record['fu_ftdcpc4f']
     C4F.FTDWORKU = record['fu_ftdworku']
@@ -247,6 +292,8 @@ def build_ftld_fvp_form(record: dict):
     C4F.FTDBIST  = record['fu_ftdbist']
     packet.append(C4F)
 
+
+def add_c5f(record, packet):
     C5F = ftld_fvp_forms.FormC5F()
     C5F.FTDCPC5F = record['fu_ftdcpc5f']
     C5F.FTDINSEX = record['fu_ftdinsex']
@@ -271,6 +318,8 @@ def build_ftld_fvp_form(record: dict):
     C5F.FTDIRIPT = record['fu_ftdiript']
     packet.append(C5F)
 
+
+def add_c6f(record, packet):
     C6F = ftld_fvp_forms.FormC6F()
     C6F.FTDCPC6F = record['fu_ftdcpc6f']
     C6F.FTDALTER = record['fu_ftdalter']
@@ -291,6 +340,8 @@ def build_ftld_fvp_form(record: dict):
     C6F.FTDRSMST = record['fu_ftdrsmst']
     packet.append(C6F)
 
+
+def add_e2f(record, packet):
     E2F = ftld_fvp_forms.FormE2F()
     E2F.FTDSMRI  = record['fu_ftdsmri']
     E2F.FTDSMMO  = record['fu_ftdsmmo']
@@ -340,6 +391,8 @@ def build_ftld_fvp_form(record: dict):
     E2F.FTDOTANS = record['fu_ftdotans']
     packet.append(E2F)
 
+
+def add_e3f(record, packet):
     E3F = ftld_fvp_forms.FormE3F()
     E3F.FTDIDIAG = record['fu_ftdidiag']
     E3F.FTDSMRIO = record['fu_ftdsmrio']
@@ -401,9 +454,6 @@ def build_ftld_fvp_form(record: dict):
     E3F.FTDOThI  = record['fu_ftdothi']
     E3F.FTDOThIS = record['fu_ftdothis']
     packet.append(E3F)
-
-    update_header(record,packet)
-    return packet
 
 
 def update_header(record, packet):
