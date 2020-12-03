@@ -25,11 +25,17 @@ Nacculator will automatically skip PTIDs with errors, so the output `data.txt`
 file will be ready to submit to NACC.
 In order to properly filter the data in the csv, nacculator is expecting that
 REDCap visits (denoted by `redcap_event_name`) contain certain keywords:
-    "initial_visit" for initial visit packets,
-    "followup_visit" for all followups,
+    "initial" for initial visit packets,
+    "follow" for all followups,
     "milestone" for milestone packets,
     "neuropath" for neuropathology packets,
     "telephone" for telephone followup packets
+
+NACCulator collects data from the Z1X form first and uses that to determine the
+presence of other forms in the packet. The Z1X form for that record must be
+marked "Unverified" or "Complete" for NACCulator to recognize the record, and
+each optional form must be marked as submitted within the Z1X for NACCulator to
+find those forms.
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input is
 expected to be from `STDIN` (the command line) unless a file is specified using
@@ -167,6 +173,7 @@ the example above shows.
       formver  -> 3
 
   *If field is blank, it will be updated to default value.*
+
 
 * **updateField**
 
