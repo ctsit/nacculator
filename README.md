@@ -21,9 +21,9 @@ Once the project data is exported from REDCap to the CSV file `data.csv`, run:
     $ redcap2nacc <data.csv >data.txt
 
 This command will work only in the simplest case; UDS3 IVP data only.
-Nacculator will automatically skip PTIDs with errors, so the output `data.txt`
+NACCulator will automatically skip PTIDs with errors, so the output `data.txt`
 file will be ready to submit to NACC.
-In order to properly filter the data in the csv, nacculator is expecting that
+In order to properly filter the data in the csv, NACCulator is expecting that
 REDCap visits (denoted by `redcap_event_name`) contain certain keywords:
     "initial" for initial visit packets,
     "follow" for all followups,
@@ -232,7 +232,7 @@ move it to whatever location you specified in your `nacculator_cfg.ini` file.
 
 The csv is used by the filter_clean_ptid filter to identify and cull all
 packets already in NACC's Current database from your input csv. It is used to
-make nacculator run faster for very large databases.
+make NACCulator run faster for very large databases.
 
 
 Example Workflow
