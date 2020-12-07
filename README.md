@@ -113,6 +113,7 @@ HOW TO Acquire current-db-subjects.csv for the filters
 Or they can be run one at a time on a `.csv` file with the `-f` and `-meta`
 flags.
 For example, to run the fixHeaders filter:
+
     $ redcap2nacc -f fixHeaders -meta nacculator_cfg.ini <data_input.csv >filtered_output.csv
 
 If the filter requires the config, it must be passed with the `-meta` flag like
