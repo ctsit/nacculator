@@ -1,5 +1,43 @@
 Changelog
 =========
+## [1.5.0] - 2020-12-08
+### Summary
+
+This version introduces several smaller maintenance-level updates.
+The FTLD builder files now function similar to the UDS3 module builders,
+where NACCulator will first scan the Z1X to see which forms are present
+in the record rather than automatically trying to process all possible
+forms. This will prevent users from having to repeatedly manually delete
+empty optional forms that will never be filled out.
+
+NACCulator's event detection has been generalized to be more compatible
+with more centers. The requirement for the initial visit packet's event
+name to contain "initial_visit" has been changed to "initial", and the
+requirement for the followup visit packet's event event name to contain
+"followup_visit" has been changed to just "follow" (to account for variants
+with either "followup" OR "follow_up").
+
+The README has been updated to include more information about what data
+NACCulator needs from REDCap in order to run correctly (such as the filled
+Z1X form), and updated documentation on running the filters. I corrected the
+example commands for running the individual filters (with an input csv AND an
+output csv) so that they work properly now. All filter commands now require an
+argument specifying the config file so that the "validate" function in
+filters.py works properly. This makes the command structure consistent across
+all filters.
+
+### added
+ * Add note about Z1X to README
+ * Add optional form logic to fvp builder
+ * Add optional form logic to ftld ivp builder
+
+### changed
+ * Fix typo in README
+ * Edit NACCulator capitalization to be consistent within README
+ * Update documentation on filters and adjust example config file to make it easier to comment/uncomment filters
+ * Fixed typo fukid9agd and fusib17pdx to have underscores in uds fvp builder
+ * Update compatible redcap_event_names to be more general (initial, follow)
+
 ## [1.4.0] - 2020-10-21
 ### Summary
 

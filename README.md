@@ -21,15 +21,21 @@ Once the project data is exported from REDCap to the CSV file `data.csv`, run:
     $ redcap2nacc <data.csv >data.txt
 
 This command will work only in the simplest case; UDS3 IVP data only.
-Nacculator will automatically skip PTIDs with errors, so the output `data.txt`
+NACCulator will automatically skip PTIDs with errors, so the output `data.txt`
 file will be ready to submit to NACC.
-In order to properly filter the data in the csv, nacculator is expecting that
+In order to properly filter the data in the csv, NACCulator is expecting that
 REDCap visits (denoted by `redcap_event_name`) contain certain keywords:
-    "initial_visit" for initial visit packets,
-    "followup_visit" for all followups,
+    "initial" for initial visit packets,
+    "follow" for all followups,
     "milestone" for milestone packets,
     "neuropath" for neuropathology packets,
     "telephone" for telephone followup packets
+
+NACCulator collects data from the Z1X form first and uses that to determine the
+presence of other forms in the packet. The Z1X form for that record must be
+marked "Unverified" or "Complete" for NACCulator to recognize the record, and
+each optional form must be marked as submitted within the Z1X for NACCulator to
+find those forms.
 
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input is
 expected to be from `STDIN` (the command line) unless a file is specified using
@@ -80,7 +86,7 @@ Both LBD / LBDSV and FTLD forms can have IVP or FVP arguments.
 
 **Example** - Run data through the `cleanPtid` filter:
 
-    $ redcap2nacc -f cleanPtid -meta nacculator_cfg.ini <data.csv >data.txt
+    $ redcap2nacc -f cleanPtid -meta nacculator_cfg.ini <data.csv >filtered_data.csv
 
 
 HOW TO Filter Data Using NACCulator
@@ -96,12 +102,26 @@ remove the `.example` portion, and then fill in your center's information.
 The config file contains sections with in-code filter function name. Each of
 these sections contains elements necessary for the filter to run.
 The filters described below will discuss what is required, if anything.
+
+The filters can be run all at once with your REDCap API token using:
+
+    $ nacculator_filters nacculator_cfg.ini
+
+You can find more details on `nacculator_filters` under the section:
+HOW TO Acquire current-db-subjects.csv for the filters
+
+Or they can be run one at a time on a `.csv` file with the `-f` and `-meta`
+flags.
+For example, to run the fixHeaders filter:
+
+    $ redcap2nacc -f fixHeaders -meta nacculator_cfg.ini <data_input.csv >filtered_output.csv
+
 If the filter requires the config, it must be passed with the `-meta` flag like
 the example above shows.
 
+
 * **cleanPtid**
 
-  **Filter config required**
   This filter requires a section in the config called `filter_clean_ptid`. This
   section will contain a single key `filepath` which will point to a csv 
   (usually called `current-db-subjects.csv`) file of ptids to be removed. All 
@@ -117,16 +137,15 @@ the example above shows.
       110003,I,001,Current
       110003,F,002,Current
 
+
 * **replaceDrugId**
 
   This filter replaces the first character of non empty fields of columns
   `drugid_1` to `drugid_30` with character "**d**".
 
-  This filter does not require any meta data file as of now.
 
 * **fixHeaders**
 
-  **Filter config required**
   This filter requires a section in the config called `filter_fix_headers` with
   as many keys as needed to replace the necessary columns. See example below.
   This filter fixes the column names of any column found in the filter mapping.
@@ -142,6 +161,8 @@ the example above shows.
       fu_otherneur: fu_othneur
       fu_otherneurx: fu_othneurxs
       fu_strokedec: fu_strokdec
+      fukid9agd: fu_kid9agd
+      fusib17pdx: fu_sib17pdx
 
 
 * **fillDefault**
@@ -154,14 +175,15 @@ the example above shows.
 
   *If field is blank, it will be updated to default value.*
 
+
 * **updateField**
 
   This filter is used to update fields that already had a value in the REDCap
   export. Currently, only `adcid` is updated.
 
+
 * **removePtid**
 
-  **Filter config required**
   This filter requires a section in the config called `filter_remove_ptid` with
   a single key called `ptid_format`. The value for that key is a regex string
   to match ptids that are to be kept.
@@ -211,7 +233,7 @@ move it to whatever location you specified in your `nacculator_cfg.ini` file.
 
 The csv is used by the filter_clean_ptid filter to identify and cull all
 packets already in NACC's Current database from your input csv. It is used to
-make nacculator run faster for very large databases.
+make NACCulator run faster for very large databases.
 
 
 Example Workflow

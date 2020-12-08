@@ -9,43 +9,45 @@ redcap_server: Your Redcap Server
 # Comment out filters that you do not intend to use with # in front of
 # the filter name and each line within that section.
 
-[filter_clean_ptid]
 # Filters out subjects with PTIDs and visitnums that are already cleared to
 # NACC's "Current Database"
+[filter_clean_ptid]
 filepath: path/to/current-db-subjects.csv
 
-[filter_replace_drug_id]
 # Automatically adds the "d" prefix for each drug ID in Form A4.
+[filter_replace_drug_id]
 present: yes
 
-# [filter_fix_headers]
 # Corrects REDCap-exported headers that do not match NACC's DEDs.
 # Write in format:
 # old_header: corrected_header
+# [filter_fix_headers]
 otherneur: othneur
 otherneurx: othneurx
 strokedec: strokdec
 fu_otherneur: fu_othneur
 fu_otherneurx: fu_othneurx
 fu_strokedec: fu_strokdec
+fukid9agd: fu_kid9agd
+fusib17pdx: fu_sib17pdx
 
-[filter_fill_default]
 # Fills fields that are typically left blank in REDCap: 
 # adcid, nogds (automatically enters 0 if the field is blank), and formver = 3)
+[filter_fill_default]
 adcid: Your ADC ID
 
-[filter_update_field]
 # Replaces the ADCID if it was previously filled in the REDCap export.
+[filter_update_field]
 adcid: Your ADC ID
 
-[filter_fix_visitdate]
 # Ensures that REDCap's 'visitnum' field is always an integer.
+[filter_fix_visitdate]
 present: yes
 
-[filter_remove_ptid]
 # Removes PTIDs that are not in NACC's "Current Database"
 # but still should be skipped, such as test PTIDs.
 # ptid_format specifies which ptids should be *kept*.
+[filter_remove_ptid]
 ptid_format: 11\d.*
 # bad_ptid notes the exceptions to ptid_format that should still be removed.
 # enter ptid in form of ptid,ptid,ptid,ext... (no spaces)
@@ -53,6 +55,6 @@ bad_ptid:
 # good_ptid notes the exceptions that don't fit ptid_format but should be kept.
 good_ptid: 
 
-[filter_eliminate_empty_date]
 # Removes PTIDs that are missing information in their visit date.
+[filter_eliminate_empty_date]
 present: yes
