@@ -27,19 +27,19 @@ def build_ftld_fvp_form(record: dict, err=sys.stderr):
     # Forms B3F, B9F, C1F, C2F, C3F, E2F, and E3F are REQUIRED.
     # Forms A3A, C4F, C5F, and C6F are OPTIONAL and must be specifically
     # marked as present for nacculator to process them
-    if record['ivp_z1x_complete'] in ['1', '2']:
-        if record['ftda3afs'] == '1':
+    if record['fvp_z1x_complete'] in ['1', '2']:
+        if record['fu_ftda3afs'] == '1':
             add_a3a(record, packet)
         add_b3f(record, packet)
         add_b9f(record, packet)
         add_c1f(record, packet)
         add_c2f(record, packet)
         add_c3f(record, packet)
-        if record['ftdc4fs'] == '1':
+        if record['fu_ftdc4fs'] == '1':
             add_c4f(record, packet)
-        if record['ftdc5fs'] == '1':
+        if record['fu_ftdc5fs'] == '1':
             add_c5f(record, packet)
-        if record['ftdc6fs'] == '1':
+        if record['fu_ftdc6fs'] == '1':
             add_c6f(record, packet)
     else:
         print("ptid " + str(record['ptid']) +
