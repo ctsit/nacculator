@@ -28,19 +28,31 @@ def build_ftld_ivp_form(record: dict, err=sys.stderr):
     # Forms A3A, C4F, C5F, and C6F are OPTIONAL and must be specifically
     # marked as present for nacculator to process them
     if record['ivp_z1x_complete'] in ['1', '2']:
-        if record['ftda3afs'] == '1':
-            add_a3a(record, packet)
+        try:
+            if record['ftda3afs'] == '1':
+                add_a3a(record, packet)
+        except KeyError:
+            pass
         add_b3f(record, packet)
         add_b9f(record, packet)
         add_c1f(record, packet)
         add_c2f(record, packet)
         add_c3f(record, packet)
-        if record['ftdc4fs'] == '1':
-            add_c4f(record, packet)
-        if record['ftdc5fs'] == '1':
-            add_c5f(record, packet)
-        if record['ftdc6fs'] == '1':
-            add_c6f(record, packet)
+        try:
+            if record['ftdc4fs'] == '1':
+                add_c4f(record, packet)
+        except KeyError:
+            pass
+        try:
+            if record['ftdc5fs'] == '1':
+                add_c5f(record, packet)
+        except KeyError:
+            pass
+        try:
+            if record['ftdc6fs'] == '1':
+                add_c6f(record, packet)
+        except KeyError:
+            pass
     else:
         print("ptid " + str(record['ptid']) +
               ": No Z1X form found.", file=err)
