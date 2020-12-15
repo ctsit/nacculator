@@ -19,39 +19,81 @@ def build_uds3_ivp_form(record, err=sys.stderr):
     add_z1_or_z1x(record, packet)
     add_a1(record, packet)
     if record['ivp_z1x_complete'] in ['1', '2']:
-        if record['a2sub'] == '1':
-            add_a2(record, packet)
-        if record['a3sub'] == '1':
-            add_a3(record, packet)
-        if record['a4sub'] == '1':
-            add_a4(record, packet)
+        try:
+            if record['a2sub'] == '1':
+                add_a2(record, packet)
+        except KeyError:
+            pass
+        try:
+            if record['a3sub'] == '1':
+                add_a3(record, packet)
+        except KeyError:
+            pass
+        try:
+            if record['a4sub'] == '1':
+                add_a4(record, packet)
+        except KeyError:
+            pass
         add_a5(record, packet)
-        if record['b1sub'] == '1':
-            add_b1(record, packet)
+        try:
+            if record['b1sub'] == '1':
+                add_b1(record, packet)
+        except KeyError:
+            pass
         add_b4(record, packet)
-        if record['b5sub'] == '1':
-            add_b5(record, packet)
-        if record['b6sub'] == '1':
-            add_b6(record, packet)
-        if record['b7sub'] == '1':
-            add_b7(record, packet)
+        try:
+            if record['b5sub'] == '1':
+                add_b5(record, packet)
+        except KeyError:
+            pass
+        try:
+            if record['b6sub'] == '1':
+                add_b6(record, packet)
+        except KeyError:
+            pass
+        try:
+            if record['b7sub'] == '1':
+                add_b7(record, packet)
+        except KeyError:
+            pass
     elif record['ivp_z1_complete'] in ['1', '2']:
-        if record['a2_sub'] == '1':
-            add_a2(record, packet)
-        if record['a3_sub'] == '1':
-            add_a3(record, packet)
-        if record['a4_sub'] == '1':
-            add_a4(record, packet)
+        try:
+            if record['a2_sub'] == '1':
+                add_a2(record, packet)
+        except KeyError:
+            pass
+        try:
+            if record['a3_sub'] == '1':
+                add_a3(record, packet)
+        except KeyError:
+            pass
+        try:
+            if record['a4_sub'] == '1':
+                add_a4(record, packet)
+        except KeyError:
+            pass
         add_a5(record, packet)
-        if record['b1_sub'] == '1':
-            add_b1(record, packet)
+        try:
+            if record['b1_sub'] == '1':
+                add_b1(record, packet)
+        except KeyError:
+            pass
         add_b4(record, packet)
-        if record['b5_sub'] == '1':
-            add_b5(record, packet)
-        if record['b6_sub'] == '1':
-            add_b6(record, packet)
-        if record['b7_sub'] == '1':
-            add_b7(record, packet)
+        try:
+            if record['b5_sub'] == '1':
+                add_b5(record, packet)
+        except KeyError:
+            pass
+        try:
+            if record['b6_sub'] == '1':
+                add_b6(record, packet)
+        except KeyError:
+            pass
+        try:
+            if record['b7_sub'] == '1':
+                add_b7(record, packet)
+        except KeyError:
+            pass
     else:
         print("ptid " + str(record['ptid']) +
               ": No Z1X or Z1 form found.", file=err)
