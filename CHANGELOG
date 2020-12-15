@@ -1,5 +1,26 @@
 Changelog
 =========
+## [1.6.0] - 2020-12-15
+### Summary
+This change was implemented after getting feedback from OHSU. Some ADRCs do 
+not have the optional forms like A2 or A3 in their REDCap project at all, since
+they will not be used for that center. NACCulator used to run with the
+requirement that all forms be present in a REDCap project, whether they were
+optional or not. This change is very similar to the one made previously that
+made the CLS, Z1, and C1 forms optional for the REDCap csv input.
+I also fixed a bug in the FTLD FVP builder that would cause it to look for the
+IVP Z1X form.
+
+### added
+ * Make optional forms for FTLD optional in REDCap project
+ * Make all optional UDS3 forms optional in REDCap project
+
+
+### changed
+* Fix cruft in FVP builder (Samantha Emerson)
+* Update README to account for cappy install complication
+* Fix ftld fvp builder to take followup Z1X instead of initial
+
 ## [1.5.0] - 2020-12-08
 ### Summary
 

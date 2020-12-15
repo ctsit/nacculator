@@ -198,6 +198,7 @@ def check_redcap_event(options, record) -> bool:
             form_match_z1 = record['ivp_z1_complete']
         except KeyError:
             form_match_z1 = ''
+            record['ivp_z1_complete'] = ''
         form_match_z1x = record['ivp_z1x_complete']
         if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
             return False
@@ -207,6 +208,7 @@ def check_redcap_event(options, record) -> bool:
             form_match_z1 = record['fvp_z1_complete']
         except KeyError:
             form_match_z1 = ''
+            record['ivp_z1_complete'] = ''
         form_match_z1x = record['fvp_z1x_complete']
         if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
             return False
