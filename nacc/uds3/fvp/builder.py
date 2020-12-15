@@ -28,7 +28,7 @@ def build_uds3_fvp_form(record, err=sys.stderr):
             if record['fu_a3sub'] == '1':
                 add_a3(record, packet)
         except KeyError:
-            print("KeyError in A3", file=err)
+            pass
         try:
             if record['fu_a4sub'] == '1':
                 add_a4(record, packet)
