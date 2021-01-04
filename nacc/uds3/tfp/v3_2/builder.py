@@ -74,37 +74,31 @@ def build_uds3_tfp_new_form(record, err=sys.stderr):
 def add_z1x(record, packet):
     # Forms T1, A1, A5, B4, B9, C2T, D1, and D2 are all REQUIRED.
     z1x = tfp_new_forms.FormZ1X()
-    z1x_field_mapping = {
-        'LANGT1': 'tele_langt1',
-        'LANGA1': 'tele_langa1',
-        'LANGA2': 'tele_langa2',
-        'LANGA3': 'tele_langa3',
-        'A3SUB': 'tele_a3sub',
-        'LANGA4': 'tele_langa4',
-        'A4SUB': 'tele_a4sub',
-        'A4NOT': 'tele_a4not',
-        'LANGB4': 'tele_langb4',
-        'LANGB5': 'tele_langb5',
-        'B5SUB': 'tele_b5sub',
-        'B5NOT': 'tele_b5not',
-        'LANGB6': 'tele_langb6',
-        'B6SUB': 'tele_b6sub',
-        'B6NOT': 'tele_b6not',
-        'LANGB7': 'tele_langb7',
-        'B7SUB': 'tele_b7sub',
-        'B7NOT': 'tele_b7not',
-        'LANGB9': 'tele_langb9',
-        'LANGC2': 'tele_langc2',
-        'C2SUB': 'tele_c2sub',
-        'C2NOT': 'tele_c2not',
-        'LANGD1': 'tele_langd1',
-        'LANGD2': 'tele_langd2',
-        'LANGCLS': 'tele_langcls',
-        'CLSSUB': 'tele_clssub'
-    }
-    for key, value in z1x_field_mapping.items():
-        if record[value].strip():
-            setattr(z1x, key, record[value])
+    z1x.LANGT1  = record['tele_langt1']
+    z1x.LANGA1  = record['tele_langa1']
+    z1x.LANGA2  = record['tele_langa2']
+    z1x.LANGA3  = record['tele_langa3']
+    z1x.A3SUB   = record['tele_a3sub']
+    z1x.LANGA4  = record['tele_langa4']
+    z1x.A4SUB   = record['tele_a4sub']
+    z1x.A4NOT   = record['tele_a4not']
+    z1x.LANGB4  = record['tele_langb4']
+    z1x.LANGB5  = record['tele_langb5']
+    z1x.B5SUB   = record['tele_b5sub']
+    z1x.B5NOT   = record['tele_b5not']
+    z1x.LANGB6  = record['tele_langb6']
+    z1x.B6SUB   = record['tele_b6sub']
+    z1x.B6NOT   = record['tele_b6not']
+    z1x.LANGB7  = record['tele_langb7']
+    z1x.B7SUB   = record['tele_b7sub']
+    z1x.B7NOT   = record['tele_b7not']
+    z1x.LANGB9  = record['tele_langb9']
+    z1x.C2SUB   = record['tele_c2sub']
+    z1x.C2NOT   = record['tele_c2not']
+    z1x.LANGD1  = record['tele_langd1']
+    z1x.LANGD2  = record['tele_langd2']
+    z1x.LANGCLS = record['tele_langcls']
+    z1x.CLSSUB  = record['tele_clssub']
     packet.insert(0, z1x)
 
 
