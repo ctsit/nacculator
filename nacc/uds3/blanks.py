@@ -169,7 +169,7 @@ def set_zeros_to_blanks(packet):
     try:
         if packet['RESPVAL'] == 1:
             set_to_blank_if_zero(
-                'RESPHEAR', 'RESPDIST', 'RESPINTR', 'RESPDISN', 'RESPFATG', 
+                'RESPHEAR', 'RESPDIST', 'RESPINTR', 'RESPDISN', 'RESPFATG',
                 'RESPEMOT', 'RESPASST', 'RESPOTH')
     except KeyError:
         pass
