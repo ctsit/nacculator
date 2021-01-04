@@ -53,13 +53,15 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
         'NPPATH9': _blanking_rule_dummy,
         'NPPATH10': _blanking_rule_dummy,
         'NPPATH11': _blanking_rule_dummy,
+        # TFP 3.2 skip rules
+        # 'ARTYPE': _blanking_rule_dummy,
     }
 
     single_value = re.compile(
-        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne)"
+        r"Blank if( Question(s?))? *\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<value>\d+)([^-]|$)")
     range_values = re.compile(
-        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne)"
+        r"Blank if( Question(s?))? *\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<start>\d+)-(?P<stop>\d+)( |$)")
 
     # First, check to see if the rule is a "Special Case"
@@ -148,18 +150,29 @@ def set_zeros_to_blanks(packet):
             if field == 0:
                 field.value = ''
     # M1
-    if packet['DECEASED'] == 1 or packet['DISCONT'] == 1:
-        set_to_blank_if_zero(
-            'RENURSE', 'RENAVAIL', 'RECOGIM', 'REJOIN', 'REPHYILL',
-            'REREFUSE', 'FTLDDISC', 'CHANGEMO', 'CHANGEDY', 'CHANGEYR',
-            'PROTOCOL', 'ACONSENT', 'RECOGIM', 'REPHYILL', 'NURSEMO',
-            'NURSEDY', 'NURSEYR', 'FTLDREAS', 'FTLDREAX')
-    elif packet['DECEASED'] == 1:
-        # for just dead
-        set_to_blank_if_zero('DISCONT')
-    elif packet['DISCONT'] == 1:
-        # for just discont
-        set_to_blank_if_zero('DECEASED')
+    try:
+        if packet['DECEASED'] == 1 or packet['DISCONT'] == 1:
+            set_to_blank_if_zero(
+                'RENURSE', 'RENAVAIL', 'RECOGIM', 'REJOIN', 'REPHYILL',
+                'REREFUSE', 'FTLDDISC', 'CHANGEMO', 'CHANGEDY', 'CHANGEYR',
+                'PROTOCOL', 'ACONSENT', 'RECOGIM', 'REPHYILL', 'NURSEMO',
+                'NURSEDY', 'NURSEYR', 'FTLDREAS', 'FTLDREAX')
+        elif packet['DECEASED'] == 1:
+            # for just dead
+            set_to_blank_if_zero('DISCONT')
+        elif packet['DISCONT'] == 1:
+            # for just discont
+            set_to_blank_if_zero('DECEASED')
+    except KeyError:
+        pass
+    # TFP
+    try:
+        if packet['RESPVAL'] == 1:
+            set_to_blank_if_zero(
+                'RESPHEAR', 'RESPDIST', 'RESPINTR', 'RESPDISN', 'RESPFATG', 
+                'RESPEMOT', 'RESPASST', 'RESPOTH')
+    except KeyError:
+        pass
 
 
 def main():

@@ -19,12 +19,18 @@ def build_uds3_tfp_new_form(record, err=sys.stderr):
     add_z1x(record, packet)
     add_t1(record, packet)
     add_a1(record, packet)
-    if record['fvp_z1x_complete'] in ['1', '2']:
+    add_a2(record, packet)
+    try:
+        z1x_complete = record['tvp_z1x_checklist_complete']
+    except KeyError:
         try:
-            if record['tele_a2sub'] == '1':
-                add_a2(record, packet)
+            z1x_complete = record['tfp_z1x_complete']
         except KeyError:
-            pass
+            try:
+                z1x_complete = record['tele_z1x_complete']
+            except KeyError:
+                z1x_complete = '0'
+    if z1x_complete in ['1', '2']:
         try:
             if record['tele_a3sub'] == '1':
                 add_a3(record, packet)
@@ -33,11 +39,6 @@ def build_uds3_tfp_new_form(record, err=sys.stderr):
         try:
             if record['tele_a4sub'] == '1':
                 add_a4(record, packet)
-        except KeyError:
-            pass
-        try:
-            if record['tele_b1sub'] == '1':
-                add_b1(record, packet)
         except KeyError:
             pass
         add_b4(record, packet)
@@ -77,16 +78,11 @@ def add_z1x(record, packet):
         'LANGT1': 'tele_langt1',
         'LANGA1': 'tele_langa1',
         'LANGA2': 'tele_langa2',
-        'A2SUB': 'tele_a2sub',
-        'A2NOT': 'tele_a2not',
         'LANGA3': 'tele_langa3',
         'A3SUB': 'tele_a3sub',
         'LANGA4': 'tele_langa4',
         'A4SUB': 'tele_a4sub',
         'A4NOT': 'tele_a4not',
-        'LANGB1': 'tele_langb1',
-        'B1SUB': 'tele_b1sub',
-        'B1NOT': 'tele_b1not',
         'LANGB4': 'tele_langb4',
         'LANGB5': 'tele_langb5',
         'B5SUB': 'tele_b5sub',
@@ -103,41 +99,27 @@ def add_z1x(record, packet):
         'C2NOT': 'tele_c2not',
         'LANGD1': 'tele_langd1',
         'LANGD2': 'tele_langd2',
-        'LANGA3A': 'tele_langa3a',
-        'FTDA3AFS': 'tele_ftda3afs',
-        'FTDA3AFR': 'tele_ftda3afr',
-        'LANGB3F': 'tele_langb3f',
-        'LANGB9F': 'tele_langb9f',
-        'LANGC1F': 'tele_langc1f',
-        'LANGC2F': 'tele_langc2f',
-        'LANGC3F': 'tele_langc3f',
-        'LANGC4F': 'tele_langc4f',
-        'FTDC4FS': 'tele_ftdc4fs',
-        'FTDC4FR': 'tele_ftdc4fr',
-        'FTDC5FS': 'tele_ftdc5fs',
-        'FTDC5FR': 'tele_ftdc5fr',
-        'FTDC6FS': 'tele_ftdc6fs',
-        'FTDC6FR': 'tele_ftdc6fr',
-        'LANGE2F': 'tele_lange2f',
-        'LANGE3F': 'tele_lange3f',
         'LANGCLS': 'tele_langcls',
         'CLSSUB': 'tele_clssub'
     }
+    for key, value in z1x_field_mapping.items():
+        if record[value].strip():
+            setattr(z1x, key, record[value])
     packet.insert(0, z1x)
 
 
 def add_t1(record, packet):
     t1 = tfp_new_forms.FormT1()
-    t1.TELCOG   = record['tele_TELCOG'.lower()]
-    t1.TELILL   = record['tele_TELILL'.lower()]
-    t1.TELHOME  = record['tele_TELHOME'.lower()]
-    t1.TELREFU  = record['tele_TELREFU'.lower()]
-    t1.TELCOV   = record['tele_TELCOV'.lower()]
-    t1.TELOTHR  = record['tele_TELOTHR'.lower()]
-    t1.TELOTHRX = record['tele_TELOTHRX'.lower()]
-    t1.TELMOD   = record['tele_TELMOD'.lower()]
-    t1.TELINPER = record['tele_TELINPER'.lower()]
-    t1.TELMILE  = record['tele_TELMILE'.lower()]
+    t1.TELCOG   = record['TELCOG'.lower()]
+    t1.TELILL   = record['TELILL'.lower()]
+    t1.TELHOME  = record['TELHOME'.lower()]
+    t1.TELREFU  = record['TELREFU'.lower()]
+    t1.TELCOV   = record['TELCOV'.lower()]
+    t1.TELOTHR  = record['TELOTHR'.lower()]
+    t1.TELOTHRX = record['TELOTHRX'.lower()]
+    t1.TELMOD   = record['TELMOD'.lower()]
+    t1.TELINPER = record['TELINPER'.lower()]
+    t1.TELMILE  = record['TELMILE'.lower()]
     packet.append(t1)
 
 
@@ -478,22 +460,6 @@ def add_a4(record, packet):
                 packet.append(a4d)
 
 
-def add_b1(record, packet):
-    b1 = tfp_new_forms.FormB1()
-    b1.HEIGHT    = record['tele_height']
-    b1.WEIGHT    = record['tele_weight']
-    b1.BPSYS     = record['tele_bpsys']
-    b1.BPDIAS    = record['tele_bpdias']
-    b1.HRATE     = record['tele_hrate']
-    b1.VISION    = record['tele_vision']
-    b1.VISCORR   = record['tele_viscorr']
-    b1.VISWCORR  = record['tele_viswcorr']
-    b1.HEARING   = record['tele_hearing']
-    b1.HEARAID   = record['tele_hearaid']
-    b1.HEARWAID  = record['tele_hearwaid']
-    packet.append(b1)
-
-
 def add_b4(record, packet):
     b4 = tfp_new_forms.FormB4()
     b4.MEMORY    = record['tele_memory']
@@ -640,81 +606,88 @@ def add_b9(record, packet):
 
 
 def add_c2t(record, packet):
-    c2t = tfp_new_forms.FormC2T()
-    c2t_filled_fields = 0
-    c2t_field_mapping = {
-        'MOCACOMP': 'tele_mocacomp',
-        'MOCAREAS': 'tele_mocareas',
-        'MOCALOC': 'tele_mocaloc',
-        'MOCALAN': 'tele_mocalan',
-        'MOCALANX': 'tele_mocalanx',
-        'MOCAVIS': 'tele_mocavis',
-        'MOCAHEAR': 'tele_mocahear',
-        'MOCATOTS': 'tele_mocatots',
-        'MOCATRAI': 'tele_mocatrai',
-        'MOCACUBE': 'tele_mocacube',
-        'MOCACLOC': 'tele_mocacloc',
-        'MOCACLON': 'tele_mocaclon',
-        'MOCACLOH': 'tele_mocacloh',
-        'MOCANAMI': 'tele_mocanami',
-        'MOCAREGI': 'tele_mocaregi',
-        'MOCADIGI': 'tele_mocadigi',
-        'MOCALETT': 'tele_mocalett',
-        'MOCASER7': 'tele_mocaser7',
-        'MOCAREPE': 'tele_mocarepe',
-        'MOCAFLUE': 'tele_mocaflue',
-        'MOCAABST': 'tele_mocaabst',
-        'MOCARECN': 'tele_mocarecn',
-        'MOCARECC': 'tele_mocarecc',
-        'MOCARECR': 'tele_mocarecr',
-        'MOCAORDT': 'tele_mocaordt',
-        'MOCAORMO': 'tele_mocaormo',
-        'MOCAORYR': 'tele_mocaoryr',
-        'MOCAORDY': 'tele_mocaordy',
-        'MOCAORPL': 'tele_mocaorpl',
-        'MOCAORCT': 'tele_mocaorct',
-        'NPSYCLOC': 'tele_npsycloc_c2',
-        'NPSYLAN': 'tele_npsylan_c2',
-        'NPSYLANX': 'tele_npsylanx_c2',
-        'CRAFTVRS': 'tele_craftvrs',
-        'CRAFTURS': 'tele_crafturs',
-        'UDSBENTC': 'tele_udsbentc',
-        'DIGFORCT': 'tele_digforct',
-        'DIGFORSL': 'tele_digforsl',
-        'DIGBACCT': 'tele_digbacct',
-        'DIGBACLS': 'tele_digbacls',
-        'ANIMALS': 'tele_animals_c2',
-        'VEG': 'tele_veg_c2',
-        'TRAILA': 'tele_traila_c2',
-        'TRAILARR': 'tele_trailarr_c2',
-        'TRAILALI': 'tele_trailali_c2',
-        'TRAILB': 'tele_trailb_c2',
-        'TRAILBRR': 'tele_trailbrr_c2',
-        'TRAILBLI': 'tele_trailbli_c2',
-        'CRAFTDVR': 'tele_craftdvr',
-        'CRAFTDRE': 'tele_craftdre',
-        'CRAFTDTI': 'tele_craftdti',
-        'CRAFTCUE': 'tele_craftcue',
-        'UDSBENTD': 'tele_udsbentd',
-        'UDSBENRS': 'tele_udsbenrs',
-        'MINTTOTS': 'tele_minttots',
-        'MINTTOTW': 'tele_minttotw',
-        'MINTSCNG': 'tele_mintscng',
-        'MINTSCNC': 'tele_mintscnc',
-        'MINTPCNG': 'tele_mintpcng',
-        'MINTPCNC': 'tele_mintpcnc',
-        'UDSVERFC': 'tele_udsverfc',
-        'UDSVERFN': 'tele_udsverfn',
-        'UDSVERNF': 'tele_udsvernf',
-        'UDSVERLC': 'tele_udsverlc',
-        'UDSVERLR': 'tele_udsverlr',
-        'UDSVERLN': 'tele_udsverln',
-        'UDSVERTN': 'tele_udsvertn',
-        'UDSVERTE': 'tele_udsverte',
-        'UDSVERTI': 'tele_udsverti',
-        'COGSTAT': 'tele_cogstat_c2'
-    }
-    packet.insert(0, c2t)
+    c2 = tfp_new_forms.FormC2()
+    c2.MODCOMM  = record['tele_modcomm']
+    c2.MOCACOMP = record['tele_mocacomp']
+    c2.MOCAREAS = record['tele_mocareas']
+    c2.MOCALAN  = record['tele_mocalan']
+    c2.MOCALANX = record['tele_mocalanx']
+    c2.MOCAHEAR = record['tele_mocahear']
+    c2.MOCBTOTS = record['tele_mocbtots']
+    c2.MOCADIGI = record['tele_mocadigi']
+    c2.MOCALETT = record['tele_mocalett']
+    c2.MOCASER7 = record['tele_mocaser7']
+    c2.MOCAREPE = record['tele_mocarepe']
+    c2.MOCAFLUE = record['tele_mocaflue']
+    c2.MOCAABST = record['tele_mocaabst']
+    c2.MOCARECN = record['tele_mocarecn']
+    c2.MOCARECC = record['tele_mocarecc']
+    c2.MOCARECR = record['tele_mocarecr']
+    c2.MOCAORDT = record['tele_mocaordt']
+    c2.MOCAORMO = record['tele_mocaormo']
+    c2.MOCAORYR = record['tele_mocaoryr']
+    c2.MOCAORDY = record['tele_mocaordy']
+    c2.MOCAORPL = record['tele_mocaorpl']
+    c2.MOCAORCT = record['tele_mocaorct']
+    c2.NPSYLAN  = record['tele_npsylan']
+    c2.NPSYLANX = record['tele_npsylanx']
+    c2.CRAFTVRS = record['tele_craftvrs']
+    c2.CRAFTURS = record['tele_crafturs']
+    c2.REY1REC  = record['tele_rey1rec']
+    c2.REY1INT  = record['tele_rey1int']
+    c2.REY2REC  = record['tele_rey2rec']
+    c2.REY2INT  = record['tele_rey2int']
+    c2.REY3REC  = record['tele_rey3rec']
+    c2.REY3INT  = record['tele_rey3int']
+    c2.REY4REC  = record['tele_rey4rec']
+    c2.REY4INT  = record['tele_rey4int']
+    c2.REY5REC  = record['tele_rey5rec']
+    c2.REY5INT  = record['tele_rey5int']
+    c2.REY6REC  = record['tele_rey6rec']
+    c2.REY6INT  = record['tele_rey6int']
+    c2.DIGFORCT = record['tele_digforct']
+    c2.DIGFORSL = record['tele_digforsl']
+    c2.DIGBACCT = record['tele_digbacct']
+    c2.DIGBACLS = record['tele_digbacls']
+    c2.OTRAILA  = record['tele_otraila']
+    c2.OTRLARR  = record['tele_otrlarr']
+    c2.OTRLALI  = record['tele_otrlali']
+    c2.OTRAILB  = record['tele_otrailb']
+    c2.OTRLBRR  = record['tele_otrlbrr']
+    c2.OTRLBLI  = record['tele_otrlbli']
+    c2.CRAFTDVR = record['tele_craftdvr']
+    c2.CRAFTDRE = record['tele_craftdre']
+    c2.CRAFTDTI = record['tele_craftdti']
+    c2.CRAFTCUE = record['tele_craftcue']
+    c2.ANIMALS  = record['tele_animals']
+    c2.VEG      = record['tele_veg']
+    c2.UDSVERFC = record['tele_udsverfc']
+    c2.UDSVERFN = record['tele_udsverfn']
+    c2.UDSVERNF = record['tele_udsvernf']
+    c2.UDSVERLC = record['tele_udsverlc']
+    c2.UDSVERLR = record['tele_udsverlr']
+    c2.UDSVERLN = record['tele_udsverln']
+    c2.UDSVERTN = record['tele_udsvertn']
+    c2.UDSVERTE = record['tele_udsverte']
+    c2.UDSVERTI = record['tele_udsverti']
+    c2.REYDREC  = record['tele_reydrec']
+    c2.REYDINT  = record['tele_reydint']
+    c2.REYTCOR  = record['tele_reytcor']
+    c2.REYFPOS  = record['tele_reyfpos']
+    c2.VNTTOTW  = record['tele_vnttotw']
+    c2.VNTPCNC  = record['tele_vntpcnc']
+    c2.COGSTAT  = record['tele_cogstat']
+    c2.RESPVAL  = record['tele_respval']
+    c2.RESPHEAR = record['tele_resphear']
+    c2.RESPDIST = record['tele_respdist']
+    c2.RESPINTR = record['tele_respintr']
+    c2.RESPDISN = record['tele_respdisn']
+    c2.RESPFATG = record['tele_respfatg']
+    c2.RESPEMOT = record['tele_respemot']
+    c2.RESPASST = record['tele_respasst']
+    c2.RESPOTH  = record['tele_respoth']
+    c2.RESPOTHX = record['tele_respothx']
+    packet.append(c2)
 
 
 def add_d1(record, packet):
