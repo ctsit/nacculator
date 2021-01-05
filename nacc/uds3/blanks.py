@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2016 University of Florida. All rights reserved.
+# Copyright 2015-2021 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -60,7 +60,6 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
         'MCINON1': _blanking_rule_mci,
         'MCINON2': _blanking_rule_mci,
         'IMPNOMCI': _blanking_rule_mci,
-        # 'ARTYPE': _blanking_rule_dummy,
     }
 
     single_value = re.compile(

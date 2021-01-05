@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ###############################################################################
-# Copyright 2015-2020 University of Florida. All rights reserved.
+# Copyright 2015-2021 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
