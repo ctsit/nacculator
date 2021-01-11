@@ -31,11 +31,11 @@ def build_uds3_tfp_new_form(record, err=sys.stderr):
             except KeyError:
                 z1x_complete = '0'
     if z1x_complete in ['1', '2']:
-        # try:
-        if record['tele_a3sub'] == '1':
-            add_a3(record, packet)
-        # except KeyError:
-        #     pass
+        try:
+            if record['tele_a3sub'] == '1':
+                add_a3(record, packet)
+        except KeyError:
+            pass
         try:
             if record['tele_a4sub'] == '1':
                 add_a4(record, packet)
