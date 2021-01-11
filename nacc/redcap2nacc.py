@@ -391,10 +391,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.tfp and not \
-            options.tfp3 and not options.lbd and not options.lbdsv and not \
-            options.ftld and not options.csf:
-                set_blanks_to_zero(packet)
+        if not (options.np or options.m or options.tfp or
+                options.tfp3 or options.lbd or options.lbdsv or
+                options.ftld or options.csf):
+            set_blanks_to_zero(packet)
 
         if options.m or options.tfp:
             blanks_uds3.set_zeros_to_blanks(packet)

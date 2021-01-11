@@ -55,11 +55,6 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
         'NPPATH11': _blanking_rule_dummy,
         # TFP 3.2 skip rules
         'TELMILE': _blanking_rule_telmile,
-        'MCIAMEM': _blanking_rule_mci,
-        'MCIAPLUS': _blanking_rule_mci,
-        'MCINON1': _blanking_rule_mci,
-        'MCINON2': _blanking_rule_mci,
-        'IMPNOMCI': _blanking_rule_mci,
     }
 
     single_value = re.compile(
@@ -152,19 +147,6 @@ def _blanking_rule_telmile():
     # 'Blank if Question 3 TELINPER = 9 (Unknown)'
     # 'Blank if this is the first telephone packet submitted for the subject.'
     return lambda packet: packet['TELINPER'] in (1, 9)
-
-
-def _blanking_rule_mci():
-    # 'Blank if Question 2 NORMCOG = 1 (Yes)'
-    # 'Blank if Question 3 DEMENTED = 0 (No)'
-    # and then if one of these is blank, all of them should be blank:
-    # 'Blank if Question 5a (MCIAMEM), Question 5b (MCIAPLUS),
-    # Question 5c (MCINON1), Question 5d, (MCINON2) or
-    # Question 5e (IMPNOMCI) = 1 (Yes)'
-    return lambda packet: packet['NORMCOG'] == 1 or packet['DEMENTED'] == 0 \
-            or packet['MCIAMEM'] == 1 or packet['MCIAPLUS'] == 1 or \
-            packet['MCINON1'] == 1 or packet['MCINON2'] == 1 or \
-            packet['IMPNOMCI'] == 1
 
 
 def set_zeros_to_blanks(packet):
