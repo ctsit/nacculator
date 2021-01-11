@@ -304,44 +304,66 @@ def set_blanks_to_zero(packet):
                 field.value = 0
 
     # B8 2.
-    if packet['PARKSIGN'] == 1:
-        set_to_zero_if_blank(
-            'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL', 'RIGIDR',
-            'BRADY', 'PARKGAIT', 'POSTINST')
+    try:
+        if packet['PARKSIGN'] == 1:
+            set_to_zero_if_blank(
+                'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL', 'RIGIDR',
+                'BRADY', 'PARKGAIT', 'POSTINST')
+    except KeyError:
+        pass
 
     # B8 3.
-    if packet['CVDSIGNS'] == 1:
-        set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
-                             'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
+    try:
+        if packet['CVDSIGNS'] == 1:
+            set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
+                                'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
+    except KeyError:
+        pass
 
     # B8 5.
-    if packet['PSPCBS'] == 1:
-        set_to_zero_if_blank(
-            'PSPCBS', 'EYEPSP', 'DYSPSP', 'AXIALPSP', 'GAITPSP', 'APRAXSP',
-            'APRAXL', 'APRAXR', 'CORTSENL', 'CORTSENR', 'ATAXL', 'ATAXR',
-            'ALIENLML', 'ALIENLMR', 'DYSTONL', 'DYSTONR', 'MYOCLLT', 'MYOCLRT')
+    try:
+        if packet['PSPCBS'] == 1:
+            set_to_zero_if_blank(
+                'PSPCBS', 'EYEPSP', 'DYSPSP', 'AXIALPSP', 'GAITPSP', 'APRAXSP',
+                'APRAXL', 'APRAXR', 'CORTSENL', 'CORTSENR', 'ATAXL', 'ATAXR',
+                'ALIENLML', 'ALIENLMR', 'DYSTONL', 'DYSTONR', 'MYOCLLT',
+                'MYOCLRT')
+    except KeyError:
+        pass
 
     # D1 4.
-    if packet['DEMENTED'] == 1:
-        set_to_zero_if_blank(
-                'AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
+    try:
+        if packet['DEMENTED'] == 1:
+            set_to_zero_if_blank(
+                    'AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
+    except KeyError:
+        pass
 
     # D1 5.
-    if packet['DEMENTED'] == 0:
-        set_to_zero_if_blank(
-                'MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
+    try:
+        if packet['DEMENTED'] == 0:
+            set_to_zero_if_blank(
+                    'MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
+    except KeyError:
+        pass
 
     # D1 11-39.
-    set_to_zero_if_blank(
-        'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS', 'CVD',
-        'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH', 'EPILEP',
-        'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP', 'ANXIET',
-        'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB', 'DYSILL', 'MEDS',
-        'COGOTH', 'COGOTH2', 'COGOTH3')
+    try:
+        set_to_zero_if_blank(
+            'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS', 'CVD',
+            'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH', 'EPILEP',
+            'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP', 'ANXIET',
+            'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB', 'DYSILL', 'MEDS',
+            'COGOTH', 'COGOTH2', 'COGOTH3')
+    except KeyError:
+        pass
 
     # D2 11.
-    if packet['ARTH'] == 1:
-        set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
+    try:
+        if packet['ARTH'] == 1:
+            set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
+    except KeyError:
+        pass
 
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
@@ -391,8 +413,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not (options.np or options.m or options.tfp or
-                options.tfp3 or options.lbd or options.lbdsv or
+        if not (options.np or options.m or options.lbd or options.lbdsv or
                 options.ftld or options.csf):
             set_blanks_to_zero(packet)
 
