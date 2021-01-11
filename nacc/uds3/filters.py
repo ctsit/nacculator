@@ -140,7 +140,7 @@ def filter_replace_drug_id_do(input_ptr, output_ptr):
     write_headers(reader, output)
     for record in reader:
         count = 0
-        prefixes = ['', 'fu_']
+        prefixes = ['', 'fu_', 'tele_']
         for prefix in prefixes:
             for i in range(1, 31):
                 col_name = prefix + 'drugid_' + str(i)
