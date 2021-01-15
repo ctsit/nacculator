@@ -472,6 +472,8 @@ def update_header(record, packet):
     for header in packet:
         header.PACKET = "FF"
         header.FORMID = header.form_name
+        if header.FORMID == "Z1X":
+            header.PACKET = "F"
         header.FORMVER = 3
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
