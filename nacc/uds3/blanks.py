@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2016 University of Florida. All rights reserved.
+# Copyright 2015-2021 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -53,13 +53,15 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
         'NPPATH9': _blanking_rule_dummy,
         'NPPATH10': _blanking_rule_dummy,
         'NPPATH11': _blanking_rule_dummy,
+        # TFP 3.2 skip rules
+        'TELMILE': _blanking_rule_telmile,
     }
 
     single_value = re.compile(
-        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne)"
+        r"Blank if( Question(s?))? *\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<value>\d+)([^-]|$)")
     range_values = re.compile(
-        r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne)"
+        r"Blank if( Question(s?))? *\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<start>\d+)-(?P<stop>\d+)( |$)")
 
     # First, check to see if the rule is a "Special Case"
@@ -140,6 +142,13 @@ def _blanking_rule_learned():
     return lambda packet: packet['REFERSC'] in (3, 4, 5, 6, 8, 9)
 
 
+def _blanking_rule_telmile():
+    # 'Blank if Question 3 TELINPER = 1 (Yes)'
+    # 'Blank if Question 3 TELINPER = 9 (Unknown)'
+    # 'Blank if this is the first telephone packet submitted for the subject.'
+    return lambda packet: packet['TELINPER'] in (1, 9)
+
+
 def set_zeros_to_blanks(packet):
     """ Sets specific fields to zero if they meet certain criteria """
     def set_to_blank_if_zero(*field_names):
@@ -148,18 +157,29 @@ def set_zeros_to_blanks(packet):
             if field == 0:
                 field.value = ''
     # M1
-    if packet['DECEASED'] == 1 or packet['DISCONT'] == 1:
-        set_to_blank_if_zero(
-            'RENURSE', 'RENAVAIL', 'RECOGIM', 'REJOIN', 'REPHYILL',
-            'REREFUSE', 'FTLDDISC', 'CHANGEMO', 'CHANGEDY', 'CHANGEYR',
-            'PROTOCOL', 'ACONSENT', 'RECOGIM', 'REPHYILL', 'NURSEMO',
-            'NURSEDY', 'NURSEYR', 'FTLDREAS', 'FTLDREAX')
-    elif packet['DECEASED'] == 1:
-        # for just dead
-        set_to_blank_if_zero('DISCONT')
-    elif packet['DISCONT'] == 1:
-        # for just discont
-        set_to_blank_if_zero('DECEASED')
+    try:
+        if packet['DECEASED'] == 1 or packet['DISCONT'] == 1:
+            set_to_blank_if_zero(
+                'RENURSE', 'RENAVAIL', 'RECOGIM', 'REJOIN', 'REPHYILL',
+                'REREFUSE', 'FTLDDISC', 'CHANGEMO', 'CHANGEDY', 'CHANGEYR',
+                'PROTOCOL', 'ACONSENT', 'RECOGIM', 'REPHYILL', 'NURSEMO',
+                'NURSEDY', 'NURSEYR', 'FTLDREAS', 'FTLDREAX')
+        elif packet['DECEASED'] == 1:
+            # for just dead
+            set_to_blank_if_zero('DISCONT')
+        elif packet['DISCONT'] == 1:
+            # for just discont
+            set_to_blank_if_zero('DECEASED')
+    except KeyError:
+        pass
+    # TFP
+    try:
+        if packet['RESPVAL'] == 1:
+            set_to_blank_if_zero(
+                'RESPHEAR', 'RESPDIST', 'RESPINTR', 'RESPDISN', 'RESPFATG',
+                'RESPEMOT', 'RESPASST', 'RESPOTH')
+    except KeyError:
+        pass
 
 
 def main():

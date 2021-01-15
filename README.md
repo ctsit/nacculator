@@ -57,7 +57,8 @@ the `-file` flag._
       -h, --help            show this help message and exit
       -fvp                  Set this flag to process as FVP data
       -ivp                  Set this flag to process as IVP data
-      -tfp                  Set this flag to process as Telephone Followup Packet data
+      -tfp                  Set this flag to process as Telephone Followup Packet v3.2 data
+      -tfp3                 Set this flag to process as TFP v3.0 (pre-2020) data
       -np                   Set this flag to process as Neuropathology data
       -m                    Set this flag to process as Milestone data
       -csf                  Set this flag to process as NACC BIDSS CSF data

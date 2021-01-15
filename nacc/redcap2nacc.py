@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ###############################################################################
-# Copyright 2015-2020 University of Florida. All rights reserved.
+# Copyright 2015-2021 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -21,6 +21,7 @@ from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
 from nacc.uds3.tfp import builder as tfp_builder
+from nacc.uds3.tfp.v3_2 import builder as tfp_new_builder
 from nacc.uds3.m import builder as m_builder
 from nacc.lbd.ivp import builder as lbd_ivp_builder
 from nacc.lbd.fvp import builder as lbd_fvp_builder
@@ -216,7 +217,26 @@ def check_redcap_event(options, record) -> bool:
     elif options.np:
         event_name = 'neuropath'
     elif options.tfp:
-        event_name = 'telephone'
+        event_name = 'follow'
+        try:
+            followup_match = record['tvp_z1x_checklist_complete']
+            if followup_match in ['', '0']:
+                return False
+        except KeyError:
+            try:
+                followup_match = record['tfp_z1x_complete']
+                if followup_match in ['', '0']:
+                    return False
+            except KeyError:
+                try:
+                    followup_match = record['tele_z1x_complete']
+                    if followup_match in ['', '0']:
+                        return False
+                except KeyError:
+                    print("Could not find a REDCap field for TFP Z1X form.")
+                    return False
+    elif options.tfp3:
+        event_name = 'tele'
     elif options.m:
         event_name = 'milestone'
 
@@ -284,44 +304,66 @@ def set_blanks_to_zero(packet):
                 field.value = 0
 
     # B8 2.
-    if packet['PARKSIGN'] == 1:
-        set_to_zero_if_blank(
-            'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL', 'RIGIDR',
-            'BRADY', 'PARKGAIT', 'POSTINST')
+    try:
+        if packet['PARKSIGN'] == 1:
+            set_to_zero_if_blank(
+                'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL', 'RIGIDR',
+                'BRADY', 'PARKGAIT', 'POSTINST')
+    except KeyError:
+        pass
 
     # B8 3.
-    if packet['CVDSIGNS'] == 1:
-        set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
-                             'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
+    try:
+        if packet['CVDSIGNS'] == 1:
+            set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
+                                'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
+    except KeyError:
+        pass
 
     # B8 5.
-    if packet['PSPCBS'] == 1:
-        set_to_zero_if_blank(
-            'PSPCBS', 'EYEPSP', 'DYSPSP', 'AXIALPSP', 'GAITPSP', 'APRAXSP',
-            'APRAXL', 'APRAXR', 'CORTSENL', 'CORTSENR', 'ATAXL', 'ATAXR',
-            'ALIENLML', 'ALIENLMR', 'DYSTONL', 'DYSTONR', 'MYOCLLT', 'MYOCLRT')
+    try:
+        if packet['PSPCBS'] == 1:
+            set_to_zero_if_blank(
+                'PSPCBS', 'EYEPSP', 'DYSPSP', 'AXIALPSP', 'GAITPSP', 'APRAXSP',
+                'APRAXL', 'APRAXR', 'CORTSENL', 'CORTSENR', 'ATAXL', 'ATAXR',
+                'ALIENLML', 'ALIENLMR', 'DYSTONL', 'DYSTONR', 'MYOCLLT',
+                'MYOCLRT')
+    except KeyError:
+        pass
 
     # D1 4.
-    if packet['DEMENTED'] == 1:
-        set_to_zero_if_blank(
-                'AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
+    try:
+        if packet['DEMENTED'] == 1:
+            set_to_zero_if_blank(
+                    'AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
+    except KeyError:
+        pass
 
     # D1 5.
-    if packet['DEMENTED'] == 0:
-        set_to_zero_if_blank(
-                'MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
+    try:
+        if packet['DEMENTED'] == 0:
+            set_to_zero_if_blank(
+                    'MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
+    except KeyError:
+        pass
 
     # D1 11-39.
-    set_to_zero_if_blank(
-        'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS', 'CVD',
-        'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH', 'EPILEP',
-        'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP', 'ANXIET',
-        'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB', 'DYSILL', 'MEDS',
-        'COGOTH', 'COGOTH2', 'COGOTH3')
+    try:
+        set_to_zero_if_blank(
+            'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS', 'CVD',
+            'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH', 'EPILEP',
+            'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP', 'ANXIET',
+            'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB', 'DYSILL', 'MEDS',
+            'COGOTH', 'COGOTH2', 'COGOTH3')
+    except KeyError:
+        pass
 
     # D2 11.
-    if packet['ARTH'] == 1:
-        set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
+    try:
+        if packet['ARTH'] == 1:
+            set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
+    except KeyError:
+        pass
 
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
@@ -358,6 +400,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             elif options.fvp:
                 packet = fvp_builder.build_uds3_fvp_form(record)
             elif options.tfp:
+                packet = tfp_new_builder.build_uds3_tfp_new_form(record)
+            elif options.tfp3:
                 packet = tfp_builder.build_uds3_tfp_form(record)
             elif options.m:
                 packet = m_builder.build_uds3_m_form(record)
@@ -369,12 +413,11 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not options.np and not options.m and not options.tfp and not \
-            options.lbd and not options.lbdsv and not options.ftld and not \
-            options.csf:
+        if not (options.np or options.m or options.lbd or options.lbdsv or
+                options.ftld or options.csf):
             set_blanks_to_zero(packet)
 
-        if options.m:
+        if options.m or options.tfp:
             blanks_uds3.set_zeros_to_blanks(packet)
 
         warnings = []
@@ -439,7 +482,10 @@ def parse_args(args=None):
         help='Set this flag to process as ivp data')
     option_group.add_argument(
         '-tfp', action='store_true', dest='tfp',
-        help='Set this flag to process as tfp data')
+        help='Set this flag to process as tfp version 3.2 data')
+    option_group.add_argument(
+        '-tfp3', action='store_true', dest='tfp3',
+        help='Set this flag to process as tfp version 3.0 (pre-June 2020) data')
     option_group.add_argument(
         '-np', action='store_true', dest='np',
         help='Set this flag to process as np data')
@@ -483,8 +529,8 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.tfp or options.np or
-            options.m or options.csf or options.filter):
+    if not (options.ivp or options.fvp or options.tfp or options.tfp3 or 
+            options.np or options.m or options.csf or options.filter):
         options.ivp = True
 
     return options

@@ -30,6 +30,17 @@ fu_otherneurx: fu_othneurx
 fu_strokedec: fu_strokdec
 fukid9agd: fu_kid9agd
 fusib17pdx: fu_sib17pdx
+tele_strokedec: tele_strokdec
+telekid9agd: tele_kid9agd
+telesib17pdx: tele_sib17pdx
+tele_resphear___1: tele_resphear
+tele_respdist___1: tele_respdist
+tele_respintr___1: tele_respintr
+tele_respdisn___1: tele_respdisn
+tele_respfatg___1: tele_respfatg
+tele_respemot___1: tele_respemot
+tele_respasst___1: tele_respasst
+tele_respoth___1: tele_respoth
 
 # Fills fields that are typically left blank in REDCap: 
 # adcid, nogds (automatically enters 0 if the field is blank), and formver = 3)
