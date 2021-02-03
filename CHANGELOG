@@ -1,5 +1,14 @@
 Changelog
 =========
+## [1.7.1] - 2021-02-03
+### Summary
+This release updates the telephone follow-up packet (TFP) module to include
+all allowable values in the NACC data element dictionary (DED).
+
+### Updated
+* C2T and A3 allowable values in TFP version 3.2 forms.py
+
+
 ## [1.7.0] - 2021-01-15
 ### Summary
 This release incorporates the telephone followup packet 3.2 module which
