@@ -573,7 +573,7 @@ def add_a4(record, packet):
             key = 'drugid_' + str(i)
             if record[key]:
                 a4d = ivp_forms.FormA4D()
-                a4d.DRUGID = record[key]
+                a4d.DRUGID = 'd' + record[key][1:]
                 packet.append(a4d)
 
 
