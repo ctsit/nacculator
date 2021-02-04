@@ -1185,6 +1185,93 @@ def update_header(record, packet):
     for header in packet:
         header.PACKET = "I"
         header.FORMID = header.form_name
+
+        # Dates/Raters quickfix
+        if header.FORMID.value == "A1 ":
+            formdate = record['ivp_a1_date']
+            formrater = record['ivp_a1_rater']
+        elif header.FORMID.value == "A2 ":
+            formdate = record['ivp_a2_date']
+            formrater = record['ivp_a2_rater']
+        elif header.FORMID.value == "A3 ":
+            formdate = record['ivp_a3_date']
+            formrater = record['ivp_a3_rater']
+        elif header.FORMID.value == "A4G":
+            formdate = record['ivp_a3_date']
+            formrater = record['ivp_a3_rater']
+        elif header.FORMID.value == "A4D":
+            formdate = record['ivp_a3_date']
+            formrater = record['ivp_a3_rater']
+        elif header.FORMID.value == "A5 ":
+            formdate = record['ivp_a5_date']
+            formrater = record['ivp_a5_rater']
+        elif header.FORMID.value == "B1 ":
+            formdate = record['ivp_b1_date']
+            formrater = record['ivp_b1_rater']
+        elif header.FORMID.value == "B4 ":
+            formdate = record['ivp_b4_date']
+            formrater = record['ivp_b4_rater']
+        elif header.FORMID.value == "B5 ":
+            formdate = record['ivp_b5_date']
+            formrater = record['ivp_b5_rater']
+        elif header.FORMID.value == "B6 ":
+            formdate = record['ivp_b6_date']
+            formrater = record['ivp_b6_rater']
+        elif header.FORMID.value == "B7 ":
+            formdate = record['ivp_b7_date']
+            formrater = record['ivp_b7_rater']
+        elif header.FORMID.value == "B8 ":
+            formdate = record['ivp_b8_date']
+            formrater = record['ivp_b8_rater']
+        elif header.FORMID.value == "B9 ":
+            formdate = record['ivp_b9_date']
+            formrater = record['ivp_b9_rater']
+        elif header.FORMID.value == "C2 ":
+            formdate = record['ivp_c2_date']
+            formrater = record['ivp_c2_rater']
+        elif header.FORMID.value == "D1 ":
+            formdate = record['ivp_d1_date']
+            formrater = record['ivp_d1_rater']
+        elif header.FORMID.value == "D2 ":
+            formdate = record['ivp_d2_date']
+            formrater = record['ivp_d2_rater']
+        elif header.FORMID.value == "A3A":
+            formdate = record['ivp_a3a_date']
+            formrater = record['ivp_a3a_rater']
+        elif header.FORMID.value == "B3F":
+            formdate = record['ivp_b3f_date']
+            formrater = record['ivp_b3f_rater']
+        elif header.FORMID.value == "B9F":
+            formdate = record['ivp_b9f_date']
+            formrater = record['ivp_b9f_rater']
+        elif header.FORMID.value == "C1F":
+            formdate = record['ivp_c1f_date']
+            formrater = record['ivp_c1f_rater']
+        elif header.FORMID.value == "C2F":
+            formdate = record['ivp_c2f_date']
+            formrater = record['ivp_c2f_rater']
+        elif header.FORMID.value == "C3F":
+            formdate = record['ivp_c3f_date']
+            formrater = record['ivp_c3f_rater']
+        elif header.FORMID.value == "C4F":
+            formdate = record['ivp_c4f_date']
+            formrater = record['ivp_c4f_rater']
+        elif header.FORMID.value == "C5F":
+            formdate = record['ivp_c5f_date']
+            formrater = record['ivp_c5f_rater']
+        elif header.FORMID.value == "C6F":
+            formdate = record['ivp_c6f_date']
+            formrater = record['ivp_c6f_rater']
+        elif header.FORMID.value == "E2F":
+            formdate = record['ivp_e2f_date']
+            formrater = record['ivp_e2f_rater']
+        elif header.FORMID.value == "E3F":
+            formdate = record['ivp_e3f_date']
+            formrater = record['ivp_e3f_rater']
+        elif header.FORMID.value == "Z1X":
+            formdate = record['ivp_z1x_date']
+            formrater = record['ivp_z1x_rater']
+
         if header.FORMID.value == "B5 ":
             header.FORMVER = "3.1"
         elif header.FORMID.value == "C1S":
@@ -1193,8 +1280,23 @@ def update_header(record, packet):
             header.FORMVER = 3
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
-        header.VISITMO = record['visitmo']
-        header.VISITDAY = record['visitday']
-        header.VISITYR = record['visityr']
+
+        # Date/Rater quickfix
+        # Date should be format of yyyy-mm-dd. If not,
+        # then use form header defaults.
+        if len(formdate.split("-")) == 3:
+            yyyy = formdate.split("-")[0]
+            mm = formdate.split("-")[1]
+            dd = formdate.split("-")[2]
+        else:
+            yyyy = record['visityr']
+            mm = record['visitmo']
+            dd = record['visitday']
+
+        header.VISITMO = mm
+        header.VISITDAY = dd
+        header.VISITYR = yyyy
         header.VISITNUM = record['visitnum']
-        header.INITIALS = record['initials']
+        header.INITIALS = formrater
+        if header.INITIALS.value == '   ':
+            header.INITIALS = record['initials']

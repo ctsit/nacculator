@@ -472,13 +472,66 @@ def update_header(record, packet):
     for header in packet:
         header.PACKET = "FF"
         header.FORMID = header.form_name
+
+        if header.FORMID.value == "A3A":
+            formdate = record['ftld_fvp_a3a_date']
+            formrater = record['ftld_fvp_a3a_rater']
+        elif header.FORMID.value == "B3F":
+            formdate = record['ftld_fvp_b3f_date']
+            formrater = record['ftld_fvp_b3f_rater']
+        elif header.FORMID.value == "B9F":
+            formdate = record['ftld_fvp_b9f_date']
+            formrater = record['ftld_fvp_b9f_rater']
+        elif header.FORMID.value == "C1F":
+            formdate = record['ftld_fvp_c1f_date']
+            formrater = record['ftld_fvp_c1f_rater']
+        elif header.FORMID.value == "C2F":
+            formdate = record['ftld_fvp_c2f_date']
+            formrater = record['ftld_fvp_c2f_initials'] #note the difference
+        elif header.FORMID.value == "C3F":
+            formdate = record['ftld_fvp_c3f_date']
+            formrater = record['ftld_fvp_c3f_rater']
+        elif header.FORMID.value == "C4F":
+            formdate = record['ftld_fvp_c4f_date']
+            formrater = record['ftld_fvp_c4f_rater']
+        elif header.FORMID.value == "C5F":
+            formdate = record['ftld_fvp_c5f_date']
+            formrater = record['ftld_fvp_c5f_rater']
+        elif header.FORMID.value == "C6F":
+            formdate = record['ftld_fvp_c6f_date']
+            formrater = record['ftld_fvp_c6f_rater']
+        elif header.FORMID.value == "E2F":
+            formdate = record['ftld_fvp_e2f_date']
+            formrater = record['ftld_fvp_e2f_rater']
+        elif header.FORMID.value == "E3F":
+            formdate = record['ftld_fvp_e3f_date']
+            formrater = record['ftld_fvp_e3f_rater']
+        elif header.FORMID.value == "Z1X":
+            formdate = record['fvp_z1x_date']
+            formrater = record['fvp_z1x_rater']
+
         if header.FORMID == "Z1X":
             header.PACKET = "F"
         header.FORMVER = 3
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
-        header.VISITMO = record['visitmo']
-        header.VISITDAY = record['visitday']
-        header.VISITYR = record['visityr']
+
+        # Date/Rater quickfix
+        # Date should be format of yyyy-mm-dd. If not,
+        # then use form header defaults.
+        if len(formdate.split("-")) == 3:
+            yyyy = formdate.split("-")[0]
+            mm = formdate.split("-")[1]
+            dd = formdate.split("-")[2]
+        else:
+            yyyy = record['visityr']
+            mm = record['visitmo']
+            dd = record['visitday']
+
+        header.VISITMO = mm
+        header.VISITDAY = dd
+        header.VISITYR = yyyy
         header.VISITNUM = record['visitnum']
-        header.INITIALS = record['initials']
+        header.INITIALS = formrater
+        if header.INITIALS.value == '   ':
+            header.INITIALS = record['initials']
