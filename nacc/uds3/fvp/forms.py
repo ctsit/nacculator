@@ -944,7 +944,7 @@ class FormZ1X(nacc.uds3.FieldBag):
         self.fields['B7NOT'] = nacc.uds3.Field(name='B7NOT', typename='Num', position=(95, 96), length=2, inclusive_range=(95,98), allowable_values=['98','97','96','95'], blanks=['Blank if Question 10 B7SUB = 1 (Yes)'])
         self.fields['LANGB8'] = nacc.uds3.Field(name='LANGB8', typename='Num', position=(98, 98), length=1, inclusive_range=(1,2), allowable_values=['2','1'], blanks=[])
         self.fields['LANGB9'] = nacc.uds3.Field(name='LANGB9', typename='Num', position=(100, 100), length=1, inclusive_range=(1,2), allowable_values=['2','1'], blanks=[])
-        self.fields['LANGC1'] = nacc.uds3.Field(name='LANGC2', typename='Num', position=(102, 102), length=1, inclusive_range=(1,2), allowable_values=['2','1'], blanks=['Blank if 13a LANGC2 = 1 (English) or 2 (Spanish)'])
+        self.fields['LANGC1'] = nacc.uds3.Field(name='LANGC1', typename='Num', position=(102, 102), length=1, inclusive_range=(1,2), allowable_values=['2','1'], blanks=['Blank if 13a LANGC2 = 1 (English) or 2 (Spanish)'])
         self.fields['LANGC2'] = nacc.uds3.Field(name='LANGC2', typename='Num', position=(104, 104), length=1, inclusive_range=(1,2), allowable_values=['2','1'], blanks=['Blank if 12a LANGC1 = 1 (English) or 2 (Spanish)'])
         self.fields['LANGD1'] = nacc.uds3.Field(name='LANGD1', typename='Num', position=(106, 106), length=1, inclusive_range=(1,2), allowable_values=['2','1'], blanks=[])
         self.fields['LANGD2'] = nacc.uds3.Field(name='LANGD2', typename='Num', position=(108, 108), length=1, inclusive_range=(1,2), allowable_values=['2','1'], blanks=[])

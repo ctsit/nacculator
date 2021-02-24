@@ -114,7 +114,7 @@ def add_z1x(record, packet):
     Z1X.LANGE3F  = record['fu_lange3f']
     Z1X.LANGCLS  = record['fu_langcls']
     Z1X.CLSSUB   = record['fu_clssub']
-    packet.insert(0, Z1X)
+    # packet.insert(0, Z1X)
 
 
 def add_a3a(record, packet):
