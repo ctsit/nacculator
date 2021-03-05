@@ -54,16 +54,7 @@ def build_uds3_m_form(record):
 def update_header(record, packet):
     for header in packet:
         header.PACKET = 'M'
-        if 'milestone_5' in record['redcap_event_name']:
-            header.FORMID = 'M5'  # header.form_name
-        elif 'milestone_4' in record['redcap_event_name']:
-            header.FORMID = 'M4'  # header.form_name
-        elif 'milestone_3' in record['redcap_event_name']:
-            header.FORMID = 'M3'  # header.form_name
-        elif 'milestone_2' in record['redcap_event_name']:
-            header.FORMID = 'M2'  # header.form_name
-        elif 'milestone_1' in record['redcap_event_name']:
-            header.FORMID = 'M1'  # header.form_name
+        header.FORMID = 'M1'  # header.form_name
         header.FORMVER = 3
         header.ADCID = 41  # record['ABCID']
         header.PTID = record['ptid']
