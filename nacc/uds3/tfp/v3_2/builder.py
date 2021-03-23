@@ -864,6 +864,9 @@ def update_header(record, packet):
     for header in packet:
         header.PACKET = "T"
         header.FORMID = header.form_name
+        header.FORMVER = "3.2"
+        header.ADCID = record['adcid']
+        header.PTID = record['ptid']
 
         # Custom header info
         formdate = ''
@@ -929,9 +932,6 @@ def update_header(record, packet):
             header.VISITDAY = record['visitday']
             header.VISITYR = record['visityr']
 
-        header.FORMVER = "3.2"
-        header.ADCID = record['adcid']
-        header.PTID = record['ptid']
         header.VISITNUM = record['visitnum']
         if formrater is not None:
             header.INITIALS = formrater
