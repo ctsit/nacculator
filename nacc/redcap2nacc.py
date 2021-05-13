@@ -165,7 +165,10 @@ def check_redcap_event(options, record) -> bool:
     """
     if options.lbd and options.ivp:
         event_name = 'initial'
-        form_match_lbd = record['lbd_ivp_b1l_complete']
+        try:
+            form_match_lbd = record['lbd_ivp_b1l_complete']
+        except KeyError:
+            form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbd and options.fvp:
@@ -175,7 +178,10 @@ def check_redcap_event(options, record) -> bool:
             return False
     elif options.lbdsv and options.ivp:
         event_name = 'initial'
-        form_match_lbd = record['lbd_ivp_b1l_complete']
+        try:
+            form_match_lbd = record['lbd_ivp_b1l_complete']
+        except KeyError:
+            form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbdsv and options.fvp:
