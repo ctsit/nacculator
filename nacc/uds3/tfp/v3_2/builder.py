@@ -57,9 +57,12 @@ def build_uds3_tfp_new_form(record, err=sys.stderr):
                 add_b7(record, packet)
         except KeyError:
             pass
-
-    add_b9(record, packet)
-    add_c2t(record, packet)
+        add_b9(record, packet)
+        try:
+            if record['tele_c2sub'] == '1':
+                add_c2t(record, packet)
+        except KeyError:
+            pass
     add_d1(record, packet)
     add_d2(record, packet)
     try:
@@ -864,8 +867,73 @@ def update_header(record, packet):
         header.FORMVER = "3.2"
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
-        header.VISITMO = record['visitmo']
-        header.VISITDAY = record['visitday']
-        header.VISITYR = record['visityr']
+
+        # Custom header info
+        formdate = ''
+        formrater = ''
+        try:
+            if header.FORMID.value == "T1":
+                formdate = record['tfp_t1_date']
+                formrater = record['tfp_t1_rater']
+            elif header.FORMID.value == "A1":
+                formdate = record['tfp_a1_date']
+                formrater = record['tfp_a1_rater']
+            elif header.FORMID.value == "A2":
+                formdate = record['tfp_a2_date']
+                formrater = record['tfp_a2_rater']
+            elif header.FORMID.value == "A3":
+                formdate = record['tfp_a3_date']
+                formrater = record['tfp_a3_rater']
+            elif header.FORMID.value == "A4D":
+                formdate = record['tfp_a4d_date']
+                formrater = record['tfp_a4d_rater']
+            elif header.FORMID.value == "A4G":
+                formdate = record['tfp_a4g_date']
+                formrater = record['tfp_a4g_rater']
+            elif header.FORMID.value == "B4":
+                formdate = record['tfp_b4_date']
+                formrater = record['tfp_b4_rater']
+            elif header.FORMID.value == "B5":
+                formdate = record['tfp_b5_date']
+                formrater = record['tfp_b5_rater']
+            elif header.FORMID.value == "B7":
+                formdate = record['tfp_b7_date']
+                formrater = record['tfp_b7_rater']
+            elif header.FORMID.value == "B9":
+                formdate = record['tfp_b9_date']
+                formrater = record['tfp_b9_rater']
+            elif header.FORMID.value == "C2":
+                formdate = record['tfp_c2_date']
+                formrater = record['tfp_c2_rater']
+            elif header.FORMID.value == "D1":
+                formdate = record['tfp_d1_date']
+                formrater = record['tfp_d1_rater']
+            elif header.FORMID.value == "D2":
+                formdate = record['tfp_d2_date']
+                formrater = record['tfp_d2_rater']
+            elif header.FORMID.value == "Z1X":
+                formdate = record['tfp_z1x_date']
+                formrater = record['tfp_z1x_rater']
+            # Date should be format of yyyy-mm-dd. If not,
+            # then use form header defaults.
+            if len(formdate.split("-")) == 3:
+                yyyy = formdate.split("-")[0]
+                mm = formdate.split("-")[1]
+                dd = formdate.split("-")[2]
+            else:
+                yyyy = record['visityr']
+                mm = record['visitmo']
+                dd = record['visitday']
+            header.VISITMO = mm
+            header.VISITDAY = dd
+            header.VISITYR = yyyy
+        except KeyError:
+            header.VISITMO = record['visitmo']
+            header.VISITDAY = record['visitday']
+            header.VISITYR = record['visityr']
+
         header.VISITNUM = record['visitnum']
-        header.INITIALS = record['initials']
+        if formrater != '':
+            header.INITIALS = formrater
+        else:
+            header.INITIALS = record['initials']

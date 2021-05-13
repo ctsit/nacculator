@@ -504,8 +504,73 @@ def update_header(record, packet):
         header.FORMVER = 3
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
-        header.VISITMO = record['visitmo']
-        header.VISITDAY = record['visitday']
-        header.VISITYR = record['visityr']
+
+        # Custom header info
+        formdate = ''
+        formrater = ''
+        try:
+            if header.FORMID.value == "B1L":
+                formdate = record['fu_b1l_date']
+                formrater = record['fu_b1l_rater']
+            elif header.FORMID.value == "B2L":
+                formdate = record['fu_b2l_date']
+                formrater = record['fu_b2l_rater']
+            elif header.FORMID.value == "B3L":
+                formdate = record['fu_b3l_date']
+                formrater = record['fu_b3l_rater']
+            elif header.FORMID.value == "B4L":
+                formdate = record['fu_b4l_date']
+                formrater = record['fu_b4l_rater']
+            elif header.FORMID.value == "B5L":
+                formdate = record['fu_b5l_date']
+                formrater = record['fu_b5l_rater']
+            elif header.FORMID.value == "B6L":
+                formdate = record['fu_b6l_date']
+                formrater = record['fu_b6l_rater']
+            elif header.FORMID.value == "B7L":
+                formdate = record['fu_b7l_date']
+                formrater = record['fu_b7l_rater']
+            elif header.FORMID.value == "B8L":
+                formdate = record['fu_b8l_date']
+                formrater = record['fu_b8l_rater']
+            elif header.FORMID.value == "B9L":
+                formdate = record['fu_b9l_date']
+                formrater = record['fu_b9l_rater']
+            elif header.FORMID.value == "C1L":
+                formdate = record['fu_c1l_date']
+                formrater = record['fu_c1l_rater']
+            elif header.FORMID.value == "D1L":
+                formdate = record['fu_d1l_date']
+                formrater = record['fu_d1l_rater']
+            elif header.FORMID.value == "E1L":
+                formdate = record['fu_e1l_date']
+                formrater = record['fu_e1l_rater']
+            elif header.FORMID.value == "E2L":
+                formdate = record['fu_e2l_date']
+                formrater = record['fu_e2l_rater']
+            elif header.FORMID.value == "E3L":
+                formdate = record['fu_e3l_date']
+                formrater = record['fu_e3l_rater']
+            # Date should be format of yyyy-mm-dd. If not,
+            # then use form header defaults.
+            if len(formdate.split("-")) == 3:
+                yyyy = formdate.split("-")[0]
+                mm = formdate.split("-")[1]
+                dd = formdate.split("-")[2]
+            else:
+                yyyy = record['visityr']
+                mm = record['visitmo']
+                dd = record['visitday']
+            header.VISITMO = mm
+            header.VISITDAY = dd
+            header.VISITYR = yyyy
+        except KeyError:
+            header.VISITMO = record['visitmo']
+            header.VISITDAY = record['visitday']
+            header.VISITYR = record['visityr']
+
         header.VISITNUM = record['visitnum']
-        header.INITIALS = record['initials']
+        if formrater != '':
+            header.INITIALS = formrater
+        else:
+            header.INITIALS = record['initials']
