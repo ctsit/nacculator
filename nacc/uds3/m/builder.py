@@ -84,7 +84,7 @@ def parse_date(date, DMY_choice):
             return m[0] + m[1]
     elif date == '':
         return ''
-    raise ValueError('Inccorect death date format, date must be MM/DD/YYYY')
+    raise ValueError('Incorrect death date format, date must be MM/DD/YYYY')
 
 
 def subject_deceased(status):
