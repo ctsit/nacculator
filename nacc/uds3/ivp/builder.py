@@ -1271,7 +1271,7 @@ def update_header(record, packet):
             header.VISITYR = record['visityr']
 
         header.VISITNUM = record['visitnum']
-        if formrater is not None:
+        if formrater != '':
             header.INITIALS = formrater
         else:
             header.INITIALS = record['initials']
