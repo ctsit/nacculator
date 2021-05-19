@@ -10,7 +10,6 @@ def header_fields():
     fields["VISITMO"] = nacc.uds3.Field(name="VISITMO", typename="Num ", position=(26, 27), length=2, inclusive_range=('1', '12'), allowable_values=[], blanks=[])
     fields["VISITDAY "] = nacc.uds3.Field(name="VISITDAY ", typename="Num ", position=(29, 30), length=2, inclusive_range=('1', '31'), allowable_values=[], blanks=[])
     fields["VISITYR"] = nacc.uds3.Field(name="VISITYR", typename="Num ", position=(32, 35), length=4, inclusive_range=('2020', '2021'), allowable_values=[], blanks=[])
-    fields["VISITNUM"] = nacc.uds3.Field(name="VISITNUM", typename="Char ", position=(37, 39), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     fields["INITIALS"] = nacc.uds3.Field(name="INITIALS", typename="Char ", position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     return fields
 
