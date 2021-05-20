@@ -82,7 +82,7 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
-                if options.csv:
+                if options.cv:
                     u = blanks_cv.convert_rule_to_python(field.name, rule)
                     if u(packet):
                         blank_warnings(warnings, field.name, formid,

@@ -8,6 +8,7 @@ class option():
     flag = 'csf'
     lbd = False
     ftld = False
+    cv = False
     csf = True
     ivp = False
     fvp = False

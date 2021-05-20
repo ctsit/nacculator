@@ -7,6 +7,7 @@ from nacc.ftld.ivp.builder import build_ftld_ivp_form
 class option():
     flag = 'ftld'
     iorf = 'ivp'
+    cv = False
     csf = False
     lbd = False
     ftld = True

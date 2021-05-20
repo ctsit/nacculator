@@ -8,6 +8,7 @@ from nacc.uds3.tfp.v3_2.builder import build_uds3_tfp_new_form
 class option():
     flag = 'tfp'
     iorf = False
+    cv = False
     csf = False
     lbd = False
     tfp = True
