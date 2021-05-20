@@ -39,7 +39,7 @@ class FormF2(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
         self.fields["C19SYMPT"] = nacc.uds3.Field(name="C19SYMPT", typename="Num", position=(45, 45), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '8', '9'], blanks=[])
-        self.fields["C19SYOTX"] = nacc.uds3.Field(name="C19SYOTX", typename="Char", position=(47, 106), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 1 C19SYMPT != Other (2)'])
+        self.fields["C19SYOTX"] = nacc.uds3.Field(name="C19SYOTX", typename="Char", position=(47, 106), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 1 C19SYMPT != 2 (Other)'])
         self.fields["C19TEST"] = nacc.uds3.Field(name="C19TEST", typename="Num", position=(108, 108), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '8', '9'], blanks=[])
         self.fields["C19T1MO"] = nacc.uds3.Field(name="C19T1MO", typename="Num", position=(110, 111), length=2, inclusive_range=('0', '12'), allowable_values=[], blanks=['Blank if 2 C19TEST is 0', 'Blank if 2 C19TEST is 8', 'Blank if 2 C19TEST is 9'])
         self.fields["C19T1DY"] = nacc.uds3.Field(name="C19T1DY", typename="Num", position=(113, 114), length=2, inclusive_range=('1', '31'), allowable_values=['99'], blanks=['Blank if 2 C19TEST is 0', 'Blank if 2 C19TEST is 8', 'Blank if 2 C19TEST is 9'])
@@ -78,7 +78,7 @@ class FormF2(nacc.uds3.FieldBag):
         self.fields["C19CANX"] = nacc.uds3.Field(name="C19CANX", typename="Num", position=(214, 214), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '8'], blanks=['Blank if 12 C19MH is 1', 'Blank if 12 C19MH is 8'])
         self.fields["C19CBEH"] = nacc.uds3.Field(name="C19CBEH", typename="Num", position=(216, 216), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '8'], blanks=['Blank if 12 C19MH is 1', 'Blank if 12 C19MH is 8'])
         self.fields["C19COTH"] = nacc.uds3.Field(name="C19COTH", typename="Num", position=(218, 218), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '8'], blanks=['Blank if 12 C19MH is 1', 'Blank if 12 C19MH is 8'])
-        self.fields["C19OTHX"] = nacc.uds3.Field(name="C19OTHX", typename="Char", position=(220, 279), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 12 C19MH is 1', 'Blank if 12 C19MH is 8', 'Blank if 13e C19COTH != Yes (1)'])
+        self.fields["C19OTHX"] = nacc.uds3.Field(name="C19OTHX", typename="Char", position=(220, 279), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 12 C19MH is 1', 'Blank if 12 C19MH is 8', 'Blank if 13e C19COTH != 1 (Yes)'])
         self.fields["C19RES"] = nacc.uds3.Field(name="C19RES", typename="Num", position=(281, 281), length=1, inclusive_range=('1', '5'), allowable_values=['1', '2', '3', '4', '5', '8'], blanks=[])
 
 
@@ -98,7 +98,7 @@ class FormF3(nacc.uds3.FieldBag):
         self.fields["C19KFAC"] = nacc.uds3.Field(name="C19KFAC", typename="Num", position=(65, 65), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '8'], blanks=[])
         self.fields["C19KAPP"] = nacc.uds3.Field(name="C19KAPP", typename="Num", position=(67, 67), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '8'], blanks=[])
         self.fields["C19KOTH"] = nacc.uds3.Field(name="C19KOTH", typename="Num", position=(69, 69), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '8'], blanks=[])
-        self.fields["C19KOTHX"] = nacc.uds3.Field(name="C19KOTHX", typename="Char", position=(71, 130), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 7 C19KOTH not = Yes (1)'])
+        self.fields["C19KOTHX"] = nacc.uds3.Field(name="C19KOTHX", typename="Char", position=(71, 130), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 7 C19KOTH not = 1 (Yes)'])
         self.fields["C19CORE"] = nacc.uds3.Field(name="C19CORE", typename="Num", position=(132, 132), length=1, inclusive_range=('1', '5'), allowable_values=['1', '2', '3', '4', '5', '8'], blanks=[])
         self.fields["C19COPRE"] = nacc.uds3.Field(name="C19COPRE", typename="Num", position=(134, 134), length=1, inclusive_range=('1', '5'), allowable_values=['1', '2', '3', '4', '5', '8'], blanks=[])
         self.fields["C19COSPX"] = nacc.uds3.Field(name="C19COSPX", typename="Char", position=(136, 1159), length=1024, inclusive_range=None, allowable_values=[], blanks=[])
