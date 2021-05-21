@@ -33,10 +33,10 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
 
     single_value = re.compile(
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+)"
-        r" *(?P<eq>=|ne|is|not =) (?P<value>\d+)([^-]|$)")
+        r" *(?P<eq>=|ne|is|not =|!=) (?P<value>\d+)([^-]|$)")
     range_values = re.compile(
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+)"
-        r" *(?P<eq>=|ne|is|not =) (?P<start>\d+)-(?P<stop>\d+)( |$)")
+        r" *(?P<eq>=|ne|is|not =|!=) (?P<start>\d+)-(?P<stop>\d+)( |$)")
     blank_value = re.compile(
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne|is|not =) blank")
     not_answered = re.compile(
@@ -87,9 +87,9 @@ def extract_blanks(csvfile):
 def _blanking_rule_check_single_value(key, eq, value):
     def should_be_blank(packet):
         """ Returns True if the value should be blank according to the rule """
-        if '=' == eq:
+        if '=' == eq or 'is' == eq:
             return packet[key] == value
-        elif 'ne' == eq:
+        elif 'ne' == eq or 'not =' == eq or '!=' == eq:
             return packet[key] != value
         else:
             raise ValueError("'eq' must be '=' or 'ne', not '%s'." % eq)

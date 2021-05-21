@@ -23,7 +23,7 @@ class FormF1(nacc.uds3.FieldBag):
         self.fields["C19TLAP"] = nacc.uds3.Field(name="C19TLAP", typename="Num", position=(51, 51), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1'], blanks=[])
         self.fields["C19TCOMP"] = nacc.uds3.Field(name="C19TCOMP", typename="Num", position=(53, 53), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1'], blanks=[])
         self.fields["C19TOTH"] = nacc.uds3.Field(name="C19TOTH", typename="Num", position=(55, 55), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1'], blanks=[])
-        self.fields["C19TOTHX"] = nacc.uds3.Field(name="C19TOTHX", typename="Char", position=(57, 116), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 2e C19OTH is 0'])
+        self.fields["C19TOTHX"] = nacc.uds3.Field(name="C19TOTHX", typename="Char", position=(57, 116), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 2e C19TOTH is 0'])
         self.fields["C19TEMAI"] = nacc.uds3.Field(name="C19TEMAI", typename="Num", position=(118, 118), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '8'], blanks=[])
         self.fields["C19TIPHN"] = nacc.uds3.Field(name="C19TIPHN", typename="Num", position=(120, 120), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1'], blanks=[])
         self.fields["C19TITAB"] = nacc.uds3.Field(name="C19TITAB", typename="Num", position=(122, 122), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1'], blanks=[])
