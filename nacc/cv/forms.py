@@ -2,15 +2,15 @@
 import nacc.uds3
 def header_fields():
     fields = {}
-    fields["PACKET "] = nacc.uds3.Field(name="PACKET ", typename="Char ", position=(1, 2), length=2, inclusive_range=None, allowable_values=[], blanks=[])
-    fields["FORMID "] = nacc.uds3.Field(name="FORMID ", typename="Char ", position=(4, 6), length=3, inclusive_range=None, allowable_values=[], blanks=[])
-    fields["FORMVER "] = nacc.uds3.Field(name="FORMVER ", typename="Num ", position=(8, 10), length=3, inclusive_range=('3', '3.2'), allowable_values=[], blanks=[])
-    fields["ADCID "] = nacc.uds3.Field(name="ADCID ", typename="Num ", position=(12, 13), length=2, inclusive_range=('2', '65'), allowable_values=[], blanks=[])
-    fields["PTID "] = nacc.uds3.Field(name="PTID ", typename="Char ", position=(15, 24), length=10, inclusive_range=None, allowable_values=[], blanks=[])
-    fields["VISITMO"] = nacc.uds3.Field(name="VISITMO", typename="Num ", position=(26, 27), length=2, inclusive_range=('1', '12'), allowable_values=[], blanks=[])
-    fields["VISITDAY "] = nacc.uds3.Field(name="VISITDAY ", typename="Num ", position=(29, 30), length=2, inclusive_range=('1', '31'), allowable_values=[], blanks=[])
-    fields["VISITYR"] = nacc.uds3.Field(name="VISITYR", typename="Num ", position=(32, 35), length=4, inclusive_range=('2020', '2021'), allowable_values=[], blanks=[])
-    fields["INITIALS"] = nacc.uds3.Field(name="INITIALS", typename="Char ", position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
+    fields["PACKET"] = nacc.uds3.Field(name="PACKET", typename="Char", position=(1, 2), length=2, inclusive_range=None, allowable_values=[], blanks=[])
+    fields["FORMID"] = nacc.uds3.Field(name="FORMID", typename="Char", position=(4, 6), length=3, inclusive_range=None, allowable_values=[], blanks=[])
+    fields["FORMVER"] = nacc.uds3.Field(name="FORMVER", typename="Num", position=(8, 10), length=3, inclusive_range=('1', '1'), allowable_values=[], blanks=[])
+    fields["ADCID"] = nacc.uds3.Field(name="ADCID", typename="Num", position=(12, 13), length=2, inclusive_range=('2', '65'), allowable_values=[], blanks=[])
+    fields["PTID"] = nacc.uds3.Field(name="PTID", typename="Char", position=(15, 24), length=10, inclusive_range=None, allowable_values=[], blanks=[])
+    fields["VISITMO"] = nacc.uds3.Field(name="VISITMO", typename="Num", position=(26, 27), length=2, inclusive_range=('1', '12'), allowable_values=[], blanks=[])
+    fields["VISITDAY"] = nacc.uds3.Field(name="VISITDAY", typename="Num", position=(29, 30), length=2, inclusive_range=('1', '31'), allowable_values=[], blanks=[])
+    fields["VISITYR"] = nacc.uds3.Field(name="VISITYR", typename="Num", position=(32, 35), length=4, inclusive_range=('2020', '2021'), allowable_values=[], blanks=[])
+    fields["INITIALS"] = nacc.uds3.Field(name="INITIALS", typename="Char", position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     return fields
 
 

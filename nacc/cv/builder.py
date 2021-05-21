@@ -157,7 +157,7 @@ def update_header(record, packet):
         header.VISITMO = parse_date(record['date'], 'M')
         header.VISITDAY = parse_date(record['date'], 'D')
         header.VISITYR = parse_date(record['date'], 'Y')
-        header.INITIALS = record['initials']
+        header.INITIALS = record['c19_initials']
 
 
 # parse header date
