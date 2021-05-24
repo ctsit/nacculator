@@ -137,11 +137,11 @@ def add_z1x(record, packet):
         Z1X.LBDB6LR  = record['fu_lbdb6lr']
     except KeyError:
         if record['fu_lbudspch'] is not None:
-            Z1X.LBDB2LS  = '1'
-            Z1X.LBDB2LR  = ''
+            Z1X.LBDB2LS = '1'
+            Z1X.LBDB2LR = ''
         if record['fu_lbspcgim'] is not None:
-            Z1X.LBDB6LS  = '1'
-            Z1X.LBDB6LR  = ''
+            Z1X.LBDB6LS = '1'
+            Z1X.LBDB6LR = ''
     packet.insert(0, Z1X)
 
 
@@ -368,9 +368,6 @@ def add_b9l(record,packet):
 
 def add_c1l(record,packet):
     C1L = lbd_short_fvp_forms.FormC1L()
-    C1L.LBNSWorD = record['fu_LBNSWorD'.lower()]
-    C1L.LBNSCoLr = record['fu_LBNSCoLr'.lower()]
-    C1L.LBNSCLWD = record['fu_LBNSCLWD'.lower()]
     C1L.LBNPFACe = record['fu_LBNPFACe'.lower()]
     C1L.LBNPNoIS = record['fu_LBNPNoIS'.lower()]
     C1L.LBNPtCor = record['fu_LBNPtCor'.lower()]
@@ -443,68 +440,17 @@ def add_e1l(record,packet):
 def add_e2l(record,packet):
     E2L = lbd_short_fvp_forms.FormE2L()
     E2L.LBISMrI  = record['fu_LBISMrI'.lower()]
-    E2L.LBISMMo  = record['fu_LBISMMo'.lower()]
-    E2L.LBISMDy  = record['fu_LBISMDy'.lower()]
-    E2L.LBISMyr  = record['fu_LBISMyr'.lower()]
-    E2L.LBISMQAV = record['fu_LBISMQAV'.lower()]
     E2L.LBISMHIP = record['fu_LBISMHIP'.lower()]
     E2L.LBISMAVL = record['fu_LBISMAVL'.lower()]
-    E2L.LBISMDCM = record['fu_LBISMDCM'.lower()]
-    E2L.LBISMFMt = record['fu_LBISMFMt'.lower()]
-    E2L.LBISMADN = record['fu_LBISMADN'.lower()]
-    E2L.LBISMVer = record['fu_LBISMVer'.lower()]
-    E2L.LBISMMAN = record['fu_LBISMMAN'.lower()]
-    E2L.LBISMoM  = record['fu_LBISMoM'.lower()]
-    E2L.LBISMStr = record['fu_LBISMStr'.lower()]
-    E2L.LBISMoS  = record['fu_LBISMoS'.lower()]
     E2L.LBIFPet  = record['fu_LBIFPet'.lower()]
-    E2L.LBIFPMo  = record['fu_LBIFPMo'.lower()]
-    E2L.LBIFPDy  = record['fu_LBIFPDy'.lower()]
-    E2L.LBIFPyr  = record['fu_LBIFPyr'.lower()]
-    E2L.LBIFPQAV = record['fu_LBIFPQAV'.lower()]
     E2L.LBIFPoCC = record['fu_LBIFPoCC'.lower()]
     E2L.LBIFPtPP = record['fu_LBIFPtPP'.lower()]
     E2L.LBIFPISL = record['fu_LBIFPISL'.lower()]
     E2L.LBIFPAVL = record['fu_LBIFPAVL'.lower()]
-    E2L.LBIFPDCM = record['fu_LBIFPDCM'.lower()]
-    E2L.LBIFPFMt = record['fu_LBIFPFMt'.lower()]
-    E2L.LBIFPADN = record['fu_LBIFPADN'.lower()]
-    E2L.LBIFPVer = record['fu_LBIFPVer'.lower()]
-    E2L.LBIFPMAN = record['fu_LBIFPMAN'.lower()]
-    E2L.LBIFPoM  = record['fu_LBIFPoM'.lower()]
-    E2L.LBIAPet  = record['fu_LBIAPet'.lower()]
-    E2L.LBIAPMo  = record['fu_LBIAPMo'.lower()]
-    E2L.LBIAPDy  = record['fu_LBIAPDy'.lower()]
-    E2L.LBIAPyr  = record['fu_LBIAPyr'.lower()]
-    E2L.LBIAPQAV = record['fu_LBIAPQAV'.lower()]
     E2L.LBIAPAVL = record['fu_LBIAPAVL'.lower()]
-    E2L.LBIAPDCM = record['fu_LBIAPDCM'.lower()]
-    E2L.LBIAPFMt = record['fu_LBIAPFMt'.lower()]
-    E2L.LBIAPLIG = record['fu_LBIAPLIG'.lower()]
-    E2L.LBIAPoL  = record['fu_LBIAPoL'.lower()]
-    E2L.LBIAPADN = record['fu_LBIAPADN'.lower()]
-    E2L.LBIAPVer = record['fu_LBIAPVer'.lower()]
-    E2L.LBIAPMAN = record['fu_LBIAPMAN'.lower()]
-    E2L.LBIAPoM  = record['fu_LBIAPoM'.lower()]
     E2L.LBItPet  = record['fu_LBItPet'.lower()]
-    E2L.LBItPMo  = record['fu_LBItPMo'.lower()]
-    E2L.LBItPDy  = record['fu_LBItPDy'.lower()]
-    E2L.LBItPyr  = record['fu_LBItPyr'.lower()]
-    E2L.LBItPQAV = record['fu_LBItPQAV'.lower()]
     E2L.LBItPAVL = record['fu_LBItPAVL'.lower()]
-    E2L.LBItPDCM = record['fu_LBItPDCM'.lower()]
-    E2L.LBItPFMt = record['fu_LBItPFMt'.lower()]
-    E2L.LBItPLIG = record['fu_LBItPLIG'.lower()]
-    E2L.LBItPoL  = record['fu_LBItPoL'.lower()]
-    E2L.LBItPADN = record['fu_LBItPADN'.lower()]
-    E2L.LBItPVer = record['fu_LBItPVer'.lower()]
-    E2L.LBItPMAN = record['fu_LBItPMAN'.lower()]
-    E2L.LBItPoM  = record['fu_LBItPoM'.lower()]
     E2L.LBIDAtS  = record['fu_LBIDAtS'.lower()]
-    E2L.LBIDSMo  = record['fu_LBIDSMo'.lower()]
-    E2L.LBIDSDy  = record['fu_LBIDSDy'.lower()]
-    E2L.LBIDSyr  = record['fu_LBIDSyr'.lower()]
-    E2L.LBIDSQAV = record['fu_LBIDSQAV'.lower()]
     E2L.LBIDSABN = record['fu_LBIDSABN'.lower()]
     packet.append(E2L)
 
