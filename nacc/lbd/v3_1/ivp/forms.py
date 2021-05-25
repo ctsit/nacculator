@@ -316,10 +316,10 @@ class FormB9L(nacc.uds3.FieldBag):
 class FormC1L(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
-        self.fields['LBNPFACe'] = nacc.uds3.Field(name='LBNPFACe', typename='Num', position=(57, 58), length=2, inclusive_range=(0, 7), allowable_values=['0', '1', '2', '3', '4', '5', '6', '7', '95', '96', '97', '98'], blanks=[])
-        self.fields['LBNPNoIS'] = nacc.uds3.Field(name='LBNPNoIS', typename='Num', position=(60, 61), length=2, inclusive_range=(0, 13), allowable_values=[], blanks=['Blank if Question 2a LBNPFACe = 95-98'])
-        self.fields['LBNPtCor'] = nacc.uds3.Field(name='LBNPtCor', typename='Num', position=(63, 64), length=2, inclusive_range=(0, 20), allowable_values=[], blanks=['Blank if Question 2a LBNPFACe = 95-98'])
-        self.fields['LBNPPArD'] = nacc.uds3.Field(name='LBNPPArD', typename='Num', position=(66, 67), length=2, inclusive_range=(0, 13), allowable_values=[], blanks=['Blank if Question 2a LBNPFACe = 95-98'])
+        self.fields['LBNPFACe'] = nacc.uds3.Field(name='LBNPFACe', typename='Num', position=(45, 46), length=2, inclusive_range=(0, 7), allowable_values=['0', '1', '2', '3', '4', '5', '6', '7', '95', '96', '97', '98'], blanks=[])
+        self.fields['LBNPNoIS'] = nacc.uds3.Field(name='LBNPNoIS', typename='Num', position=(48, 49), length=2, inclusive_range=(0, 13), allowable_values=[], blanks=['Blank if Question 2a LBNPFACe = 95-98'])
+        self.fields['LBNPtCor'] = nacc.uds3.Field(name='LBNPtCor', typename='Num', position=(51, 52), length=2, inclusive_range=(0, 20), allowable_values=[], blanks=['Blank if Question 2a LBNPFACe = 95-98'])
+        self.fields['LBNPPArD'] = nacc.uds3.Field(name='LBNPPArD', typename='Num', position=(54, 55), length=2, inclusive_range=(0, 13), allowable_values=[], blanks=['Blank if Question 2a LBNPFACe = 95-98'])
 
 
 class FormD1L(nacc.uds3.FieldBag):
@@ -387,19 +387,19 @@ class FormE2L(nacc.uds3.FieldBag):
     def __init__(self):
         self.fields = header_fields()
         self.fields['LBISMrI'] = nacc.uds3.Field(name='LBISMrI', typename='Num', position=(45, 45), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
-        self.fields['LBISMHIP'] = nacc.uds3.Field(name='LBISMHIP', typename='Num', position=(60, 60), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '8', '9'], blanks=['Blank if Question 1 LBISMrI = 0 (No or unknown)'])
-        self.fields['LBISMAVL'] = nacc.uds3.Field(name='LBISMAVL', typename='Num', position=(62, 62), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=['Blank if Question 1 LBISMrI = 0 (No or\nunknown)'])
-        self.fields['LBIFPet'] = nacc.uds3.Field(name='LBIFPet', typename='Num', position=(176, 176), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
-        self.fields['LBIFPoCC'] = nacc.uds3.Field(name='LBIFPoCC', typename='Num', position=(191, 191), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '8', '9'], blanks=['Blank if Question 2 LBIFPet = 0 (No or unknown)'])
-        self.fields['LBIFPtPP'] = nacc.uds3.Field(name='LBIFPtPP', typename='Num', position=(193, 193), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '8', '9'], blanks=['Blank if Question 2 LBIFPet = 0 (No or unknown)'])
-        self.fields['LBIFPISL'] = nacc.uds3.Field(name='LBIFPISL', typename='Num', position=(195, 195), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '8', '9'], blanks=['Blank if Question 2 LBIFPet = 0 (No or unknown)',])
-        self.fields['LBIFPAVL'] = nacc.uds3.Field(name='LBIFPAVL', typename='Num', position=(197, 197), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=['Blank if Question 2 LBIFPet = 0 (No or\nunknown)'])
-        self.fields['LBIAPet'] = nacc.uds3.Field(name='LBIAPet', typename='Num', position=(278, 278), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
-        self.fields['LBIAPAVL'] = nacc.uds3.Field(name='LBIAPAVL', typename='Num', position=(293, 293), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '9'], blanks=['Blank if Question 3 LBIAPet = 0 (No or\nunknown)'])
-        self.fields['LBItPet'] = nacc.uds3.Field(name='LBItPet', typename='Num', position=(407, 407), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
-        self.fields['LBItPAVL'] = nacc.uds3.Field(name='LBItPAVL', typename='Num', position=(422, 422), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '9'], blanks=['Blank if Question 4 LBItPet = 0 (No or\nunknown)'])
-        self.fields['LBIDAtS'] = nacc.uds3.Field(name='LBIDAtS', typename='Num', position=(536, 536), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
-        self.fields['LBIDSABN'] = nacc.uds3.Field(name='LBIDSABN', typename='Num', position=(551, 551), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '8', '9'], blanks=['Blank if Question 5 LBIDAtS = 0 (No or unknown)'])
+        self.fields['LBISMHIP'] = nacc.uds3.Field(name='LBISMHIP', typename='Num', position=(47, 47), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '8', '9'], blanks=['Blank if Question 1 LBISMrI = 0 (No or unknown)'])
+        self.fields['LBISMAVL'] = nacc.uds3.Field(name='LBISMAVL', typename='Num', position=(49, 49), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=['Blank if Question 1 LBISMrI = 0 (No or\nunknown)'])
+        self.fields['LBIFPet'] = nacc.uds3.Field(name='LBIFPet', typename='Num', position=(51, 51), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
+        self.fields['LBIFPoCC'] = nacc.uds3.Field(name='LBIFPoCC', typename='Num', position=(53, 53), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '8', '9'], blanks=['Blank if Question 2 LBIFPet = 0 (No or unknown)'])
+        self.fields['LBIFPtPP'] = nacc.uds3.Field(name='LBIFPtPP', typename='Num', position=(55, 55), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '8', '9'], blanks=['Blank if Question 2 LBIFPet = 0 (No or unknown)'])
+        self.fields['LBIFPISL'] = nacc.uds3.Field(name='LBIFPISL', typename='Num', position=(57, 57), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '8', '9'], blanks=['Blank if Question 2 LBIFPet = 0 (No or unknown)',])
+        self.fields['LBIFPAVL'] = nacc.uds3.Field(name='LBIFPAVL', typename='Num', position=(59, 59), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=['Blank if Question 2 LBIFPet = 0 (No or\nunknown)'])
+        self.fields['LBIAPet'] = nacc.uds3.Field(name='LBIAPet', typename='Num', position=(61, 61), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
+        self.fields['LBIAPAVL'] = nacc.uds3.Field(name='LBIAPAVL', typename='Num', position=(63, 63), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '9'], blanks=['Blank if Question 3 LBIAPet = 0 (No or\nunknown)'])
+        self.fields['LBItPet'] = nacc.uds3.Field(name='LBItPet', typename='Num', position=(65, 65), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
+        self.fields['LBItPAVL'] = nacc.uds3.Field(name='LBItPAVL', typename='Num', position=(67, 67), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '9'], blanks=['Blank if Question 4 LBItPet = 0 (No or\nunknown)'])
+        self.fields['LBIDAtS'] = nacc.uds3.Field(name='LBIDAtS', typename='Num', position=(69, 69), length=1, inclusive_range=(0, 1), allowable_values=['0', '1'], blanks=[])
+        self.fields['LBIDSABN'] = nacc.uds3.Field(name='LBIDSABN', typename='Num', position=(71, 71), length=1, inclusive_range=(0, 1), allowable_values=['0', '1', '8', '9'], blanks=['Blank if Question 5 LBIDAtS = 0 (No or unknown)'])
 
 
 class FormE3L(nacc.uds3.FieldBag):
