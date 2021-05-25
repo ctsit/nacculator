@@ -141,8 +141,8 @@ def add_z1x(record, packet):
             Z1X.B2LSUB = '1'
             Z1X.B2LNOT = ''
         if record['lbspcgim'] is not None:
-            Z1X.B2LSUB = '1'
-            Z1X.B2LNOT = ''
+            Z1X.B6LSUB = '1'
+            Z1X.B6LNOT = ''
     packet.insert(0, Z1X)
 
 
