@@ -106,42 +106,42 @@ def add_z1x(record, packet):
         Z1X.LANGCLS  = record['fu_langcls']
         Z1X.CLSSUB   = record['fu_clssub']
     except KeyError:
-        Z1X.LANGA3A  = '0'
-        Z1X.FTDA3AFS = '0'
-        Z1X.FTDA3AFR = '0'
-        Z1X.LANGB3F  = '0'
-        Z1X.LANGB9F  = '0'
-        Z1X.LANGC1F  = '0'
-        Z1X.LANGC2F  = '0'
-        Z1X.LANGC3F  = '0'
-        Z1X.LANGC4F  = '0'
-        Z1X.FTDC4FS  = '0'
-        Z1X.FTDC4FR  = '0'
-        Z1X.LANGC5F  = '0'
-        Z1X.FTDC5FS  = '0'
-        Z1X.FTDC5FR  = '0'
-        Z1X.LANGC6F  = '0'
-        Z1X.FTDC6FS  = '0'
-        Z1X.FTDC6FR  = '0'
-        Z1X.LANGE2F  = '0'
-        Z1X.LANGE3F  = '0'
-        Z1X.LANGCLS  = '0'
+        Z1X.LANGA3A  = ''
+        Z1X.FTDA3AFS = ''
+        Z1X.FTDA3AFR = ''
+        Z1X.LANGB3F  = ''
+        Z1X.LANGB9F  = ''
+        Z1X.LANGC1F  = ''
+        Z1X.LANGC2F  = ''
+        Z1X.LANGC3F  = ''
+        Z1X.LANGC4F  = ''
+        Z1X.FTDC4FS  = ''
+        Z1X.FTDC4FR  = ''
+        Z1X.LANGC5F  = ''
+        Z1X.FTDC5FS  = ''
+        Z1X.FTDC5FR  = ''
+        Z1X.LANGC6F  = ''
+        Z1X.FTDC6FS  = ''
+        Z1X.FTDC6FR  = ''
+        Z1X.LANGE2F  = ''
+        Z1X.LANGE3F  = ''
+        Z1X.LANGCLS  = ''
         Z1X.CLSSUB   = '0'
     # for REDCap projects that don't have the LBD questions added to their Z1X,
     # we just see if there's info in the B2L and B6L forms and fill in
     # accordingly.
     try:
-        Z1X.LBDB2LS  = record['fu_lbdb2ls']
-        Z1X.LBDB2LR  = record['fu_lbdb2lr']
-        Z1X.LBDB6LS  = record['fu_lbdb6ls']
-        Z1X.LBDB6LR  = record['fu_lbdb6lr']
+        Z1X.B2LSUB  = record['fu_b2lsub']
+        Z1X.B2LNOT  = record['fu_b2lnot']
+        Z1X.B6LSUB  = record['fu_b6lsub']
+        Z1X.B6LNOT  = record['fu_b6lnot']
     except KeyError:
         if record['fu_lbudspch'] is not None:
-            Z1X.LBDB2LS = '1'
-            Z1X.LBDB2LR = ''
+            Z1X.B2LSUB = '1'
+            Z1X.B2LNOT = ''
         if record['fu_lbspcgim'] is not None:
-            Z1X.LBDB6LS = '1'
-            Z1X.LBDB6LR = ''
+            Z1X.B2LSUB = '1'
+            Z1X.B2LNOT = ''
     packet.insert(0, Z1X)
 
 

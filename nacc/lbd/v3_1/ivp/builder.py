@@ -65,6 +65,7 @@ def add_z1x(record, packet):
     Z1X.LANGA4   = record['langa4']
     Z1X.A4SUB    = record['a4sub']
     Z1X.A4NOT    = record['a4not']
+    Z1X.LANGA5   = record['langa5']
     Z1X.LANGB1   = record['langb1']
     Z1X.B1SUB    = record['b1sub']
     Z1X.B1NOT    = record['b1not']
@@ -106,42 +107,42 @@ def add_z1x(record, packet):
         Z1X.LANGCLS  = record['langcls']
         Z1X.CLSSUB   = record['clssub']
     except KeyError:
-        Z1X.LANGA3A  = '0'
-        Z1X.FTDA3AFS = '0'
-        Z1X.FTDA3AFR = '0'
-        Z1X.LANGB3F  = '0'
-        Z1X.LANGB9F  = '0'
-        Z1X.LANGC1F  = '0'
-        Z1X.LANGC2F  = '0'
-        Z1X.LANGC3F  = '0'
-        Z1X.LANGC4F  = '0'
-        Z1X.FTDC4FS  = '0'
-        Z1X.FTDC4FR  = '0'
-        Z1X.LANGC5F  = '0'
-        Z1X.FTDC5FS  = '0'
-        Z1X.FTDC5FR  = '0'
-        Z1X.LANGC6F  = '0'
-        Z1X.FTDC6FS  = '0'
-        Z1X.FTDC6FR  = '0'
-        Z1X.LANGE2F  = '0'
-        Z1X.LANGE3F  = '0'
-        Z1X.LANGCLS  = '0'
+        Z1X.LANGA3A  = ''
+        Z1X.FTDA3AFS = ''
+        Z1X.FTDA3AFR = ''
+        Z1X.LANGB3F  = ''
+        Z1X.LANGB9F  = ''
+        Z1X.LANGC1F  = ''
+        Z1X.LANGC2F  = ''
+        Z1X.LANGC3F  = ''
+        Z1X.LANGC4F  = ''
+        Z1X.FTDC4FS  = ''
+        Z1X.FTDC4FR  = ''
+        Z1X.LANGC5F  = ''
+        Z1X.FTDC5FS  = ''
+        Z1X.FTDC5FR  = ''
+        Z1X.LANGC6F  = ''
+        Z1X.FTDC6FS  = ''
+        Z1X.FTDC6FR  = ''
+        Z1X.LANGE2F  = ''
+        Z1X.LANGE3F  = ''
+        Z1X.LANGCLS  = ''
         Z1X.CLSSUB   = '0'
     # for REDCap projects that don't have the LBD questions added to their Z1X,
     # we just see if there's info in the B2L and B6L forms and fill in
     # accordingly.
     try:
-        Z1X.LBDB2LS  = record['lbdb2ls']
-        Z1X.LBDB2LR  = record['lbdb2lr']
-        Z1X.LBDB6LS  = record['lbdb6ls']
-        Z1X.LBDB6LR  = record['lbdb6lr']
+        Z1X.B2LSUB  = record['b2lsub']
+        Z1X.B2LNOT  = record['b2lnot']
+        Z1X.B6LSUB  = record['b6lsub']
+        Z1X.B6LNOT  = record['b6lnot']
     except KeyError:
         if record['lbudspch'] is not None:
-            Z1X.LBDB2LS = '1'
-            Z1X.LBDB2LR = ''
+            Z1X.B2LSUB = '1'
+            Z1X.B2LNOT = ''
         if record['lbspcgim'] is not None:
-            Z1X.LBDB6LS = '1'
-            Z1X.LBDB6LR = ''
+            Z1X.B2LSUB = '1'
+            Z1X.B2LNOT = ''
     packet.insert(0, Z1X)
 
 
