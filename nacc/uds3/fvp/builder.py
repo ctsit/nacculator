@@ -163,7 +163,11 @@ def add_z1_or_z1x(record, packet):
         'LANGE2F': 'fu_lange2f',
         'LANGE3F': 'fu_lange3f',
         'LANGCLS': 'fu_langcls',
-        'CLSSUB': 'fu_clssub'
+        'CLSSUB': 'fu_clssub',
+        'B2LSUB': 'fu_b2lsub',
+        'B2LNOT': 'fu_b2lnot',
+        'B6LSUB': 'fu_b6lsub',
+        'B6LNOT': 'fu_b6lnot'
     }
     for key, value in z1x_field_mapping.items():
         if record[value].strip():

@@ -167,7 +167,11 @@ def add_z1_or_z1x(record, packet):
         'LANGE2F': 'lange2f',
         'LANGE3F': 'lange3f',
         'LANGCLS': 'langcls',
-        'CLSSUB': 'clssub'
+        'CLSSUB': 'clssub',
+        'B2LSUB': 'b2lsub',
+        'B2LNOT': 'b2lnot',
+        'B6LSUB': 'b6lsub',
+        'B6LNOT': 'b6lnot'
     }
     for key, value in z1x_field_mapping.items():
         try:
