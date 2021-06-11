@@ -58,8 +58,12 @@ def build_uds3_tfp_new_form(record, err=sys.stderr):
         except KeyError:
             pass
 
-    add_b9(record, packet)
-    add_c2t(record, packet)
+        add_b9(record, packet)
+        try:
+            if record['tele_c2sub'] == '1':
+                add_c2t(record, packet)
+        except KeyError:
+            pass
     add_d1(record, packet)
     add_d2(record, packet)
     try:
