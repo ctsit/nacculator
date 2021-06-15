@@ -326,6 +326,13 @@ def set_blanks_to_zero(packet):
             if empty(field):
                 field.value = 0
 
+    # B6 G1.
+    try:
+        if packet['GDS'] in range(0, 15):
+            set_to_zero_if_blank('NOGDS')
+    except KeyError:
+        pass
+
     # B8 2.
     try:
         if packet['PARKSIGN'] == 1:
