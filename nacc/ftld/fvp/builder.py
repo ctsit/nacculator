@@ -486,8 +486,8 @@ def add_e3f(record, packet):
     E3F.FTDCBFLB = record['fu_ftdcbflb']
     E3F.FTDCBFOA = record['fu_ftdcbfoa']
     E3F.FTDCBFOS = record['fu_ftdcbfos']
-    E3F.FTDOThI  = record['fu_ftdothi']
-    E3F.FTDOThIS = record['fu_ftdothis']
+    E3F.FTDOTHI  = record['fu_ftdothi']
+    E3F.FTDOTHIS = record['fu_ftdothis']
     packet.append(E3F)
 
 
