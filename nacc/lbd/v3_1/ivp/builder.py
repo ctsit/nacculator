@@ -288,6 +288,7 @@ def add_b4l(record, packet):
     B4L.LBAPINt  = record['LBAPINt'.lower()]
     B4L.LBAPFAML = record['LBAPFAML'.lower()]
     B4L.LBAPINtr = record['LBAPINtr'.lower()]
+    B4L.LBAPotH  = record['LBAPotH'.lower()]
     packet.append(B4L)
 
 
