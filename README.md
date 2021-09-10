@@ -30,7 +30,8 @@ REDCap visits (denoted by `redcap_event_name`) contain certain keywords:
     "follow" for all followups,
     "milestone" for milestone packets,
     "neuropath" for neuropathology packets,
-    "telephone" for telephone followup packets
+    "telephone" for telephone followup packets,
+    "covid" for covid-related survey packets
 
 NACCulator collects data from the Z1X form first and uses that to determine the
 presence of other forms in the packet. The Z1X form for that record must be
@@ -47,7 +48,7 @@ the `-file` flag._
 
     $ redcap2nacc -h
     usage: redcap2nacc [-h]
-                       [-fvp | -ivp | -tfp | -np | -m | -csf | -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}]
+                       [-fvp | -ivp | -tfp | -np | -m | -cv | -csf | -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}]
                        [-lbd | -ftld] [-file FILE] [-meta FILTER_META] [-ptid PTID]
                        [-vnum VNUM] [-vtype VTYPE]
 
@@ -61,6 +62,7 @@ the `-file` flag._
       -tfp3                 Set this flag to process as TFP v3.0 (pre-2020) data
       -np                   Set this flag to process as Neuropathology data
       -m                    Set this flag to process as Milestone data
+      -cv                   Set this flag to process as COVID data
       -csf                  Set this flag to process as NACC BIDSS CSF data
 
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
