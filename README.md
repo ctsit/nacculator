@@ -3,8 +3,15 @@ NACCulator
 
 [![DOI](https://zenodo.org/badge/20501/ctsit/nacculator.svg)](https://zenodo.org/badge/latestdoi/20501/ctsit/nacculator)
 
-Converts a CSV data file exported from REDCap into the NACC's UDS3 fixed-width
-format.
+NACCulator is a Python 3-based data converter that changes REDCap .csv exported
+data to NACC’s fixed-width .txt format. It is configured for UDS3 forms,
+including FTLD and LBD (versions 3.0 and 3.1). It will perform basic data
+integrity checks during a run: verifying that each field is the correct type
+and length, verifying that there are no illegal characters in the Char fields,
+verifying that Num fields are within the acceptable range as defined in NACC's
+Data Element Dictionary for each form, and checking that no blanking rules have
+been violated. NACCulator outputs a .txt file that is immediately ready to
+submit to NACC's database.
 
 _Note:_ NACCulator _**requires Python 3.**_
 

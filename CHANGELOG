@@ -1,5 +1,17 @@
 Changelog
 =========
+## [1.8.0] - 2021-09-13
+### Summary
+
+### Updated
+ * Add Z1X processing to LBD short version
+ * Update UDS Z1X to include handling for optional LBD short version fields
+ * Make C2T optional for telephone follow-ups to reflect NACC's DED
+
+### Added
+ * Add new CV covid module
+
+
 ## [1.7.1] - 2021-02-03
 ### Summary
 This release updates the telephone follow-up packet (TFP) module to include
