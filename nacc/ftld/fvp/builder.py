@@ -114,6 +114,29 @@ def add_z1x(record, packet):
     Z1X.LANGE3F  = record['fu_lange3f']
     Z1X.LANGCLS  = record['fu_langcls']
     Z1X.CLSSUB   = record['fu_clssub']
+    # for REDCap projects that don't have the LBD questions added to their Z1X,
+    # we just see if there's info in the B2L and B6L forms and fill in
+    # accordingly.
+    try:
+        Z1X.B2LSUB  = record['fu_b2lsub']
+        Z1X.B2LNOT  = record['fu_b2lnot']
+        Z1X.B6LSUB  = record['fu_b6lsub']
+        Z1X.B6LNOT  = record['fu_b6lnot']
+    except KeyError:
+        try:
+            if record['fu_lbudspch'] is not None:
+                Z1X.B2LSUB = '1'
+                Z1X.B2LNOT = ''
+            if record['fu_lbspcgim'] is not None:
+                Z1X.B2LSUB = '1'
+                Z1X.B2LNOT = ''
+        # And leave the LBD fields blank if the project does not contain the
+        # LBD module
+        except KeyError:
+            Z1X.B2LSUB = ''
+            Z1X.B2LNOT = ''
+            Z1X.B6LSUB = ''
+            Z1X.B6LNOT = ''
     packet.insert(0, Z1X)
 
 
@@ -463,8 +486,8 @@ def add_e3f(record, packet):
     E3F.FTDCBFLB = record['fu_ftdcbflb']
     E3F.FTDCBFOA = record['fu_ftdcbfoa']
     E3F.FTDCBFOS = record['fu_ftdcbfos']
-    E3F.FTDOThI  = record['fu_ftdothi']
-    E3F.FTDOThIS = record['fu_ftdothis']
+    E3F.FTDOTHI  = record['fu_ftdothi']
+    E3F.FTDOTHIS = record['fu_ftdothis']
     packet.append(E3F)
 
 

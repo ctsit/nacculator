@@ -8,6 +8,7 @@ from nacc.uds3.tfp.v3_2.builder import build_uds3_tfp_new_form
 class option():
     flag = 'tfp'
     iorf = False
+    cv = False
     csf = False
     lbd = False
     tfp = True
@@ -165,7 +166,7 @@ def make_filled_form() -> dict:
         'tele_b7not': '',
         'tele_langb9': '',
         'tele_langc2': '',
-        'tele_c2sub': '',
+        'tele_c2sub': '1',
         'tele_c2not': '',
         'tele_langd1': '',
         'tele_langd2': '',
@@ -188,6 +189,7 @@ def make_filled_form() -> dict:
         'tele_lange3f': '',
         'tele_langcls': '',
         'tele_clssub': '',
+        'tvp_z1x_checklist_complete': '2',
         'telcog': '',
         'telill': '',
         'telhome': '',

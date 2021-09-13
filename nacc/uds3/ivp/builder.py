@@ -120,62 +120,126 @@ def add_z1_or_z1x(record, packet):
     # are just section separators.
     z1x = ivp_forms.FormZ1X()
     z1x_filled_fields = 0
-    z1x_field_mapping = {
-        'LANGA1': 'langa1',
-        'LANGA2': 'langa2',
-        'A2SUB': 'a2sub',
-        'A2NOT': 'a2not',
-        'LANGA3': 'langa3',
-        'A3SUB': 'a3sub',
-        'LANGA4': 'langa4',
-        'A4SUB': 'a4sub',
-        'A4NOT': 'a4not',
-        'LANGA5': 'langa5',
-        'LANGB1': 'langb1',
-        'B1SUB': 'b1sub',
-        'B1NOT': 'b1not',
-        'LANGB4': 'langb4',
-        'LANGB5': 'langb5',
-        'B5SUB': 'b5sub',
-        'B5NOT': 'b5not',
-        'LANGB6': 'langb6',
-        'B6SUB': 'b6sub',
-        'B6NOT': 'b6not',
-        'LANGB7': 'langb7',
-        'B7SUB': 'b7sub',
-        'B7NOT': 'b7not',
-        'LANGB8': 'langb8',
-        'LANGB9': 'langb9',
-        'LANGC2': 'langc2',
-        'LANGD1': 'langd1',
-        'LANGD2': 'langd2',
-        'LANGA3A': 'langa3a',
-        'FTDA3AFS': 'ftda3afs',
-        'FTDA3AFR': 'ftda3afr',
-        'LANGB3F': 'langb3f',
-        'LANGB9F': 'langb9f',
-        'LANGC1F': 'langc1f',
-        'LANGC2F': 'langc2f',
-        'LANGC3F': 'langc3f',
-        'LANGC4F': 'langc4f',
-        'FTDC4FS': 'ftdc4fs',
-        'FTDC4FR': 'ftdc4fr',
-        'FTDC5FS': 'ftdc5fs',
-        'FTDC5FR': 'ftdc5fr',
-        'FTDC6FS': 'ftdc6fs',
-        'FTDC6FR': 'ftdc6fr',
-        'LANGE2F': 'lange2f',
-        'LANGE3F': 'lange3f',
-        'LANGCLS': 'langcls',
-        'CLSSUB': 'clssub'
-    }
-    for key, value in z1x_field_mapping.items():
-        try:
-            if record[value].strip():
-                setattr(z1x, key, record[value])
-                z1x_filled_fields += 1
-        except KeyError:
-            pass
+    try:
+        z1x_field_mapping = {
+            'LANGA1': 'langa1',
+            'LANGA2': 'langa2',
+            'A2SUB': 'a2sub',
+            'A2NOT': 'a2not',
+            'LANGA3': 'langa3',
+            'A3SUB': 'a3sub',
+            'LANGA4': 'langa4',
+            'A4SUB': 'a4sub',
+            'A4NOT': 'a4not',
+            'LANGA5': 'langa5',
+            'LANGB1': 'langb1',
+            'B1SUB': 'b1sub',
+            'B1NOT': 'b1not',
+            'LANGB4': 'langb4',
+            'LANGB5': 'langb5',
+            'B5SUB': 'b5sub',
+            'B5NOT': 'b5not',
+            'LANGB6': 'langb6',
+            'B6SUB': 'b6sub',
+            'B6NOT': 'b6not',
+            'LANGB7': 'langb7',
+            'B7SUB': 'b7sub',
+            'B7NOT': 'b7not',
+            'LANGB8': 'langb8',
+            'LANGB9': 'langb9',
+            'LANGC2': 'langc2',
+            'LANGD1': 'langd1',
+            'LANGD2': 'langd2',
+            'LANGA3A': 'langa3a',
+            'FTDA3AFS': 'ftda3afs',
+            'FTDA3AFR': 'ftda3afr',
+            'LANGB3F': 'langb3f',
+            'LANGB9F': 'langb9f',
+            'LANGC1F': 'langc1f',
+            'LANGC2F': 'langc2f',
+            'LANGC3F': 'langc3f',
+            'LANGC4F': 'langc4f',
+            'FTDC4FS': 'ftdc4fs',
+            'FTDC4FR': 'ftdc4fr',
+            'FTDC5FS': 'ftdc5fs',
+            'FTDC5FR': 'ftdc5fr',
+            'FTDC6FS': 'ftdc6fs',
+            'FTDC6FR': 'ftdc6fr',
+            'LANGE2F': 'lange2f',
+            'LANGE3F': 'lange3f',
+            'LANGCLS': 'langcls',
+            'CLSSUB': 'clssub',
+            'B2LSUB': 'b2lsub',
+            'B2LNOT': 'b2lnot',
+            'B6LSUB': 'b6lsub',
+            'B6LNOT': 'b6lnot'
+        }
+        for key, value in z1x_field_mapping.items():
+            try:
+                if record[value].strip():
+                    setattr(z1x, key, record[value])
+                    z1x_filled_fields += 1
+            except KeyError:
+                pass
+    # If the input CSV does not contain the LBD section on the Z1X,
+    # fall back on the old version:
+    except KeyError:
+        z1x_field_mapping = {
+            'LANGA1': 'langa1',
+            'LANGA2': 'langa2',
+            'A2SUB': 'a2sub',
+            'A2NOT': 'a2not',
+            'LANGA3': 'langa3',
+            'A3SUB': 'a3sub',
+            'LANGA4': 'langa4',
+            'A4SUB': 'a4sub',
+            'A4NOT': 'a4not',
+            'LANGA5': 'langa5',
+            'LANGB1': 'langb1',
+            'B1SUB': 'b1sub',
+            'B1NOT': 'b1not',
+            'LANGB4': 'langb4',
+            'LANGB5': 'langb5',
+            'B5SUB': 'b5sub',
+            'B5NOT': 'b5not',
+            'LANGB6': 'langb6',
+            'B6SUB': 'b6sub',
+            'B6NOT': 'b6not',
+            'LANGB7': 'langb7',
+            'B7SUB': 'b7sub',
+            'B7NOT': 'b7not',
+            'LANGB8': 'langb8',
+            'LANGB9': 'langb9',
+            'LANGC2': 'langc2',
+            'LANGD1': 'langd1',
+            'LANGD2': 'langd2',
+            'LANGA3A': 'langa3a',
+            'FTDA3AFS': 'ftda3afs',
+            'FTDA3AFR': 'ftda3afr',
+            'LANGB3F': 'langb3f',
+            'LANGB9F': 'langb9f',
+            'LANGC1F': 'langc1f',
+            'LANGC2F': 'langc2f',
+            'LANGC3F': 'langc3f',
+            'LANGC4F': 'langc4f',
+            'FTDC4FS': 'ftdc4fs',
+            'FTDC4FR': 'ftdc4fr',
+            'FTDC5FS': 'ftdc5fs',
+            'FTDC5FR': 'ftdc5fr',
+            'FTDC6FS': 'ftdc6fs',
+            'FTDC6FR': 'ftdc6fr',
+            'LANGE2F': 'lange2f',
+            'LANGE3F': 'lange3f',
+            'LANGCLS': 'langcls',
+            'CLSSUB': 'clssub'
+        }
+        for key, value in z1x_field_mapping.items():
+            try:
+                if record[value].strip():
+                    setattr(z1x, key, record[value])
+                    z1x_filled_fields += 1
+            except KeyError:
+                pass
 
     # Check if Z1 form is present in REDCap project. If it is not present,
     # do not map the fields and simply mark z1_filled_fields as 0.

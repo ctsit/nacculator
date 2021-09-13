@@ -17,6 +17,7 @@ from nacc.uds3 import blanks as blanks_uds3
 from nacc.lbd import blanks as blanks_lbd
 from nacc.ftld import blanks as blanks_ftld
 from nacc.csf import blanks as blanks_csf
+from nacc.cv import blanks as blanks_cv
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
@@ -30,6 +31,7 @@ from nacc.lbd.v3_1.fvp import builder as lbd_short_fvp_builder
 from nacc.ftld.ivp import builder as ftld_ivp_builder
 from nacc.ftld.fvp import builder as ftld_fvp_builder
 from nacc.csf import builder as csf_builder
+from nacc.cv import builder as cv_builder
 from nacc.uds3 import filters
 from nacc.uds3 import packet as uds3_packet
 from nacc.uds3 import Field
@@ -55,7 +57,8 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
                       if f.blanks and not empty(f)]:
 
             for rule in field.blanks:
-                if not options.lbd and not options.ftld and not options.csf:
+                if not options.lbd and not options.ftld and not options.csf \
+                   and not options.cv:
                     r = blanks_uds3.convert_rule_to_python(field.name, rule)
                     if r(packet):
                         blank_warnings(warnings, field.name, formid,
@@ -76,6 +79,12 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
                 if options.csf:
                     q = blanks_csf.convert_rule_to_python(field.name, rule)
                     if q(packet):
+                        blank_warnings(warnings, field.name, formid,
+                                       field.value, len(field.value), rule)
+
+                if options.cv:
+                    u = blanks_cv.convert_rule_to_python(field.name, rule)
+                    if u(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
     return warnings
@@ -165,22 +174,34 @@ def check_redcap_event(options, record) -> bool:
     """
     if options.lbd and options.ivp:
         event_name = 'initial'
-        form_match_lbd = record['lbd_ivp_b1l_complete']
+        try:
+            form_match_lbd = record['lbd_ivp_b1l_complete']
+        except KeyError:
+            form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbd and options.fvp:
         event_name = 'follow'
-        form_match_lbd = record['lbd_fvp_b1l_complete']
+        try:
+            form_match_lbd = record['lbd_fvp_b1l_complete']
+        except KeyError:
+            form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbdsv and options.ivp:
         event_name = 'initial'
-        form_match_lbd = record['lbd_ivp_b1l_complete']
+        try:
+            form_match_lbd = record['lbd_ivp_b1l_complete']
+        except KeyError:
+            form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbdsv and options.fvp:
         event_name = 'follow'
-        form_match_lbd = record['lbd_fvp_b1l_complete']
+        try:
+            form_match_lbd = record['lbd_fvp_b1l_complete']
+        except KeyError:
+            form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.ftld and options.ivp:
@@ -214,6 +235,8 @@ def check_redcap_event(options, record) -> bool:
         if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
             return False
     # TODO: add -csf option if/when it is added to the full ADRC project.
+    elif options.cv:
+        event_name = 'covid'
     elif options.np:
         event_name = 'neuropath'
     elif options.tfp:
@@ -302,6 +325,13 @@ def set_blanks_to_zero(packet):
             field = packet[field_name]
             if empty(field):
                 field.value = 0
+
+    # B6 G1.
+    try:
+        if packet['GDS'] in range(0, 15):
+            set_to_zero_if_blank('NOGDS')
+    except KeyError:
+        pass
 
     # B8 2.
     try:
@@ -393,6 +423,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 packet = ftld_fvp_builder.build_ftld_fvp_form(record)
             elif options.csf:
                 packet = csf_builder.build_csf_form(record)
+            elif options.cv:
+                packet = cv_builder.build_cv_form(record)
             elif options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
             elif options.np:
@@ -414,7 +446,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             continue
 
         if not (options.np or options.m or options.lbd or options.lbdsv or
-                options.ftld or options.csf):
+                options.ftld or options.csf or options.cv):
             set_blanks_to_zero(packet)
 
         if options.m or options.tfp:
@@ -444,7 +476,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             continue
 
         if not options.np and not options.m and not options.lbd and not \
-            options.lbdsv and not options.ftld and not options.csf:
+           options.lbdsv and not options.ftld and not options.csf and not \
+           options.cv:
             warnings += check_single_select(packet)
 
         for form in packet:
@@ -511,6 +544,9 @@ def parse_args(args=None):
         '-csf', action='store_true', dest='csf',
         help='Set this flag to process as Cerebrospinal Fluid data')
     parser.add_argument(
+        '-cv', action='store_true', dest='cv',
+        help='Set this flag to process as COVID-19 data')
+    parser.add_argument(
         '-file', action='store', dest='file',
         help='Path of the csv file to be processed.')
     parser.add_argument(
@@ -529,8 +565,9 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.tfp or options.tfp3 or 
-            options.np or options.m or options.csf or options.filter):
+    if not (options.ivp or options.fvp or options.tfp or options.tfp3 or
+            options.np or options.m or options.csf or options.cv or
+            options.filter):
         options.ivp = True
 
     return options

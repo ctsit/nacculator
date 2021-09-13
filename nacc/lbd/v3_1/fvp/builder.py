@@ -21,6 +21,131 @@ def build_lbd_short_fvp_form(record):
                 and int(record['visitday']) >= 1):
         raise ValueError('Visit date cannot precede June 1, 2017.')
 
+    add_z1x(record, packet)
+    # Forms B1L, B3L, B4L, B5L, B7L, B9L, C1L, E1L, E2L, E3L, D1L are REQUIRED.
+    # Forms B2L and B6L are OPTIONAL and must be specifically marked as present
+    # for nacculator to process them
+    add_b1l(record, packet)
+    try:
+        if record['fu_lbdb2ls'] == '1':
+            add_b2l(record, packet)
+    except KeyError:
+        if record['fu_lbudspch'] is not None:
+            add_b2l(record, packet)
+    add_b3l(record, packet)
+    add_b4l(record, packet)
+    add_b5l(record, packet)
+    try:
+        if record['fu_lbdb6ls'] == '1':
+            add_b6l(record, packet)
+    except KeyError:
+        if record['fu_lbspcgim'] is not None:
+            add_b6l(record, packet)
+    add_b7l(record, packet)
+    add_b9l(record, packet)
+    add_c1l(record, packet)
+    add_d1l(record, packet)
+    add_e1l(record, packet)
+    add_e2l(record, packet)
+    add_e3l(record, packet)
+    update_header(record, packet)
+
+    return packet
+
+
+def add_z1x(record, packet):
+    Z1X = lbd_short_fvp_forms.FormZ1X()
+    Z1X.LANGA1   = record['fu_langa1']
+    Z1X.LANGA2   = record['fu_langa2']
+    Z1X.A2SUB    = record['fu_a2sub']
+    Z1X.A2NOT    = record['fu_a2not']
+    Z1X.LANGA3   = record['fu_langa3']
+    Z1X.A3SUB    = record['fu_a3sub']
+    Z1X.A3NOT    = record['fu_a3not']
+    Z1X.LANGA4   = record['fu_langa4']
+    Z1X.A4SUB    = record['fu_a4sub']
+    Z1X.A4NOT    = record['fu_a4not']
+    Z1X.LANGB1   = record['fu_langb1']
+    Z1X.B1SUB    = record['fu_b1sub']
+    Z1X.B1NOT    = record['fu_b1not']
+    Z1X.LANGB4   = record['fu_langb4']
+    Z1X.LANGB5   = record['fu_langb5']
+    Z1X.B5SUB    = record['fu_b5sub']
+    Z1X.B5NOT    = record['fu_b5not']
+    Z1X.LANGB6   = record['fu_langb6']
+    Z1X.B6SUB    = record['fu_b6sub']
+    Z1X.B6NOT    = record['fu_b6not']
+    Z1X.LANGB7   = record['fu_langb7']
+    Z1X.B7SUB    = record['fu_b7sub']
+    Z1X.B7NOT    = record['fu_b7not']
+    Z1X.LANGB8   = record['fu_langb8']
+    Z1X.LANGB9   = record['fu_langb9']
+    Z1X.LANGC2   = record['fu_langc2']
+    Z1X.LANGD1   = record['fu_langd1']
+    Z1X.LANGD2   = record['fu_langd2']
+    try:
+        Z1X.LANGA3A  = record['fu_langa3a']
+        Z1X.FTDA3AFS = record['fu_ftda3afs']
+        Z1X.FTDA3AFR = record['fu_ftda3afr']
+        Z1X.LANGB3F  = record['fu_langb3f']
+        Z1X.LANGB9F  = record['fu_langb9f']
+        Z1X.LANGC1F  = record['fu_langc1f']
+        Z1X.LANGC2F  = record['fu_langc2f']
+        Z1X.LANGC3F  = record['fu_langc3f']
+        Z1X.LANGC4F  = record['fu_langc4f']
+        Z1X.FTDC4FS  = record['fu_ftdc4fs']
+        Z1X.FTDC4FR  = record['fu_ftdc4fr']
+        Z1X.LANGC5F  = record['fu_langc5f']
+        Z1X.FTDC5FS  = record['fu_ftdc5fs']
+        Z1X.FTDC5FR  = record['fu_ftdc5fr']
+        Z1X.LANGC6F  = record['fu_langc6f']
+        Z1X.FTDC6FS  = record['fu_ftdc6fs']
+        Z1X.FTDC6FR  = record['fu_ftdc6fr']
+        Z1X.LANGE2F  = record['fu_lange2f']
+        Z1X.LANGE3F  = record['fu_lange3f']
+        Z1X.LANGCLS  = record['fu_langcls']
+        Z1X.CLSSUB   = record['fu_clssub']
+    except KeyError:
+        Z1X.LANGA3A  = ''
+        Z1X.FTDA3AFS = ''
+        Z1X.FTDA3AFR = ''
+        Z1X.LANGB3F  = ''
+        Z1X.LANGB9F  = ''
+        Z1X.LANGC1F  = ''
+        Z1X.LANGC2F  = ''
+        Z1X.LANGC3F  = ''
+        Z1X.LANGC4F  = ''
+        Z1X.FTDC4FS  = ''
+        Z1X.FTDC4FR  = ''
+        Z1X.LANGC5F  = ''
+        Z1X.FTDC5FS  = ''
+        Z1X.FTDC5FR  = ''
+        Z1X.LANGC6F  = ''
+        Z1X.FTDC6FS  = ''
+        Z1X.FTDC6FR  = ''
+        Z1X.LANGE2F  = ''
+        Z1X.LANGE3F  = ''
+        Z1X.LANGCLS  = ''
+        Z1X.CLSSUB   = '0'
+    # for REDCap projects that don't have the LBD questions added to their Z1X,
+    # we just see if there's info in the B2L and B6L forms and fill in
+    # accordingly.
+    try:
+        Z1X.B2LSUB  = record['fu_b2lsub']
+        Z1X.B2LNOT  = record['fu_b2lnot']
+        Z1X.B6LSUB  = record['fu_b6lsub']
+        Z1X.B6LNOT  = record['fu_b6lnot']
+    except KeyError:
+        if record['fu_lbudspch'] is not None:
+            Z1X.B2LSUB = '1'
+            Z1X.B2LNOT = ''
+        if record['fu_lbspcgim'] is not None:
+            Z1X.B6LSUB = '1'
+            Z1X.B6LNOT = ''
+    packet.insert(0, Z1X)
+
+
+def add_b1l(record, packet):
     B1L = lbd_short_fvp_forms.FormB1L()
     B1L.LBSSALIV = record['fu_LBSSALIV'.lower()]
     B1L.LBSSWALL = record['fu_lBSSWALL'.lower()]
@@ -46,6 +171,8 @@ def build_lbd_short_fvp_form(record):
     B1L.LBSAGeBr = record['fu_LBSAGeBr'.lower()]
     packet.append(B1L)
 
+
+def add_b2l(record,packet):
     B2L = lbd_short_fvp_forms.FormB2L()
     B2L.LBUDSPCH = record['fu_LBUDSPCH'.lower()]
     B2L.LBUDSALV = record['fu_LBUDSALV'.lower()]
@@ -62,6 +189,8 @@ def build_lbd_short_fvp_form(record):
     B2L.LBUDSeNS = record['fu_LBUDSeNS'.lower()]
     packet.append(B2L)
 
+
+def add_b3l(record,packet):
     B3L = lbd_short_fvp_forms.FormB3L()
     B3L.LBUMSPCH = record['fu_LBUMSPCH'.lower()]
     B3L.LBUMSPCX = record['fu_LBUMSPCX'.lower()]
@@ -121,6 +250,8 @@ def build_lbd_short_fvp_form(record):
     B3L.LBUMHNyX = record['fu_LBUMHNyX'.lower()]
     packet.append(B3L)
 
+
+def add_b4l(record,packet):
     B4L = lbd_short_fvp_forms.FormB4L()
     B4L.LBDeLUS  = record['fu_LBDeLUS'.lower()]
     B4L.LBDHUrt  = record['fu_LBDHUrt'.lower()]
@@ -159,6 +290,8 @@ def build_lbd_short_fvp_form(record):
     B4L.LBAPotH  = record['fu_LBAPotH'.lower()]
     packet.append(B4L)
 
+
+def add_b5l(record,packet):
     B5L = lbd_short_fvp_forms.FormB5L()
     B5L.LBMLtHrG = record['fu_LBMLtHrG'.lower()]
     B5L.LBMSLeeP = record['fu_LBMSLeeP'.lower()]
@@ -166,6 +299,8 @@ def build_lbd_short_fvp_form(record):
     B5L.LBMStAre = record['fu_LBMStAre'.lower()]
     packet.append(B5L)
 
+
+def add_b6l(record,packet):
     B6L = lbd_short_fvp_forms.FormB6L()
     B6L.LBSPCGIM = record['fu_LBSPCGIM'.lower()]
     B6L.LBSPDrM  = record['fu_LBSPDrM'.lower()]
@@ -188,6 +323,8 @@ def build_lbd_short_fvp_form(record):
     B6L.LBSPALrt = record['fu_LBSPALrt'.lower()]
     packet.append(B6L)
 
+
+def add_b7l(record,packet):
     B7L = lbd_short_fvp_forms.FormB7L()
     B7L.LBSCLIV  = record['fu_LBSCLIV'.lower()]
     B7L.LBSCSLP  = record['fu_LBSCSLP'.lower()]
@@ -211,6 +348,8 @@ def build_lbd_short_fvp_form(record):
     B7L.LBSCALrt = record['fu_LBSCALrt'.lower()]
     packet.append(B7L)
 
+
+def add_b9l(record,packet):
     B9L = lbd_short_fvp_forms.FormB9L()
     B9L.CoNSFALL = record['fu_CoNSFALL'.lower()]
     B9L.CoNSWKoF = record['fu_CoNSWKoF'.lower()]
@@ -226,16 +365,17 @@ def build_lbd_short_fvp_form(record):
     B9L.CoDSFLDy = record['fu_CoDSFLDy'.lower()]
     packet.append(B9L)
 
+
+def add_c1l(record,packet):
     C1L = lbd_short_fvp_forms.FormC1L()
-    C1L.LBNSWorD = record['fu_LBNSWorD'.lower()]
-    C1L.LBNSCoLr = record['fu_LBNSCoLr'.lower()]
-    C1L.LBNSCLWD = record['fu_LBNSCLWD'.lower()]
     C1L.LBNPFACe = record['fu_LBNPFACe'.lower()]
     C1L.LBNPNoIS = record['fu_LBNPNoIS'.lower()]
     C1L.LBNPtCor = record['fu_LBNPtCor'.lower()]
     C1L.LBNPPArD = record['fu_LBNPPArD'.lower()]
     packet.append(C1L)
 
+
+def add_d1l(record,packet):
     D1L = lbd_short_fvp_forms.FormD1L()
     D1L.LBCDSCoG = record['fu_LBCDSCoG'.lower()]
     D1L.LBCCMeM  = record['fu_LBCCMeM'.lower()]
@@ -275,6 +415,8 @@ def build_lbd_short_fvp_form(record):
     D1L.LBCoGDX  = record['fu_LBCoGDX'.lower()]
     packet.append(D1L)
 
+
+def add_e1l(record,packet):
     E1L = lbd_short_fvp_forms.FormE1L()
     E1L.LBGNeWGN = record['fu_LBGNeWGN'.lower()]
     E1L.LBGLrrK2 = record['fu_LBGLrrK2'.lower()]
@@ -294,73 +436,26 @@ def build_lbd_short_fvp_form(record):
     E1L.LBGotHX  = record['fu_LBGotHX'.lower()]
     packet.append(E1L)
 
+
+def add_e2l(record,packet):
     E2L = lbd_short_fvp_forms.FormE2L()
     E2L.LBISMrI  = record['fu_LBISMrI'.lower()]
-    E2L.LBISMMo  = record['fu_LBISMMo'.lower()]
-    E2L.LBISMDy  = record['fu_LBISMDy'.lower()]
-    E2L.LBISMyr  = record['fu_LBISMyr'.lower()]
-    E2L.LBISMQAV = record['fu_LBISMQAV'.lower()]
     E2L.LBISMHIP = record['fu_LBISMHIP'.lower()]
     E2L.LBISMAVL = record['fu_LBISMAVL'.lower()]
-    E2L.LBISMDCM = record['fu_LBISMDCM'.lower()]
-    E2L.LBISMFMt = record['fu_LBISMFMt'.lower()]
-    E2L.LBISMADN = record['fu_LBISMADN'.lower()]
-    E2L.LBISMVer = record['fu_LBISMVer'.lower()]
-    E2L.LBISMMAN = record['fu_LBISMMAN'.lower()]
-    E2L.LBISMoM  = record['fu_LBISMoM'.lower()]
-    E2L.LBISMStr = record['fu_LBISMStr'.lower()]
-    E2L.LBISMoS  = record['fu_LBISMoS'.lower()]
     E2L.LBIFPet  = record['fu_LBIFPet'.lower()]
-    E2L.LBIFPMo  = record['fu_LBIFPMo'.lower()]
-    E2L.LBIFPDy  = record['fu_LBIFPDy'.lower()]
-    E2L.LBIFPyr  = record['fu_LBIFPyr'.lower()]
-    E2L.LBIFPQAV = record['fu_LBIFPQAV'.lower()]
     E2L.LBIFPoCC = record['fu_LBIFPoCC'.lower()]
     E2L.LBIFPtPP = record['fu_LBIFPtPP'.lower()]
     E2L.LBIFPISL = record['fu_LBIFPISL'.lower()]
     E2L.LBIFPAVL = record['fu_LBIFPAVL'.lower()]
-    E2L.LBIFPDCM = record['fu_LBIFPDCM'.lower()]
-    E2L.LBIFPFMt = record['fu_LBIFPFMt'.lower()]
-    E2L.LBIFPADN = record['fu_LBIFPADN'.lower()]
-    E2L.LBIFPVer = record['fu_LBIFPVer'.lower()]
-    E2L.LBIFPMAN = record['fu_LBIFPMAN'.lower()]
-    E2L.LBIFPoM  = record['fu_LBIFPoM'.lower()]
-    E2L.LBIAPet  = record['fu_LBIAPet'.lower()]
-    E2L.LBIAPMo  = record['fu_LBIAPMo'.lower()]
-    E2L.LBIAPDy  = record['fu_LBIAPDy'.lower()]
-    E2L.LBIAPyr  = record['fu_LBIAPyr'.lower()]
-    E2L.LBIAPQAV = record['fu_LBIAPQAV'.lower()]
     E2L.LBIAPAVL = record['fu_LBIAPAVL'.lower()]
-    E2L.LBIAPDCM = record['fu_LBIAPDCM'.lower()]
-    E2L.LBIAPFMt = record['fu_LBIAPFMt'.lower()]
-    E2L.LBIAPLIG = record['fu_LBIAPLIG'.lower()]
-    E2L.LBIAPoL  = record['fu_LBIAPoL'.lower()]
-    E2L.LBIAPADN = record['fu_LBIAPADN'.lower()]
-    E2L.LBIAPVer = record['fu_LBIAPVer'.lower()]
-    E2L.LBIAPMAN = record['fu_LBIAPMAN'.lower()]
-    E2L.LBIAPoM  = record['fu_LBIAPoM'.lower()]
     E2L.LBItPet  = record['fu_LBItPet'.lower()]
-    E2L.LBItPMo  = record['fu_LBItPMo'.lower()]
-    E2L.LBItPDy  = record['fu_LBItPDy'.lower()]
-    E2L.LBItPyr  = record['fu_LBItPyr'.lower()]
-    E2L.LBItPQAV = record['fu_LBItPQAV'.lower()]
     E2L.LBItPAVL = record['fu_LBItPAVL'.lower()]
-    E2L.LBItPDCM = record['fu_LBItPDCM'.lower()]
-    E2L.LBItPFMt = record['fu_LBItPFMt'.lower()]
-    E2L.LBItPLIG = record['fu_LBItPLIG'.lower()]
-    E2L.LBItPoL  = record['fu_LBItPoL'.lower()]
-    E2L.LBItPADN = record['fu_LBItPADN'.lower()]
-    E2L.LBItPVer = record['fu_LBItPVer'.lower()]
-    E2L.LBItPMAN = record['fu_LBItPMAN'.lower()]
-    E2L.LBItPoM  = record['fu_LBItPoM'.lower()]
     E2L.LBIDAtS  = record['fu_LBIDAtS'.lower()]
-    E2L.LBIDSMo  = record['fu_LBIDSMo'.lower()]
-    E2L.LBIDSDy  = record['fu_LBIDSDy'.lower()]
-    E2L.LBIDSyr  = record['fu_LBIDSyr'.lower()]
-    E2L.LBIDSQAV = record['fu_LBIDSQAV'.lower()]
     E2L.LBIDSABN = record['fu_LBIDSABN'.lower()]
     packet.append(E2L)
 
+
+def add_e3l(record,packet):
     E3L = lbd_short_fvp_forms.FormE3L()
     E3L.LBoPoLyS = record['fu_LBoPoLyS'.lower()]
     E3L.LBoPoPoS = record['fu_LBoPoPoS'.lower()]
@@ -384,9 +479,14 @@ def build_lbd_short_fvp_form(record):
 
 def update_header(record, packet):
     for header in packet:
-        header.PACKET = "FL"
-        header.FORMID = header.form_name
-        header.FORMVER = 3.1
+        if header.form_name == "Z1X":
+            header.PACKET = "F"
+            header.FORMID = header.form_name
+            header.FORMVER = 3
+        else:
+            header.PACKET = "FL"
+            header.FORMID = header.form_name
+            header.FORMVER = 3.1
         header.ADCID = record['adcid']
         header.PTID = record['ptid']
         header.VISITMO = record['visitmo']
