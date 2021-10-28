@@ -167,7 +167,7 @@ def check_for_bad_characters(field: Field) -> typing.List:
     return incompatible
 
 
-def check_redcap_event(options, record) -> bool:
+def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
     """
     Determines if the record's redcap_event_name and filled forms match the
     options flag
@@ -256,7 +256,7 @@ def check_redcap_event(options, record) -> bool:
                     if followup_match in ['', '0']:
                         return False
                 except KeyError:
-                    print("Could not find a REDCap field for TFP Z1X form.")
+                    print("Could not find a REDCap field for TFP Z1X form.", file=err)
                     return False
     elif options.tfp3:
         event_name = 'tele'
