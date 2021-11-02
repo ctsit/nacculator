@@ -14,7 +14,7 @@ class TestUDSFormSkip(unittest.TestCase):
 
         expected = record['ftdothis']
         result = ivp_builder.build_ftld_ivp_form(record)
-        self.assertEqual(expected, result['FTDOThIS'])
+        self.assertEqual(expected, result['FTDOTHIS'])
 
     def test_a3a_fvp_skip(self):
         """ If the FVP A3a is not present in the csv, it should be skipped
@@ -24,7 +24,7 @@ class TestUDSFormSkip(unittest.TestCase):
 
         expected = record['fu_ftdothis']
         result = fvp_builder.build_ftld_fvp_form(record)
-        self.assertEqual(expected, result['FTDOThIS'])
+        self.assertEqual(expected, result['FTDOTHIS'])
 
     def test_ivp_b3f_not_skipped(self):
         """ Form B3F is required and should never be skipped. """

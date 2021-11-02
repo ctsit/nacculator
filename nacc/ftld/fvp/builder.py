@@ -124,12 +124,12 @@ def add_z1x(record, packet):
         Z1X.B6LNOT  = record['fu_b6lnot']
     except KeyError:
         try:
-            if record['fu_lbudspch'] is not None:
+            if record['fu_lbudspch'] in ['0', '1']:
                 Z1X.B2LSUB = '1'
                 Z1X.B2LNOT = ''
-            if record['fu_lbspcgim'] is not None:
-                Z1X.B2LSUB = '1'
-                Z1X.B2LNOT = ''
+            if record['fu_lbspcgim'] in ['0', '1']:
+                Z1X.B6LSUB = '1'
+                Z1X.B6LNOT = ''
         # And leave the LBD fields blank if the project does not contain the
         # LBD module
         except KeyError:
