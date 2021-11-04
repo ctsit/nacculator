@@ -1,5 +1,16 @@
 Changelog
 =========
+## [1.8.1] - 2021-11-04
+### Summary
+This release provides one major bug fix in the FTLD follow-up packet, updated
+installation instructions, and a few minor fixes for bugs in error logging
+etc.
+
+### Updated
+ * Fix cappy install instructions in README
+ * Update FTLD FVP Z1X with fixed column spacing
+
+
 ## [1.8.0] - 2021-09-13
 ### Summary
 

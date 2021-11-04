@@ -59,7 +59,7 @@ the `-file` flag._
                        [-lbd | -ftld] [-file FILE] [-meta FILTER_META] [-ptid PTID]
                        [-vnum VNUM] [-vtype VTYPE]
 
-    Process redcap form output to nacculator.
+    Process redcap export data through nacculator.
 
     optional arguments:
       -h, --help            show this help message and exit
