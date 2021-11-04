@@ -21,7 +21,7 @@ HOW TO Convert from REDCap to NACC
 
 To install NACCulator, run:
 
-    $ python3 -m pip install git+https://github.com/ctsit/cappy.git@2.0.0#egg=cappy-2.0.0
+    $ python3 -m pip install git+https://github.com/ctsit/cappy.git@2.0.0
     $ pip3 install git+https://github.com/ctsit/nacculator.git
 
 Once the project data is exported from REDCap to the CSV file `data.csv`, run:
@@ -59,7 +59,7 @@ the `-file` flag._
                        [-lbd | -ftld] [-file FILE] [-meta FILTER_META] [-ptid PTID]
                        [-vnum VNUM] [-vtype VTYPE]
 
-    Process redcap form output to nacculator.
+    Process redcap export data through nacculator.
 
     optional arguments:
       -h, --help            show this help message and exit
