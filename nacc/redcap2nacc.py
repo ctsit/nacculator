@@ -8,6 +8,7 @@
 
 import argparse
 import csv
+from os import EX_OSERR
 import re
 import sys
 import traceback
@@ -396,6 +397,10 @@ def set_blanks_to_zero(packet):
         pass
 
 
+def print_csv(packet):
+    pass
+
+
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
@@ -480,15 +485,19 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
            options.cv:
             warnings += check_single_select(packet)
 
-        for form in packet:
+        if options.csv_output:
+            print_csv(packet)
 
-            try:
-                print(form, file=out)
-            except AssertionError:
-                print("[SKIP] Error for ptid : " + str(record['ptid']),
-                      file=err)
-                traceback.print_exc()
-                continue
+        else:
+            for form in packet:
+
+                try:
+                    print(form, file=out)
+                except AssertionError:
+                    print("[SKIP] Error for ptid : " + str(record['ptid']),
+                        file=err)
+                    traceback.print_exc()
+                    continue
 
 
 filters_names = {
@@ -543,7 +552,7 @@ def parse_args(args=None):
     parser.add_argument(
         '-csf', action='store_true', dest='csf',
         help='Set this flag to process as Cerebrospinal Fluid data')
-    parser.add_argument(
+    parser.add_argument(  # change to 'covid' i think, to prevent confusion wth -csv
         '-cv', action='store_true', dest='cv',
         help='Set this flag to process as COVID-19 data')
     parser.add_argument(
@@ -561,6 +570,9 @@ def parse_args(args=None):
     parser.add_argument(
         '-vtype', action='store', dest='vtype',
         help='Ptid for which you need the records')
+    parser.add_argument(
+        '-csv', action='store_true', dest='csv_output',
+        help='Flag to print output to csv format instead')
 
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
