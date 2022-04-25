@@ -82,10 +82,10 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
     }
 
     single_value = re.compile(
-        r"Blank if( Question(s?))? *\w+ (?P<key>\w+)"
+        r"Blank if( Question(s?))? *\w+(,?) (?P<key>\w+)(,?)"
         r" *(?P<eq>=|ne) (?P<value>\d+)([^-]|$)")
     range_values = re.compile(
-        r"Blank if( Question(s?))? *\w+ (?P<key>\w+)"
+        r"Blank if( Question(s?))? *\w+(,?) (?P<key>\w+)(,?)"
         r" *(?P<eq>=|ne) (?P<start>\d+)-(?P<stop>\d+)( |$)")
     blank_value = re.compile(
         r"Blank if( Question(s?))? *\w+ (?P<key>\w+) *(?P<eq>=|ne) blank")
