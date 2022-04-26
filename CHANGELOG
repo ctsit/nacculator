@@ -1,5 +1,15 @@
 Changelog
 =========
+## [1.8.2] - 2022-04-26
+
+### Summary
+This release fixes another bug in the FTLD blanking logic parsing that caused
+an error for rules that contained both a multi-part question and a comma
+(i.e. "Question 3b,").
+
+### Updated
+ * Fix regular expression parsing for blanking rules in FTLD module to account for unusual punctuation in DED
+
 ## [1.8.1] - 2021-11-04
 ### Summary
 This release provides one major bug fix in the FTLD follow-up packet, updated
