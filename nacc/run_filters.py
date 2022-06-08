@@ -3,7 +3,6 @@ import sys
 import csv
 import datetime
 import configparser
-# from cappy import API
 from redcap import Project
 from nacc.uds3.filters import *
 
@@ -92,8 +91,8 @@ def read_config(config_path):
 def get_data_from_redcap_pycap(folder_name, config):
     # Enter the path for filters_config
     try:
-        token = config.get('cappy', 'token')
-        redcap_url = config.get('cappy', 'redcap_server')
+        token = config.get('pycap', 'token')
+        redcap_url = config.get('pycap', 'redcap_server')
     except Exception as e:
         print("Please check the config file and validate all the proper fields exist", file=sys.stderr)
         print(e)
