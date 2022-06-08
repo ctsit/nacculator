@@ -133,7 +133,6 @@ def get_data_from_redcap_pycap(folder_name, config):
                 writer.writeheader()
                 # header_mapping = next(reader)
                 for current_record_chunk in chunked_records:
-                    # current_ptid = current_record_chunk['ptid']
                     data = redcap_project.export_records(records=current_record_chunk)
                     for row in data:
                         writer.writerow(row)
