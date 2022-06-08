@@ -6,7 +6,7 @@
 
 from setuptools import setup, find_packages
 
-VERSION = "1.8.3"
+VERSION = "1.8.2"
 
 setup(
     name="nacculator",
