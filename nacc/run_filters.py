@@ -3,7 +3,7 @@ import sys
 import csv
 import datetime
 import configparser
-from cappy import API
+from redcap import Project
 from nacc.uds3.filters import *
 
 
@@ -88,29 +88,54 @@ def read_config(config_path):
     return config
 
 
-# Getting Data From RedCap
-def get_data_from_redcap(folder_name, config):
+def get_data_from_redcap_pycap(folder_name, config):
     # Enter the path for filters_config
     try:
-        token = config.get('cappy', 'token')
-        redcap_url = config.get('cappy', 'redcap_server')
+        token = config.get('pycap', 'token')
+        redcap_url = config.get('pycap', 'redcap_server')
     except Exception as e:
         print("Please check the config file and validate all the proper fields exist", file=sys.stderr)
         print(e)
         raise e
 
-    redcap_access_api = API(token, redcap_url, 'master.yaml')
-    res = redcap_access_api.export_records(adhoc_redcap_options={
-                                              'format': 'csv'
-                                          })
+    redcap_project = Project(redcap_url, token)
+
+    # Get list of all fieldnames in project to create a csv header
+    assert hasattr(redcap_project, 'field_names')
+    header_a = getattr(redcap_project, 'field_names')
+
+    header_b = []
+    list_of_fields = redcap_project.export_field_names()
+    for field in list_of_fields:
+        header_b.append(field['export_field_name'])
+
+    header_full = list(set(header_a + header_b))
+    header_full.insert(1, 'redcap_event_name')
+
+    # Get list of all records present in project to iterate over
+    list_of_records = []
+    all_records = redcap_project.export_records(fields=['ptid'])
+    for record in all_records:
+        if record['ptid'] not in list_of_records:
+            list_of_records.append(record['ptid'])
+
+    chunked_records = []
+    # Break the list into chunks of 50
+    n = 50
+    for i in range(0, len(list_of_records), n):
+        chunked_records.append(list_of_records[i:i + n])
+
     try:
-        rawdata = str(res.text)
-        myreader = csv.reader(rawdata.splitlines())
+
         try:
-            with open(os.path.join(folder_name, "redcap_input.csv"), "w") as file:
-                writer = csv.writer(file, delimiter=',')
-                for row in myreader:
-                    writer.writerow(row)
+            with open(os.path.join(folder_name, "redcap_input.csv"), "w") as redcap_export:
+                writer = csv.DictWriter(redcap_export, fieldnames=header_full)
+                writer.writeheader()
+                # header_mapping = next(reader)
+                for current_record_chunk in chunked_records:
+                    data = redcap_project.export_records(records=current_record_chunk)
+                    for row in data:
+                        writer.writerow(row)
         except Exception as e:
             print("Error in Writing")
             print(e)
@@ -136,7 +161,7 @@ def main():
     config_path = sys.argv[1]
     config = read_config(config_path)
 
-    get_data_from_redcap(folder_name, config)
+    get_data_from_redcap_pycap(folder_name, config)
     run_all_filters(folder_name, config_path)
 
     exit()

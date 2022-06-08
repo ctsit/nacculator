@@ -31,11 +31,8 @@ setup(
         ]
     },
 
-    dependency_links=[
-        "git+https://github.com/ctsit/cappy.git@2.0.0#egg=cappy-2.0.0"
-    ],
     install_requires=[
-        "cappy==2.0.0"
+        "PyCap>=2.1.0"
     ],
 
     python_requires=">=3.6.0",
