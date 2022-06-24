@@ -1,5 +1,15 @@
 Changelog
 =========
+## [1.9.0] - 2022-06-24
+
+### Summary
+This release changes our REDCap API call from cappy to PyCap, which allows for
+a more flexible data export. This new library makes it so a REDCap project of
+any size can be automatically exported; the filters will no longer fail when
+attempting to export a REDCap data csv larger than 30mb.
+
+### Updated
+ * Update run_filters.py to use PyCap instead of cappy
 ## [1.8.2] - 2022-04-26
 
 ### Summary

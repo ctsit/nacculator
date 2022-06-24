@@ -1,6 +1,6 @@
 [DEFAULT]
 
-[cappy]
+[pycap]
 token: Your REDCAP Token
 redcap_server: Your Redcap Server
 
