@@ -120,8 +120,37 @@ The filters can be run all at once with your REDCap API token using:
 You can find more details on `nacculator_filters` under the section:
 HOW TO Acquire current-db-subjects.csv for the filters
 
-Or they can be run one at a time on a `.csv` file with the `-f` and `-meta`
+
+RUNNING ALL FILTERS ON A LOCAL FILE
+------------------------------------------------------
+
+REDCap has an export size limit that can be exceeded with a large project like
+the ADRC. When the size of the project surpasses the REDCap limit, the
+`nacculator_filters` command will no longer work. The data must be manually
+exported from the project in chunks (whether by event or by ptid). However you
+choose to export the data, keep in mind that all of the fields in a packet need
+to be present in the input csv you use. So, for example, the A1 and A2 forms in
+the IVP cannot be exported and run separately through NACCulator.
+
+You can still run all the filters using your config file on a REDCap-exported
+csv, even when not using `nacculator_filters`. The command to use this filter
+locally is:
+
+    $ python3 nacc/local_filters.py nacculator_cfg.ini redcap_input.csv
+
+where `redcap_input.csv` is the location of the file you want to filter. The
+filter will then run as normal, creating a `run_CURRENT-DATE` folder and
+depositing each stage of the filter process in this folder. The final output
+of the filter process is a csv file called `final_Update.csv` which can then
+be run through NACCulator.
+
+
+RUNNING INDIVIDUAL FILTERS
+------------------------------------------------------
+
+The filters can also be run one at a time on a `.csv` file with the `-f` and `-meta`
 flags.
+
 For example, to run the fixHeaders filter:
 
     $ redcap2nacc -f fixHeaders -meta nacculator_cfg.ini <data_input.csv >filtered_output.csv
