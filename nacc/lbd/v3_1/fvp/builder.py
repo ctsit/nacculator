@@ -447,6 +447,7 @@ def add_e2l(record,packet):
     E2L.LBIFPtPP = record['fu_LBIFPtPP'.lower()]
     E2L.LBIFPISL = record['fu_LBIFPISL'.lower()]
     E2L.LBIFPAVL = record['fu_LBIFPAVL'.lower()]
+    E2L.LBIAPet  = record['fu_LBIAPet'.lower()]
     E2L.LBIAPAVL = record['fu_LBIAPAVL'.lower()]
     E2L.LBItPet  = record['fu_LBItPet'.lower()]
     E2L.LBItPAVL = record['fu_LBItPAVL'.lower()]

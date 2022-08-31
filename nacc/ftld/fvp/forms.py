@@ -170,7 +170,7 @@ class FormC1F(nacc.uds3.FieldBag):
         self.fields['FTDSENPR'] = nacc.uds3.Field(name='FTDSENPR', typename='Num', position=(96, 97), length=2, inclusive_range=(0, 20), allowable_values=[], blanks=['Blank if Question 5a FTDSENAS = 95-98'])
         self.fields['FTDNOUNC'] = nacc.uds3.Field(name='FTDNOUNC', typename='Num', position=(99, 100), length=2, inclusive_range=(0, 16), allowable_values=['95', '96', '97', '98'], blanks=[])
         self.fields['FTDVERBC'] = nacc.uds3.Field(name='FTDVERBC', typename='Num', position=(102, 103), length=2, inclusive_range=(0, 16), allowable_values=[], blanks=['Blank if Question 6a FTDNOUNC = 95-98'])
-        self.fields['FTDRATIO'] = nacc.uds3.Field(name='FTDRATIO', typename='Num', position=(105, 109), length=5, inclusive_range=(0,16), allowable_values=[], blanks=['Blank if Question 6a FTDNOUNC = 95-98'])
+        self.fields['FTDRATIO'] = nacc.uds3.Field(name='FTDRATIO', typename='Num', position=(105, 109), length=5, inclusive_range=(0,16), allowable_values=[88.88], blanks=['Blank if Question 6a FTDNOUNC = 95-98'])
         self.fields['FTDREAAS'] = nacc.uds3.Field(name='FTDREAAS', typename='Num', position=(111, 112), length=2, inclusive_range=(0, 5), allowable_values=['95', '96', '97', '98'], blanks=[])
         self.fields['FTDREAOS'] = nacc.uds3.Field(name='FTDREAOS', typename='Num', position=(114, 115), length=2, inclusive_range=(0, 37), allowable_values=[], blanks=['Blank if Question 7a FTDREAAS = 95-98'])
         self.fields['FTDREASR'] = nacc.uds3.Field(name='FTDREASR', typename='Num', position=(117, 118), length=2, inclusive_range=(0, 20), allowable_values=[], blanks=['Blank if Question 7a FTDREAAS = 95-98'])
