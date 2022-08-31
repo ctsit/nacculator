@@ -1,5 +1,19 @@
 Changelog
 =========
+## [1.10.0] - 2022-08-31
+### Summary
+This release introduces minor fixes to the FTLD and LBD Short Version modules.
+
+### Added
+ * Add missing field for #3 in LBD Short Version FVP form E2L in the builder file (Samantha Emerson)
+ * Add ability to run filters on a local redcap export csv rather than automatically downloading via redcap api (Samantha Emerson)
+
+### Changed
+ * Update gitignore (mbentz-uf)
+ * Update allowable_favlues on FTDRATIO in ftld forms.py files to account for error code (Samantha Emerson)
+ * Re-adjust Z1X spacing on FVP LBDSV to account for invisible deprecated C1 form (Samantha Emerson)
+ * Update Z1X positions in forms.py for lbd short version (Samantha Emerson)
+
 ## [1.9.0] - 2022-06-24
 
 ### Summary
