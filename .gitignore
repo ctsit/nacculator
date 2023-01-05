@@ -17,3 +17,5 @@ build/
 run_*/
 nacculator_cfg.ini
 .DS_STORE
+.venv/*
+testenv/*
