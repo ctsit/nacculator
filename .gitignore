@@ -13,3 +13,5 @@ build/
 
 # Anything else is probably a preference. Think twice and then ask three people
 # before adding something else.
+.venv/*
+testenv/*
