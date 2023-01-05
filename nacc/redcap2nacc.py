@@ -8,7 +8,7 @@
 
 import argparse
 import csv
-from os import EX_OSERR
+from os.path import isfile
 import re
 import sys
 import traceback
@@ -397,12 +397,138 @@ def set_blanks_to_zero(packet):
         pass
 
 
-def print_csv(packet):
-    pass
+def csv_addfield(field_list, name):
+    field_list.append(name)
+    return field_list
+
+
+def csv_collect_headers(options, i, record, out, err):
+    """ Collects the relevant csv field headers from only the first valid record in the input csv and prints that list of headers to the output file. """
+
+    list_of_deprecated_fields = ['A2COMM','A3COMM','A4COMM','B1COMM','B5COMM','B6COMM','B7COMM', 'BOSTON','MEMTIME','MEMUNITS','WAIS','DIGIBLEN','DIGIB','DIGIFLEN','DIGIF','LOGIMEM','LOGIPREV','LOGIYR','LOGIDAY','LOGIMO','MMSELOC','MMSELAN','MMSELANX','MMSEORDA','MMSEORLO','PENTAGON','MMSE']
+
+
+
+    while i < 1:
+        print("Collecting header fields...", file=err)
+        # Build an "example" packet with every possible field in the DED for that module, to create the csv header list.
+        if options.ivp:
+            example_record: typing.OrderedDict = {
+                'adcid': '1',
+                'ptid': '1',
+                'visitmo': '1',
+                'visitday': '1',
+                'visityr': '1',
+                'visitnum': '1',
+                'initials': '1',
+                'a2sub': '1',
+                'a3sub': '1',
+                'a4sub': '1',
+                'b1sub': '1',
+                'b5sub': '1',
+                'b6sub': '1',
+                'b7sub': '1',
+                'ftda3afs': '1',
+                'ftdc4fs': '1',
+                'ftdc5fs': '1',
+                'ftdc6fs': '1',
+                'clssub': '1'
+            }
+        try:
+            packet = build_packet(example_record, options)
+            field_list = []
+        except Exception:
+            print("Error: Missing a necessary field in project.", file=err)
+            traceback.print_exc()
+
+        for form in packet:
+            for field in [f for f in form.fields.values()]:
+                if field.name not in field_list:
+                    if field.name not in list_of_deprecated_fields:
+                        field_list = csv_addfield(field_list, field.name)
+        i += 1
+        with open('temp.csv', 'w', encoding='utf-8') as temp:
+            writer = csv.DictWriter(out, fieldnames=field_list)
+            writer.writeheader()
+            print("Headers found.", file=err)
+    return i
+
+
+def csv_check_compatible(packet, options):
+    csv_error = False
+    if options.ivp:
+        for form in packet:
+            if form.fields['FORMID'] == ("C1S" or "Z1 "):
+                csv_error = True
+    return csv_error
+
+
+def print_csv(i, record, packet, err, out=sys.stdout):
+    """Converts data in REDCap's CSV format to a condensed NACC CSV format."""
+    # first, create a list of all the fields we want to put in the csv header
+    field_list = []
+    list_of_deprecated_fields = ['A2COMM','A3COMM','A4COMM','B1COMM','B5COMM','B6COMM','B7COMM', 'BOSTON','MEMTIME','MEMUNITS','WAIS','DIGIBLEN','DIGIB','DIGIFLEN','DIGIF','LOGIMEM','LOGIPREV','LOGIYR','LOGIDAY','LOGIMO','MMSELOC','MMSELAN','MMSELANX','MMSEORDA','MMSEORLO','PENTAGON','MMSE']
+
+    # then, create a dictionary mapping those fieldnames to the values
+    values_dict = {}
+    for form in packet:
+        for field in [f for f in form.fields.values()]:
+            if field.name not in field_list:
+                if field.name not in list_of_deprecated_fields:
+                    field_list = csv_addfield(field_list, field.name)
+                    values_dict[field.name] = field.value
+
+    # field_list = list(dict.fromkeys(field_list))
+    with open('temp.csv', 'a', encoding='utf-8') as temp:
+        writer = csv.DictWriter(out, fieldnames=values_dict.keys())
+        # Checks if the header has already been written. If not, writes the header.
+        # while i < 1:
+        if len(values_dict.keys()) > i:
+            print("Updating headers...", file=err)
+            writer.writeheader()
+            # i += 1
+            i = len(values_dict.keys())
+        writer.writerow(values_dict)
+    return i
+
+
+def build_packet(record, options):
+    if options.lbd and options.ivp:
+        packet = lbd_ivp_builder.build_lbd_ivp_form(record)
+    elif options.lbd and options.fvp:
+        packet = lbd_fvp_builder.build_lbd_fvp_form(record)
+    elif options.lbdsv and options.ivp:
+        packet = lbd_short_ivp_builder.build_lbd_short_ivp_form(record)
+    elif options.lbdsv and options.fvp:
+        packet = lbd_short_fvp_builder.build_lbd_short_fvp_form(record)
+    elif options.ftld and options.ivp:
+        packet = ftld_ivp_builder.build_ftld_ivp_form(record)
+    elif options.ftld and options.fvp:
+        packet = ftld_fvp_builder.build_ftld_fvp_form(record)
+    elif options.csf:
+        packet = csf_builder.build_csf_form(record)
+    elif options.cv:
+        packet = cv_builder.build_cv_form(record)
+    elif options.ivp:
+        packet = ivp_builder.build_uds3_ivp_form(record)
+    elif options.np:
+        packet = np_builder.build_uds3_np_form(record)
+    elif options.fvp:
+        packet = fvp_builder.build_uds3_fvp_form(record)
+    elif options.tfp:
+        packet = tfp_new_builder.build_uds3_tfp_new_form(record)
+    elif options.tfp3:
+        packet = tfp_builder.build_uds3_tfp_form(record)
+    elif options.m:
+        packet = m_builder.build_uds3_m_form(record)
+
+    return packet
 
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
+
+    i = 0
     reader = csv.DictReader(fp)
     for record in reader:
         # Right now the csf form is a single non-longitudinal form in a
@@ -412,41 +538,16 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             if not event_match:
                 continue
 
+        if options.csv_output:
+            i = csv_collect_headers(options, i, record, out, err)
+
         print("[START] ptid : " + str(record['ptid']), file=err)
         try:
-            if options.lbd and options.ivp:
-                packet = lbd_ivp_builder.build_lbd_ivp_form(record)
-            elif options.lbd and options.fvp:
-                packet = lbd_fvp_builder.build_lbd_fvp_form(record)
-            elif options.lbdsv and options.ivp:
-                packet = lbd_short_ivp_builder.build_lbd_short_ivp_form(record)
-            elif options.lbdsv and options.fvp:
-                packet = lbd_short_fvp_builder.build_lbd_short_fvp_form(record)
-            elif options.ftld and options.ivp:
-                packet = ftld_ivp_builder.build_ftld_ivp_form(record)
-            elif options.ftld and options.fvp:
-                packet = ftld_fvp_builder.build_ftld_fvp_form(record)
-            elif options.csf:
-                packet = csf_builder.build_csf_form(record)
-            elif options.cv:
-                packet = cv_builder.build_cv_form(record)
-            elif options.ivp:
-                packet = ivp_builder.build_uds3_ivp_form(record)
-            elif options.np:
-                packet = np_builder.build_uds3_np_form(record)
-            elif options.fvp:
-                packet = fvp_builder.build_uds3_fvp_form(record)
-            elif options.tfp:
-                packet = tfp_new_builder.build_uds3_tfp_new_form(record)
-            elif options.tfp3:
-                packet = tfp_builder.build_uds3_tfp_form(record)
-            elif options.m:
-                packet = m_builder.build_uds3_m_form(record)
-
+            packet = build_packet(record, options)
         except Exception:
             if 'ptid' in record:
                 print("[SKIP] Error for ptid : " + str(record['ptid']),
-                      file=err)
+                    file=err)
             traceback.print_exc()
             continue
 
@@ -486,7 +587,11 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             warnings += check_single_select(packet)
 
         if options.csv_output:
-            print_csv(packet)
+            csv_error = csv_check_compatible(packet, options)
+            if csv_error:
+                print("[SKIP] Error for ptid : " + str(record['ptid']) + " (contains Z1 instead of Z1X or C1S instead of C2)", file=err)
+                continue
+            i = print_csv(i, record, packet, err, out)
 
         else:
             for form in packet:
