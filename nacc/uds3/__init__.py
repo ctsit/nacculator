@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2021 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -9,6 +9,7 @@ import decimal
 
 
 class _UdsType(object):
+    """ Handles the difference between Num and Char fields """
     def __init__(self, length):
         assert length > 0
         self.length = length
@@ -45,6 +46,13 @@ UDS3_TYPES = {'Num': Num, 'Char': Char}
 
 
 class Field(object):
+    """
+    Base class for a field. Contains all metadata pertaining to that field:
+    fieldname, whether it's a number or character, length of the field and
+    which columns in the output text that the field should occupy, the range of
+    values allowed, whether there are any exact values allowed such as error
+    codes outside of the normal range, blanking rules, and the data value.
+    """
     def __init__(self, name, typename, position, length, inclusive_range=None,
                  allowable_values=None, blanks=None, value=None):
         assert allowable_values is None or \
@@ -123,7 +131,7 @@ class Field(object):
 
 
 class FieldBag(object):
-    """ Base class for Forms """
+    """ Base class for Forms; aka a bag of Fields """
     def __init__(self):
         self.fields = dict()
 
