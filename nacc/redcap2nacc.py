@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ###############################################################################
-# Copyright 2015-2021 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -40,7 +40,8 @@ from nacc.uds3 import Field
 def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
         -> typing.List:
     """
-    Parses rules for when each field should be blank and then checks them
+    Parses rules for when each field should be blank and then checks that the
+    rules are followed
     """
     warnings: list = []
 
@@ -48,7 +49,7 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
         # Find all fields that:
         #   1) have blanking rules; and
         #   2) aren't blank.
-        formid = ""
+        formid: str = ""
         try:
             formid = " in form %s" % (form.fields['FORMID'].value)
         except KeyError:
@@ -90,7 +91,12 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
     return warnings
 
 
-def blank_warnings(warnings, fieldname, formid, value, length, rule):
+def blank_warnings(warnings: list, fieldname, formid, value, length: int,
+                   rule: str) -> list:
+    """
+    Adds any blanking errors and their location to a list, so that the entire
+    list of issues can be delivered at the end of the run
+    """
     warnings.append(
         "%s%s is '%s' with length '%s', but should be blank: '%s'." %
         (fieldname, formid, value, length, rule))
@@ -99,16 +105,14 @@ def blank_warnings(warnings, fieldname, formid, value, length, rule):
 
 def check_characters(packet: uds3_packet.Packet) -> typing.List:
     """
-    Checks typename="Char" fields for any of 4 special characters: & ' " %
-    If these characters are found, throws an error and skips the ptid
+    Checks any fields with typename="Char" for any of 4 forbidden characters:
+    & ' " %
+    If these characters are found, appends an error to the error list and
+    skips the ptid
     """
     warnings = []
 
     for form in packet:
-        # Find all fields that have any of the forbidden characters, and
-        #   figure out which characters are present in the string.
-        # If they are found, append an error to our error file
-        #   and skip the PTID
         for field in [f for f in form.fields.values()]:
             if field.typename == "Char":
                 incompatible = check_for_bad_characters(field)
@@ -268,8 +272,9 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
     return event_match
 
 
-def check_single_select(packet: uds3_packet.Packet):
-    """ Checks the values of sets of interdependent questions
+def check_single_select(packet: uds3_packet.Packet) -> list:
+    """ Checks the values of sets of interdependent questions- specifically,
+    that only one field is marked "present" out of several possibilities.
 
     There are some sets of questions which should function like an HTML radio
     button group in that only one of them should be selected. However, because
@@ -278,7 +283,8 @@ def check_single_select(packet: uds3_packet.Packet):
     """
     warnings = list()
 
-    # TODO: get these checks actually working.
+    # TODO: These checks do not currently work. Get them actually working.
+    # The issue seems to be with the "exclusive" function.
     # D1 4
     fields_4 = ('AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
     if not exclusive(packet, fields_4):
@@ -306,20 +312,23 @@ def check_single_select(packet: uds3_packet.Packet):
     return warnings
 
 
-def empty(field):
+def empty(field) -> bool:
     """ Helper function that returns True if a field's value is empty """
     return field.value.strip() == ""
 
 
-def exclusive(packet, fields, value_to_check=1):
-    """ Returns True iff, for a set of fields, only one of field is set. """
+def exclusive(packet, fields, value_to_check=1) -> bool:
+    """
+    Returns True iff, for a set of fields, at most only one of the fields is
+    not 0.
+    """
     values = [packet[f].value for f in fields]
     true_values = [v for v in values if v == value_to_check]
     return len(true_values) <= 1
 
 
 def set_blanks_to_zero(packet):
-    """ Sets specific fields to zero if they meet certain criteria """
+    """ Sets specific blank fields to zero if they meet certain criteria """
     def set_to_zero_if_blank(*field_names):
         for field_name in field_names:
             field = packet[field_name]
@@ -397,7 +406,37 @@ def set_blanks_to_zero(packet):
 
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
-    """Converts data in REDCap's CSV format to NACC's fixed-width format."""
+    """
+    Converts data in REDCap's CSV format to NACC's fixed-width format.
+
+    First, the program parses the argument flags to filter out any records that
+    do not contain the desired packet type.
+
+    Next, the program uses those argument flags to determine which packet type
+    to process, and calls upon the builder for the specified packet type. This
+    is where it checks that the fields are the correct length, within the
+    allowable values range, and other technical numbers-based errors.
+
+    Next, the program auto-fills special fields with 0 if they are blank, due
+    to the way the REDCap project is configured. It also converts some 0 values
+    to blanks in the case of Milestone or Telephone Followup packets.
+
+    Next, it creates an empty warning list and begins processing the blanking
+    rules for each field in the specified packet type. For any errors in
+    blanking it encounters, the program populates the list of warnings with
+    each broken rule and skips that PTID.
+
+    It then repeats this warning collection process, except to search for
+    forbidden characters in fields marked as "Char" type.
+
+    Next, the program is meant to check for clusters of fields that can only
+    have one option marked "Present", but this process currently is not
+    functional and passes no matter what.
+
+    Finally, the program prints out the processed record to a series of rows
+    organized by form ID in the text file specified as the output destination,
+    and moves on to the next visit record.
+    """
     reader = csv.DictReader(fp)
     for record in reader:
         # Right now the csf form is a single non-longitudinal form in a
@@ -503,6 +542,7 @@ filters_names = {
 
 
 def parse_args(args=None):
+    """ Parses all argument flags (packet type, filters, etc) """
     parser = argparse.ArgumentParser(
         description='Process redcap form output to nacculator.')
 
@@ -575,13 +615,15 @@ def parse_args(args=None):
 
 def main():
     """
-    Reads a REDCap exported CSV, data file, then prints it out in NACC's format
+    Reads a REDCap-exported CSV data file, then prints it out in NACC's format
     """
     options = parse_args()
 
     fp = sys.stdin if options.file is None else open(options.file, 'r')
 
-    # Place holder for future. May need to output to a specific file in future.
+    # Default option is to print out directly to the command terminal.
+    # If you want to print the output to a specific file, then redirect
+    # stdout to that filename.
     output = sys.stdout
 
     if options.filter:

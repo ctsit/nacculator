@@ -7,8 +7,8 @@ def add_cls(record, packet, forms, err=sys.stderr):
     Adds CLS form to packet.
 
     According to the IVP Guidebook (v3.0, March 2015), Form CLS should be
-    completed if the subject or co-participant indicates that the subject is
-    Hispanic/Latino.
+    completed once if the subject or co-participant indicates that the subject
+    is Hispanic/Latino.
 
     Therefore, if the subject is not Hispanic/Latino, do not add a CLS.
 

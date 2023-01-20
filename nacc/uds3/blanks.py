@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2021 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -12,7 +12,8 @@ import sys
 
 def convert_rule_to_python(name: str, rule: str) -> bool:
     """
-    Converts the text `rule` into a python function.
+    Converts the "rule" string into a python function using "blanks" from the
+    associated forms.py file. The fieldname being checked here is "name".
 
     The returned function accepts one argument of type `Packet`.
 
@@ -33,7 +34,7 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
         'ZIP': _blanking_rule_dummy,
         'DECCLMOT': _blanking_rule_dummy,
         'CRAFTDRE': _blanking_rule_dummy,
-        # Neuropath skip rules
+        # Account for the Neuropath skip rules
         'NPINF': _blanking_rule_dummy,
         'NPHEMO': _blanking_rule_dummy,
         'NPOLD': _blanking_rule_dummy,
@@ -184,6 +185,9 @@ def set_zeros_to_blanks(packet):
 
 def main():
     """
+    This "blanks" file concerns the UDS3 packet types- IVP, FVP, TIP, TFP,
+    and the Milestone and Neuropath forms.
+
     Extracts all blanking rules from all DED files in a specified directory.
 
     Usage:
