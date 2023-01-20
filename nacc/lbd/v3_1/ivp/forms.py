@@ -1,8 +1,9 @@
 ###############################################################################
-# Copyright 2015-2019 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
+
 import nacc.uds3
 
 ### BEGIN non-generated code
@@ -15,10 +16,13 @@ CURRENT_YEAR = date.today().year
 
 ### END non-generated code
 
-# This form is for LBD IVP's short forms (version 3.1)
+# This form is for LBD IVP's short forms (Lewy Body Initial, version 3.1)
 
 
 def header_fields():
+    """
+    Generates the header info that appears in columns 1-43 of every form
+    """
     fields = {}
     fields['PACKET'] = nacc.uds3.Field(name='PACKET', typename='Char', position=(1, 2), length=2, inclusive_range=None, allowable_values=[], blanks=[])
     fields['FORMID'] = nacc.uds3.Field(name='FORMID', typename='Char', position=(4, 6), length=3, inclusive_range=None, allowable_values=[], blanks=[])
