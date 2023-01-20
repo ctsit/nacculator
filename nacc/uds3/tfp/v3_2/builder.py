@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2021 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -12,7 +12,10 @@ from nacc.uds3 import packet as tfp_new_packet
 
 
 def build_uds3_tfp_new_form(record, err=sys.stderr):
-    """ Converts REDCap CSV data into a packet (list of TFP V3.2 Form objects) """
+    """
+    Populates a Packet object with a record of REDCap CSV-read data (list of
+    TFP V3.2 Form objects)
+    """
     packet = tfp_new_packet.Packet()
 
     # Set up the forms
@@ -862,6 +865,7 @@ def add_d2(record, packet):
 
 
 def update_header(record, packet):
+    """ The header must be printed for each row of text output """
     for header in packet:
         header.PACKET = "T"
         header.FORMID = header.form_name

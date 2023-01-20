@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2020 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -9,6 +9,9 @@ from nacc.uds3 import packet as np_packet
 
 
 def build_uds3_np_form(record):
+    """
+    The Neuropath packet is a single form with a different format than UDS data
+    """
     packet = np_packet.Packet()
     np = np_forms.FormNP()
     np.NPFORMMO = record['npformmo']

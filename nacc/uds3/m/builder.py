@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2020 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -10,8 +10,11 @@ import re
 
 
 def build_uds3_m_form(record):
-
-    """ Converts REDCap CSV data into a packet (list of M Form objects) """
+    """
+    Converts REDCap CSV data into a packet (list of M Form objects). The
+    Milestone packet is a single form with a slightly different format than UDS
+    visit data, but it still needs header info etc.
+    """
     packet = m_packet.Packet()
     m = m_form.FormM()
     m.CHANGEMO = parse_date(record['m1_1'], 'M')
