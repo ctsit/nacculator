@@ -132,8 +132,8 @@ def _blanking_rule_dummy():
 
 def _blanking_rule_ftldsubt():
     """
-    Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1 and 
-    14d FTLDNOS ne 1 
+    Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1 and
+    14d FTLDNOS ne 1
     """
     return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
                           packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
@@ -144,7 +144,7 @@ def _blanking_rule_learned():
     The two rules contradict each other:
      - Blank if Question 2a REFERSC ne 1
      - Blank if Question 2a REFERSC ne 2
-    
+
     The intent appears to be "blank if REFERSC is 3, 4, 5, 6, 8, or 9", but
     that makes 6 individual blanking rules and the maximum is 5 (BLANKS1-5).
     """
