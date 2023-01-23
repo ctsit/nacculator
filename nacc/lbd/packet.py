@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2019 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -7,10 +7,16 @@
 
 class Packet(list):
     """
-    A collection of LBD Forms
+    This Packet refers to a collection of LBD or LBD Short Version forms.
 
-    This class makes it convenient to access a field, which are all uniquely
-    named, regardless of which form they are in.
+    A Packet is a collection of Forms, each with a unique FormID. The forms
+    present depend on the packet type (determined by flag argument when
+    running the program)- UDS, LBD, FTLD, Milestone, Neuropath, COVID, and so
+    on.
+
+    This class makes it convenient to access any field and its metadata. Each
+    field is uniquely named according to NACC's Data Element Dictionary,
+    regardless of which form they are in.
     """
 
     def __init__(self):

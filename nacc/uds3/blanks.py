@@ -58,6 +58,9 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
         'TELMILE': _blanking_rule_telmile,
     }
 
+    # The regex needs to have a lot of flexibility due to inconsistent naming
+    # conventions in our source, NACC's Data Element Dictionary (as seen in
+    # forms.py)
     single_value = re.compile(
         r"Blank if( Question(s?))? *\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<value>\d+)([^-]|$)")
@@ -128,25 +131,32 @@ def _blanking_rule_dummy():
 
 
 def _blanking_rule_ftldsubt():
-    # Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1
-    # and 14d FTLDNOS ne 1
+    """
+    Blank if #14a PSP ne 1 and #14b CORT ne 1 and #14c FTLDMO ne 1 and 
+    14d FTLDNOS ne 1 
+    """
     return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
                           packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
 
 
 def _blanking_rule_learned():
-    # The two rules contradict each other:
-    #  - Blank if Question 2a REFERSC ne 1
-    #  - Blank if Question 2a REFERSC ne 2
-    # The intent appears to be "blank if REFERSC is 3, 4, 5, 6, 8, or 9", but
-    # that makes 6 individual blanking rules and the maximum is 5 (BLANKS1-5).
+    """
+    The two rules contradict each other:
+     - Blank if Question 2a REFERSC ne 1
+     - Blank if Question 2a REFERSC ne 2
+    
+    The intent appears to be "blank if REFERSC is 3, 4, 5, 6, 8, or 9", but
+    that makes 6 individual blanking rules and the maximum is 5 (BLANKS1-5).
+    """
     return lambda packet: packet['REFERSC'] in (3, 4, 5, 6, 8, 9)
 
 
 def _blanking_rule_telmile():
-    # 'Blank if Question 3 TELINPER = 1 (Yes)'
-    # 'Blank if Question 3 TELINPER = 9 (Unknown)'
-    # 'Blank if this is the first telephone packet submitted for the subject.'
+    """
+    'Blank if Question 3 TELINPER = 1 (Yes)'
+    'Blank if Question 3 TELINPER = 9 (Unknown)'
+    'Blank if this is the first telephone packet submitted for the subject.'
+    """
     return lambda packet: packet['TELINPER'] in (1, 9)
 
 

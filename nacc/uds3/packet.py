@@ -7,6 +7,8 @@
 
 class Packet(list):
     """
+    This Packet refers to a collection of UDS, Milestone, or Neuropath forms.
+
     A Packet is a collection of Forms, each with a unique FormID. The forms
     present depend on the packet type (determined by flag argument when
     running the program)- UDS, LBD, FTLD, Milestone, Neuropath, COVID, and so
