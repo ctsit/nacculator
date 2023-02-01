@@ -9,7 +9,11 @@ import decimal
 
 
 class _UdsType(object):
-    """ Handles the difference between Num and Char fields """
+    """
+    Handles the difference between Num and Char fields: Num fields must be a
+    number (either integer or decimal depending on the field), while Char
+    fields can have any characters besides ' " & or %
+    """
     def __init__(self, length):
         assert length > 0
         self.length = length

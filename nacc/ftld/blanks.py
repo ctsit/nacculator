@@ -183,8 +183,8 @@ def _blanking_rule_check_blank_value(key, eq, value=None):
 
 def _blanking_rule_ftld_or2(rule):
     """
-    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    along with other regular conditions
+    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown)),
+    or if FTDIDIAG or FTDSMRIO are 0.
     """
     if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
         return lambda packet: packet['FTDIDIAG'] == 0
@@ -198,8 +198,8 @@ def _blanking_rule_ftld_or2(rule):
 
 def _blanking_rule_ftld_or2a(rule):
     """
-    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    along with other regular conditions
+    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown)),
+    or if FTDIDIAG or FTDSMRIO are 0, or if FTDMRIOB is not 1.
     """
     if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
         return lambda packet: packet['FTDIDIAG'] == 0
@@ -215,8 +215,8 @@ def _blanking_rule_ftld_or2a(rule):
 
 def _blanking_rule_ftld_or3(rule):
     """
-    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    along with other regular conditions
+    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown)),
+    or if FTDIDIAG or FTDFDGPE are 0.
     """
     if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
         return lambda packet: packet['FTDIDIAG'] == 0
@@ -231,7 +231,7 @@ def _blanking_rule_ftld_or3(rule):
 def _blanking_rule_ftld_or3a(rule):
     """
     Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    along with other regular conditions
+    or if FTDIDIAG or FTDFDGPE are 0, or if FTDFDGOA is not 1.
     """
     if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
         return lambda packet: packet['FTDIDIAG'] == 0
@@ -247,8 +247,8 @@ def _blanking_rule_ftld_or3a(rule):
 
 def _blanking_rule_ftld_or4(rule):
     """
-    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    along with other regular conditions
+    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown)),
+    or if FTDIDIAG or FTDAMYP are 0.
     """
     if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
         return lambda packet: packet['FTDIDIAG'] == 0
@@ -262,8 +262,8 @@ def _blanking_rule_ftld_or4(rule):
 
 def _blanking_rule_ftld_or4a(rule):
     """
-    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    along with other regular conditions
+    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown)),
+    or if FTDIDIAG or FTDAMYP are 0, or if FTDAMYOA is not 1.
     """
     if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
         return lambda packet: packet['FTDIDIAG'] == 0
@@ -279,8 +279,8 @@ def _blanking_rule_ftld_or4a(rule):
 
 def _blanking_rule_ftld_or5(rule):
     """
-    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    along with other regular conditions
+    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown)),
+    or if FTDIDIAG or FTDCBFSP are 0.
     """
     if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
         return lambda packet: packet['FTDIDIAG'] == 0
@@ -294,8 +294,8 @@ def _blanking_rule_ftld_or5(rule):
 
 def _blanking_rule_ftld_or5a(rule):
     """
-    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown))
-    along with other regular conditions
+    Blank if either of 2 possibilities is true (= 0 (No) or = 9 (Unknown)),
+    or if FTDIDIAG or FTDCBFSP are 0, or if FTDCBFOA is not 1.
     """
     if rule == 'Blank if Question 1 FTDIDIAG = 0 (No)':
         return lambda packet: packet['FTDIDIAG'] == 0
