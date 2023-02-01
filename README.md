@@ -221,6 +221,13 @@ the example above shows.
   export. Currently, only `adcid` is updated.
 
 
+* **fixVisitNum**
+
+  This filter is used to ensure that the `visitnum` field is always an integer.
+  It is currently only accessible from the config file when running all
+  filters.
+
+
 * **removePtid**
 
   This filter requires a section in the config called `filter_remove_ptid` with

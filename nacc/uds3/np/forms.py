@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2020 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -15,6 +15,8 @@ from datetime import date
 CURRENT_YEAR = date.today().year
 
 ### END non-generated code
+
+# This packet is for NP (Neuropath) forms
 
 
 def header_fields():
