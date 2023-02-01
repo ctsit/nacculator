@@ -10,9 +10,10 @@ import decimal
 
 class _UdsType(object):
     """
-    Handles the difference between Num and Char fields: Num fields must be a
-    number (either integer or decimal depending on the field), while Char
-    fields can have any characters besides ' " & or %
+    This class is used for "Field" object setup. Fields can have either "Char"
+    or "Num" types. This class asserts that the object 1) has a length longer
+    than 0, 2) has a string as its value, and 3) assigns those length and value
+    attributes to the object.
     """
     def __init__(self, length):
         assert length > 0
@@ -30,10 +31,18 @@ class _UdsType(object):
 
 
 class Char(_UdsType):
+    """
+    Char fields can have any characters besides ' " & or % (and these forbidden
+    characters are checked for later)
+    """
     pass
 
 
 class Num(_UdsType):
+    """
+    Num fields must be a number (either integer or decimal depending on the
+    field)
+    """
     def __call__(self, *args, **kwargs):
         value = args[0] if len(args) > 0 else None
         try:
