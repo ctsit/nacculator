@@ -44,7 +44,12 @@ def int_or_string(value, default=-1):
 
 @validate
 def filter_clean_ptid(input_ptr, filter_config, output_ptr):
-    """ Filter for removing PTIDs already in NACC's Current Database """
+    """
+    Verifies that the clean_ptid filter is active, either in the config or as
+    an input flag. If so, it runs the "filter_clean_ptid_do" filter, which
+    removes PTIDs that are identified as present in NACC's "Current Database"
+    to reduce the size of the NACC submission file.
+    """
     if filter_config:
         filepath = filter_config['filepath']
         with open(filepath, 'r') as nacc_packet_file:
@@ -56,7 +61,7 @@ def filter_clean_ptid(input_ptr, filter_config, output_ptr):
 
 
 def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
-    """ Carries out the Clean PTID filter after verification """
+    """ Filter for removing PTIDs already in NACC's Current Database """
     redcap_packet_list = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(redcap_packet_list, output)
@@ -131,7 +136,11 @@ def write_headers(reader, output):
 
 @validate
 def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
-    """ Filter for ensuring that each DrugID begins with the character "d" """
+    """
+    Verifies that the replace_drug_id filter is active, either in the config or
+    as an input flag. If so, it runs the "filter_replace_drug_id_do" filter,
+    which replaces the first character of drugIDs in the input csv with "d".
+    """
     if filter_meta:
         filter_replace_drug_id_do(input_ptr, output_ptr)
     else:
@@ -140,7 +149,7 @@ def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
 
 
 def filter_replace_drug_id_do(input_ptr, output_ptr):
-    """ Carries out the Replace DrugID Filter after verification """
+    """ Filter for ensuring that each DrugID begins with the character "d" """
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -163,7 +172,11 @@ def filter_replace_drug_id_do(input_ptr, output_ptr):
 
 @validate
 def filter_fix_headers(input_file, header_mapping, output_file):
-    """ Filter for correcting misspelled fieldnames in the REDCap project """
+    """
+    Verifies that the fix_headers filter is active, either in the config or as
+    an input flag. If so, it runs the "filter_fix_headers_do" filter, which
+    renames / corrects spelling on fieldnames in the input csv.
+    """
     if header_mapping:
         return filter_fix_headers_do(input_file, header_mapping, output_file)
     else:
@@ -172,7 +185,7 @@ def filter_fix_headers(input_file, header_mapping, output_file):
 
 
 def filter_fix_headers_do(input_ptr, header_dictionary, output_ptr):
-    """ Carries out the Fix Headers filter after verification """
+    """ Filter for correcting misspelled fieldnames in the REDCap project """
     csv_reader = csv.reader(input_ptr)
     csv_writer = csv.writer(output_ptr)
     headers = next(csv_reader)
@@ -185,7 +198,11 @@ def filter_fix_headers_do(input_ptr, header_dictionary, output_ptr):
 
 @validate
 def filter_remove_ptid(input_ptr, filter_config, output_ptr):
-    """ Filter for removing any PTID that does not match a specified format """
+    """
+    Verifies that the remove_ptid filter is active, either in the config or as
+    an input flag. If so, it runs the "filter_remove_ptid_do" filter, which
+    removes all PTIDs that do not match a specified format.
+    """
     if filter_config:
         return filter_remove_ptid_do(input_ptr, filter_config, output_ptr)
     else:
@@ -194,7 +211,7 @@ def filter_remove_ptid(input_ptr, filter_config, output_ptr):
 
 
 def filter_remove_ptid_do(input_ptr, filter_diction, output_ptr):
-    """ Carries out the Remove PTID filter after verification """
+    """ Filter for removing any PTID that does not match a specified format """
     regex_exp = filter_diction['ptid_format']
     good_ptids_list = load_special_case_ptid('good_ptid', filter_diction)
     bad_ptids_list = load_special_case_ptid('bad_ptid', filter_diction)
@@ -215,7 +232,12 @@ def filter_remove_ptid_do(input_ptr, filter_diction, output_ptr):
 
 @validate
 def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
-    """ Filter for removing rows in the csv that do not have visit dates """
+    """
+    Verifies that the eliminate_empty_date filter is active, either in the
+    config or as an input flag. If so, it runs the
+    "filter_eliminate_empty_date_do" filter, which removes removes any rows in
+    the input csv that do not have a visit date.
+    """
     if filter_meta:
         filter_eliminate_empty_date_do(input_ptr, output_ptr)
     else:
@@ -224,7 +246,7 @@ def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
 
 
 def filter_eliminate_empty_date_do(input_ptr, output_ptr):
-    """ Carries out the Eliminate Empty Date filter after verification """
+    """ Filter for removing rows in the csv that do not have visit dates """
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -270,8 +292,9 @@ def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False,
 @validate
 def filter_fix_visitnum(input_ptr, filter_meta, output_ptr):
     """
-    Filter for converting all visitdates to integers (removing trailing zeroes
-    etc)
+    Verifies that the fix_visitnum filter is active either in the config or as
+    an input flag. If so, it runs the "filter_fix_visitnum_do" filter, which
+    converts all visitdates to integers.
     """
     if filter_meta:
         filter_fix_visitnum_do(input_ptr, output_ptr)
@@ -281,7 +304,10 @@ def filter_fix_visitnum(input_ptr, filter_meta, output_ptr):
 
 
 def filter_fix_visitnum_do(input_ptr, output_ptr):
-    """ Carries out the Fix Visitnum filter after verification """
+    """
+    Filter for converting all visitdates to integers (removing trailing zeroes
+    etc)
+    """
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
