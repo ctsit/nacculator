@@ -1,5 +1,13 @@
 Changelog
 =========
+## [1.11.0] - 2022-08-31
+### Summary
+This release updates documentation on the developer end for the functions within NACCulator's code.
+
+### Changed
+* Updated every file with new docstrings and comments to better explain how the code works (Samantha Emerson)
+* Changed the name of visit number fix filter to be more clear (Samantha Emerson)
+
 ## [1.10.0] - 2022-08-31
 ### Summary
 This release introduces minor fixes to the FTLD and LBD Short Version modules.

@@ -105,7 +105,7 @@ ptid,redcap_event_name,formver,adcid,visitmo,visitday,visityr,visitnum,initials,
         expected = ['1600-A', '110001', '110003']
         self.assertListEqual(actual, expected)
 
-    def test_filter_fix_vistnim(self):
+    def test_filter_fix_vistnum(self):
         '''
         `filter_fix_visitnum` should turn string to int if
         filled and does nothing if blank.
