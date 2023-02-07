@@ -33,6 +33,7 @@ def validate(func):
 
 
 def int_or_string(value, default=-1):
+    """ Ensures that the visit number is an integer value """
     try:
         returnable = int(value)
     except ValueError:
@@ -43,6 +44,12 @@ def int_or_string(value, default=-1):
 
 @validate
 def filter_clean_ptid(input_ptr, filter_config, output_ptr):
+    """
+    Verifies that the clean_ptid filter is active, either in the config or as
+    an input flag. If so, it runs the "filter_clean_ptid_do" filter, which
+    removes PTIDs that are identified as present in NACC's "Current Database"
+    to reduce the size of the NACC submission file.
+    """
     if filter_config:
         filepath = filter_config['filepath']
         with open(filepath, 'r') as nacc_packet_file:
@@ -54,11 +61,13 @@ def filter_clean_ptid(input_ptr, filter_config, output_ptr):
 
 
 def filter_clean_ptid_do(input_ptr, nacc_packet_file, output_ptr):
+    """ Filter for removing PTIDs already in NACC's Current Database """
     redcap_packet_list = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(redcap_packet_list, output)
 
-    # TODO: Deal with M Flag in Current_db.csv.
+    # TODO: Create code that can handle the -m flag (using M visits in
+    # Current_db.csv)
 
     completed_subjs = defaultdict(list)
     nacc_packet_list = csv.DictReader(nacc_packet_file)
@@ -127,6 +136,11 @@ def write_headers(reader, output):
 
 @validate
 def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
+    """
+    Verifies that the replace_drug_id filter is active, either in the config or
+    as an input flag. If so, it runs the "filter_replace_drug_id_do" filter,
+    which replaces the first character of drugIDs in the input csv with "d".
+    """
     if filter_meta:
         filter_replace_drug_id_do(input_ptr, output_ptr)
     else:
@@ -135,6 +149,7 @@ def filter_replace_drug_id(input_ptr, filter_meta, output_ptr):
 
 
 def filter_replace_drug_id_do(input_ptr, output_ptr):
+    """ Filter for ensuring that each DrugID begins with the character "d" """
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -157,6 +172,11 @@ def filter_replace_drug_id_do(input_ptr, output_ptr):
 
 @validate
 def filter_fix_headers(input_file, header_mapping, output_file):
+    """
+    Verifies that the fix_headers filter is active, either in the config or as
+    an input flag. If so, it runs the "filter_fix_headers_do" filter, which
+    renames / corrects spelling on fieldnames in the input csv.
+    """
     if header_mapping:
         return filter_fix_headers_do(input_file, header_mapping, output_file)
     else:
@@ -165,6 +185,7 @@ def filter_fix_headers(input_file, header_mapping, output_file):
 
 
 def filter_fix_headers_do(input_ptr, header_dictionary, output_ptr):
+    """ Filter for correcting misspelled fieldnames in the REDCap project """
     csv_reader = csv.reader(input_ptr)
     csv_writer = csv.writer(output_ptr)
     headers = next(csv_reader)
@@ -177,6 +198,11 @@ def filter_fix_headers_do(input_ptr, header_dictionary, output_ptr):
 
 @validate
 def filter_remove_ptid(input_ptr, filter_config, output_ptr):
+    """
+    Verifies that the remove_ptid filter is active, either in the config or as
+    an input flag. If so, it runs the "filter_remove_ptid_do" filter, which
+    removes all PTIDs that do not match a specified format.
+    """
     if filter_config:
         return filter_remove_ptid_do(input_ptr, filter_config, output_ptr)
     else:
@@ -185,6 +211,7 @@ def filter_remove_ptid(input_ptr, filter_config, output_ptr):
 
 
 def filter_remove_ptid_do(input_ptr, filter_diction, output_ptr):
+    """ Filter for removing any PTID that does not match a specified format """
     regex_exp = filter_diction['ptid_format']
     good_ptids_list = load_special_case_ptid('good_ptid', filter_diction)
     bad_ptids_list = load_special_case_ptid('bad_ptid', filter_diction)
@@ -205,6 +232,12 @@ def filter_remove_ptid_do(input_ptr, filter_diction, output_ptr):
 
 @validate
 def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
+    """
+    Verifies that the eliminate_empty_date filter is active, either in the
+    config or as an input flag. If so, it runs the
+    "filter_eliminate_empty_date_do" filter, which removes removes any rows in
+    the input csv that do not have a visit date.
+    """
     if filter_meta:
         filter_eliminate_empty_date_do(input_ptr, output_ptr)
     else:
@@ -213,6 +246,7 @@ def filter_eliminate_empty_date(input_ptr, filter_meta, output_ptr):
 
 
 def filter_eliminate_empty_date_do(input_ptr, output_ptr):
+    """ Filter for removing rows in the csv that do not have visit dates """
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -224,12 +258,17 @@ def filter_eliminate_empty_date_do(input_ptr, output_ptr):
 
 
 def _invalid_date(record):
+    """ Identifies whether a date field is empty """
     return (record['visitmo'] == '' or record['visitday'] == '' or
             record['visityr'] == '')
 
 
 def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False,
                          defaultCheck=False):
+    """
+    Updates field values according to filter rules and prints out how many
+    fields were changed
+    """
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -251,15 +290,24 @@ def fill_value_of_fields(input_ptr, output_ptr, keysDict, blankCheck=False,
 
 
 @validate
-def filter_fix_visitdate(input_ptr, filter_meta, output_ptr):
+def filter_fix_visitnum(input_ptr, filter_meta, output_ptr):
+    """
+    Verifies that the fix_visitnum filter is active either in the config or as
+    an input flag. If so, it runs the "filter_fix_visitnum_do" filter, which
+    converts all visitdates to integers.
+    """
     if filter_meta:
-        filter_fix_visitdate_do(input_ptr, output_ptr)
+        filter_fix_visitnum_do(input_ptr, output_ptr)
     else:
         skip_filter(input_ptr, output_ptr)
         return
 
 
-def filter_fix_visitdate_do(input_ptr, output_ptr):
+def filter_fix_visitnum_do(input_ptr, output_ptr):
+    """
+    Filter for converting all visitdates to integers (removing trailing zeroes
+    etc)
+    """
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -273,15 +321,23 @@ def filter_fix_visitdate_do(input_ptr, output_ptr):
 
 @validate
 def filter_fill_default(input_ptr, filter_meta, output_ptr):
+    """
+    Hard-codes selected empty fields from the config to always be a set value
+    """
     if filter_meta:
-        fill_value_of_fields(input_ptr, output_ptr, fill_default_values(filter_meta), defaultCheck=True)
+        fill_value_of_fields(input_ptr, output_ptr,
+                             fill_default_values(filter_meta),
+                             defaultCheck=True)
     else:
         skip_filter(input_ptr, output_ptr)
         return
 
 
 def fill_default_values(config):
-    # This dictionary contains the keys used in the config
+    """
+    This dictionary contains the keys used in the config - it carries out the
+    Fill Default filter after verification
+    """
     try:
         adcid = config['adcid']
     except KeyError:
@@ -294,13 +350,20 @@ def fill_default_values(config):
 
 @validate
 def filter_update_field(input_ptr, filter_meta, output_ptr):
+    """
+    Hard-codes fields from the config that may already be filled to always be a
+    certain value
+    """
     if filter_meta:
-        fill_value_of_fields(input_ptr, output_ptr, fill_non_blank_values(filter_meta), blankCheck=True)
+        fill_value_of_fields(input_ptr, output_ptr,
+                             fill_non_blank_values(filter_meta),
+                             blankCheck=True)
     else:
         skip_filter(input_ptr, output_ptr)
 
 
 def fill_non_blank_values(config):
+    """ Carries out the Update Field filter after verification """
     try:
         adcid = config['adcid']
     except KeyError:
@@ -310,6 +373,10 @@ def fill_non_blank_values(config):
 
 
 def skip_filter(input_ptr, output_ptr):
+    """
+    Prints a confirmation that a filter has been skipped and moves on to the
+    next step in processing
+    """
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
@@ -320,50 +387,71 @@ def skip_filter(input_ptr, output_ptr):
 
 
 def filter_extract_ptid(input_ptr, Ptid, visit_num, visit_type, output_ptr):
+    """
+    Filter for the "getPtid" option in redcap2nacc using the -ptid, -vnum, and
+    -vtype flags. This filter collects information about a PTID in the input
+    csv file based on criteria: PTID, visit number, visit type (based on the
+    REDCap event name, such as "followup") respectively.
+    """
     reader = csv.DictReader(input_ptr)
     output = csv.DictWriter(output_ptr, None)
     write_headers(reader, output)
 
-    if(visit_num and visit_type):
+    if (visit_num and visit_type):
         filtered = [row for row in reader if
                     filter_csv_all(Ptid, visit_num, visit_type, row)]
 
-    elif(not visit_num and visit_type):
+    elif (not visit_num and visit_type):
         filtered = [row for row in reader if
                     filter_csv_vtype(Ptid, visit_type, row)]
 
-    elif(not visit_type and visit_num):
+    elif (not visit_type and visit_num):
         filtered = [row for row in reader if
                     filter_csv_vnum(Ptid, visit_num, row)]
 
-    elif(not visit_type and not visit_num):
+    elif (not visit_type and not visit_num):
         filtered = [row for row in reader if
                     filter_csv_ptid(Ptid, row)]
     output.writerows(filtered)
 
 
 def filter_csv_all(Ptid, visit_num, visit_type, record):
+    """
+    Returns records for PTIDs that match the requested PTID, visit number, AND
+    visit type
+    """
     if record['ptid'] == Ptid and record['visitnum'].lstrip("0") == visit_num \
       and (re.search(visit_type, record['redcap_event_name'])):
         return record
 
 
 def filter_csv_vtype(Ptid, visit_type, record):
+    """
+    Returns records for PTIDs that match the requested PTID and visit type
+    """
     if record['ptid'] == Ptid and re.search(visit_type, record['redcap_event_name']):
         return record
 
 
 def filter_csv_vnum(Ptid, visit_num, record):
+    """
+    Returns records for PTIDs that match the requested PTID and visit number
+    """
     if record['ptid'] == Ptid and record['visitnum'].lstrip("0") == visit_num:
         return record
 
 
 def filter_csv_ptid(Ptid, record):
+    """ Returns all records for the PTID that matches a requested PTID """
     if record['ptid'] == Ptid:
         return record
 
 
 def load_special_case_ptid(case_name, filter_config):
+    """
+    Loads bad_ptids and good_ptids into a list from the config file depending
+    on case_name input argument
+    """
     try:
         ptids_string = filter_config[case_name]
         li = list(ptids_string.split(","))

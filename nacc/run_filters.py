@@ -57,14 +57,14 @@ def run_all_filters(folder_name, config):
         with open(output_path, 'w') as output_ptr, open(input_path, 'r') as input_ptr:
             filter_update_field(input_ptr, config, output_ptr)
 
-        print("--------------Fixing Visit Dates--------------------", file=sys.stderr)
+        print("--------------Fixing Visit Numbers--------------------", file=sys.stderr)
         input_path = os.path.join(folder_name, "update_fields.csv")
-        output_path = os.path.join(folder_name, "proper_visitdate.csv")
+        output_path = os.path.join(folder_name, "proper_visitnum.csv")
         with open(output_path, 'w') as output_ptr, open(input_path, 'r') as input_ptr:
-            filter_fix_visitdate(input_ptr, config, output_ptr)
+            filter_fix_visitnum(input_ptr, config, output_ptr)
 
         print("--------------Removing Unnecessary Records--------------------", file=sys.stderr)
-        input_path = os.path.join(folder_name, "proper_visitdate.csv")
+        input_path = os.path.join(folder_name, "proper_visitnum.csv")
         output_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
         with open(output_path, 'w') as output_ptr, open(input_path, 'r') as input_ptr:
             filter_remove_ptid(input_ptr, config, output_ptr)
@@ -89,6 +89,9 @@ def read_config(config_path):
 
 
 def get_data_from_redcap_pycap(folder_name, config):
+    """
+    Uses PyCap to collect a REDCap project data export using your API token
+    """
     # Enter the path for filters_config
     try:
         token = config.get('pycap', 'token')
