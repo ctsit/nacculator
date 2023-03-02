@@ -11,6 +11,7 @@ class option():
     cv = False
     csf = False
     lbd = False
+    tip = False
     tfp = True
     tfp3 = False
     ftld = False
@@ -20,7 +21,7 @@ class option():
 
 class TestBlankRulesForTFP(unittest.TestCase):
     '''
-    These tests are designed to run tfp data fields (generated below
+    These tests are designed to run TFP data fields (generated below
     the tests here) through the check_blanks function for the UDS3 module.
     It is mostly concerned with making sure the "special cases" are functioning
     properly. There should be overlap with the ivp and fvp blanks.
@@ -30,9 +31,11 @@ class TestBlankRulesForTFP(unittest.TestCase):
         self.options = option()
 
     def test_for_filled_when_ruled_blank(self):
-        # Have it look for the langa4 error to see that general blanking rules
-        # are working (langa4 also comes before the variable (a4sub)
-        # it's dependent on)
+        '''
+        Have it look for the langa4 error to see that general blanking rules
+        are working (langa4 also comes before the variable (a4sub)
+        it's dependent on)
+        '''
         record = make_filled_form()
         record['tele_a4sub'] = '0'
         record['tele_langa4'] = '1'
@@ -107,7 +110,8 @@ class TestBlankRulesForTFP(unittest.TestCase):
 
     def test_set_zeros_to_blanks(self):
         '''
-        To follow up with the last test, the function within uds3.blanks.py "set_zeros_to_blanks" should clear up these errors.
+        To follow up with the last test, the function within uds3.blanks.py 
+        "set_zeros_to_blanks" should clear up these errors.
         '''
         record = make_filled_form()
         record['tele_respval'] = '1'
