@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2021 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -10,25 +10,30 @@ import nacc.uds3
 # WARNING: When generating new forms, do not overwrite this section
 from datetime import date
 
-# WARNING: When generating new forms, use CURRENT_YEAR instead of"2014"
-# WARNING: When generating new forms, use CURRENT_YEAR-15 instead of"1999"
+# WARNING: When generating new forms, use CURRENT_YEAR instead of "2014"
+# WARNING: When generating new forms, use CURRENT_YEAR-15 instead of "1999"
 CURRENT_YEAR = date.today().year
 
 ### END non-generated code
 
+# This packet is for TIP (Telephone Initial) forms
+
 
 def header_fields():
+    """
+    Generates the header info that appears in columns 1-43 of every form
+    """
     fields = {}
-    fields["PACKET "] = nacc.uds3.Field(name="PACKET ", typename="Char ", position=(1, 2), length=2, inclusive_range=None, allowable_values=[], blanks=[])
-    fields["FORMID "] = nacc.uds3.Field(name="FORMID ", typename="Char ", position=(4, 6), length=3, inclusive_range=None, allowable_values=[], blanks=[])
-    fields["FORMVER "] = nacc.uds3.Field(name="FORMVER ", typename="Num ", position=(8, 10), length=3, inclusive_range=('3', '3.2'), allowable_values=[], blanks=[])
-    fields["ADCID "] = nacc.uds3.Field(name="ADCID ", typename="Num ", position=(12, 13), length=2, inclusive_range=('2', '65'), allowable_values=[], blanks=[])
-    fields["PTID "] = nacc.uds3.Field(name="PTID ", typename="Char ", position=(15, 24), length=10, inclusive_range=None, allowable_values=[], blanks=[])
-    fields["VISITMO"] = nacc.uds3.Field(name="VISITMO", typename="Num ", position=(26, 27), length=2, inclusive_range=('1', '12'), allowable_values=[], blanks=[])
-    fields["VISITDAY "] = nacc.uds3.Field(name="VISITDAY ", typename="Num ", position=(29, 30), length=2, inclusive_range=('1', '31'), allowable_values=[], blanks=[])
-    fields["VISITYR"] = nacc.uds3.Field(name="VISITYR", typename="Num ", position=(32, 35), length=4, inclusive_range=(CURRENT_YEAR-15, CURRENT_YEAR), allowable_values=[], blanks=[])
-    fields["VISITNUM"] = nacc.uds3.Field(name="VISITNUM", typename="Char ", position=(37, 39), length=3, inclusive_range=None, allowable_values=[], blanks=[])
-    fields["INITIALS"] = nacc.uds3.Field(name="INITIALS", typename="Char ", position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
+    fields["PACKET"] = nacc.uds3.Field(name="PACKET", typename="Char", position=(1, 2), length=2, inclusive_range=None, allowable_values=[], blanks=[])
+    fields["FORMID"] = nacc.uds3.Field(name="FORMID", typename="Char", position=(4, 6), length=3, inclusive_range=None, allowable_values=[], blanks=[])
+    fields["FORMVER"] = nacc.uds3.Field(name="FORMVER", typename="Num", position=(8, 10), length=3, inclusive_range=(), allowable_values=['3', '3.2'], blanks=[])
+    fields["ADCID"] = nacc.uds3.Field(name="ADCID", typename="Num", position=(12, 13), length=2, inclusive_range=('2', '65'), allowable_values=[], blanks=[])
+    fields["PTID"] = nacc.uds3.Field(name="PTID", typename="Char", position=(15, 24), length=10, inclusive_range=None, allowable_values=[], blanks=[])
+    fields["VISITMO"] = nacc.uds3.Field(name="VISITMO", typename="Num", position=(26, 27), length=2, inclusive_range=('1', '12'), allowable_values=[], blanks=[])
+    fields["VISITDAY"] = nacc.uds3.Field(name="VISITDAY", typename="Num", position=(29, 30), length=2, inclusive_range=('1', '31'), allowable_values=[], blanks=[])
+    fields["VISITYR"] = nacc.uds3.Field(name="VISITYR", typename="Num", position=(32, 35), length=4, inclusive_range=(CURRENT_YEAR-15, CURRENT_YEAR), allowable_values=[], blanks=[])
+    fields["VISITNUM"] = nacc.uds3.Field(name="VISITNUM", typename="Char", position=(37, 39), length=3, inclusive_range=None, allowable_values=[], blanks=[])
+    fields["INITIALS"] = nacc.uds3.Field(name="INITIALS", typename="Char", position=(41, 43), length=3, inclusive_range=None, allowable_values=[], blanks=[])
     return fields
 
 
@@ -391,7 +396,7 @@ class FormA5(nacc.uds3.FieldBag):
         self.fields["ALCFREQ"] = nacc.uds3.Field(name="ALCFREQ", typename="Num", position=(60, 60), length=1, inclusive_range=('0', '4'), allowable_values=['0', '1', '2', '3', '4', '9'], blanks=['Blank if #1f. ALCOCCAS ne 1 (Yes)'])
         self.fields["CVHATT"] = nacc.uds3.Field(name="CVHATT", typename="Num", position=(62, 62), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=[])
         self.fields["HATTMULT"] = nacc.uds3.Field(name="HATTMULT", typename="Num", position=(64, 64), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '9'], blanks=['Blank if #2a. CVHATT = 0 (Absent)', 'Blank if #2a. CVHATT = 9 (Unknown)'])
-        self.fields["HATTYEAR"] = nacc.uds3.Field(name="HATTYEAR", typename="Num", position=(66, 69), length=4, inclusive_range=('1900', 'CURRENT_YEAR'), allowable_values=['9999'], blanks=['Blank if #2a. CVHATT = 0 (Absent)', 'Blank if #2a. CVHATT = 9 (Unknown)'])
+        self.fields["HATTYEAR"] = nacc.uds3.Field(name="HATTYEAR", typename="Num", position=(66, 69), length=4, inclusive_range=('1900', CURRENT_YEAR), allowable_values=['9999'], blanks=['Blank if #2a. CVHATT = 0 (Absent)', 'Blank if #2a. CVHATT = 9 (Unknown)'])
         self.fields["CVAFIB"] = nacc.uds3.Field(name="CVAFIB", typename="Num", position=(71, 71), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=[])
         self.fields["CVANGIO"] = nacc.uds3.Field(name="CVANGIO", typename="Num", position=(73, 73), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=[])
         self.fields["CVBYPASS"] = nacc.uds3.Field(name="CVBYPASS", typename="Num", position=(75, 75), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=[])
@@ -403,20 +408,20 @@ class FormA5(nacc.uds3.FieldBag):
         self.fields["CVOTHRX"] = nacc.uds3.Field(name="CVOTHRX", typename="Char", position=(87, 146), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if #2i. CVOTHR = 0 (Absent)', 'Blank if #2i. CVOTHR = 9 (Unknown)'])
         self.fields["CBSTROKE"] = nacc.uds3.Field(name="CBSTROKE", typename="Num", position=(148, 148), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=[])
         self.fields["STROKMUL"] = nacc.uds3.Field(name="STROKMUL", typename="Num", position=(150, 150), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '9'], blanks=['Blank if #3a. CBSTROKE = 0 (Absent)', 'Blank if #3a. CBSTROKE = 9 (Unknown)'])
-        self.fields["STROKYR"] = nacc.uds3.Field(name="STROKYR", typename="Num", position=(152, 155), length=4, inclusive_range=('1900', 'CURRENT_YEAR'), allowable_values=['9999'], blanks=['Blank if #3a. CBSTROKE = 0 (Absent)', 'Blank if #3a. CBSTROKE = 9 (Unknown)'])
+        self.fields["STROKYR"] = nacc.uds3.Field(name="STROKYR", typename="Num", position=(152, 155), length=4, inclusive_range=('1900', CURRENT_YEAR), allowable_values=['9999'], blanks=['Blank if #3a. CBSTROKE = 0 (Absent)', 'Blank if #3a. CBSTROKE = 9 (Unknown)'])
         self.fields["CBTIA"] = nacc.uds3.Field(name="CBTIA", typename="Num", position=(157, 157), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=[])
         self.fields["TIAMULT"] = nacc.uds3.Field(name="TIAMULT", typename="Num", position=(159, 159), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '9'], blanks=['Blank if #3b. CBTIA = 0 (Absent)', 'Blank if #3b. CBTIA = 9 (Unknown)'])
-        self.fields["TIAYEAR"] = nacc.uds3.Field(name="TIAYEAR", typename="Num", position=(161, 164), length=4, inclusive_range=('1900', 'CURRENT_YEAR'), allowable_values=['9999'], blanks=['Blank if #3b. CBTIA = 0 (Absent)', 'Blank if #3b. CBTIA = 9 (Unknown)'])
+        self.fields["TIAYEAR"] = nacc.uds3.Field(name="TIAYEAR", typename="Num", position=(161, 164), length=4, inclusive_range=('1900', CURRENT_YEAR), allowable_values=['9999'], blanks=['Blank if #3b. CBTIA = 0 (Absent)', 'Blank if #3b. CBTIA = 9 (Unknown)'])
         self.fields["PD"] = nacc.uds3.Field(name="PD", typename="Num", position=(166, 166), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '9'], blanks=[])
-        self.fields["PDYR"] = nacc.uds3.Field(name="PDYR", typename="Num", position=(168, 171), length=4, inclusive_range=('1900', 'CURRENT_YEAR'), allowable_values=['9999'], blanks=['Blank if #4a. PD = 0 (Absent)', 'Blank if #4a. PD = 9 (Unknown)'])
+        self.fields["PDYR"] = nacc.uds3.Field(name="PDYR", typename="Num", position=(168, 171), length=4, inclusive_range=('1900', CURRENT_YEAR), allowable_values=['9999'], blanks=['Blank if #4a. PD = 0 (Absent)', 'Blank if #4a. PD = 9 (Unknown)'])
         self.fields["PDOTHR"] = nacc.uds3.Field(name="PDOTHR", typename="Num", position=(173, 173), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1', '9'], blanks=[])
-        self.fields["PDOTHRYR"] = nacc.uds3.Field(name="PDOTHRYR", typename="Num", position=(175, 178), length=4, inclusive_range=('1900', 'CURRENT_YEAR'), allowable_values=['9999'], blanks=['Blank if #4b. PDOTHR = 0 (Absent)', 'Blank if #4b. PDOTHR = 9 (Unknown)'])
+        self.fields["PDOTHRYR"] = nacc.uds3.Field(name="PDOTHRYR", typename="Num", position=(175, 178), length=4, inclusive_range=('1900', CURRENT_YEAR), allowable_values=['9999'], blanks=['Blank if #4b. PDOTHR = 0 (Absent)', 'Blank if #4b. PDOTHR = 9 (Unknown)'])
         self.fields["SEIZURES"] = nacc.uds3.Field(name="SEIZURES", typename="Num", position=(180, 180), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=[])
         self.fields["TBI"] = nacc.uds3.Field(name="TBI", typename="Num", position=(182, 182), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=[])
         self.fields["TBIBRIEF"] = nacc.uds3.Field(name="TBIBRIEF", typename="Num", position=(184, 184), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=['Blank if #4d. TBI = 0 (Absent)', 'Blank if #4d. TBI = 9 (Unknown)'])
         self.fields["TBIEXTEN"] = nacc.uds3.Field(name="TBIEXTEN", typename="Num", position=(186, 186), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=['Blank if #4d. TBI = 0 (Absent)', 'Blank if #4d. TBI = 9 (Unknown)'])
         self.fields["TBIWOLOS"] = nacc.uds3.Field(name="TBIWOLOS", typename="Num", position=(188, 188), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=['Blank if #4d. TBI = 0 (Absent)', 'Blank if #4d. TBI = 9 (Unknown)'])
-        self.fields["TBIYEAR"] = nacc.uds3.Field(name="TBIYEAR", typename="Num", position=(190, 193), length=4, inclusive_range=('1900', 'CURRENT_YEAR'), allowable_values=['9999'], blanks=['Blank if #4d. TBI = 0 (Absent)', 'Blank if #4d. TBI = 9 (Unknown)'])
+        self.fields["TBIYEAR"] = nacc.uds3.Field(name="TBIYEAR", typename="Num", position=(190, 193), length=4, inclusive_range=('1900', CURRENT_YEAR), allowable_values=['9999'], blanks=['Blank if #4d. TBI = 0 (Absent)', 'Blank if #4d. TBI = 9 (Unknown)'])
         self.fields["DIABETES"] = nacc.uds3.Field(name="DIABETES", typename="Num", position=(195, 195), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=[])
         self.fields["DIABTYPE"] = nacc.uds3.Field(name="DIABTYPE", typename="Num", position=(197, 197), length=1, inclusive_range=('1', '3'), allowable_values=['1', '2', '3', '9'], blanks=['Blank if #5a. DIABETES = 0 (Absent)', 'Blank if #5a. DIABETES = 9 (Unknown)'])
         self.fields["HYPERTEN"] = nacc.uds3.Field(name="HYPERTEN", typename="Num", position=(199, 199), length=1, inclusive_range=('0', '2'), allowable_values=['0', '1', '2', '9'], blanks=[])
@@ -662,26 +667,26 @@ class FormC2(nacc.uds3.FieldBag):
         self.fields = header_fields()
         self.fields["MODCOMM"] = nacc.uds3.Field(name="MODCOMM", typename="Num", position=(45, 45), length=1, inclusive_range=('1', '3'), allowable_values=['1', '2', '3'], blanks=[])
         self.fields["MOCACOMP"] = nacc.uds3.Field(name="MOCACOMP", typename="Num", position=(47, 47), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1'], blanks=[])
-        self.fields["MOCAREAS"] = nacc.uds3.Field(name="MOCAREAS", typename="Num", position=(49, 50), length=2, inclusive_range=None, allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is Yes (1)'])
-        self.fields["MOCALAN"] = nacc.uds3.Field(name="MOCALAN", typename="Num", position=(52, 52), length=1, inclusive_range=('1', '3'), allowable_values=['1', '2', '3'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCALANX"] = nacc.uds3.Field(name="MOCALANX", typename="Char", position=(54, 113), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 1a MOCACOMP = No (0) or 1b MOCALAN = English (1) or Spanish (2)'])
-        self.fields["MOCAHEAR"] = nacc.uds3.Field(name="MOCAHEAR", typename="Num", position=(115, 115), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCBTOTS"] = nacc.uds3.Field(name="MOCBTOTS", typename="Num", position=(117, 118), length=2, inclusive_range=('0', '22'), allowable_values=['88'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCADIGI"] = nacc.uds3.Field(name="MOCADIGI", typename="Num", position=(120, 121), length=2, inclusive_range=('0', '2'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCALETT"] = nacc.uds3.Field(name="MOCALETT", typename="Num", position=(123, 124), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCASER7"] = nacc.uds3.Field(name="MOCASER7", typename="Num", position=(126, 127), length=2, inclusive_range=('0', '3'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCAREPE"] = nacc.uds3.Field(name="MOCAREPE", typename="Num", position=(129, 130), length=2, inclusive_range=('0', '2'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCAFLUE"] = nacc.uds3.Field(name="MOCAFLUE", typename="Num", position=(132, 133), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCAABST"] = nacc.uds3.Field(name="MOCAABST", typename="Num", position=(135, 136), length=2, inclusive_range=('0', '2'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCARECN"] = nacc.uds3.Field(name="MOCARECN", typename="Num", position=(138, 139), length=2, inclusive_range=('0', '5'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCARECC"] = nacc.uds3.Field(name="MOCARECC", typename="Num", position=(141, 142), length=2, inclusive_range=('0', '5'), allowable_values=['88'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCARECR"] = nacc.uds3.Field(name="MOCARECR", typename="Num", position=(144, 145), length=2, inclusive_range=('0', '5'), allowable_values=['88'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCAORDT"] = nacc.uds3.Field(name="MOCAORDT", typename="Num", position=(147, 148), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCAORMO"] = nacc.uds3.Field(name="MOCAORMO", typename="Num", position=(150, 151), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCAORYR"] = nacc.uds3.Field(name="MOCAORYR", typename="Num", position=(153, 154), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCAORDY"] = nacc.uds3.Field(name="MOCAORDY", typename="Num", position=(156, 157), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCAORPL"] = nacc.uds3.Field(name="MOCAORPL", typename="Num", position=(159, 160), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
-        self.fields["MOCAORCT"] = nacc.uds3.Field(name="MOCAORCT", typename="Num", position=(162, 163), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP is No (0)'])
+        self.fields["MOCAREAS"] = nacc.uds3.Field(name="MOCAREAS", typename="Num", position=(49, 50), length=2, inclusive_range=None, allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 1 (Yes)'])
+        self.fields["MOCALAN"] = nacc.uds3.Field(name="MOCALAN", typename="Num", position=(52, 52), length=1, inclusive_range=('1', '3'), allowable_values=['1', '2', '3'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCALANX"] = nacc.uds3.Field(name="MOCALANX", typename="Char", position=(54, 113), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 1a MOCACOMP = 0 (No) or 1b MOCALAN = English (1) or Spanish (2)'])
+        self.fields["MOCAHEAR"] = nacc.uds3.Field(name="MOCAHEAR", typename="Num", position=(115, 115), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCBTOTS"] = nacc.uds3.Field(name="MOCBTOTS", typename="Num", position=(117, 118), length=2, inclusive_range=('0', '22'), allowable_values=['88'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCADIGI"] = nacc.uds3.Field(name="MOCADIGI", typename="Num", position=(120, 121), length=2, inclusive_range=('0', '2'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCALETT"] = nacc.uds3.Field(name="MOCALETT", typename="Num", position=(123, 124), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCASER7"] = nacc.uds3.Field(name="MOCASER7", typename="Num", position=(126, 127), length=2, inclusive_range=('0', '3'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCAREPE"] = nacc.uds3.Field(name="MOCAREPE", typename="Num", position=(129, 130), length=2, inclusive_range=('0', '2'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCAFLUE"] = nacc.uds3.Field(name="MOCAFLUE", typename="Num", position=(132, 133), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCAABST"] = nacc.uds3.Field(name="MOCAABST", typename="Num", position=(135, 136), length=2, inclusive_range=('0', '2'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCARECN"] = nacc.uds3.Field(name="MOCARECN", typename="Num", position=(138, 139), length=2, inclusive_range=('0', '5'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCARECC"] = nacc.uds3.Field(name="MOCARECC", typename="Num", position=(141, 142), length=2, inclusive_range=('0', '5'), allowable_values=['88'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCARECR"] = nacc.uds3.Field(name="MOCARECR", typename="Num", position=(144, 145), length=2, inclusive_range=('0', '5'), allowable_values=['88'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCAORDT"] = nacc.uds3.Field(name="MOCAORDT", typename="Num", position=(147, 148), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCAORMO"] = nacc.uds3.Field(name="MOCAORMO", typename="Num", position=(150, 151), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCAORYR"] = nacc.uds3.Field(name="MOCAORYR", typename="Num", position=(153, 154), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCAORDY"] = nacc.uds3.Field(name="MOCAORDY", typename="Num", position=(156, 157), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCAORPL"] = nacc.uds3.Field(name="MOCAORPL", typename="Num", position=(159, 160), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
+        self.fields["MOCAORCT"] = nacc.uds3.Field(name="MOCAORCT", typename="Num", position=(162, 163), length=2, inclusive_range=('0', '1'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if 1a MOCACOMP = 0 (No)'])
         self.fields["NPSYLAN"] = nacc.uds3.Field(name="NPSYLAN", typename="Num", position=(165, 165), length=1, inclusive_range=('1', '3'), allowable_values=['1', '2', '3'], blanks=[])
         self.fields["NPSYLANX"] = nacc.uds3.Field(name="NPSYLANX", typename="Char", position=(167, 226), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if 2a NPSYLAN = English (1) or Spanish (2)'])
         self.fields["CRAFTVRS"] = nacc.uds3.Field(name="CRAFTVRS", typename="Num", position=(228, 229), length=2, inclusive_range=('0', '44'), allowable_values=['95', '96', '97', '98'], blanks=[])
@@ -958,7 +963,7 @@ class FormZ1X(nacc.uds3.FieldBag):
         self.fields["B8SUB"] = nacc.uds3.Field(name="B8SUB", typename="Num", position=(94, 94), length=1, inclusive_range=('0', '1'), allowable_values=['0', '1'], blanks=[])
         self.fields["B8NOT"] = nacc.uds3.Field(name="B8NOT", typename="Num", position=(96, 97), length=2, inclusive_range=('95', '98'), allowable_values=['95', '96', '97', '98'], blanks=['Blank if #12b. B8SUB = 1 (Yes)'])
         self.fields["LANGB9"] = nacc.uds3.Field(name="LANGB9", typename="Num", position=(99, 99), length=1, inclusive_range=('1', '2'), allowable_values=['1', '2'], blanks=[])
-        self.fields["LANGC2"] = nacc.uds3.Field(name="LANGC2", typename="Num", position=(101, 101), length=1, inclusive_range=('1', '2'), allowable_values=['1', '2'], blanks=[])
+        self.fields["LANGC2T"] = nacc.uds3.Field(name="LANGC2T", typename="Num", position=(101, 101), length=1, inclusive_range=('1', '2'), allowable_values=['1', '2'], blanks=[])
         self.fields["LANGD1"] = nacc.uds3.Field(name="LANGD1", typename="Num", position=(103, 103), length=1, inclusive_range=('1', '2'), allowable_values=['1', '2'], blanks=[])
         self.fields["LANGD2"] = nacc.uds3.Field(name="LANGD2", typename="Num", position=(105, 105), length=1, inclusive_range=('1', '2'), allowable_values=['1', '2'], blanks=[])
         self.fields["LANGCLS"] = nacc.uds3.Field(name="LANGCLS", typename="Num", position=(107, 107), length=1, inclusive_range=('1', '2'), allowable_values=['1', '2'], blanks=['Blank if #17b CLSSUB = 0 (No)'])

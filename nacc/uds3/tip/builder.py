@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2021 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -11,7 +11,10 @@ from nacc.uds3 import packet as tip_packet
 
 
 def build_uds3_tip_form(record, err=sys.stderr):
-    """ Converts REDCap CSV data into a packet (list of TIP Form objects) """
+    """
+    Populates a Packet object with a record of REDCap CSV-read data (list of
+    TIP Form objects)
+    """
     packet = tip_packet.Packet()
 
     # Set up the forms
@@ -71,7 +74,7 @@ def build_uds3_tip_form(record, err=sys.stderr):
 
 
 def add_z1x(record, packet):
-    # Forms T1, A1, A5, B4, B9, C2T, D1, and D2 are all REQUIRED.
+    # Forms T1, A1, A2, A5, B1, B4, B9, C2T, D1, and D2 are all REQUIRED.
     z1x = tip_forms.FormZ1X()
     z1x.LANGT1  = record['tip_LANGT1'.lower()]
     z1x.LANGA1  = record['tip_LANGA1'.lower()]
@@ -98,7 +101,7 @@ def add_z1x(record, packet):
     z1x.B8SUB   = record['tip_B8SUB'.lower()]
     z1x.B8NOT   = record['tip_B8NOT'.lower()]
     z1x.LANGB9  = record['tip_LANGB9'.lower()]
-    z1x.LANGC2  = record['tip_LANGC2'.lower()]
+    z1x.LANGC2T  = record['tip_LANGC2T'.lower()]
     z1x.LANGD1  = record['tip_LANGD1'.lower()]
     z1x.LANGD2  = record['tip_LANGD2'.lower()]
     z1x.LANGCLS = record['tip_LANGCLS'.lower()]
@@ -153,7 +156,6 @@ def add_a1(record, packet):
     packet.append(a1)
 
 
-
 def add_a2(record, packet):
     a2 = tip_forms.FormA2()
     a2.INBIRMO   = record['tip_inbirmo']
@@ -180,7 +182,7 @@ def add_a2(record, packet):
 
 def add_a3(record, packet):
     a3 = tip_forms.FormA3()
-    a3.AFFFAMM   = record['tip_affamm']
+    a3.AFFFAMM   = record['tip_afffamm']
     a3.FADMUT    = record['tip_fadmut']
     a3.FADMUTX   = record['tip_fadmutx']
     a3.FADMUSO   = record['tip_fadmuso']
@@ -555,7 +557,7 @@ def add_b1(record, packet):
     b1.HEARING  = record['tip_HEARING'.lower()]
     b1.HEARAID  = record['tip_HEARAID'.lower()]
     b1.HEARWAID = record['tip_HEARWAID'.lower()]
-    record.append(b1)
+    packet.append(b1)
 
 def add_b4(record, packet):
     b4 = tip_forms.FormB4()
