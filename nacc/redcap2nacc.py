@@ -61,31 +61,36 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
             for rule in field.blanks:
                 if not options.lbd and not options.ftld and not options.csf \
                    and not options.cv:
-                    r = blanks_uds3.convert_rule_to_python(field.name, rule, options)
+                    r = blanks_uds3.convert_rule_to_python(field.name, rule,
+                                                           options)
                     if r(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.lbd:
-                    t = blanks_lbd.convert_rule_to_python(field.name, rule, options)
+                    t = blanks_lbd.convert_rule_to_python(field.name, rule,
+                                                          options)
                     if t(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.ftld:
-                    s = blanks_ftld.convert_rule_to_python(field.name, rule, options)
+                    s = blanks_ftld.convert_rule_to_python(field.name, rule,
+                                                           options)
                     if s(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.csf:
-                    q = blanks_csf.convert_rule_to_python(field.name, rule, options)
+                    q = blanks_csf.convert_rule_to_python(field.name, rule,
+                                                          options)
                     if q(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.cv:
-                    u = blanks_cv.convert_rule_to_python(field.name, rule, options)
+                    u = blanks_cv.convert_rule_to_python(field.name, rule,
+                                                         options)
                     if u(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)

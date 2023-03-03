@@ -100,7 +100,6 @@ def convert_rule_to_python(name: str, rule: str, options) -> bool:
         }
         special_cases.update(special_cases_tip)
 
-
     # The regex needs to have a lot of flexibility due to inconsistent naming
     # conventions in our source, NACC's Data Element Dictionary (as seen in
     # forms.py)

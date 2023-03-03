@@ -110,7 +110,7 @@ class TestBlankRulesForTFP(unittest.TestCase):
 
     def test_set_zeros_to_blanks(self):
         '''
-        To follow up with the last test, the function within uds3.blanks.py 
+        To follow up with the last test, the function within uds3.blanks.py
         "set_zeros_to_blanks" should clear up these errors.
         '''
         record = make_filled_form()
