@@ -178,7 +178,7 @@ def _blanking_rule_ftldsubt():
     14d FTLDNOS ne 1
     """
     return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
-                          packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
+        packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
 
 
 def _blanking_rule_learned():
@@ -216,7 +216,7 @@ def _blanking_rule_tip_mocalanx():
     'Blank if 1a MOCACOMP = 0 (No) or 1b MOCALAN = English (1) or Spanish (2)'
     """
     return lambda packet: packet['MOCACOMP'] == 0 or \
-                          packet['MOCALAN'] in (1, 2)
+        packet['MOCALAN'] in (1, 2)
 
 
 def _blanking_rule_tip_npsylanx():
@@ -301,7 +301,7 @@ def blanking_rule_tip_respothx():
     'Blank if 14a RESPVAL = 1 or RESPOTH ne 1'
     """
     return lambda packet: packet['RESPVAL'] == 1 or \
-                          packet['RESPOTH'] != 0
+        packet['RESPOTH'] != 0
 
 
 def set_zeros_to_blanks(packet):

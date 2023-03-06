@@ -559,6 +559,7 @@ def add_b1(record, packet):
     b1.HEARWAID = record['tip_HEARWAID'.lower()]
     packet.append(b1)
 
+
 def add_b4(record, packet):
     b4 = tip_forms.FormB4()
     b4.MEMORY    = record['tip_memory']

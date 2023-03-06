@@ -280,7 +280,8 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
                     if followup_match in ['', '0']:
                         return False
                 except KeyError:
-                    print("Could not find a REDCap field for TFP Z1X form.", file=err)
+                    print("Could not find a REDCap field for TFP Z1X form.",
+                          file=err)
                     return False
     elif options.tfp3:
         event_name = 'tele'
@@ -366,16 +367,17 @@ def set_blanks_to_zero(packet):
     try:
         if packet['PARKSIGN'] == 1:
             set_to_zero_if_blank(
-                'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL', 'RIGIDR',
-                'BRADY', 'PARKGAIT', 'POSTINST')
+                'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL',
+                'RIGIDR', 'BRADY', 'PARKGAIT', 'POSTINST')
     except KeyError:
         pass
 
     # B8 3.
     try:
         if packet['CVDSIGNS'] == 1:
-            set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
-                                'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
+            set_to_zero_if_blank(
+                'CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR', 'CORTVISL',
+                'CORTVISR', 'SOMATL', 'SOMATR')
     except KeyError:
         pass
 
@@ -409,11 +411,11 @@ def set_blanks_to_zero(packet):
     # D1 11-39.
     try:
         set_to_zero_if_blank(
-            'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS', 'CVD',
-            'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH', 'EPILEP',
-            'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP', 'ANXIET',
-            'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB', 'DYSILL', 'MEDS',
-            'COGOTH', 'COGOTH2', 'COGOTH3')
+            'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS',
+            'CVD', 'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH',
+            'EPILEP', 'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP',
+            'ANXIET', 'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB',
+            'DYSILL', 'MEDS', 'COGOTH', 'COGOTH2', 'COGOTH3')
     except KeyError:
         pass
 
@@ -631,7 +633,7 @@ def parse_args(args=None):
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
     if not (options.ivp or options.fvp or options.tip or options.tfp or
-            options.tfp3 or options.np or options.m or options.csf or 
+            options.tfp3 or options.np or options.m or options.csf or
             options.cv or options.filter):
         options.ivp = True
 

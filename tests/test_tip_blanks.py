@@ -1,7 +1,6 @@
 import unittest
 
 from nacc import redcap2nacc
-from nacc.uds3 import blanks
 from nacc.uds3.tip.builder import build_uds3_tip_form
 
 
