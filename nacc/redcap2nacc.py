@@ -35,6 +35,7 @@ from nacc.cv import builder as cv_builder
 from nacc.uds3 import filters
 from nacc.uds3 import packet as uds3_packet
 from nacc.uds3 import Field
+from nacc.logger import db_logger
 
 
 def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
@@ -257,6 +258,13 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
                         return False
                 except KeyError:
                     print("Could not find a REDCap field for TFP Z1X form.", file=err)
+                    db_logger.log_error(
+                        "Could not find a REDCap field for TFP Z1X form",
+                        data={
+                            ptid: record['ptid'],
+                            error: "Could not find a REDCap field for TFP Z1X form"
+                        },
+                        sheet='error')
                     return False
     elif options.tfp3:
         event_name = 'tele'
@@ -346,7 +354,7 @@ def set_blanks_to_zero(packet):
     try:
         if packet['CVDSIGNS'] == 1:
             set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
-                                'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
+                                 'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
     except KeyError:
         pass
 
@@ -365,7 +373,7 @@ def set_blanks_to_zero(packet):
     try:
         if packet['DEMENTED'] == 1:
             set_to_zero_if_blank(
-                    'AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
+                'AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
     except KeyError:
         pass
 
@@ -373,7 +381,7 @@ def set_blanks_to_zero(packet):
     try:
         if packet['DEMENTED'] == 0:
             set_to_zero_if_blank(
-                    'MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
+                'MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
     except KeyError:
         pass
 
@@ -397,6 +405,8 @@ def set_blanks_to_zero(packet):
 
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
+    global db_logger
+
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
     for record in reader:
@@ -408,6 +418,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 continue
 
         print("[START] ptid : " + str(record['ptid']), file=err)
+        db_logger.log_info('[START] ptid: {}'.format(record['ptid']))
         try:
             if options.lbd and options.ivp:
                 packet = lbd_ivp_builder.build_lbd_ivp_form(record)
@@ -442,6 +453,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             if 'ptid' in record:
                 print("[SKIP] Error for ptid : " + str(record['ptid']),
                       file=err)
+                db_logger.log_error(
+                    '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                    data={ptid: record['ptid'], error: 'Unknown'},
+                    sheet="error")
             traceback.print_exc()
             continue
 
@@ -457,6 +472,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             warnings += check_blanks(packet, options)
         except KeyError:
             print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            db_logger.log_error(
+                '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                data={ptid: record['ptid'], error: 'Unknown'},
+                sheet="error")
             traceback.print_exc()
             continue
 
@@ -464,6 +483,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             warnings += check_characters(packet)
         except KeyError:
             print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            db_logger.log_error(
+                '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                data={ptid: record['ptid'], error: 'Unknown'},
+                sheet="error")
             traceback.print_exc()
             continue
 
@@ -473,6 +496,11 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             warn = "\n".join(map(str, warnings))
             warn = warn.replace("\\", "")
             print(warn, file=err)
+            db_logger.log_error(
+                '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                data={ptid: record['ptid'],
+                      error: ",".join(map(str, warnings))},
+                sheet="error")
             continue
 
         if not options.np and not options.m and not options.lbd and not \
@@ -487,6 +515,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             except AssertionError:
                 print("[SKIP] Error for ptid : " + str(record['ptid']),
                       file=err)
+                db_logger.log_error(
+                    '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                    data={ptid: record['ptid'], error: 'Assertion failed'},
+                    sheet="error")
                 traceback.print_exc()
                 continue
 
