@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2020 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -11,7 +11,10 @@ from nacc.uds3 import packet as ftld_fvp_packet
 
 
 def build_ftld_fvp_form(record: dict, err=sys.stderr):
-    ''' Converts REDCap CSV data into a packet (list of FVP Form objects) '''
+    """
+    Populates a Packet object with a record of REDCap CSV-read data (list of
+    FVP Form objects)
+    """
     packet = ftld_fvp_packet.Packet()
 
     # Set up the forms..........
@@ -492,6 +495,7 @@ def add_e3f(record, packet):
 
 
 def update_header(record, packet):
+    """ The header must be printed for each row of text output """
     for header in packet:
         header.PACKET = "FF"
         header.FORMID = header.form_name

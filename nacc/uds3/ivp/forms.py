@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright 2015-2016 University of Florida. All rights reserved.
+# Copyright 2015-2023 University of Florida. All rights reserved.
 # This file is part of UF CTS-IT's NACCulator project.
 # Use of this source code is governed by the license found in the LICENSE file.
 ###############################################################################
@@ -16,6 +16,7 @@ CURRENT_YEAR = date.today().year
 
 
 class FormA4G(nacc.uds3.FieldBag):
+    """ A4 is handled separately because it is a repeatable form """
     def __init__(self):
         self.fields = header_fields()
         self.fields['ANYMEDS'] = nacc.uds3.Field(name='ANYMEDS',
@@ -25,8 +26,13 @@ class FormA4G(nacc.uds3.FieldBag):
 
 ### END non-generated code
 
+# This packet is for the UDS3 IVP (Initial Visit) forms
+
 
 def header_fields():
+    """
+    Generates the header info that appears in columns 1-43 of every form
+    """
     fields = {}
     fields['PACKET'] = nacc.uds3.Field(name='PACKET', typename='Char', position=(1, 2), length=2, inclusive_range=None, allowable_values=[], blanks=[])
     fields['FORMID'] = nacc.uds3.Field(name='FORMID', typename='Char', position=(4, 6), length=3, inclusive_range=None, allowable_values=[], blanks=[])
