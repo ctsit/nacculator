@@ -33,6 +33,7 @@ setup(
 
     install_requires=[
         "PyCap>=2.1.0"
+        "python_db_logger @ git+ssh://git@github.com:/ctsit/python_db_logger.git"
     ],
 
     python_requires=">=3.6.0",
