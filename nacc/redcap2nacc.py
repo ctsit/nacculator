@@ -405,8 +405,6 @@ def set_blanks_to_zero(packet):
 
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
-    global db_logger
-
     """Converts data in REDCap's CSV format to NACC's fixed-width format."""
     reader = csv.DictReader(fp)
     for record in reader:
