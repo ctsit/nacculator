@@ -11,6 +11,7 @@ instances from one file to another.
 """
 
 db_logger: DBLogger = DBLogger(
-    logging.getLogger(('')),
-    ConnectionHelper(dot_env_file='.env')
+    logging.getLogger(('nacculator-db-logger')),
+    ConnectionHelper(dot_env_file='.env').connect_to_mysql(),
+    write_to_prod=True
 )

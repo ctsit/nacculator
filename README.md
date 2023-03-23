@@ -383,9 +383,9 @@ folder, which should contain any "corrected" DEDs._
 ## MySQL setup for Python DB Logger
 To enable local database logging with Python DB Logger,
 1. Create a copy of example.env:
-    - `cp example.env .env`
+    - `cp db_logger.env.example .env`
 2. Start the mysql container
-    - `cd ./containers/mysql && docker compose up -d`
+    - `cd .containers/mysql && docker compose up -d`
 
 ### Resources
 
