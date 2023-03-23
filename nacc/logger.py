@@ -10,8 +10,11 @@ we don't have to worry about creating and passing the dbLogger
 instances from one file to another.
 """
 
+logging_instance = logging.getLogger('nacculator-db-logger')
+logging_instance.setLevel(logging.DEBUG)
+
 db_logger: DBLogger = DBLogger(
-    logging.getLogger(('nacculator-db-logger')),
+    logging_instance,
     ConnectionHelper(dot_env_file='.env').connect_to_mysql(),
     write_to_prod=True
 )
