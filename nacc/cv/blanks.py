@@ -10,7 +10,7 @@ import re
 import sys
 
 
-def convert_rule_to_python(name: str, rule: str) -> bool:
+def convert_rule_to_python(name: str, rule: str, options) -> bool:
     """
     Converts the text `rule` into a python function.
 

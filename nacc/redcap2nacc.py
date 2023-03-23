@@ -21,6 +21,7 @@ from nacc.cv import blanks as blanks_cv
 from nacc.uds3.ivp import builder as ivp_builder
 from nacc.uds3.np import builder as np_builder
 from nacc.uds3.fvp import builder as fvp_builder
+from nacc.uds3.tip import builder as tip_builder
 from nacc.uds3.tfp import builder as tfp_builder
 from nacc.uds3.tfp.v3_2 import builder as tfp_new_builder
 from nacc.uds3.m import builder as m_builder
@@ -60,31 +61,36 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
             for rule in field.blanks:
                 if not options.lbd and not options.ftld and not options.csf \
                    and not options.cv:
-                    r = blanks_uds3.convert_rule_to_python(field.name, rule)
+                    r = blanks_uds3.convert_rule_to_python(field.name, rule,
+                                                           options)
                     if r(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.lbd:
-                    t = blanks_lbd.convert_rule_to_python(field.name, rule)
+                    t = blanks_lbd.convert_rule_to_python(field.name, rule,
+                                                          options)
                     if t(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.ftld:
-                    s = blanks_ftld.convert_rule_to_python(field.name, rule)
+                    s = blanks_ftld.convert_rule_to_python(field.name, rule,
+                                                           options)
                     if s(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.csf:
-                    q = blanks_csf.convert_rule_to_python(field.name, rule)
+                    q = blanks_csf.convert_rule_to_python(field.name, rule,
+                                                          options)
                     if q(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.cv:
-                    u = blanks_cv.convert_rule_to_python(field.name, rule)
+                    u = blanks_cv.convert_rule_to_python(field.name, rule,
+                                                         options)
                     if u(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
@@ -243,6 +249,20 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
         event_name = 'covid'
     elif options.np:
         event_name = 'neuropath'
+    elif options.tip:
+        event_name = 'initial'
+        try:
+            followup_match = record['tip_z1x_complete']
+            if followup_match in ['', '0']:
+                return False
+        except KeyError:
+            try:
+                followup_match = record['tip_z1x_checklist_complete']
+                if followup_match in ['', '0']:
+                    return False
+            except KeyError:
+                print("Could not find a REDCap field for TFP Z1X form.")
+                return False
     elif options.tfp:
         event_name = 'follow'
         try:
@@ -260,7 +280,8 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
                     if followup_match in ['', '0']:
                         return False
                 except KeyError:
-                    print("Could not find a REDCap field for TFP Z1X form.", file=err)
+                    print("Could not find a REDCap field for TFP Z1X form.",
+                          file=err)
                     return False
     elif options.tfp3:
         event_name = 'tele'
@@ -346,16 +367,17 @@ def set_blanks_to_zero(packet):
     try:
         if packet['PARKSIGN'] == 1:
             set_to_zero_if_blank(
-                'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL', 'RIGIDR',
-                'BRADY', 'PARKGAIT', 'POSTINST')
+                'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL',
+                'RIGIDR', 'BRADY', 'PARKGAIT', 'POSTINST')
     except KeyError:
         pass
 
     # B8 3.
     try:
         if packet['CVDSIGNS'] == 1:
-            set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
-                                'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
+            set_to_zero_if_blank(
+                'CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR', 'CORTVISL',
+                'CORTVISR', 'SOMATL', 'SOMATR')
     except KeyError:
         pass
 
@@ -389,11 +411,11 @@ def set_blanks_to_zero(packet):
     # D1 11-39.
     try:
         set_to_zero_if_blank(
-            'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS', 'CVD',
-            'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH', 'EPILEP',
-            'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP', 'ANXIET',
-            'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB', 'DYSILL', 'MEDS',
-            'COGOTH', 'COGOTH2', 'COGOTH3')
+            'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS',
+            'CVD', 'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH',
+            'EPILEP', 'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP',
+            'ANXIET', 'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB',
+            'DYSILL', 'MEDS', 'COGOTH', 'COGOTH2', 'COGOTH3')
     except KeyError:
         pass
 
@@ -470,6 +492,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 packet = np_builder.build_uds3_np_form(record)
             elif options.fvp:
                 packet = fvp_builder.build_uds3_fvp_form(record)
+            elif options.tip:
+                packet = tip_builder.build_uds3_tip_form(record)
             elif options.tfp:
                 packet = tfp_new_builder.build_uds3_tfp_new_form(record)
             elif options.tfp3:
@@ -488,7 +512,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 options.ftld or options.csf or options.cv):
             set_blanks_to_zero(packet)
 
-        if options.m or options.tfp:
+        if options.m or options.tfp or options.tip:
             blanks_uds3.set_zeros_to_blanks(packet)
 
         warnings = []
@@ -554,6 +578,9 @@ def parse_args(args=None):
         '-ivp', action='store_true', dest='ivp',
         help='Set this flag to process as ivp data')
     option_group.add_argument(
+        '-tip', action='store_true', dest='tip',
+        help='Set this flag to process as tip data')
+    option_group.add_argument(
         '-tfp', action='store_true', dest='tfp',
         help='Set this flag to process as tfp version 3.2 data')
     option_group.add_argument(
@@ -605,9 +632,9 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.tfp or options.tfp3 or
-            options.np or options.m or options.csf or options.cv or
-            options.filter):
+    if not (options.ivp or options.fvp or options.tip or options.tfp or
+            options.tfp3 or options.np or options.m or options.csf or
+            options.cv or options.filter):
         options.ivp = True
 
     return options

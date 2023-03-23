@@ -11,6 +11,7 @@ class option():
     csf = False
     lbd = False
     lbdsv = False
+    tip = False
     tfp = True
     tfp3 = False
     ftld = False

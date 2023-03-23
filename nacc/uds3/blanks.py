@@ -10,7 +10,7 @@ import re
 import sys
 
 
-def convert_rule_to_python(name: str, rule: str) -> bool:
+def convert_rule_to_python(name: str, rule: str, options) -> bool:
     """
     Converts the "rule" string into a python function using "blanks" from the
     associated forms.py file. The fieldname being checked here is "name".
@@ -58,14 +58,56 @@ def convert_rule_to_python(name: str, rule: str) -> bool:
         'TELMILE': _blanking_rule_telmile,
     }
 
+    if options.tip:
+        special_cases_tip = {
+            'INVISITS': _blanking_rule_tip_inlivwth,
+            'INCALLS': _blanking_rule_tip_inlivwth,
+            'MOCALANX': _blanking_rule_tip_mocalanx,
+            'NPSYLANX': _blanking_rule_tip_npsylanx,
+            'CRAFTURS': _blanking_rule_tip_crafturs,
+            'REY1INT': _blanking_rule_tip_rey1rec,
+            'REY2REC': _blanking_rule_tip_rey1rec,
+            'REY2INT': _blanking_rule_tip_rey1rec,
+            'REY3REC': _blanking_rule_tip_rey1rec,
+            'REY3INT': _blanking_rule_tip_rey1rec,
+            'REY4REC': _blanking_rule_tip_rey1rec,
+            'REY4INT': _blanking_rule_tip_rey1rec,
+            'REY5REC': _blanking_rule_tip_rey1rec,
+            'REY5INT': _blanking_rule_tip_rey1rec,
+            'REY6REC': _blanking_rule_tip_rey1rec,
+            'REY6INT': _blanking_rule_tip_rey1rec,
+            'DIGFORSL': blanking_rule_tip_digforsl,
+            'DIGBACLS': blanking_rule_tip_digbacls,
+            'OTRLARR': blanking_rule_tip_otraila,
+            'OTRLALI': blanking_rule_tip_otraila,
+            'OTRLBRR': blanking_rule_tip_otrailb,
+            'OTRLBLI': blanking_rule_tip_otrailb,
+            'CRAFTDRE': blanking_rule_tip_craftdvr,
+            'CRAFTDTI': blanking_rule_tip_craftdvr,
+            'CRAFTCUE': blanking_rule_tip_craftdvr,
+            'UDSVERFN': blanking_rule_tip_udsverfc,
+            'UDSVERNF': blanking_rule_tip_udsverfc,
+            'UDSVERLC': blanking_rule_tip_udsverfc,
+            'UDSVERLR': blanking_rule_tip_udsverlc,
+            'UDSVERLN': blanking_rule_tip_udsverlc,
+            'UDSVERTN': blanking_rule_tip_udsverlc,
+            'UDSVERTE': blanking_rule_tip_udsverlc,
+            'UDSVERTI': blanking_rule_tip_udsverlc,
+            'REYDINT': blanking_rule_tip_reydrec,
+            'REYTCOR': blanking_rule_tip_reydrec,
+            'REYFPOS': blanking_rule_tip_reydrec,
+            'RESPOTHX': blanking_rule_tip_respothx,
+        }
+        special_cases.update(special_cases_tip)
+
     # The regex needs to have a lot of flexibility due to inconsistent naming
     # conventions in our source, NACC's Data Element Dictionary (as seen in
     # forms.py)
     single_value = re.compile(
-        r"Blank if( Question(s?))? *\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
+        r"Blank if( Question(s?))? (#?)*\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<value>\d+)([^-]|$)")
     range_values = re.compile(
-        r"Blank if( Question(s?))? *\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
+        r"Blank if( Question(s?))? (#?)*\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<start>\d+)-(?P<stop>\d+)( |$)")
 
     # First, check to see if the rule is a "Special Case"
@@ -136,7 +178,7 @@ def _blanking_rule_ftldsubt():
     14d FTLDNOS ne 1
     """
     return lambda packet: packet['PSP'] != 1 and packet['CORT'] != 1 and \
-                          packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
+        packet['FTLDMO'] != 1 and packet['FTLDNOS'] != 1
 
 
 def _blanking_rule_learned():
@@ -158,6 +200,108 @@ def _blanking_rule_telmile():
     'Blank if this is the first telephone packet submitted for the subject.'
     """
     return lambda packet: packet['TELINPER'] in (1, 9)
+
+
+def _blanking_rule_tip_inlivwth():
+    """
+    This blanking rule is incorrect in the TIP data element dictionary. It
+    reads: 'Blank if #9. INLIVWTH ne 1 (Yes)' but it should be the opposite:
+    'Blank if Question 10 INLIVWTH = 1 (Yes)'
+    """
+    return lambda packet: packet['INLIVWTH'] == 1
+
+
+def _blanking_rule_tip_mocalanx():
+    """
+    'Blank if 1a MOCACOMP = 0 (No) or 1b MOCALAN = English (1) or Spanish (2)'
+    """
+    return lambda packet: packet['MOCACOMP'] == 0 or \
+        packet['MOCALAN'] in (1, 2)
+
+
+def _blanking_rule_tip_npsylanx():
+    """
+    'Blank if 2a NPSYLAN = English (1) or Spanish (2)'
+    """
+    return lambda packet: packet['NPSYLAN'] in (1, 2)
+
+
+def _blanking_rule_tip_crafturs():
+    """
+    'Blank if 3a CRAFTVRS = 95 - 98'
+    """
+    return lambda packet: packet['CRAFTVRS'] in (95, 96, 97, 98)
+
+
+def _blanking_rule_tip_rey1rec():
+    """
+    'Blank if 4a REY1REC 88, 95-98'
+    """
+    return lambda packet: packet['REY1REC'] in (88, 95, 96, 97, 98)
+
+
+def blanking_rule_tip_digforsl():
+    """
+    Blank if 5a DIGFORCT = 95 - 98
+    """
+    return lambda packet: packet['DIGFORCT'] in (95, 96, 97, 98)
+
+
+def blanking_rule_tip_digbacls():
+    """
+    'Blank if 6a DIGBACCT = 95 - 98'
+    """
+    return lambda packet: packet['DIGBACCT'] in (95, 96, 97, 98)
+
+
+def blanking_rule_tip_otraila():
+    """
+    'Blank if 7a OTRAILA = 888, 995 - 998'
+    """
+    return lambda packet: packet['OTRAILA'] in (888, 995, 996, 997, 998)
+
+
+def blanking_rule_tip_otrailb():
+    """
+    'Blank if 7b OTRAILB = 888, 995 - 998'
+    """
+    return lambda packet: packet['OTRAILB'] in (888, 995, 996, 997, 998)
+
+
+def blanking_rule_tip_craftdvr():
+    """
+    'Blank if 8a CRAFTDVR is 95 - 98'
+    """
+    return lambda packet: packet['CRAFTDVR'] in (95, 96, 97, 98)
+
+
+def blanking_rule_tip_udsverfc():
+    """
+    'Blank if 10a UDSVERFC is 95 - 98'
+    """
+    return lambda packet: packet['UDSVERFC'] in (95, 96, 97, 98)
+
+
+def blanking_rule_tip_udsverlc():
+    """
+    'Blank if 10d UDSVERLC is 95 - 98'
+    """
+    return lambda packet: packet['UDSVERLC'] in (95, 96, 97, 98)
+
+
+def blanking_rule_tip_reydrec():
+    """
+    'Blank if 11a REYDREC is 88, 95-98'
+    """
+    return lambda packet: packet['REYDREC'] in (88, 95, 96, 97, 98)
+
+
+def blanking_rule_tip_respothx():
+    """
+    'Blank if 14a RESPVAL = 1 or RESPOTH ne 1'
+    """
+    return lambda packet: packet['RESPVAL'] == 1 or \
+        packet['RESPOTH'] != 0
 
 
 def set_zeros_to_blanks(packet):

@@ -41,6 +41,19 @@ tele_respfatg___1: tele_respfatg
 tele_respemot___1: tele_respemot
 tele_respasst___1: tele_respasst
 tele_respoth___1: tele_respoth
+tip_resphear___1: tip_resphear
+tip_respdist___1: tip_respdist
+tip_respintr___1: tip_respintr
+tip_respdisn___1: tip_respdisn
+tip_respfatg___1: tip_respfatg
+tip_respemot___1: tip_respemot
+tip_respasst___1: tip_respasst
+tip_respoth___1: tip_respoth
+tip_strokedec: tip_strokdec
+tip_momoe: tip_mommoe
+tip_otherneur: tip_othneur
+tip_otherneurx: tip_othneurx
+ivp_z1x_form_checklist_complete: ivp_z1x_complete
 
 # Fills fields that are typically left blank in REDCap: 
 # adcid, nogds (automatically enters 0 if the field is blank), and formver = 3)

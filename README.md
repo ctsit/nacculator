@@ -32,7 +32,7 @@ NACCulator will automatically skip PTIDs with errors, so the output `data.txt`
 file will be ready to submit to NACC.
 In order to properly filter the data in the csv, NACCulator is expecting that
 REDCap visits (denoted by `redcap_event_name`) contain certain keywords:
-    "initial" for initial visit packets,
+    "initial" for initial visit and initial telephone packets,
     "follow" for all followups,
     "milestone" for milestone packets,
     "neuropath" for neuropathology packets,
@@ -65,6 +65,7 @@ the `-file` flag._
       -fvp                  Set this flag to process as FVP data
       -ivp                  Set this flag to process as IVP data
       -tfp                  Set this flag to process as Telephone Followup Packet v3.2 data
+      -tip                  Set this flag to process as Telephone Initial Packet data
       -tfp3                 Set this flag to process as TFP v3.0 (pre-2020) data
       -np                   Set this flag to process as Neuropathology data
       -m                    Set this flag to process as Milestone data
@@ -359,9 +360,9 @@ To run all the tests:
     $ python3 -m unittest
 
 
-To run only the tests in a file:
+To run only the tests in a specific file:
 
-    $ python3 tests/WHICHEVER_test.py
+    $ python3 tests/test_$SPECIFIC_FILE.py
 
 
 ### Generating Forms
