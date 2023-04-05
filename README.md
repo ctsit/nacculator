@@ -385,7 +385,7 @@ To enable local database logging with Python DB Logger,
 1. Create a copy of example.env:
     - `cp db_logger.env.example .env`
 2. Start the mysql container
-    - `cd .containers/mysql && docker compose up -d`
+    - `docker compose -f .containers/mysql/docker-compose.yml up -d`
 
 ### Resources
 
