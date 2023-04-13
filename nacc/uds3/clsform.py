@@ -1,5 +1,6 @@
 import datetime
 import sys
+from nacc.logger import db_logger
 
 
 def add_cls(record, packet, forms, err=sys.stderr):
@@ -54,6 +55,7 @@ def add_cls(record, packet, forms, err=sys.stderr):
         msg = "[WARNING] CLS form is incomplete for PTID: " \
             + ptid
         print(msg, file=err)
+        db_logger.log_warn(msg)
 
     # Otherwise, check percentages and dates before appending.
 
@@ -64,6 +66,7 @@ def add_cls(record, packet, forms, err=sys.stderr):
         msg = "[WARNING] eng_percentage_spanish is not an " \
             "integer for PTID: " + ptid
         print(msg, file=err)
+        db_logger.log_warn(msg)
 
     try:
         pct_eng = int(record['eng_percentage_english'])
@@ -71,11 +74,13 @@ def add_cls(record, packet, forms, err=sys.stderr):
         msg = "[WARNING] eng_percentage_english is not an " \
             "integer for PTID: " + ptid
         print(msg, file=err)
+        db_logger.log_warn(msg)
 
     if pct_eng + pct_spn != 100:
         msg = "[WARNING] language proficiency " + \
             "percentages do not equal 100 for PTID : " + ptid
         print(msg, file=err)
+        db_logger.log_warn(msg)
 
     visit_date = datetime.datetime(
         int(record['visityr']), int(record['visitmo']), 1)
@@ -83,11 +88,13 @@ def add_cls(record, packet, forms, err=sys.stderr):
     if visit_date < cls_added:
         message = "CLS forms should not be in " + \
             "packets from before June 1, 2017 for PTID: " + ptid
+        db_logger.log_error(message)
         raise Exception(message)
 
     if record['form_cls_linguistic_history_of_subject_complete'] != '2':
         message = "Could not parse packet as completed CLS form is not " + \
             "marked complete in REDCap for PTID: " + ptid
+        db_logger.log_error(message)
         raise Exception(message)
 
     packet.append(cls_form)
