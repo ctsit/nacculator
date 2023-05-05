@@ -59,13 +59,13 @@ class TestCLS(unittest.TestCase):
         ipacket = packet.Packet()
         itrap = StringIO()
         clsform.add_cls(record, ipacket, ivp_forms, itrap)
-        assert itrap.getvalue() == "[WARNING] CLS form is incomplete for PTID: unknown\n"
+        assert itrap.getvalue() == "[WARNING] CLS form is incomplete for PTID: unknown visit 1\n"
         itrap.close()
 
         fpacket = packet.Packet()
         ftrap = StringIO()
         clsform.add_cls(record, fpacket, fvp_forms, ftrap)
-        assert ftrap.getvalue() == "[WARNING] CLS form is incomplete for PTID: unknown\n"
+        assert ftrap.getvalue() == "[WARNING] CLS form is incomplete for PTID: unknown visit 1\n"
         ftrap.close()
 
     def test_cls_proficiency_not_100_has_warning(self):
@@ -80,13 +80,13 @@ class TestCLS(unittest.TestCase):
         ipacket = packet.Packet()
         itrap = StringIO()
         clsform.add_cls(record, ipacket, ivp_forms, itrap)
-        assert itrap.getvalue() == "[WARNING] language proficiency percentages do not equal 100 for PTID : unknown\n"
+        assert itrap.getvalue() == "[WARNING] CLS language proficiency percentages do not equal 100 for PTID : unknown visit 1\n"
         itrap.close()
 
         fpacket = packet.Packet()
         ftrap = StringIO()
         clsform.add_cls(record, fpacket, fvp_forms, ftrap)
-        assert ftrap.getvalue() == "[WARNING] language proficiency percentages do not equal 100 for PTID : unknown\n"
+        assert ftrap.getvalue() == "[WARNING] CLS language proficiency percentages do not equal 100 for PTID : unknown visit 1\n"
         ftrap.close()
 
     def test_check_cls_date(self):
@@ -156,6 +156,7 @@ def make_filled_record():
         'eng_proficiency_write_english': '1',
         'eng_proficiency_oral_english': '1',
         'hispanic': '1',    # This is from Form A1
+        'visitnum': '1',
         'visityr': '2018',
         'visitmo': '11',
         'form_cls_linguistic_history_of_subject_complete': '2',

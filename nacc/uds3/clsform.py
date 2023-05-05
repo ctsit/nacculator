@@ -52,7 +52,7 @@ def add_cls(record, packet, forms, err=sys.stderr):
     ptid = record.get('ptid', 'unknown')
     if num_filled_fields != total_fields:
         msg = "[WARNING] CLS form is incomplete for PTID: " \
-            + ptid
+            + ptid + " visit " + str(record['visitnum'])
         print(msg, file=err)
 
     # Otherwise, check percentages and dates before appending.
