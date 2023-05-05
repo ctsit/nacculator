@@ -61,19 +61,19 @@ def add_cls(record, packet, forms, err=sys.stderr):
     try:
         pct_spn = int(record['eng_percentage_spanish'])
     except ValueError:
-        msg = "[WARNING] eng_percentage_spanish is not an " \
+        msg = "[WARNING] CLS eng_percentage_spanish is not an " \
             "integer for PTID: " + ptid + " visit " + str(record['visitnum'])
         print(msg, file=err)
 
     try:
         pct_eng = int(record['eng_percentage_english'])
     except ValueError:
-        msg = "[WARNING] eng_percentage_english is not an " \
+        msg = "[WARNING] CLS eng_percentage_english is not an " \
             "integer for PTID: " + ptid + " visit " + str(record['visitnum'])
         print(msg, file=err)
 
     if pct_eng + pct_spn != 100:
-        msg = "[WARNING] language proficiency " + \
+        msg = "[WARNING] CLS language proficiency " + \
             "percentages do not equal 100 for PTID : " + ptid + " visit " + \
             str(record['visitnum'])
         print(msg, file=err)
