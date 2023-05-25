@@ -468,7 +468,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             if not event_match:
                 continue
 
-        print("[START] ptid : " + str(record['ptid']), file=err)
+        print("[START] ptid : " + str(record['ptid']) + " visit " +
+              str(record['visitnum']), file=err)
         try:
             if options.lbd and options.ivp:
                 packet = lbd_ivp_builder.build_lbd_ivp_form(record)
@@ -503,8 +504,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         except Exception:
             if 'ptid' in record:
-                print("[SKIP] Error for ptid : " + str(record['ptid']),
-                      file=err)
+                print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                      " visit " + str(record['visitnum']), file=err)
             traceback.print_exc()
             continue
 
@@ -519,20 +520,22 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         try:
             warnings += check_blanks(packet, options)
         except KeyError:
-            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                  " visit " + str(record['visitnum']), file=err)
             traceback.print_exc()
             continue
 
         try:
             warnings += check_characters(packet)
         except KeyError:
-            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                  " visit " + str(record['visitnum']), file=err)
             traceback.print_exc()
             continue
 
         if warnings:
-            print("[SKIP] Error for ptid : " + str(record['ptid']),
-                  file=err)
+            print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                  " visit " + str(record['visitnum']), file=err)
             warn = "\n".join(map(str, warnings))
             warn = warn.replace("\\", "")
             print(warn, file=err)
@@ -548,8 +551,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             try:
                 print(form, file=out)
             except AssertionError:
-                print("[SKIP] Error for ptid : " + str(record['ptid']),
-                      file=err)
+                print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                      " visit " + str(record['visitnum']), file=err)
                 traceback.print_exc()
                 continue
 
