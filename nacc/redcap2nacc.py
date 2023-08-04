@@ -550,8 +550,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             continue
 
         if warnings:
-            print("[SKIP] Error for ptid : " + str(record['ptid']),
-                  file=err)
+            print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                  " visit " + str(record['visitnum']), file=err)
             warn = "\n".join(map(str, warnings))
             warn = warn.replace("\\", "")
             print(warn, file=err)
