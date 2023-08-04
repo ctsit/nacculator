@@ -19,4 +19,7 @@ nacculator_cfg.ini
 .DS_STORE
 .env
 logs/*
-venv
+
+# virtual environment folders .venv is standard, venv is legacy non-standard path
+.venv/ 
+venv/
