@@ -4,7 +4,8 @@ import csv
 import datetime
 import configparser
 from nacc.uds3.filters import *
-from nacc.logger import db_logger
+from nacc.logger import report_handler
+import logging
 
 
 # Creating a folder which contains Intermediate files
@@ -27,7 +28,8 @@ def run_all_filters(folder_name, config, input_name):
     # Calling Filters
     try:
         print("--------------Removing subjects already in current--------------------", file=sys.stderr)
-        db_logger.log_info('Removing subjects already in current')
+        # db_logger.log_info('Removing subjects already in current')
+        logging.info('Removing subjects already in current')
         if input_name:
             input_path = input_name
         else:
@@ -39,7 +41,8 @@ def run_all_filters(folder_name, config, input_name):
             filter_clean_ptid(input_ptr, config, output_ptr)
 
         print("--------------Replacing drug IDs--------------------", file=sys.stderr)
-        db_logger.log_info('Replacing drug IDs')
+        # db_logger.log_info('Replacing drug IDs')
+        logging.info('Replacing drug IDs')
 
         input_path = os.path.join(folder_name, "clean.csv")
         output_path = os.path.join(folder_name, "drugs.csv")
@@ -47,7 +50,8 @@ def run_all_filters(folder_name, config, input_name):
             filter_replace_drug_id(input_ptr, config, output_ptr)
 
         print("--------------Fixing Headers--------------------", file=sys.stderr)
-        db_logger.log_info('Fixing Headers')
+        # db_logger.log_info('Fixing Headers')
+        logging.info('Fixing Headers')
 
         input_path = os.path.join(folder_name, "drugs.csv")
         output_path = os.path.join(folder_name, "clean_headers.csv")
@@ -55,7 +59,8 @@ def run_all_filters(folder_name, config, input_name):
             filter_fix_headers(input_ptr, config, output_ptr)
 
         print("--------------Filling in Defaults--------------------", file=sys.stderr)
-        db_logger.log_info('Filling in Defaults')
+        # db_logger.log_info('Filling in Defaults')
+        logging.info('Filling in Defaults')
 
         input_path = os.path.join(folder_name, "clean_headers.csv")
         output_path = os.path.join(folder_name, "default.csv")
@@ -63,15 +68,16 @@ def run_all_filters(folder_name, config, input_name):
             filter_fill_default(input_ptr, config, output_ptr)
 
         print("--------------Updating fields--------------------", file=sys.stderr)
-        db_logger.log_info('Updating fields')
+        # db_logger.log_info('Updating fields')
+        logging.info('Updating fields')
 
         input_path = os.path.join(folder_name, "default.csv")
         output_path = os.path.join(folder_name, "update_fields.csv")
         with open(output_path, 'w') as output_ptr, open(input_path, 'r') as input_ptr:
-            filter_update_field(input_ptr, config, output_ptr)
+             (input_ptr, config, output_ptr)
 
         print("--------------Fixing Visit Dates--------------------", file=sys.stderr)
-        db_logger.log_info('Fixing visit dates')
+        logging.info('Fixing visit dates')
 
         input_path = os.path.join(folder_name, "update_fields.csv")
         output_path = os.path.join(folder_name, "proper_visitdate.csv")
@@ -79,14 +85,14 @@ def run_all_filters(folder_name, config, input_name):
             filter_fix_visitdate(input_ptr, config, output_ptr)
 
         print("--------------Removing Unnecessary Records--------------------", file=sys.stderr)
-        db_logger.log_info('Removing Unnecessary Records')
+        logging.info('Removing Unnecessary Records')
         input_path = os.path.join(folder_name, "proper_visitdate.csv")
         output_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
         with open(output_path, 'w') as output_ptr, open(input_path, 'r') as input_ptr:
             filter_remove_ptid(input_ptr, config, output_ptr)
 
         print("--------------Removing Records without VisitDate--------------------", file=sys.stderr)
-        db_logger.log_info('Removing Records without VisitDate')
+        logging.info('Removing Records without VisitDate')
         input_path = os.path.join(folder_name, "CleanedPtid_Update.csv")
         output_path = os.path.join(folder_name, "final_Update.csv")
         with open(output_path, 'w') as output_ptr, open(input_path, 'r') as input_ptr:
@@ -94,10 +100,18 @@ def run_all_filters(folder_name, config, input_name):
 
     except Exception as e:
         print("Error in Opening a file")
-        db_logger.log_error('Error in Opening a file',
-                            data={ptid: None,
-                                  error: f'Error in Opening a file: {e}'},
-                            sheet='error')
+        # db_logger.log_error('Error in Opening a file',
+        #                     data={ptid: None,
+        #                           error: f'Error in Opening a file: {e}'},
+        #                     sheet='error')
+        logging.error('Error in Opening a file',
+                      extra={
+                          "report_handler": {
+                              "data": {"ptid": None,
+                                       "error": f'Error in Opening a file: {e}'},
+                              "sheet": 'error'
+                          }
+                      })
         print(e)
 
     return
