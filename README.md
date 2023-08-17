@@ -381,13 +381,6 @@ first.
 _Note: execute `generator.py` from the same folder as the `corrected`
 folder, which should contain any "corrected" DEDs._
 
-## MySQL setup for Python DB Logger
-To enable local database logging with Python DB Logger,
-1. Create a copy of example.env:
-    - `cp db_logger.env.example .env`
-2. Start the mysql container
-    - `docker compose -f .containers/mysql/docker-compose.yml up -d`
-
 ### Resources
 
 * UDS3 forms: https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/UDS3csvded.html

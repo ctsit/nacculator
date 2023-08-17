@@ -36,7 +36,8 @@ from nacc.cv import builder as cv_builder
 from nacc.uds3 import filters
 from nacc.uds3 import packet as uds3_packet
 from nacc.uds3 import Field
-from nacc.logger import report_handler
+from nacc.logger import configure_logging
+from report_handler.report_handler import ReportHandler
 import logging
 
 
@@ -283,13 +284,6 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
                         return False
                 except KeyError:
                     print("Could not find a REDCap field for TFP Z1X form.", file=err)
-                    # db_logger.log_error(
-                    #     "Could not find a REDCap field for TFP Z1X form",
-                    #     data={
-                    #         ptid: record['ptid'],
-                    #         error: "Could not find a REDCap field for TFP Z1X form"
-                    #     },
-                    #     sheet='error')
                     logging.error(
                         "Could not find a REDCap field for TFP Z1X form",
                         extra={
@@ -488,7 +482,6 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 continue
 
         print("[START] ptid : " + str(record['ptid']), file=err)
-        # db_logger.log_info('[START] ptid: {}'.format(record['ptid']))
         logging.info('[START] ptid: {}'.format(record['ptid']))
         try:
             if options.lbd and options.ivp:
@@ -526,10 +519,6 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             if 'ptid' in record:
                 print("[SKIP] Error for ptid : " + str(record['ptid']),
                       file=err)
-                # db_logger.log_error(
-                #     '[SKIP] Error for ptid : {}'.format(record['ptid']),
-                #     data={ptid: record['ptid'], error: 'Unknown'},
-                #     sheet="error")
                 logging.error(
                     '[SKIP] Error for ptid : {}'.format(record['ptid']),
                     extra={
@@ -553,10 +542,6 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             warnings += check_blanks(packet, options)
         except KeyError:
             print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
-            # db_logger.log_error(
-            #     '[SKIP] Error for ptid : {}'.format(record['ptid']),
-            #     data={ptid: record['ptid'], error: 'Unknown'},
-            #     sheet="error")
             logging.error(
                 '[SKIP] Error for ptid : {}'.format(record['ptid']),
                 extra={
@@ -572,10 +557,6 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             warnings += check_characters(packet)
         except KeyError:
             print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
-            # db_logger.log_error(
-            #     '[SKIP] Error for ptid : {}'.format(record['ptid']),
-            #     data={ptid: record['ptid'], error: 'Unknown'},
-            #     sheet="error")
             logging.error(
                 '[SKIP] Error for ptid : {}'.format(record['ptid']),
                 extra={
@@ -593,11 +574,6 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             warn = "\n".join(map(str, warnings))
             warn = warn.replace("\\", "")
             print(warn, file=err)
-            # db_logger.log_error(
-            #     '[SKIP] Error for ptid : {}'.format(record['ptid']),
-            #     data={ptid: record['ptid'],
-            #           error: ",".join(map(str, warnings))},
-            #     sheet="error")
             logging.error(
                 '[SKIP] Error for ptid : {}'.format(record['ptid']),
                 extra={
@@ -620,10 +596,6 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             except AssertionError:
                 print("[SKIP] Error for ptid : " + str(record['ptid']),
                       file=err)
-                # db_logger.log_error(
-                #     '[SKIP] Error for ptid : {}'.format(record['ptid']),
-                #     data={ptid: record['ptid'], error: 'Assertion failed'},
-                #     sheet="error")
                 logging.error(
                     '[SKIP] Error for ptid : {}'.format(record['ptid']),
                     extra={
@@ -730,6 +702,9 @@ def main():
 
     fp = sys.stdin if options.file is None else open(options.file, 'r')
 
+    report_handler = ReportHandler()
+    configure_logging(options, [report_handler])
+
     # Default option is to print out directly to the command terminal.
     # If you want to print the output to a specific file, then redirect
     # stdout to that filename.
@@ -746,7 +721,6 @@ def main():
     else:
         convert(fp, options)
 
-    # db_logger.generate_report()
     report_handler.write_report()
 
 

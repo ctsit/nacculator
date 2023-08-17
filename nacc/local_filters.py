@@ -28,7 +28,6 @@ def run_all_filters(folder_name, config, input_name):
     # Calling Filters
     try:
         print("--------------Removing subjects already in current--------------------", file=sys.stderr)
-        # db_logger.log_info('Removing subjects already in current')
         logging.info('Removing subjects already in current')
         if input_name:
             input_path = input_name
@@ -41,7 +40,6 @@ def run_all_filters(folder_name, config, input_name):
             filter_clean_ptid(input_ptr, config, output_ptr)
 
         print("--------------Replacing drug IDs--------------------", file=sys.stderr)
-        # db_logger.log_info('Replacing drug IDs')
         logging.info('Replacing drug IDs')
 
         input_path = os.path.join(folder_name, "clean.csv")
@@ -50,7 +48,6 @@ def run_all_filters(folder_name, config, input_name):
             filter_replace_drug_id(input_ptr, config, output_ptr)
 
         print("--------------Fixing Headers--------------------", file=sys.stderr)
-        # db_logger.log_info('Fixing Headers')
         logging.info('Fixing Headers')
 
         input_path = os.path.join(folder_name, "drugs.csv")
@@ -59,7 +56,6 @@ def run_all_filters(folder_name, config, input_name):
             filter_fix_headers(input_ptr, config, output_ptr)
 
         print("--------------Filling in Defaults--------------------", file=sys.stderr)
-        # db_logger.log_info('Filling in Defaults')
         logging.info('Filling in Defaults')
 
         input_path = os.path.join(folder_name, "clean_headers.csv")
@@ -68,7 +64,6 @@ def run_all_filters(folder_name, config, input_name):
             filter_fill_default(input_ptr, config, output_ptr)
 
         print("--------------Updating fields--------------------", file=sys.stderr)
-        # db_logger.log_info('Updating fields')
         logging.info('Updating fields')
 
         input_path = os.path.join(folder_name, "default.csv")
@@ -100,10 +95,6 @@ def run_all_filters(folder_name, config, input_name):
 
     except Exception as e:
         print("Error in Opening a file")
-        # db_logger.log_error('Error in Opening a file',
-        #                     data={ptid: None,
-        #                           error: f'Error in Opening a file: {e}'},
-        #                     sheet='error')
         logging.error('Error in Opening a file',
                       extra={
                           "report_handler": {

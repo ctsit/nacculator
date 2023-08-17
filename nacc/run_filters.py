@@ -88,10 +88,6 @@ def run_all_filters(folder_name, config):
 
     except Exception as e:
         print("Error in Opening a file")
-        # db_logger.log_error('Error in Opening a file',
-        #                     data={ptid: None,
-        #                           error: f'Error in Opening a file: {e}'},
-        #                     sheet='error')
         logging.error('Error in Opening a file',
                       extra={
                           "report_handler": {
@@ -121,12 +117,6 @@ def get_data_from_redcap_pycap(folder_name, config):
         redcap_url = config.get('pycap', 'redcap_server')
     except Exception as e:
         print("Please check the config file and validate all the proper fields exist", file=sys.stderr)
-        # db_logger.log_error('Please check the config file and validate all the proper fields exist',
-        #                     data={
-        #                         ptid: None,
-        #                         error: f'Please check the config file and validate all the proper fields exist : {e}'
-        #                     },
-        #                     sheet='error')
         logging.error('Please check the config file and validate all the proper fields exist',
                       extra={
                           "report_handler": {
@@ -181,10 +171,6 @@ def get_data_from_redcap_pycap(folder_name, config):
                         writer.writerow(row)
         except Exception as e:
             print("Error in Writing")
-            # db_logger.log_error('Error in writing',
-            #                     data={ptid: None, error: f'Error in writing: {e}'},
-            #                     sheet='error'
-            #                     )
             logging.error('Error in writing',
                           extra={
                               "report_handler": {
@@ -197,11 +183,6 @@ def get_data_from_redcap_pycap(folder_name, config):
 
     except Exception as e:
         print("Error in CSV file")
-        # db_logger.log_error('Error in CSV file',
-        #                     data={ptid: None,
-        #                           error: f'Error in CSV file: {e}'},
-        #                     sheet='error'
-        #                     )
         logging.error('Error in CSV file',
                       extra={
                           "report_handler": {
