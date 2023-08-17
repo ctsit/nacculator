@@ -69,7 +69,7 @@ def run_all_filters(folder_name, config, input_name):
         input_path = os.path.join(folder_name, "default.csv")
         output_path = os.path.join(folder_name, "update_fields.csv")
         with open(output_path, 'w') as output_ptr, open(input_path, 'r') as input_ptr:
-             (input_ptr, config, output_ptr)
+            (input_ptr, config, output_ptr)
 
         print("--------------Fixing Visit Dates--------------------", file=sys.stderr)
         logging.info('Fixing visit dates')
