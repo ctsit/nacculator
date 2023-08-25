@@ -1,6 +1,5 @@
 import datetime
 import sys
-from nacc.logger import report_handler
 import logging
 
 

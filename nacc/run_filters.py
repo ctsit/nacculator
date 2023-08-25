@@ -5,8 +5,6 @@ import datetime
 import configparser
 from redcap import Project
 from nacc.uds3.filters import *
-# from nacc.logger import db_logger
-from nacc.logger import report_handler
 import logging
 
 

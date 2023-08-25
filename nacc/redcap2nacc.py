@@ -524,7 +524,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                     extra={
                         "report_handler": {
                             "data": {"ptid": record['ptid'], "error": 'Unknown'},
-                            "sheet": "error"
+                            "sheet": "ERROR"
                         }
                     })
             traceback.print_exc()
@@ -547,7 +547,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 extra={
                     "report_handler": {
                         "data": {"ptid": record['ptid'], "error": 'Unknown'},
-                        "sheet": "error"
+                        "sheet": "ERROR"
                     }
                 })
             traceback.print_exc()
@@ -562,7 +562,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 extra={
                     "report_handler": {
                         "data": {"ptid": record['ptid'], "error": 'Unknown'},
-                        "sheet": "error"
+                        "sheet": "ERROR"
                     }
                 })
             traceback.print_exc()
@@ -579,7 +579,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 extra={
                     "report_handler": {
                         "data": {"ptid": record['ptid'], "error": ",".join(map(str, warnings))},
-                        "sheet": "error"
+                        "sheet": "ERROR"
                     }
                 })
             continue
@@ -601,7 +601,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                     extra={
                         "report_handler": {
                             "data": {"ptid": record['ptid'], "error": 'Assertion failed'},
-                            "sheet": "error"
+                            "sheet": "ERROR"
                         }
                     })
                 traceback.print_exc()
@@ -710,18 +710,21 @@ def main():
     # stdout to that filename.
     output = sys.stdout
 
-    if options.filter:
-        if options.filter == "getPtid":
-            filters.filter_extract_ptid(
-                fp, options.ptid, options.vnum, options.vtype, output)
+    try:
+        if options.filter:
+            if options.filter == "getPtid":
+                filters.filter_extract_ptid(
+                    fp, options.ptid, options.vnum, options.vtype, output)
+            else:
+                filter_method = 'filter_' + filters_names[options.filter]
+                filter_func = getattr(filters, filter_method)
+                filter_func(fp, options.filter_meta, output)
         else:
-            filter_method = 'filter_' + filters_names[options.filter]
-            filter_func = getattr(filters, filter_method)
-            filter_func(fp, options.filter_meta, output)
-    else:
-        convert(fp, options)
-
-    report_handler.write_report()
+            convert(fp, options)
+    except Exception as e:
+        print(f"An exception occurred in main(): {str(e), str(e.__cause__), str(e.__context__), str(e.__traceback__), str(e.with_traceback())}")
+    finally:
+        report_handler.write_report("logs")
 
 
 if __name__ == '__main__':

@@ -4,7 +4,6 @@ import csv
 import datetime
 import configparser
 from nacc.uds3.filters import *
-from nacc.logger import report_handler
 import logging
 
 
