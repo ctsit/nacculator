@@ -292,7 +292,7 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
                                     "ptid": record['ptid'],
                                     "error": "Could not find a REDCap field for TFP Z1X form"
                                 },
-                                "sheet": 'error'
+                                "sheet": 'ERROR'
                             }
                         },
                     )
@@ -524,9 +524,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                     extra={
                         "report_handler": {
                             "data": {"ptid": record['ptid'], "error": 'Unknown'},
-                            "sheet": "ERROR"
+                            "sheet": "SKIP"
                         }
-                    })
+                    }
+                    )
             traceback.print_exc()
             continue
 
@@ -547,9 +548,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 extra={
                     "report_handler": {
                         "data": {"ptid": record['ptid'], "error": 'Unknown'},
-                        "sheet": "ERROR"
+                        "sheet": "SKIP"
                     }
-                })
+                }
+                )
             traceback.print_exc()
             continue
 
@@ -562,9 +564,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 extra={
                     "report_handler": {
                         "data": {"ptid": record['ptid'], "error": 'Unknown'},
-                        "sheet": "ERROR"
+                        "sheet": "SKIP"
                     }
-                })
+                }
+                )
             traceback.print_exc()
             continue
 
@@ -579,9 +582,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 extra={
                     "report_handler": {
                         "data": {"ptid": record['ptid'], "error": ",".join(map(str, warnings))},
-                        "sheet": "ERROR"
+                        "sheet": "SKIP"
                     }
-                })
+                }
+                )
             continue
 
         if not options.np and not options.m and not options.lbd and not \
@@ -601,9 +605,10 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                     extra={
                         "report_handler": {
                             "data": {"ptid": record['ptid'], "error": 'Assertion failed'},
-                            "sheet": "ERROR"
+                            "sheet": "SKIP"
                         }
-                    })
+                    }
+                    )
                 traceback.print_exc()
                 continue
 
@@ -721,6 +726,7 @@ def main():
                 filter_func(fp, options.filter_meta, output)
         else:
             convert(fp, options)
+        logging.info('Nacculator Ended')
     except Exception as e:
         print(f"An exception occurred in main(): {str(e), str(e.__cause__), str(e.__context__), str(e.__traceback__), str(e.with_traceback())}")
     finally:

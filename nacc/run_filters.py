@@ -91,9 +91,10 @@ def run_all_filters(folder_name, config):
                           "report_handler": {
                               "data": {"ptid": None,
                                        "error": f'Error in Opening a file: {e}'},
-                              "sheet": 'error'
+                              "sheet": 'ERROR'
                           }
-                      })
+                      }
+                      )
         print(e)
 
     return
@@ -122,9 +123,10 @@ def get_data_from_redcap_pycap(folder_name, config):
                                   "ptid": None,
                                   "error": f'Please check the config file and validate all the proper fields exist : {e}'
                               },
-                              "sheet": 'error'
+                              "sheet": 'ERROR'
                           }
-                      })
+                      }
+                      )
         print(e)
         raise e
 
@@ -173,7 +175,7 @@ def get_data_from_redcap_pycap(folder_name, config):
                           extra={
                               "report_handler": {
                                   "data": {"ptid": None, "error": f'Error in writing: {e}'},
-                                  "sheet": 'error'
+                                  "sheet": 'ERROR'
                               }
                           }
                           )
@@ -186,7 +188,7 @@ def get_data_from_redcap_pycap(folder_name, config):
                           "report_handler": {
                               "data": {"ptid": None,
                                        "error": f'Error in CSV file: {e}'},
-                              "sheet": 'error'
+                              "sheet": 'ERROR'
                           }
                       }
                       )

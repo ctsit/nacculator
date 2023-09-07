@@ -101,7 +101,8 @@ def run_all_filters(folder_name, config, input_name):
                                        "error": f'Error in Opening a file: {e}'},
                               "sheet": 'error'
                           }
-                      })
+                      }
+                      )
         print(e)
 
     return
