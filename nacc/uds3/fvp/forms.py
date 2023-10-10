@@ -57,7 +57,7 @@ class FormA2(nacc.uds3.FieldBag):
         self.fields['INBIRYR'] = nacc.uds3.Field(name='INBIRYR', typename='Num', position=(48, 51), length=4, inclusive_range=(1875, CURRENT_YEAR-15), allowable_values=['9999'], blanks=[])
         self.fields['INSEX'] = nacc.uds3.Field(name='INSEX', typename='Num', position=(53, 53), length=1, inclusive_range=(1, 2), allowable_values=['2', '1'], blanks=[])
         self.fields['NEWINF'] = nacc.uds3.Field(name='NEWINF', typename='Num', position=(55, 55), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=[])
-        self.fields['INHISP'] = nacc.uds3.Field(name='INHISP', typename='Num', position=(57, 57), length=1, inclusive_range=(0, 1), allowable_values=['1', '0'], blanks=['Blank if Question 3 NEWINF = 0 (No)'])
+        self.fields['INHISP'] = nacc.uds3.Field(name='INHISP', typename='Num', position=(57, 57), length=1, inclusive_range=(0, 1), allowable_values=['1', '0', '9'], blanks=['Blank if Question 3 NEWINF = 0 (No)'])
         self.fields['INHISPOR'] = nacc.uds3.Field(name='INHISPOR', typename='Num', position=(59, 60), length=2, inclusive_range=(1, 6), allowable_values=['50', '99', '3', '2', '1', '6', '5', '4'], blanks=['Blank if Question 4 INHISP ne 1 (Yes)'])
         self.fields['INHISPOX'] = nacc.uds3.Field(name='INHISPOX', typename='Char', position=(62, 121), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 4a INHISPOR ne 50 (Other)'])
         self.fields['INRACE'] = nacc.uds3.Field(name='INRACE', typename='Num', position=(123, 124), length=2, inclusive_range=(1, 5), allowable_values=['99', '3', '2', '1', '50', '5', '4'], blanks=['Blank if Question 3 NEWINF = 0 (No)'])
