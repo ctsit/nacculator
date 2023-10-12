@@ -57,6 +57,7 @@ def add_cls(record, packet, forms, err=sys.stderr):
             + ptid + " visit " + str(record['visitnum'])
         print(msg, file=err)
         logging.warning(msg)
+        return
 
     # Otherwise, check percentages and dates before appending.
 

@@ -301,6 +301,19 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
         event_name = 'tele'
     elif options.m:
         event_name = 'milestone'
+        try:
+            milestone_match = record['milestone_complete']
+            if milestone_match in ['', '0']:
+                return False
+        except KeyError:
+            try:
+                milestone_match = record['ee5_research_structural_mri_complete']
+                if milestone_match in ['', '0']:
+                    return False
+            except KeyError:
+                print("Could not find a REDCap field corresponding to the \
+                      Milestone form.",
+                      file=err)
 
     redcap_event = record['redcap_event_name']
     event_match = event_name in redcap_event
