@@ -104,10 +104,10 @@ def convert_rule_to_python(name: str, rule: str, options) -> bool:
     # conventions in our source, NACC's Data Element Dictionary (as seen in
     # forms.py)
     single_value = re.compile(
-        r"Blank if( Question(s?))? (#?)*\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
+        r"Blank (i|I)f( Question(s?))? (#?)*\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<value>\d+)([^-]|$)")
     range_values = re.compile(
-        r"Blank if( Question(s?))? (#?)*\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
+        r"Blank (i|I)f( Question(s?))? (#?)*\w+\.? (?P<key>\w+) *(?P<eq>=|ne)"
         r" (?P<start>\d+)-(?P<stop>\d+)( |$)")
 
     # First, check to see if the rule is a "Special Case"

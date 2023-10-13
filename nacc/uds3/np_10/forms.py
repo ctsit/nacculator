@@ -16,7 +16,7 @@ CURRENT_YEAR = date.today().year
 
 ### END non-generated code
 
-# This packet is for NP (Neuropath) forms
+# This packet is for NP (Neuropath) version 10 forms
 
 
 def header_fields():

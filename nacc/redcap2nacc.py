@@ -249,7 +249,10 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
     elif options.cv:
         event_name = 'covid'
     elif options.np:
-        event_name = 'neuropath'
+        if record['formver'] == '11' or record['formver_11'] == '11':
+            event_name = 'neuropath'
+        else:
+            return False
     elif options.np10:
         event_name = 'neuropath'
     elif options.tip:
@@ -304,6 +307,14 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
                       Milestone form.",
                       file=err)
 
+    if options.np or options.np10:
+        try:
+            if not record['redcap_event_name'] and not record['visitnum']:
+                record['redcap_event_name'] = 'neuropath'
+                record['visitnum'] = 'NP'
+        except KeyError:
+            record['redcap_event_name'] = 'neuropath'
+            record['visitnum'] = 'NP'
     redcap_event = record['redcap_event_name']
     event_match = event_name in redcap_event
     return event_match
@@ -608,10 +619,10 @@ def parse_args(args=None):
         '-tfp3', action='store_true', dest='tfp3',
         help='Set this flag to process as tfp version 3.0 (pre-June 2020) data')
     option_group.add_argument(
-        '-np', action='store_true', dest='np_11',
+        '-np', action='store_true', dest='np',
         help='Set this flag to process as np version 11 data')
     option_group.add_argument(
-        '-np10', action='store_true', dest='np_10',
+        '-np10', action='store_true', dest='np10',
         help='Set this flag to process as np version 10 data')
     option_group.add_argument(
         '-m', action='store_true', dest='m',
