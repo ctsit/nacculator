@@ -67,7 +67,8 @@ the `-file` flag._
       -tfp                  Set this flag to process as Telephone Followup Packet v3.2 data
       -tip                  Set this flag to process as Telephone Initial Packet data
       -tfp3                 Set this flag to process as TFP v3.0 (pre-2020) data
-      -np                   Set this flag to process as Neuropathology data
+      -np                   Set this flag to process as Neuropathology version 11 data
+      -np10                 Set this flag to process as Neuropathology version 10 data
       -m                    Set this flag to process as Milestone data
       -cv                   Set this flag to process as COVID data
       -csf                  Set this flag to process as NACC BIDSS CSF data
