@@ -249,8 +249,21 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
     elif options.cv:
         event_name = 'covid'
     elif options.np:
-        if record['formver'] == '11' or record['formver_11'] == '11':
-            event_name = 'neuropath'
+        try:
+            if record['formver'] == '11' or record['formver_11'] == '11':
+                event_name = 'neuropath'
+        except KeyError:
+            try:
+                if record['formver'] == '11':
+                    event_name = 'neuropath'
+            except KeyError:
+                try:
+                    if record['formver_11'] == '11':
+                        event_name = 'neuropath'
+                except KeyError:
+                    print("Could not find a REDCap field for Neuropath Form \
+                          version number (formver or formver_11).",
+                          file=err)
         else:
             return False
     elif options.np10:
