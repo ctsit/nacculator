@@ -18,6 +18,7 @@ class option():
     ivp = False
     fvp = False
     np = False
+    np10 = False
     m = False
 
 

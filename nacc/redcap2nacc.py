@@ -19,7 +19,8 @@ from nacc.ftld import blanks as blanks_ftld
 from nacc.csf import blanks as blanks_csf
 from nacc.cv import blanks as blanks_cv
 from nacc.uds3.ivp import builder as ivp_builder
-from nacc.uds3.np import builder as np_builder
+from nacc.uds3.np_11 import builder as np_11_builder
+from nacc.uds3.np_10 import builder as np_10_builder
 from nacc.uds3.fvp import builder as fvp_builder
 from nacc.uds3.tip import builder as tip_builder
 from nacc.uds3.tfp import builder as tfp_builder
@@ -248,6 +249,24 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
     elif options.cv:
         event_name = 'covid'
     elif options.np:
+        try:
+            if record['formver'] == '11' or record['formver_11'] == '11':
+                event_name = 'neuropath'
+        except KeyError:
+            try:
+                if record['formver'] == '11':
+                    event_name = 'neuropath'
+            except KeyError:
+                try:
+                    if record['formver_11'] == '11':
+                        event_name = 'neuropath'
+                except KeyError:
+                    print("Could not find a REDCap field for Neuropath Form \
+                          version number (formver or formver_11).",
+                          file=err)
+        else:
+            return False
+    elif options.np10:
         event_name = 'neuropath'
     elif options.tip:
         event_name = 'initial'
@@ -301,6 +320,14 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
                       Milestone form.",
                       file=err)
 
+    if options.np or options.np10:
+        try:
+            if not record['redcap_event_name'] and not record['visitnum']:
+                record['redcap_event_name'] = 'neuropath'
+                record['visitnum'] = 'NP'
+        except KeyError:
+            record['redcap_event_name'] = 'neuropath'
+            record['visitnum'] = 'NP'
     redcap_event = record['redcap_event_name']
     event_match = event_name in redcap_event
     return event_match
@@ -503,7 +530,9 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             elif options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
             elif options.np:
-                packet = np_builder.build_uds3_np_form(record)
+                packet = np_11_builder.build_uds3_np_form(record)
+            elif options.np10:
+                packet = np_10_builder.build_uds3_np_form(record)
             elif options.fvp:
                 packet = fvp_builder.build_uds3_fvp_form(record)
             elif options.tip:
@@ -522,8 +551,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not (options.np or options.m or options.lbd or options.lbdsv or
-                options.ftld or options.csf or options.cv):
+        if not (options.np or options.np10 or options.m or options.lbd or
+                options.lbdsv or options.ftld or options.csf or options.cv):
             set_blanks_to_zero(packet)
 
         if options.m or options.tfp or options.tip:
@@ -554,9 +583,9 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             print(warn, file=err)
             continue
 
-        if not options.np and not options.m and not options.lbd and not \
-           options.lbdsv and not options.ftld and not options.csf and not \
-           options.cv:
+        if not options.np and not options.np10 and not options.m and not \
+           options.lbd and not options.lbdsv and not options.ftld and not \
+           options.csf and not options.cv:
             warnings += check_single_select(packet)
 
         for form in packet:
@@ -604,7 +633,10 @@ def parse_args(args=None):
         help='Set this flag to process as tfp version 3.0 (pre-June 2020) data')
     option_group.add_argument(
         '-np', action='store_true', dest='np',
-        help='Set this flag to process as np data')
+        help='Set this flag to process as np version 11 data')
+    option_group.add_argument(
+        '-np10', action='store_true', dest='np10',
+        help='Set this flag to process as np version 10 data')
     option_group.add_argument(
         '-m', action='store_true', dest='m',
         help='Set this flag to process as m data')
@@ -649,8 +681,8 @@ def parse_args(args=None):
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
     if not (options.ivp or options.fvp or options.tip or options.tfp or
-            options.tfp3 or options.np or options.m or options.csf or
-            options.cv or options.filter):
+            options.tfp3 or options.np or options.np10 or options.m or
+            options.csf or options.cv or options.filter):
         options.ivp = True
 
     return options
