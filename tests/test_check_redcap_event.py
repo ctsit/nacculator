@@ -8,7 +8,9 @@ class option():
     lbdsv = False
     ftld = False
     csf = False
+    cv = False
     np = False
+    np10 = False
     m = False
     ivp = False
     fvp = False
@@ -72,6 +74,18 @@ class TestRedcapEvent(unittest.TestCase):
         self.options.lbd = True
         result = check_redcap_event(self.options, record)
         self.assertNotEqual(incorrect, result)
+
+    def test_for_np_no_event(self):
+        '''
+        Checks that the -np flag's redcap_event_name is optional.
+        This is because Neuropath data can come from separate REDCap projects
+        dedicated to NP and BDS data only.
+        redcap2nacc sets non-longitudinal NP events to "NP".
+        '''
+        self.options.np = True
+        record = {'formver_11': '11'}
+        result = check_redcap_event(self.options, record)
+        self.assertNotEqual('NP', result)
 
 
 if __name__ == "__main__":

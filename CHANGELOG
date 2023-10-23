@@ -1,5 +1,23 @@
 Changelog
 =========
+## [1.12.0] - 2023-10-23
+### Summary
+This release adds processing for Telephone Initial Packets and Neuropath version 11 to NACCulator. 
+
+### Added
+ * Add Neuropath 11 option to processing with complete form and builder files (Samantha Emerson)
+ * Split neuropath into versions 10 and 11 (Samantha Emerson)
+ * Add TIP to NACCulator options (Samantha Emerson)
+ * Add unit tests for tip (Samantha Emerson)
+ * Add visitnum to error and warning printouts (Samantha Emerson)
+ * Add vscode config submodule (Michael Bentz)
+ * Add 'CLS' to CLS warnings for clarity of which form is being talked about (Samantha Emerson)
+
+### Updated
+ * Add logic to milestone event detection to skip forms marked as Incomplete (0) (Samantha Emerson)
+ * Add skip to warning for incomplete CLS (Samantha Emerson)
+ * Update and add unit tests (Samantha Emerson)
+
 ## [1.11.0] - 2022-08-31
 ### Summary
 This release updates documentation on the developer end for the functions within NACCulator's code.

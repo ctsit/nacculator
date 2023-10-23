@@ -11,12 +11,14 @@ class option():
     csf = False
     lbd = False
     lbdsv = False
+    tip = False
     tfp = True
     tfp3 = False
     ftld = False
     ivp = False
     fvp = False
     np = False
+    np10 = False
     m = False
 
 

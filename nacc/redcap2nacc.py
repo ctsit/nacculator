@@ -19,8 +19,10 @@ from nacc.ftld import blanks as blanks_ftld
 from nacc.csf import blanks as blanks_csf
 from nacc.cv import blanks as blanks_cv
 from nacc.uds3.ivp import builder as ivp_builder
-from nacc.uds3.np import builder as np_builder
+from nacc.uds3.np_11 import builder as np_11_builder
+from nacc.uds3.np_10 import builder as np_10_builder
 from nacc.uds3.fvp import builder as fvp_builder
+from nacc.uds3.tip import builder as tip_builder
 from nacc.uds3.tfp import builder as tfp_builder
 from nacc.uds3.tfp.v3_2 import builder as tfp_new_builder
 from nacc.uds3.m import builder as m_builder
@@ -60,31 +62,36 @@ def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
             for rule in field.blanks:
                 if not options.lbd and not options.ftld and not options.csf \
                    and not options.cv:
-                    r = blanks_uds3.convert_rule_to_python(field.name, rule)
+                    r = blanks_uds3.convert_rule_to_python(field.name, rule,
+                                                           options)
                     if r(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.lbd:
-                    t = blanks_lbd.convert_rule_to_python(field.name, rule)
+                    t = blanks_lbd.convert_rule_to_python(field.name, rule,
+                                                          options)
                     if t(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.ftld:
-                    s = blanks_ftld.convert_rule_to_python(field.name, rule)
+                    s = blanks_ftld.convert_rule_to_python(field.name, rule,
+                                                           options)
                     if s(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.csf:
-                    q = blanks_csf.convert_rule_to_python(field.name, rule)
+                    q = blanks_csf.convert_rule_to_python(field.name, rule,
+                                                          options)
                     if q(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
 
                 if options.cv:
-                    u = blanks_cv.convert_rule_to_python(field.name, rule)
+                    u = blanks_cv.convert_rule_to_python(field.name, rule,
+                                                         options)
                     if u(packet):
                         blank_warnings(warnings, field.name, formid,
                                        field.value, len(field.value), rule)
@@ -242,7 +249,43 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
     elif options.cv:
         event_name = 'covid'
     elif options.np:
+        try:
+            if record['formver'] == '11' or record['formver_11'] == '11':
+                event_name = 'neuropath'
+            else:
+                return False
+        except KeyError:
+            try:
+                if record['formver'] == '11':
+                    event_name = 'neuropath'
+                else:
+                    return False
+            except KeyError:
+                try:
+                    if record['formver_11'] == '11':
+                        event_name = 'neuropath'
+                    else:
+                        return False
+                except KeyError:
+                    print("Could not find a REDCap field for Neuropath Form \
+                          version number (formver or formver_11).",
+                          file=err)
+    elif options.np10:
         event_name = 'neuropath'
+    elif options.tip:
+        event_name = 'initial'
+        try:
+            followup_match = record['tip_z1x_complete']
+            if followup_match in ['', '0']:
+                return False
+        except KeyError:
+            try:
+                followup_match = record['tip_z1x_checklist_complete']
+                if followup_match in ['', '0']:
+                    return False
+            except KeyError:
+                print("Could not find a REDCap field for TFP Z1X form.")
+                return False
     elif options.tfp:
         event_name = 'follow'
         try:
@@ -260,13 +303,35 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
                     if followup_match in ['', '0']:
                         return False
                 except KeyError:
-                    print("Could not find a REDCap field for TFP Z1X form.", file=err)
+                    print("Could not find a REDCap field for TFP Z1X form.",
+                          file=err)
                     return False
     elif options.tfp3:
         event_name = 'tele'
     elif options.m:
         event_name = 'milestone'
+        try:
+            milestone_match = record['milestone_complete']
+            if milestone_match in ['', '0']:
+                return False
+        except KeyError:
+            try:
+                milestone_match = record['ee5_research_structural_mri_complete']
+                if milestone_match in ['', '0']:
+                    return False
+            except KeyError:
+                print("Could not find a REDCap field corresponding to the \
+                      Milestone form.",
+                      file=err)
 
+    if options.np or options.np10:
+        try:
+            if not record['redcap_event_name'] and not record['visitnum']:
+                record['redcap_event_name'] = 'neuropath'
+                record['visitnum'] = 'NP'
+        except KeyError:
+            record['redcap_event_name'] = 'neuropath'
+            record['visitnum'] = 'NP'
     redcap_event = record['redcap_event_name']
     event_match = event_name in redcap_event
     return event_match
@@ -346,16 +411,17 @@ def set_blanks_to_zero(packet):
     try:
         if packet['PARKSIGN'] == 1:
             set_to_zero_if_blank(
-                'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL', 'RIGIDR',
-                'BRADY', 'PARKGAIT', 'POSTINST')
+                'RESTTRL', 'RESTTRR', 'SLOWINGL', 'SLOWINGR', 'RIGIDL',
+                'RIGIDR', 'BRADY', 'PARKGAIT', 'POSTINST')
     except KeyError:
         pass
 
     # B8 3.
     try:
         if packet['CVDSIGNS'] == 1:
-            set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
-                                'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
+            set_to_zero_if_blank(
+                'CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR', 'CORTVISL',
+                'CORTVISR', 'SOMATL', 'SOMATR')
     except KeyError:
         pass
 
@@ -389,11 +455,11 @@ def set_blanks_to_zero(packet):
     # D1 11-39.
     try:
         set_to_zero_if_blank(
-            'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS', 'CVD',
-            'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH', 'EPILEP',
-            'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP', 'ANXIET',
-            'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB', 'DYSILL', 'MEDS',
-            'COGOTH', 'COGOTH2', 'COGOTH3')
+            'ALZDIS', 'LBDIS', 'MSA', 'PSP', 'CORT', 'FTLDMO', 'FTLDNOS',
+            'CVD', 'ESSTREM', 'DOWNS', 'HUNT', 'PRION', 'BRNINJ', 'HYCEPH',
+            'EPILEP', 'NEOP', 'HIV', 'OTHCOG', 'DEP', 'BIPOLDX', 'SCHIZOP',
+            'ANXIET', 'DELIR', 'PTSDDX', 'OTHPSY', 'ALCDEM', 'IMPSUB',
+            'DYSILL', 'MEDS', 'COGOTH', 'COGOTH2', 'COGOTH3')
     except KeyError:
         pass
 
@@ -446,7 +512,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             if not event_match:
                 continue
 
-        print("[START] ptid : " + str(record['ptid']), file=err)
+        print("[START] ptid : " + str(record['ptid']) + " visit " +
+              str(record['visitnum']), file=err)
         try:
             if options.lbd and options.ivp:
                 packet = lbd_ivp_builder.build_lbd_ivp_form(record)
@@ -467,9 +534,13 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             elif options.ivp:
                 packet = ivp_builder.build_uds3_ivp_form(record)
             elif options.np:
-                packet = np_builder.build_uds3_np_form(record)
+                packet = np_11_builder.build_uds3_np_form(record)
+            elif options.np10:
+                packet = np_10_builder.build_uds3_np_form(record)
             elif options.fvp:
                 packet = fvp_builder.build_uds3_fvp_form(record)
+            elif options.tip:
+                packet = tip_builder.build_uds3_tip_form(record)
             elif options.tfp:
                 packet = tfp_new_builder.build_uds3_tfp_new_form(record)
             elif options.tfp3:
@@ -479,44 +550,46 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
         except Exception:
             if 'ptid' in record:
-                print("[SKIP] Error for ptid : " + str(record['ptid']),
-                      file=err)
+                print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                      " visit " + str(record['visitnum']), file=err)
             traceback.print_exc()
             continue
 
-        if not (options.np or options.m or options.lbd or options.lbdsv or
-                options.ftld or options.csf or options.cv):
+        if not (options.np or options.np10 or options.m or options.lbd or
+                options.lbdsv or options.ftld or options.csf or options.cv):
             set_blanks_to_zero(packet)
 
-        if options.m or options.tfp:
+        if options.m or options.tfp or options.tip:
             blanks_uds3.set_zeros_to_blanks(packet)
 
         warnings = []
         try:
             warnings += check_blanks(packet, options)
         except KeyError:
-            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                  " visit " + str(record['visitnum']), file=err)
             traceback.print_exc()
             continue
 
         try:
             warnings += check_characters(packet)
         except KeyError:
-            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                  " visit " + str(record['visitnum']), file=err)
             traceback.print_exc()
             continue
 
         if warnings:
-            print("[SKIP] Error for ptid : " + str(record['ptid']),
-                  file=err)
+            print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                  " visit " + str(record['visitnum']), file=err)
             warn = "\n".join(map(str, warnings))
             warn = warn.replace("\\", "")
             print(warn, file=err)
             continue
 
-        if not options.np and not options.m and not options.lbd and not \
-           options.lbdsv and not options.ftld and not options.csf and not \
-           options.cv:
+        if not options.np and not options.np10 and not options.m and not \
+           options.lbd and not options.lbdsv and not options.ftld and not \
+           options.csf and not options.cv:
             warnings += check_single_select(packet)
 
         for form in packet:
@@ -524,8 +597,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             try:
                 print(form, file=out)
             except AssertionError:
-                print("[SKIP] Error for ptid : " + str(record['ptid']),
-                      file=err)
+                print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                      " visit " + str(record['visitnum']), file=err)
                 traceback.print_exc()
                 continue
 
@@ -554,6 +627,9 @@ def parse_args(args=None):
         '-ivp', action='store_true', dest='ivp',
         help='Set this flag to process as ivp data')
     option_group.add_argument(
+        '-tip', action='store_true', dest='tip',
+        help='Set this flag to process as tip data')
+    option_group.add_argument(
         '-tfp', action='store_true', dest='tfp',
         help='Set this flag to process as tfp version 3.2 data')
     option_group.add_argument(
@@ -561,7 +637,10 @@ def parse_args(args=None):
         help='Set this flag to process as tfp version 3.0 (pre-June 2020) data')
     option_group.add_argument(
         '-np', action='store_true', dest='np',
-        help='Set this flag to process as np data')
+        help='Set this flag to process as np version 11 data')
+    option_group.add_argument(
+        '-np10', action='store_true', dest='np10',
+        help='Set this flag to process as np version 10 data')
     option_group.add_argument(
         '-m', action='store_true', dest='m',
         help='Set this flag to process as m data')
@@ -605,9 +684,9 @@ def parse_args(args=None):
     options = parser.parse_args(args)
     # Defaults to processing of ivp.
     # TODO this can be changed in future to process fvp by default.
-    if not (options.ivp or options.fvp or options.tfp or options.tfp3 or
-            options.np or options.m or options.csf or options.cv or
-            options.filter):
+    if not (options.ivp or options.fvp or options.tip or options.tfp or
+            options.tfp3 or options.np or options.np10 or options.m or
+            options.csf or options.cv or options.filter):
         options.ivp = True
 
     return options
