@@ -32,11 +32,11 @@ NACCulator will automatically skip PTIDs with errors, so the output `data.txt`
 file will be ready to submit to NACC.
 In order to properly filter the data in the csv, NACCulator is expecting that
 REDCap visits (denoted by `redcap_event_name`) contain certain keywords:
-    "initial" for initial visit and initial telephone packets,
-    "follow" for all followups,
+    "initial" for all initial visit packets (including telephone and optional modules such as lbd),
+    "follow" for all followups (including version 3.1 telephone and optional modules),
     "milestone" for milestone packets,
     "neuropath" for neuropathology packets,
-    "telephone" for telephone followup packets,
+    "tele" for old (version 3.0) telephone followups,
     "covid" for covid-related survey packets
 
 NACCulator collects data from the Z1X form first and uses that to determine the
@@ -54,8 +54,8 @@ the `-file` flag._
 
     $ redcap2nacc -h
     usage: redcap2nacc [-h]
-                       [-fvp | -ivp | -tfp | -np | -m | -cv | -csf | -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}]
-                       [-lbd | -ftld] [-file FILE] [-meta FILTER_META] [-ptid PTID]
+                       [-fvp | -ivp | -tip | -tfp | -tfp3 | -np | -np10 | -m | -cv | -csf | -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}]
+                       [-lbd | lbdsv | -ftld] [-file FILE] [-meta FILTER_META] [-ptid PTID]
                        [-vnum VNUM] [-vtype VTYPE]
 
     Process redcap export data through nacculator.
@@ -74,16 +74,16 @@ the `-file` flag._
       -csf                  Set this flag to process as NACC BIDSS CSF data
 
       -f {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}, --filter {cleanPtid,replaceDrugId,fixHeaders,fillDefault,updateField,removePtid,removeDateRecord,getPtid}
-                              Set this flag to process the filter
+                              Set this flag to run the data through the chosen filter
       -lbd                  Set this flag to process as Lewy Body Dementia data (FORMVER = 3)
       -lbdsv                Set this flag to process as Lewy Body Dementia short version data (FORMVER = 3.1)
       -ftld                 Set this flag to process as Frontotemporal Lobar Degeneration data
 
-      -file FILE            Path of the csv file to be processed.
+      -file FILE            Path of the csv file to be processed
       -meta FILTER_META     Input file for the filter metadata (in case -filter is used)
       -ptid PTID            Ptid for which you need the records
-      -vnum VNUM            Ptid for which you need the records
-      -vtype VTYPE          Ptid for which you need the records
+      -vnum VNUM            Visit number for which you need the records
+      -vtype VTYPE          Visit type for which you need the records
 
 
 **Example** - Process a Neuropathology form:
