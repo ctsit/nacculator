@@ -1,5 +1,12 @@
 Changelog
 =========
+## [1.12.1] - 2023-10-27
+### Summary
+This release fixes some blanking logic errors in the new Neuropath version 11 module. 
+
+### Updated
+ * Fix blanking rules in NP 11 (Samantha Emerson)
+
 ## [1.12.0] - 2023-10-23
 ### Summary
 This release adds processing for Telephone Initial Packets and Neuropath version 11 to NACCulator. 
