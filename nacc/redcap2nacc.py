@@ -613,14 +613,15 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
             try:
                 print(form, file=out)
-            except AssertionError:
-                print("[SKIP] Error for ptid : " + str(record['ptid']),
+            except AssertionError as e:
+                print("[SKIP] Error for ptid assertion: " +
+                      str(record['ptid']),
                       file=err)
                 logging.error(
                     '[SKIP] Error for ptid : {}'.format(record['ptid']),
                     extra={
                         "report_handler": {
-                            "data": {"ptid": record['ptid'], "error": 'Assertion failed'},
+                            "data": {"ptid": record['ptid'], "error": str(e)},
                             "sheet": "SKIP"
                         }
                     }
