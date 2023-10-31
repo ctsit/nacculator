@@ -180,7 +180,8 @@ def check_for_bad_characters(field: Field) -> typing.List:
     return incompatible
 
 
-def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
+def check_redcap_event(
+        options, record, out=sys.stdout, err=sys.stderr) -> bool:
     """
     Determines if the record's redcap_event_name and filled forms match the
     options flag
@@ -283,7 +284,9 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
                     if followup_match in ['', '0']:
                         return False
                 except KeyError:
-                    print("Could not find a REDCap field for TFP Z1X form.", file=err)
+                    print(
+                        "Could not find a REDCap field for TFP Z1X form.",
+                        file=err)
                     logging.error(
                         "Could not find a REDCap field for TFP Z1X form",
                         extra={
@@ -528,7 +531,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             elif options.m:
                 packet = m_builder.build_uds3_m_form(record)
 
-        except Exception:
+        except Exception as e:
             if 'ptid' in record:
                 print("[SKIP] Error for ptid : " + str(record['ptid']),
                       file=err)
@@ -536,11 +539,11 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                     '[SKIP] Error for ptid : {}'.format(record['ptid']),
                     extra={
                         "report_handler": {
-                            "data": {"ptid": record['ptid'], "error": 'Unknown'},
+                            "data": {"ptid": record['ptid'], "error": str(e)},
                             "sheet": "SKIP"
                         }
                     }
-                    )
+                )
             traceback.print_exc()
             continue
 
@@ -554,33 +557,33 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         warnings = []
         try:
             warnings += check_blanks(packet, options)
-        except KeyError:
+        except KeyError as e:
             print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             logging.error(
                 '[SKIP] Error for ptid : {}'.format(record['ptid']),
                 extra={
                     "report_handler": {
-                        "data": {"ptid": record['ptid'], "error": 'Unknown'},
+                        "data": {"ptid": record['ptid'], "error": str(e)},
                         "sheet": "SKIP"
                     }
                 }
-                )
+            )
             traceback.print_exc()
             continue
 
         try:
             warnings += check_characters(packet)
-        except KeyError:
+        except KeyError as e:
             print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
             logging.error(
                 '[SKIP] Error for ptid : {}'.format(record['ptid']),
                 extra={
                     "report_handler": {
-                        "data": {"ptid": record['ptid'], "error": 'Unknown'},
+                        "data": {"ptid": record['ptid'], "error": str(e)},
                         "sheet": "SKIP"
                     }
                 }
-                )
+            )
             traceback.print_exc()
             continue
 
@@ -598,7 +601,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                         "sheet": "SKIP"
                     }
                 }
-                )
+            )
             continue
 
         if not options.np and not options.m and not options.lbd and not \
@@ -621,7 +624,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                             "sheet": "SKIP"
                         }
                     }
-                    )
+                )
                 traceback.print_exc()
                 continue
 
@@ -741,7 +744,8 @@ def main():
             convert(fp, options)
         logging.info('Nacculator Ended')
     except Exception as e:
-        print(f"An exception occurred in main(): {str(e), str(e.__cause__), str(e.__context__), str(e.__traceback__), str(e.with_traceback())}")
+        print(
+            f"An exception occurred in main(): {str(e), str(e.__cause__), str(e.__context__), str(e.__traceback__), str(e.with_traceback())}")
     finally:
         report_handler.write_report("logs")
 
