@@ -382,7 +382,6 @@ first.
 _Note: execute `generator.py` from the same folder as the `corrected`
 folder, which should contain any "corrected" DEDs._
 
-
 ### Resources
 
 * UDS3 forms: https://www.alz.washington.edu/NONMEMBER/UDS/DOCS/VER3/UDS3csvded.html
