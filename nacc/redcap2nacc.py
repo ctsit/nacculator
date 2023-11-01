@@ -539,7 +539,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                     '[SKIP] Error for ptid : {}'.format(record['ptid']),
                     extra={
                         "report_handler": {
-                            "data": {"ptid": record['ptid'], "error": str(e)},
+                            "data": {"ptid": record['ptid'], "error": str(traceback.format_exc())},
                             "sheet": "SKIP"
                         }
                     }
@@ -563,7 +563,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 '[SKIP] Error for ptid : {}'.format(record['ptid']),
                 extra={
                     "report_handler": {
-                        "data": {"ptid": record['ptid'], "error": str(e)},
+                        "data": {"ptid": record['ptid'], "error": str(traceback.format_exc())},
                         "sheet": "SKIP"
                     }
                 }
@@ -579,7 +579,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
                 '[SKIP] Error for ptid : {}'.format(record['ptid']),
                 extra={
                     "report_handler": {
-                        "data": {"ptid": record['ptid'], "error": str(e)},
+                        "data": {"ptid": record['ptid'], "error": str(traceback.format_exc())},
                         "sheet": "SKIP"
                     }
                 }
