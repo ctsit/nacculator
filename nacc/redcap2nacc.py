@@ -528,7 +528,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             if not event_match:
                 continue
 
-        print("[START] ptid : " + str(record['ptid']), file=err)
+        print("[START] ptid : " + str(record['ptid']) +
+              " visit " + str(record['visitnum']), file=err)
         logging.info('[START] ptid: {}'.format(record['ptid']))
         try:
             if options.lbd and options.ivp:
@@ -591,7 +592,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         try:
             warnings += check_blanks(packet, options)
         except KeyError as e:
-            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                  " visit " + str(record['visitnum']), file=err)
             logging.error(
                 '[SKIP] Error for ptid : {}'.format(record['ptid']),
                 extra={
@@ -607,7 +609,8 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         try:
             warnings += check_characters(packet)
         except KeyError as e:
-            print("[SKIP] Error for ptid : " + str(record['ptid']), file=err)
+            print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                  " visit " + str(record['visitnum']), file=err)
             logging.error(
                 '[SKIP] Error for ptid : {}'.format(record['ptid']),
                 extra={
