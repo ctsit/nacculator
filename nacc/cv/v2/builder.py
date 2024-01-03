@@ -20,66 +20,29 @@ def build_cv_form(record: dict, err=sys.stderr):
         if not (int(parse_date(record['date'], 'Y')) > 2019):
             raise ValueError('Form date cannot precede Jan 1, 2020.')
 
-        elif (int(parse_date(record['date'], 'M')) < 7 and
-              int(parse_date(record['date'], 'Y')) == 2022) or \
-             (int(parse_date(record['date'], 'Y')) < 2022):
-            add_f1_v1(record, packet)
-            add_f2_v1(record, packet)
-            add_f3_v1(record, packet)
-            update_header_v1(record, packet)
-
         elif (int(parse_date(record['date'], 'M')) > 7 and
               int(parse_date(record['date'], 'Y')) == 2022) or \
              (int(parse_date(record['date'], 'Y')) > 2022):
-            add_f2_v2(record, packet)
-            add_f3_v2(record, packet)
-            update_header_v2(record, packet)
+            add_f2(record, packet)
+            add_f3(record, packet)
+            update_header(record, packet)
 
     except Exception:
         if not (int(record['visityr']) > 2019):
             raise ValueError('Form date cannot precede Jan 1, 2020.')
-
-        elif (int(record['visitmo']) < 7 and
-              int(record['visityr']) == 2022) or \
-             (int(record['visityr']) < 2022):
-            add_f1(record, packet)
-            add_f2(record, packet)
-            add_f3(record, packet)
-            update_header_v1(record, packet)
 
         elif (int(record['visitmo']) > 7 and
               int(record['visityr']) == 2022) or \
              (int(record['visityr']) > 2022):
             add_f2(record, packet)
             add_f3(record, packet)
-            update_header_v2(record, packet)
+            update_header(record, packet)
 
     return packet
 
 
-def add_f1_v1(record, packet):
-    F1 = cv_forms.FormF1_v1()
-    F1.C19TVIS  = record['C19TVIS'.lower()]
-    F1.C19TPHON = record['C19TPHON'.lower()]
-    F1.C19TTAB  = record['C19TTAB'.lower()]
-    F1.C19TLAP  = record['C19TLAP'.lower()]
-    F1.C19TCOMP = record['C19TCOMP'.lower()]
-    F1.C19TOTH  = record['C19TOTH'.lower()]
-    F1.C19TOTHX = record['C19TOTHX'.lower()]
-    F1.C19TEMAI = record['C19TEMAI'.lower()]
-    F1.C19TIPHN = record['C19TIPHN'.lower()]
-    F1.C19TITAB = record['C19TITAB'.lower()]
-    F1.C19TILAP = record['C19TILAP'.lower()]
-    F1.C19TICOM = record['C19TICOM'.lower()]
-    F1.C19TIWED = record['C19TIWED'.lower()]
-    F1.C19TISHD = record['C19TISHD'.lower()]
-    F1.C19TIOTH = record['C19TIOTH'.lower()]
-    F1.C19TIOTX = record['C19TIOTX'.lower()]
-    packet.append(F1)
-
-
-def add_f2_v1(record, packet):
-    F2 = cv_forms.FormF2_v1()
+def add_f2(record, packet):
+    F2 = cv_forms.FormF2()
     F2.C19SYMPT = record['C19SYMPT'.lower()]
     F2.C19SYOTX = record['C19SYOTX'.lower()]
     F2.C19TEST  = record['C19TEST'.lower()]
@@ -155,8 +118,8 @@ def add_f2_v1(record, packet):
     packet.append(F2)
 
 
-def add_f3_v1(record, packet):
-    F3 = cv_forms.FormF3_v1()
+def add_f3(record, packet):
+    F3 = cv_forms.FormF3()
     F3.C19COISO = record['C19COISO'.lower()]
     F3.C19CODIS = record['C19CODIS'.lower()]
     F3.C19COINC = record['C19COINC'.lower()]
@@ -177,20 +140,7 @@ def add_f3_v1(record, packet):
     packet.append(F3)
 
 
-def update_header_v1(record, packet):
-    for header in packet:
-        header.PACKET = "CV"
-        header.FORMID = header.form_name
-        header.FORMVER = 1
-        header.ADCID = record['adcid']
-        header.PTID = record['ptid']
-        header.VISITMO = parse_date(record['date'], 'M')
-        header.VISITDAY = parse_date(record['date'], 'D')
-        header.VISITYR = parse_date(record['date'], 'Y')
-        header.INITIALS = record['c19_initials']
-
-
-def update_header_v2(record, packet):
+def update_header(record, packet):
     for header in packet:
         header.PACKET = "CV"
         header.FORMID = header.form_name
