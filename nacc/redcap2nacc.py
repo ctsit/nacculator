@@ -34,6 +34,7 @@ from nacc.ftld.ivp import builder as ftld_ivp_builder
 from nacc.ftld.fvp import builder as ftld_fvp_builder
 from nacc.csf import builder as csf_builder
 from nacc.cv import builder as cv_builder
+from nacc.cv.v2 import builder as cv_v2_builder
 from nacc.uds3 import filters
 from nacc.uds3 import packet as uds3_packet
 from nacc.uds3 import Field
@@ -252,6 +253,20 @@ def check_redcap_event(
     # TODO: add -csf option if/when it is added to the full ADRC project.
     elif options.cv:
         event_name = 'covid'
+    elif options.cv2:
+        event_name = 'arm'
+        try:
+            form_match_covid = record['f2_covid_impact_survey_participant_complete']
+        except KeyError:
+            try:
+                form_match_covid = record['f2_covid_impact_survey_complete']
+            except KeyError:
+                print("Could not find a REDCap field for F2 Covid Impact \
+                      Survey completion.",
+                      file=err)
+                return False
+        if form_match_covid in ['0', '']:
+            return False
     elif options.np:
         try:
             if record['formver'] == '11' or record['formver_11'] == '11':
