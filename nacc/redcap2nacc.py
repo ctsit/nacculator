@@ -486,6 +486,13 @@ def set_blanks_to_zero(packet):
     except KeyError:
         pass
 
+    # NP v11 19(r, s, t)
+    try:
+        set_to_zero_if_blank(
+            'NPPDXR', 'NPPDXS', 'NPPDXT')
+    except KeyError:
+        pass
+
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """
