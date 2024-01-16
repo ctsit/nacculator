@@ -486,6 +486,13 @@ def set_blanks_to_zero(packet):
     except KeyError:
         pass
 
+    # NP v11 19(r, s, t)
+    try:
+        set_to_zero_if_blank(
+            'NPPDXR', 'NPPDXS', 'NPPDXT')
+    except KeyError:
+        pass
+
 
 def convert(fp, options, out=sys.stdout, err=sys.stderr):
     """
@@ -581,7 +588,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
-        if not (options.np or options.np10 or options.m or options.lbd or
+        if not (options.np10 or options.m or options.lbd or
                 options.lbdsv or options.ftld or options.csf or options.cv):
             set_blanks_to_zero(packet)
 
