@@ -178,7 +178,7 @@ class FormB3L(nacc.uds3.FieldBag):
         self.fields['LBUMHMrH'] = nacc.uds3.Field(name='LBUMHMrH', typename='Num', position=(1053, 1053), length=1, inclusive_range=(0, 4), allowable_values=['0', '1', '2', '3', '4', '8'], blanks=[])
         self.fields['LBUHMrHX'] = nacc.uds3.Field(name='LBUHMrHX', typename='Char', position=(1055, 1114), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 7a LBUMHMrH  ne 8 (Untestable)'])
         self.fields['LBUMHMLH'] = nacc.uds3.Field(name='LBUMHMLH', typename='Num', position=(1116, 1116), length=1, inclusive_range=(0, 4), allowable_values=['0', '1', '2', '3', '4', '8'], blanks=[])
-        self.fields['LBUHMLHX'] = nacc.uds3.Field(name='LBUHMLHX', typename='Char', position=(1118, 1177), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question  7b LBUMHMLH  ne 8 (Untestable)'])
+        self.fields['LBUHMLHX'] = nacc.uds3.Field(name='LBUHMLHX', typename='Char', position=(1118, 1177), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 7b LBUMHMLH  ne 8 (Untestable)'])
         self.fields['LBUMPSrH'] = nacc.uds3.Field(name='LBUMPSrH', typename='Num', position=(1179, 1179), length=1, inclusive_range=(0, 4), allowable_values=['0', '1', '2', '3', '4', '8'], blanks=[])
         self.fields['LBUPSrHX'] = nacc.uds3.Field(name='LBUPSrHX', typename='Char', position=(1181, 1240), length=60, inclusive_range=None, allowable_values=[], blanks=['Blank if Question 8a LBUMPSrH  ne 8 (Untestable)'])
         self.fields['LBUMPSLH'] = nacc.uds3.Field(name='LBUMPSLH', typename='Num', position=(1242, 1242), length=1, inclusive_range=(0, 4), allowable_values=['0', '1', '2', '3', '4', '8'], blanks=[])
