@@ -65,7 +65,7 @@ adcid: Your ADC ID
 adcid: Your ADC ID
 
 # Ensures that REDCap's 'visitnum' field is always an integer.
-[filter_fix_visitdate]
+[filter_fix_visitnum]
 present: yes
 
 # Removes PTIDs that are not in NACC's "Current Database"
