@@ -37,6 +37,9 @@ from nacc.cv import builder as cv_builder
 from nacc.uds3 import filters
 from nacc.uds3 import packet as uds3_packet
 from nacc.uds3 import Field
+from nacc.logger import configure_logging
+from report_handler.report_handler import ReportHandler
+import logging
 
 
 def check_blanks(packet: uds3_packet.Packet, options: argparse.Namespace) \
@@ -178,7 +181,8 @@ def check_for_bad_characters(field: Field) -> typing.List:
     return incompatible
 
 
-def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
+def check_redcap_event(
+        options, record, out=sys.stdout, err=sys.stderr) -> bool:
     """
     Determines if the record's redcap_event_name and filled forms match the
     options flag
@@ -303,8 +307,21 @@ def check_redcap_event(options, record, out=sys.stdout, err=sys.stderr) -> bool:
                     if followup_match in ['', '0']:
                         return False
                 except KeyError:
-                    print("Could not find a REDCap field for TFP Z1X form.",
-                          file=err)
+                    print(
+                        "Could not find a REDCap field for TFP Z1X form.",
+                        file=err)
+                    logging.error(
+                        "Could not find a REDCap field for TFP Z1X form",
+                        extra={
+                            "report_handler": {
+                                "data": {
+                                    "ptid": record['ptid'],
+                                    "error": "Could not find a REDCap field for TFP Z1X form"
+                                },
+                                "sheet": 'ERROR'
+                            }
+                        },
+                    )
                     return False
     elif options.tfp3:
         event_name = 'tele'
@@ -419,9 +436,8 @@ def set_blanks_to_zero(packet):
     # B8 3.
     try:
         if packet['CVDSIGNS'] == 1:
-            set_to_zero_if_blank(
-                'CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR', 'CORTVISL',
-                'CORTVISR', 'SOMATL', 'SOMATR')
+            set_to_zero_if_blank('CORTDEF', 'SIVDFIND', 'CVDMOTL', 'CVDMOTR',
+                                 'CORTVISL', 'CORTVISR', 'SOMATL', 'SOMATR')
     except KeyError:
         pass
 
@@ -440,7 +456,7 @@ def set_blanks_to_zero(packet):
     try:
         if packet['DEMENTED'] == 1:
             set_to_zero_if_blank(
-                    'AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
+                'AMNDEM', 'PCA', 'PPASYN', 'FTDSYN', 'LBDSYN', 'NAMNDEM')
     except KeyError:
         pass
 
@@ -448,7 +464,7 @@ def set_blanks_to_zero(packet):
     try:
         if packet['DEMENTED'] == 0:
             set_to_zero_if_blank(
-                    'MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
+                'MCIAMEM', 'MCIAPLUS', 'MCINON1', 'MCINON2', 'IMPNOMCI')
     except KeyError:
         pass
 
@@ -467,6 +483,13 @@ def set_blanks_to_zero(packet):
     try:
         if packet['ARTH'] == 1:
             set_to_zero_if_blank('ARTUPEX', 'ARTLOEX', 'ARTSPIN', 'ARTUNKN')
+    except KeyError:
+        pass
+
+    # NP v11 19(r, s, t)
+    try:
+        set_to_zero_if_blank(
+            'NPPDXR', 'NPPDXS', 'NPPDXT')
     except KeyError:
         pass
 
@@ -512,8 +535,9 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             if not event_match:
                 continue
 
-        print("[START] ptid : " + str(record['ptid']) + " visit " +
-              str(record['visitnum']), file=err)
+        print("[START] ptid : " + str(record['ptid']) +
+              " visit " + str(record['visitnum']), file=err)
+        logging.info('[START] ptid: {}'.format(record['ptid']))
         try:
             if options.lbd and options.ivp:
                 packet = lbd_ivp_builder.build_lbd_ivp_form(record)
@@ -548,14 +572,23 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             elif options.m:
                 packet = m_builder.build_uds3_m_form(record)
 
-        except Exception:
+        except Exception as e:
             if 'ptid' in record:
-                print("[SKIP] Error for ptid : " + str(record['ptid']) +
-                      " visit " + str(record['visitnum']), file=err)
+                print("[SKIP] Error for ptid : " + str(record['ptid']),
+                      file=err)
+                logging.error(
+                    '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                    extra={
+                        "report_handler": {
+                            "data": {"ptid": record['ptid'], "error": str(traceback.format_exc())},
+                            "sheet": "SKIP"
+                        }
+                    }
+                )
             traceback.print_exc()
             continue
 
-        if not (options.np or options.np10 or options.m or options.lbd or
+        if not (options.np10 or options.m or options.lbd or
                 options.lbdsv or options.ftld or options.csf or options.cv):
             set_blanks_to_zero(packet)
 
@@ -565,17 +598,35 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         warnings = []
         try:
             warnings += check_blanks(packet, options)
-        except KeyError:
+        except KeyError as e:
             print("[SKIP] Error for ptid : " + str(record['ptid']) +
                   " visit " + str(record['visitnum']), file=err)
+            logging.error(
+                '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                extra={
+                    "report_handler": {
+                        "data": {"ptid": record['ptid'], "error": str(traceback.format_exc())},
+                        "sheet": "SKIP"
+                    }
+                }
+            )
             traceback.print_exc()
             continue
 
         try:
             warnings += check_characters(packet)
-        except KeyError:
+        except KeyError as e:
             print("[SKIP] Error for ptid : " + str(record['ptid']) +
                   " visit " + str(record['visitnum']), file=err)
+            logging.error(
+                '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                extra={
+                    "report_handler": {
+                        "data": {"ptid": record['ptid'], "error": str(traceback.format_exc())},
+                        "sheet": "SKIP"
+                    }
+                }
+            )
             traceback.print_exc()
             continue
 
@@ -585,6 +636,15 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             warn = "\n".join(map(str, warnings))
             warn = warn.replace("\\", "")
             print(warn, file=err)
+            logging.error(
+                '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                extra={
+                    "report_handler": {
+                        "data": {"ptid": record['ptid'], "error": ",".join(map(str, warnings))},
+                        "sheet": "SKIP"
+                    }
+                }
+            )
             continue
 
         if not options.np and not options.np10 and not options.m and not \
@@ -596,9 +656,19 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
 
             try:
                 print(form, file=out)
-            except AssertionError:
-                print("[SKIP] Error for ptid : " + str(record['ptid']) +
-                      " visit " + str(record['visitnum']), file=err)
+            except AssertionError as e:
+                print("[SKIP] Error for ptid assertion: " +
+                      str(record['ptid']),
+                      file=err)
+                logging.error(
+                    '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                    extra={
+                        "report_handler": {
+                            "data": {"ptid": record['ptid'], "error": str(e)},
+                            "sheet": "SKIP"
+                        }
+                    }
+                )
                 traceback.print_exc()
                 continue
 
@@ -700,21 +770,31 @@ def main():
 
     fp = sys.stdin if options.file is None else open(options.file, 'r')
 
+    report_handler = ReportHandler()
+    configure_logging(options, [report_handler])
+
     # Default option is to print out directly to the command terminal.
     # If you want to print the output to a specific file, then redirect
     # stdout to that filename.
     output = sys.stdout
 
-    if options.filter:
-        if options.filter == "getPtid":
-            filters.filter_extract_ptid(
-                fp, options.ptid, options.vnum, options.vtype, output)
+    try:
+        if options.filter:
+            if options.filter == "getPtid":
+                filters.filter_extract_ptid(
+                    fp, options.ptid, options.vnum, options.vtype, output)
+            else:
+                filter_method = 'filter_' + filters_names[options.filter]
+                filter_func = getattr(filters, filter_method)
+                filter_func(fp, options.filter_meta, output)
         else:
-            filter_method = 'filter_' + filters_names[options.filter]
-            filter_func = getattr(filters, filter_method)
-            filter_func(fp, options.filter_meta, output)
-    else:
-        convert(fp, options)
+            convert(fp, options)
+        logging.info('Nacculator Ended')
+    except Exception as e:
+        print(
+            f"An exception occurred in main(): {str(e), str(e.__cause__), str(e.__context__), str(e.__traceback__), str(e.with_traceback())}")
+    finally:
+        report_handler.write_report("logs")
 
 
 if __name__ == '__main__':

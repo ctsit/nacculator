@@ -57,7 +57,7 @@ class TestTFPEventNameDetection(unittest.TestCase):
         '''
         Test that the function returns false when the event name check fails.
         '''
-        record = {'redcap_event_name': 'followup_arm_1', 'z1x_complete': '2'}
+        record = {'ptid': '1', 'redcap_event_name': 'followup_arm_1', 'z1x_complete': '2'}
 
         actual = redcap2nacc.check_redcap_event(self.options, record)
         self.assertFalse(actual)

@@ -1,5 +1,17 @@
 Changelog
 =========
+## [1.13.0] - 2024-03-07
+### Summary
+This release adds logging functionality (report_handler) to NACCulator's output (found in the `logs` folder), along with several minor bug fixes. 
+
+### Added
+ * Added report_handler (Kshitij Sinha)
+
+### Fixed
+ * Fix filter name in nacculator_cfg.ini.example (Samantha Emerson)
+ * Add A3NOT field to ivp and fvp builder files (Samantha Emerson)
+ * Add FTLD fields to Z1X in builder.py for ivp and fvp (Samantha Emerson)
+
 ## [1.12.1] - 2023-10-27
 ### Summary
 This release fixes some blanking logic errors in the new Neuropath version 11 module. 
