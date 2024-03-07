@@ -6,7 +6,7 @@
 
 from setuptools import setup, find_packages
 
-VERSION = "1.12.1"
+VERSION = "1.13.0"
 
 setup(
     name="nacculator",
