@@ -1,5 +1,12 @@
 Changelog
 =========
+## [1.13.1] - 2024-04-15
+### Summary
+This release removes the `.vscode` sub-module from the NACCulator repo, since it points to a private repository and makes NACCulator difficult to install for those who do not have permissions for the .vscode repo. 
+
+### Removed
+* Remove private submodule (Michael Bentz)
+
 ## [1.13.0] - 2024-03-07
 ### Summary
 This release adds logging functionality (report_handler) to NACCulator's output (found in the `logs` folder), along with several minor bug fixes. 
