@@ -33,7 +33,7 @@ setup(
 
     install_requires=[
         "PyCap>=2.1.0",
-        "report_handler @ git+https://git@github.com:/ctsit/report_handler.git"
+        "report_handler @ git+https://git@github.com:/ctsit/report_handler.git@1.3.0"
     ],
 
     python_requires=">=3.6.0",
