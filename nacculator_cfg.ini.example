@@ -1,8 +1,9 @@
 [DEFAULT]
 
 [pycap]
+redcap_server: http://<redcap_server>/api/
 token: Your REDCAP Token
-redcap_server: Your Redcap Server
+tokens: token1,token2,token3,token3
 
 # [filters] - Each section is named after the corresponding function name
 # in filters.py
