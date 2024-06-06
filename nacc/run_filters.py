@@ -6,6 +6,7 @@ import configparser
 from redcap import Project
 from nacc.uds3.filters import *
 import logging
+import pandas as pd
 
 
 # Creating a folder which contains Intermediate files
@@ -112,7 +113,7 @@ def get_data_from_redcap_pycap(folder_name, config):
     """
     # Enter the path for filters_config
     try:
-        token = config.get('pycap', 'token')
+        tokens = config.get('pycap', 'token').split(',')
         redcap_url = config.get('pycap', 'redcap_server')
     except Exception as e:
         print("Please check the config file and validate all the proper fields exist", file=sys.stderr)
@@ -130,7 +131,32 @@ def get_data_from_redcap_pycap(folder_name, config):
         print(e)
         raise e
 
-    redcap_project = Project(redcap_url, token)
+    try:
+        df_all_project_data = pd.DataFrame()
+        for token in tokens:
+            df_project_data = _get_project_data(redcap_url, token)
+            df_all_project_data = pd.concat([df_all_project_data, df_project_data], ignore_index=True)
+
+        # Ignore index to remove the record number column
+        df_all_project_data.to_csv(os.path.join(folder_name, "redcap_input.csv"), index=False)
+    except Exception as e:
+        print("Error in exporting project data")
+        logging.error('Error in processing project data',
+                      extra={
+                          "report_handler": {
+                              "data": {"ptid": None, "error": f'Error in exporting project data: {e}'},
+                              "sheet": 'ERROR'
+                          }
+                      }
+                      )
+        print(e)
+
+    return
+
+
+def _get_project_data(url: str, token: str) -> pd.DataFrame:
+    df_project_data = pd.DataFrame()
+    redcap_project = Project(url, token)
 
     # Get list of all fieldnames in project to create a csv header
     assert hasattr(redcap_project, 'field_names')
@@ -146,8 +172,13 @@ def get_data_from_redcap_pycap(folder_name, config):
 
     # Get list of all records present in project to iterate over
     list_of_records = []
+
+    # If there are multiple records with the same ptid only keep the first occurence
+    # export all records only grabbing the ptid field
     all_records = redcap_project.export_records(fields=['ptid'])
+    # iterate through all records
     for record in all_records:
+        # if the ptid is not already in the list then append it
         if record['ptid'] not in list_of_records:
             list_of_records.append(record['ptid'])
 
@@ -157,43 +188,11 @@ def get_data_from_redcap_pycap(folder_name, config):
     for i in range(0, len(list_of_records), n):
         chunked_records.append(list_of_records[i:i + n])
 
-    try:
+    for current_record_chunk in chunked_records:
+        chunked_data = redcap_project.export_records(records=current_record_chunk)
+        df_project_data = pd.concat([df_project_data, pd.DataFrame(chunked_data)], ignore_index=True)
 
-        try:
-            with open(os.path.join(folder_name, "redcap_input.csv"), "w") as redcap_export:
-                writer = csv.DictWriter(redcap_export, fieldnames=header_full)
-                writer.writeheader()
-                # header_mapping = next(reader)
-                for current_record_chunk in chunked_records:
-                    data = redcap_project.export_records(
-                        records=current_record_chunk)
-                    for row in data:
-                        writer.writerow(row)
-        except Exception as e:
-            print("Error in Writing")
-            logging.error('Error in writing',
-                          extra={
-                              "report_handler": {
-                                  "data": {"ptid": None, "error": f'Error in writing: {e}'},
-                                  "sheet": 'ERROR'
-                              }
-                          }
-                          )
-            print(e)
-
-    except Exception as e:
-        print("Error in CSV file")
-        logging.error('Error in CSV file',
-                      extra={
-                          "report_handler": {
-                              "data": {"ptid": None,
-                                       "error": f'Error in CSV file: {e}'},
-                              "sheet": 'ERROR'
-                          }
-                      }
-                      )
-
-    return
+    return df_project_data
 
 
 def main():
