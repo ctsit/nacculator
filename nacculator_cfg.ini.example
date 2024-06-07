@@ -1,8 +1,9 @@
 [DEFAULT]
 
 [pycap]
+redcap_server: http://<redcap_server>/api/
+# token now supports multiple tokens as a comma-delimeted list without spaces e.g., token1,token2,token3,token4
 token: Your REDCAP Token
-redcap_server: Your Redcap Server
 
 # [filters] - Each section is named after the corresponding function name
 # in filters.py

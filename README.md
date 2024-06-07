@@ -351,7 +351,7 @@ This is not exhaustive, but here is an explanation of some important files.
 
 * `nacc/run_filters.py` and `tools/preprocess/run_filters.sh`:
     pulls data from REDCap based on the settings found in `nacculator_cfg.ini`
-    (for .py) and `filters_config.cfg` (for .sh).
+    (for .py) and `filters_config.cfg` (for .sh). Supports exporting data from multiple REDCap projects by adding a comma-delimited list of tokens without spaces e.g., `token=token1,token2` to `token` in the `nacculator_cfg.ini` config file.
 
 
 ### Testing
