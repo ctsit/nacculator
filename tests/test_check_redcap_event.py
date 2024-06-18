@@ -35,7 +35,8 @@ class TestRedcapEvent(unittest.TestCase):
         '''
         self.options.ivp = True
         record = {'redcap_event_name': 'initial_visit_year_arm_1',
-                  'ivp_z1_complete': '', 'ivp_z1x_complete': '2'}
+                  'ivp_z1_complete': '', 'ivp_z1x_complete': '2', 
+                  'ivp_a1_complete': '2'}
         result = check_redcap_event(self.options, record)
         self.assertTrue(result)
 
@@ -46,7 +47,8 @@ class TestRedcapEvent(unittest.TestCase):
         '''
         self.options.fvp = True
         record = {'redcap_event_name': 'initial_visit_year_arm_1',
-                  'fvp_z1_complete': '', 'fvp_z1x_complete': ''}
+                  'fvp_z1_complete': '', 'fvp_z1x_complete': '',
+                  'fvp_a1_complete': '2'}
         result = check_redcap_event(self.options, record)
         self.assertFalse(result)
 
@@ -68,7 +70,7 @@ class TestRedcapEvent(unittest.TestCase):
         self.options.ivp = True
         record = {'redcap_event_name': 'initial_visit_year_arm_1',
                   'ivp_z1_complete': '', 'ivp_z1x_complete': '',
-                  'lbd_ivp_b1l_complete': '2'}
+                  'lbd_ivp_b1l_complete': '2', 'ivp_a1_complete': '2'}
         incorrect = check_redcap_event(self.options, record)
 
         self.options.lbd = True
