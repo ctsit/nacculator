@@ -45,6 +45,9 @@ marked "Unverified" or "Complete" for NACCulator to recognize the record, and
 each optional form must be marked as submitted within the Z1X for NACCulator to
 find those forms.
 
+_Note: For UDS visits (the -ivp and -fvp flags), NACCulator also expects the
+A1 subject demographics form to be either Unverified or Complete._
+
 _Note: output is written to `STDOUT`; errors are written to `STDERR`; input is
 expected to be from `STDIN` (the command line) unless a file is specified using
 the `-file` flag._
