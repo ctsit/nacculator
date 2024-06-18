@@ -237,7 +237,12 @@ def check_redcap_event(
             form_match_z1 = ''
             record['ivp_z1_complete'] = ''
         form_match_z1x = record['ivp_z1x_complete']
-        if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
+        try:
+            form_match_a1 = record['ivp_a1_complete']
+        except KeyError:
+            form_match_a1 = record['ivp_a1_subject_demographics_complete']
+        if (form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']) or \
+           form_match_a1 in ['0', '']:
             return False
     elif options.fvp:
         event_name = 'follow'
@@ -247,7 +252,12 @@ def check_redcap_event(
             form_match_z1 = ''
             record['fvp_z1_complete'] = ''
         form_match_z1x = record['fvp_z1x_complete']
-        if form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']:
+        try:
+            form_match_a1 = record['fvp_a1_complete']
+        except KeyError:
+            form_match_a1 = record['fvp_a1_subject_demographics_complete']
+        if (form_match_z1 in ['0', ''] and form_match_z1x in ['0', '']) or \
+           form_match_a1 in ['0', '']:
             return False
     # TODO: add -csf option if/when it is added to the full ADRC project.
     elif options.cv:
