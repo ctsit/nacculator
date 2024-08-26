@@ -6,7 +6,7 @@
 
 from setuptools import setup, find_packages
 
-VERSION = "1.13.1"
+VERSION = "1.14.0"
 
 setup(
     name="nacculator",
@@ -33,7 +33,7 @@ setup(
 
     install_requires=[
         "PyCap>=2.1.0",
-	"pandas>=2.2.0",
+        "pandas>=2.2.0",
         "report_handler @ git+https://git@github.com:/ctsit/report_handler.git@1.3.0"
     ],
 

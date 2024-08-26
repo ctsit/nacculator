@@ -1,5 +1,19 @@
 Changelog
 =========
+## [1.14.0] - 2024-08-26
+### Summary
+This release adds support for multiple REDCap projects, in case the Optional Modules such as LBD or FTLD are broken out into their own REDCap projects. To pull from multiple REDCap projects into the same `redcap_input.csv` file, create a list of API tokens in your config file. This update also changes NACCulator's event detection to require the presence of both the Z1X and the A1 forms for UDS visits.
+
+### Added
+ * Add additional unit test (Michael Bentz)
+ * Add pandas to setup.py (Michael Bentz)
+ * Add script to combine REDCap project data (Michael Bentz)
+
+### Updated
+ * Update README with new requirements for ivp and fvp processing (Samantha Emerson)
+ * Add A1 to required forms for IVP and FVP processing (Samantha Emerson)
+ * Bump report_handler dependency to 1.3.0 (Michael Bentz)
+
 ## [1.13.1] - 2024-04-15
 ### Summary
 This release removes the `.vscode` sub-module from the NACCulator repo, since it points to a private repository and makes NACCulator difficult to install for those who do not have permissions for the .vscode repo. 
