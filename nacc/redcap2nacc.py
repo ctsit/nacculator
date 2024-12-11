@@ -221,12 +221,18 @@ def check_redcap_event(
             return False
     elif options.ftld and options.ivp:
         event_name = 'initial'
-        form_match_ftld = record['ftld_present']
+        try:
+            form_match_ftld = record['ftld_ivp_b3f_supplemental_updrs_complete']
+        except KeyError:
+            form_match_ftld = record['ftld_ivp_b3f_complete']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ftld and options.fvp:
         event_name = 'follow'
-        form_match_ftld = record['fu_ftld_present']
+        try:
+            form_match_ftld = record['ftld_fvp_b3f_supplemental_updrs_complete']
+        except KeyError:
+            form_match_ftld = record['ftld_fvp_b3f_complete']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ivp:
