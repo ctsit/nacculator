@@ -33,8 +33,12 @@ def build_lbd_short_fvp_form(record):
         if record['fu_lbdb2ls'] == '1':
             add_b2l(record, packet)
     except KeyError:
-        if record['fu_lbudspch'] is not None:
-            add_b2l(record, packet)
+        try:
+            if record['fu_b2lsub'] == '1':
+                add_b2l(record, packet)
+        except KeyError:
+            if record['fu_lbudspch'] is not None:
+                add_b2l(record, packet)
     add_b3l(record, packet)
     add_b4l(record, packet)
     add_b5l(record, packet)
@@ -42,8 +46,12 @@ def build_lbd_short_fvp_form(record):
         if record['fu_lbdb6ls'] == '1':
             add_b6l(record, packet)
     except KeyError:
-        if record['fu_lbspcgim'] is not None:
-            add_b6l(record, packet)
+        try:
+            if record['fu_b6lsub'] == '1':
+                add_b6l(record, packet)
+        except KeyError:
+            if record['fu_lbspcgim'] is not None:
+                add_b6l(record, packet)
     add_b7l(record, packet)
     add_b9l(record, packet)
     add_c1l(record, packet)
