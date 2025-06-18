@@ -12,6 +12,8 @@ import re
 import sys
 import traceback
 import typing
+from datetime import date
+from datetime import datetime
 
 from nacc.uds3 import blanks as blanks_uds3
 from nacc.lbd import blanks as blanks_lbd
@@ -179,6 +181,21 @@ def check_for_bad_characters(field: Field) -> typing.List:
             incompatible.append(percent_char + " (%s)" % num_percent)
 
     return incompatible
+
+
+def check_valid_visit_date(record) -> bool:
+    """
+    Determines whether the record's visit date is in the future, and
+    returns an error if it is past today's date
+    """
+    bad_visit_days: bool = False
+    todays_date = date.today()
+    record_date = datetime.strptime(record['visitdate'], '%m-%d-%Y').date()
+
+    if record_date > todays_date:
+        bad_visit_days = True
+
+    return bad_visit_days
 
 
 def check_redcap_event(
@@ -611,6 +628,23 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
         if options.m or options.tfp or options.tip:
             blanks_uds3.set_zeros_to_blanks(packet)
 
+        # check to make sure the visitdate is in the past
+        date_in_future = check_valid_visit_date(record)
+        if date_in_future:
+            print("[SKIP] Error for ptid : " + str(record['ptid']) +
+                  " visit " + str(record['visitnum']), file=err)
+            print("Record has a visitdate that is past today's date.", file=err)
+            logging.error(
+                '[SKIP] Error for ptid : {}'.format(record['ptid']),
+                extra={
+                    "report_handler": {
+                        "data": {"ptid": record['ptid'], "error": "Record has a visitdate that is past today's date."},
+                        "sheet": "SKIP"
+                    }
+                }
+            )
+            continue
+
         warnings = []
         try:
             warnings += check_blanks(packet, options)
@@ -646,6 +680,11 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             traceback.print_exc()
             continue
 
+        if not options.np and not options.np10 and not options.m and not \
+           options.lbd and not options.lbdsv and not options.ftld and not \
+           options.csf and not options.cv:
+            warnings += check_single_select(packet)
+
         if warnings:
             print("[SKIP] Error for ptid : " + str(record['ptid']) +
                   " visit " + str(record['visitnum']), file=err)
@@ -663,13 +702,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             )
             continue
 
-        if not options.np and not options.np10 and not options.m and not \
-           options.lbd and not options.lbdsv and not options.ftld and not \
-           options.csf and not options.cv:
-            warnings += check_single_select(packet)
-
         for form in packet:
-
             try:
                 print(form, file=out)
             except AssertionError as e:
