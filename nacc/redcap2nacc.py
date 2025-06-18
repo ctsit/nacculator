@@ -190,7 +190,12 @@ def check_valid_visit_date(record) -> bool:
     """
     bad_visit_days: bool = False
     todays_date = date.today()
-    record_date = datetime.strptime(record['visitdate'], '%m-%d-%Y').date()
+    try:
+        record_date = datetime.strptime(record['visitdate'], '%m-%d-%Y').date()
+    except KeyError:
+        date_list = [record["visitmo"], record["visitday"], record["visityr"]]
+        combined_date = "-".join(date_list)
+        record_date = datetime.strptime(combined_date, '%m-%d-%Y').date()
 
     if record_date > todays_date:
         bad_visit_days = True
