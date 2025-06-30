@@ -183,22 +183,23 @@ def check_for_bad_characters(field: Field) -> typing.List:
     return incompatible
 
 
-def check_valid_visit_date(record) -> bool:
+def check_valid_visit_date(record, options) -> bool:
     """
     Determines whether the record's visit date is in the future, and
     returns an error if it is past today's date
     """
     bad_visit_days: bool = False
     todays_date = date.today()
-    try:
-        date_list = [record["visityr"], record["visitmo"], record["visitday"]]
-        combined_date = "-".join(date_list)
-        record_date = datetime.strptime(combined_date, '%Y-%m-%d').date()
-    except KeyError:
-        record_date = datetime.strptime(record['visitdate'], '%Y-%m-%d').date()
+    if not options.m:
+        try:
+            date_list = [record["visityr"], record["visitmo"], record["visitday"]]
+            combined_date = "-".join(date_list)
+            record_date = datetime.strptime(combined_date, '%Y-%m-%d').date()
+        except KeyError:
+            record_date = datetime.strptime(record['visitdate'], '%Y-%m-%d').date()
 
-    if record_date > todays_date:
-        bad_visit_days = True
+        if record_date > todays_date:
+            bad_visit_days = True
 
     return bad_visit_days
 
@@ -652,7 +653,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             blanks_uds3.set_zeros_to_blanks(packet)
 
         # check to make sure the visitdate is in the past
-        date_in_future = check_valid_visit_date(record)
+        date_in_future = check_valid_visit_date(record, options)
         if date_in_future:
             print("[SKIP] Error for ptid : " + str(record['ptid']) +
                   " visit " + str(record['visitnum']), file=err)
