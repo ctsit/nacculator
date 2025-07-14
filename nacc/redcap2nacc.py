@@ -183,22 +183,23 @@ def check_for_bad_characters(field: Field) -> typing.List:
     return incompatible
 
 
-def check_valid_visit_date(record) -> bool:
+def check_valid_visit_date(record, options) -> bool:
     """
     Determines whether the record's visit date is in the future, and
     returns an error if it is past today's date
     """
     bad_visit_days: bool = False
     todays_date = date.today()
-    try:
-        date_list = [record["visityr"], record["visitmo"], record["visitday"]]
-        combined_date = "-".join(date_list)
-        record_date = datetime.strptime(combined_date, '%Y-%m-%d').date()
-    except KeyError:
-        record_date = datetime.strptime(record['visitdate'], '%Y-%m-%d').date()
+    if not options.m:
+        try:
+            date_list = [record["visityr"], record["visitmo"], record["visitday"]]
+            combined_date = "-".join(date_list)
+            record_date = datetime.strptime(combined_date, '%Y-%m-%d').date()
+        except KeyError:
+            record_date = datetime.strptime(record['visitdate'], '%Y-%m-%d').date()
 
-    if record_date > todays_date:
-        bad_visit_days = True
+        if record_date > todays_date:
+            bad_visit_days = True
 
     return bad_visit_days
 
@@ -212,49 +213,67 @@ def check_redcap_event(
     if options.lbd and options.ivp:
         event_name = 'initial'
         try:
-            form_match_lbd = record['lbd_ivp_b1l_complete']
+            form_match_lbd = record['lbd_present']
         except KeyError:
-            form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
+            try:
+                form_match_lbd = record['lbd_ivp_b1l_complete']
+            except KeyError:
+                form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbd and options.fvp:
         event_name = 'follow'
         try:
-            form_match_lbd = record['lbd_fvp_b1l_complete']
+            form_match_lbd = record['fu_lbd_present']
         except KeyError:
-            form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
+            try:
+                form_match_lbd = record['lbd_fvp_b1l_complete']
+            except KeyError:
+                form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbdsv and options.ivp:
         event_name = 'initial'
-        try:
-            form_match_lbd = record['lbd_ivp_b1l_complete']
+        try: 
+            form_match_lbd = record['lbd_present']
         except KeyError:
-            form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
+            try:
+                form_match_lbd = record['lbd_ivp_b1l_complete']
+            except KeyError:
+                form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.lbdsv and options.fvp:
         event_name = 'follow'
         try:
-            form_match_lbd = record['lbd_fvp_b1l_complete']
+            form_match_lbd = record['fu_lbd_present']
         except KeyError:
-            form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
+            try:
+                form_match_lbd = record['lbd_fvp_b1l_complete']
+            except KeyError:
+                form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
         if form_match_lbd in ['0', '']:
             return False
     elif options.ftld and options.ivp:
         event_name = 'initial'
         try:
-            form_match_ftld = record['ftld_ivp_b3f_supplemental_updrs_complete']
+            form_match_ftld = record['ftld_present']
         except KeyError:
-            form_match_ftld = record['ftld_ivp_b3f_complete']
+            try:
+                form_match_ftld = record['ftld_ivp_b3f_supplemental_updrs_complete']
+            except KeyError:
+                form_match_ftld = record['ftld_ivp_b3f_complete']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ftld and options.fvp:
         event_name = 'follow'
         try:
-            form_match_ftld = record['ftld_fvp_b3f_supplemental_updrs_complete']
+            form_match_ftld = record['fu_ftld_present']
         except KeyError:
-            form_match_ftld = record['ftld_fvp_b3f_complete']
+            try:
+                form_match_ftld = record['ftld_fvp_b3f_supplemental_updrs_complete']
+            except KeyError:
+                form_match_ftld = record['ftld_fvp_b3f_complete']
         if form_match_ftld in ['0', '']:
             return False
     elif options.ivp:
@@ -634,7 +653,7 @@ def convert(fp, options, out=sys.stdout, err=sys.stderr):
             blanks_uds3.set_zeros_to_blanks(packet)
 
         # check to make sure the visitdate is in the past
-        date_in_future = check_valid_visit_date(record)
+        date_in_future = check_valid_visit_date(record, options)
         if date_in_future:
             print("[SKIP] Error for ptid : " + str(record['ptid']) +
                   " visit " + str(record['visitnum']), file=err)
