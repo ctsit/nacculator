@@ -190,7 +190,7 @@ def check_valid_visit_date(record, options) -> bool:
     """
     bad_visit_days: bool = False
     todays_date = date.today()
-    if not options.m:
+    if not options.m and not options.np:
         try:
             date_list = [record["visityr"], record["visitmo"], record["visitday"]]
             combined_date = "-".join(date_list)
