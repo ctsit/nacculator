@@ -210,10 +210,18 @@ def check_redcap_event(
     Determines if the record's redcap_event_name and filled forms match the
     options flag
     """
+    # for LBD, LBD Short Version, and FTLD modules, check if the Z1X has the
+    # corresponding switch before just checking for presence of data
+    # (sometimes sites will collect incomplete data for a visit and mark the
+    # whole packet as missing on the Z1X)
     if options.lbd and options.ivp:
         event_name = 'initial'
         try:
-            form_match_lbd = record['lbd_present']
+            if record['lbd_present'] == 1:
+                try:
+                    form_match_lbd = record['lbd_ivp_b1l_complete']
+                except KeyError:
+                    form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
         except KeyError:
             try:
                 form_match_lbd = record['lbd_ivp_b1l_complete']
@@ -224,7 +232,11 @@ def check_redcap_event(
     elif options.lbd and options.fvp:
         event_name = 'follow'
         try:
-            form_match_lbd = record['fu_lbd_present']
+            if record['fu_lbd_present'] == 1:
+                try:
+                    form_match_lbd = record['lbd_fvp_b1l_complete']
+                except KeyError:
+                    form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
         except KeyError:
             try:
                 form_match_lbd = record['lbd_fvp_b1l_complete']
@@ -234,8 +246,12 @@ def check_redcap_event(
             return False
     elif options.lbdsv and options.ivp:
         event_name = 'initial'
-        try: 
-            form_match_lbd = record['lbd_present']
+        try:
+            if record['lbd_present'] == 1:
+                try:
+                    form_match_lbd = record['lbd_ivp_b1l_complete']
+                except KeyError:
+                    form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
         except KeyError:
             try:
                 form_match_lbd = record['lbd_ivp_b1l_complete']
@@ -246,7 +262,11 @@ def check_redcap_event(
     elif options.lbdsv and options.fvp:
         event_name = 'follow'
         try:
-            form_match_lbd = record['fu_lbd_present']
+            if record['fu_lbd_present'] == 1:
+                try:
+                    form_match_lbd = record['lbd_fvp_b1l_complete']
+                except KeyError:
+                    form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
         except KeyError:
             try:
                 form_match_lbd = record['lbd_fvp_b1l_complete']
@@ -257,7 +277,11 @@ def check_redcap_event(
     elif options.ftld and options.ivp:
         event_name = 'initial'
         try:
-            form_match_ftld = record['ftld_present']
+            if record['ftld_present'] == 1:
+                try:
+                    form_match_ftld = record['ftld_ivp_b3f_supplemental_updrs_complete']
+                except KeyError:
+                    form_match_ftld = record['ftld_ivp_b3f_complete']
         except KeyError:
             try:
                 form_match_ftld = record['ftld_ivp_b3f_supplemental_updrs_complete']
@@ -268,7 +292,11 @@ def check_redcap_event(
     elif options.ftld and options.fvp:
         event_name = 'follow'
         try:
-            form_match_ftld = record['fu_ftld_present']
+            if record['fu_ftld_present'] == 1:
+                try:
+                    form_match_ftld = record['ftld_fvp_b3f_supplemental_updrs_complete']
+                except KeyError:
+                    form_match_ftld = record['ftld_fvp_b3f_complete']
         except KeyError:
             try:
                 form_match_ftld = record['ftld_fvp_b3f_supplemental_updrs_complete']
