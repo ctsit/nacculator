@@ -217,7 +217,7 @@ def check_redcap_event(
     if options.lbd and options.ivp:
         event_name = 'initial'
         try:
-            if record['lbd_present'] == 1:
+            if record['lbd_present'] == '1':
                 try:
                     form_match_lbd = record['lbd_ivp_b1l_complete']
                 except KeyError:
@@ -227,12 +227,18 @@ def check_redcap_event(
                 form_match_lbd = record['lbd_ivp_b1l_complete']
             except KeyError:
                 form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
-        if form_match_lbd in ['0', '']:
+        # Check whether the packet is associated with a UDSv3 or UDSv4 visit
+        # (UDSv4 visits should not go to the legacy submission portal)
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_lbd in ['0', ''] or uds_version == '4':
             return False
     elif options.lbd and options.fvp:
         event_name = 'follow'
         try:
-            if record['fu_lbd_present'] == 1:
+            if record['fu_lbd_present'] == '1':
                 try:
                     form_match_lbd = record['lbd_fvp_b1l_complete']
                 except KeyError:
@@ -242,12 +248,16 @@ def check_redcap_event(
                 form_match_lbd = record['lbd_fvp_b1l_complete']
             except KeyError:
                 form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
-        if form_match_lbd in ['0', '']:
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_lbd in ['0', ''] or uds_version == '4':
             return False
     elif options.lbdsv and options.ivp:
         event_name = 'initial'
         try:
-            if record['lbd_present'] == 1:
+            if record['lbd_present'] == '1':
                 try:
                     form_match_lbd = record['lbd_ivp_b1l_complete']
                 except KeyError:
@@ -257,12 +267,16 @@ def check_redcap_event(
                 form_match_lbd = record['lbd_ivp_b1l_complete']
             except KeyError:
                 form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
-        if form_match_lbd in ['0', '']:
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_lbd in ['0', ''] or uds_version == '4':
             return False
     elif options.lbdsv and options.fvp:
         event_name = 'follow'
         try:
-            if record['fu_lbd_present'] == 1:
+            if record['fu_lbd_present'] == '1':
                 try:
                     form_match_lbd = record['lbd_fvp_b1l_complete']
                 except KeyError:
@@ -272,12 +286,16 @@ def check_redcap_event(
                 form_match_lbd = record['lbd_fvp_b1l_complete']
             except KeyError:
                 form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
-        if form_match_lbd in ['0', '']:
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_lbd in ['0', ''] or uds_version == '4':
             return False
     elif options.ftld and options.ivp:
         event_name = 'initial'
         try:
-            if record['ftld_present'] == 1:
+            if record['ftld_present'] == '1':
                 try:
                     form_match_ftld = record['ftld_ivp_b3f_supplemental_updrs_complete']
                 except KeyError:
@@ -287,12 +305,16 @@ def check_redcap_event(
                 form_match_ftld = record['ftld_ivp_b3f_supplemental_updrs_complete']
             except KeyError:
                 form_match_ftld = record['ftld_ivp_b3f_complete']
-        if form_match_ftld in ['0', '']:
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_ftld in ['0', ''] or uds_version == '4':
             return False
     elif options.ftld and options.fvp:
         event_name = 'follow'
         try:
-            if record['fu_ftld_present'] == 1:
+            if record['fu_ftld_present'] == '1':
                 try:
                     form_match_ftld = record['ftld_fvp_b3f_supplemental_updrs_complete']
                 except KeyError:
@@ -302,7 +324,11 @@ def check_redcap_event(
                 form_match_ftld = record['ftld_fvp_b3f_supplemental_updrs_complete']
             except KeyError:
                 form_match_ftld = record['ftld_fvp_b3f_complete']
-        if form_match_ftld in ['0', '']:
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_ftld in ['0', ''] or uds_version == '4':
             return False
     elif options.ivp:
         event_name = 'initial'
