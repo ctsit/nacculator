@@ -104,6 +104,26 @@ Both LBD / LBDSV and FTLD forms can have IVP or FVP arguments.
     $ redcap2nacc -f cleanPtid -meta nacculator_cfg.ini <data.csv >filtered_data.csv
 
 
+HOW TO Skip UDSv4 Packets in the LBD and FTLD Modules
+-----------------------------------------------------
+
+With the release of UDSv4, the LBD, LBD Short Version, and FTLD modules can be
+associated with either a UDSv3 or a UDSv4 visit. This is because the modules
+themselves have not been changed between the UDS versions. UDSv3-associated
+LBD, LBDSV, or FTLD module packets can be submitted to NACC's legacy submission
+system via NACCulator as usual, but the UDSv4-associated visits must be
+submitted to the new Flywheel system. In order to skip these UDSv4-associated
+visits with NACCulator, the center needs to add a field to their LBD, LBDSV,
+and/or FTLD REDCap projects in the Header form.
+
+This field should be labeled "udsv3_or_udsv4" and have two options:
+- 3, UDSv3
+- 4, UDSv4
+
+NACCulator will skip any packet that has a value of 4 in this field. These
+packets should go to Flywheel instead.
+
+
 HOW TO Filter Data Using NACCulator
 -----------------------------------
 

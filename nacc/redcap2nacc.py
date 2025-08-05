@@ -210,71 +210,131 @@ def check_redcap_event(
     Determines if the record's redcap_event_name and filled forms match the
     options flag
     """
+    # for LBD, LBD Short Version, and FTLD modules, check if the Z1X has the
+    # corresponding switch before just checking for presence of data
+    # (sometimes sites will collect incomplete data for a visit and mark the
+    # whole packet as missing on the Z1X)
     if options.lbd and options.ivp:
         event_name = 'initial'
+        form_match_lbd = '0'
         try:
-            form_match_lbd = record['lbd_present']
+            if record['lbd_present'] == '1':
+                try:
+                    form_match_lbd = record['lbd_ivp_b1l_complete']
+                except KeyError:
+                    form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
         except KeyError:
             try:
                 form_match_lbd = record['lbd_ivp_b1l_complete']
             except KeyError:
                 form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
-        if form_match_lbd in ['0', '']:
+        # Check whether the packet is associated with a UDSv3 or UDSv4 visit
+        # (UDSv4 visits should not go to the legacy submission portal)
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_lbd in ['0', ''] or uds_version == '4':
             return False
     elif options.lbd and options.fvp:
         event_name = 'follow'
+        form_match_lbd = '0'
         try:
-            form_match_lbd = record['fu_lbd_present']
+            if record['fu_lbd_present'] == '1':
+                try:
+                    form_match_lbd = record['lbd_fvp_b1l_complete']
+                except KeyError:
+                    form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
         except KeyError:
             try:
                 form_match_lbd = record['lbd_fvp_b1l_complete']
             except KeyError:
                 form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
-        if form_match_lbd in ['0', '']:
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_lbd in ['0', ''] or uds_version == '4':
             return False
     elif options.lbdsv and options.ivp:
         event_name = 'initial'
-        try: 
-            form_match_lbd = record['lbd_present']
+        form_match_lbd = '0'
+        try:
+            if record['lbd_present'] == '1':
+                try:
+                    form_match_lbd = record['lbd_ivp_b1l_complete']
+                except KeyError:
+                    form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
         except KeyError:
             try:
                 form_match_lbd = record['lbd_ivp_b1l_complete']
             except KeyError:
                 form_match_lbd = record['lbd_ivp_b1l_clinical_symptoms_and_exam_complete']
-        if form_match_lbd in ['0', '']:
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_lbd in ['0', ''] or uds_version == '4':
             return False
     elif options.lbdsv and options.fvp:
         event_name = 'follow'
+        form_match_lbd = '0'
         try:
-            form_match_lbd = record['fu_lbd_present']
+            if record['fu_lbd_present'] == '1':
+                try:
+                    form_match_lbd = record['lbd_fvp_b1l_complete']
+                except KeyError:
+                    form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
         except KeyError:
             try:
                 form_match_lbd = record['lbd_fvp_b1l_complete']
             except KeyError:
                 form_match_lbd = record['lbd_fvp_b1l_clinical_symptoms_and_exam_complete']
-        if form_match_lbd in ['0', '']:
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_lbd in ['0', ''] or uds_version == '4':
             return False
     elif options.ftld and options.ivp:
         event_name = 'initial'
+        form_match_ftld = '0'
         try:
-            form_match_ftld = record['ftld_present']
+            if record['ftld_present'] == '1':
+                try:
+                    form_match_ftld = record['ftld_ivp_b3f_supplemental_updrs_complete']
+                except KeyError:
+                    form_match_ftld = record['ftld_ivp_b3f_complete']
         except KeyError:
             try:
                 form_match_ftld = record['ftld_ivp_b3f_supplemental_updrs_complete']
             except KeyError:
                 form_match_ftld = record['ftld_ivp_b3f_complete']
-        if form_match_ftld in ['0', '']:
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_ftld in ['0', ''] or uds_version == '4':
             return False
     elif options.ftld and options.fvp:
         event_name = 'follow'
+        form_match_ftld = '0'
         try:
-            form_match_ftld = record['fu_ftld_present']
+            if record['fu_ftld_present'] == '1':
+                try:
+                    form_match_ftld = record['ftld_fvp_b3f_supplemental_updrs_complete']
+                except KeyError:
+                    form_match_ftld = record['ftld_fvp_b3f_complete']
         except KeyError:
             try:
                 form_match_ftld = record['ftld_fvp_b3f_supplemental_updrs_complete']
             except KeyError:
                 form_match_ftld = record['ftld_fvp_b3f_complete']
-        if form_match_ftld in ['0', '']:
+        try:
+            uds_version = record['udsv3_or_udsv4']
+        except KeyError:
+            uds_version = '3'
+        if form_match_ftld in ['0', ''] or uds_version == '4':
             return False
     elif options.ivp:
         event_name = 'initial'

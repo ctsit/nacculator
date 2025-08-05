@@ -95,6 +95,23 @@ class TestRedcapEvent(unittest.TestCase):
         result = check_redcap_event(self.options, record)
         self.assertNotEqual('NP', result)
 
+    def test_for_udsv4_in_optional_module(self):
+        '''
+        Checks that the packet is skipped when udsv3_or_udsv4 in an optional
+        module project's Header form is equal to '4' for visits that are
+        associated with a UDSv4 visit; UDSv4-associated LBD and FTLD packets
+        should go to the new Flywheel interface and not to the legacy
+        submission system.
+        '''
+        self.options.lbdsv = True
+        self.options.ivp = True
+        record = {'redcap_event_name': 'initial_visit_year_arm_1',
+                  'lbd_present': '1',
+                  'lbd_ivp_b1l_complete': '2',
+                  'udsv3_or_udsv4': '4'}  # condition met to return False
+        result = check_redcap_event(self.options, record)
+        self.assertFalse(result)
+
 
 if __name__ == "__main__":
     unittest.main()
