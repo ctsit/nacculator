@@ -216,6 +216,7 @@ def check_redcap_event(
     # whole packet as missing on the Z1X)
     if options.lbd and options.ivp:
         event_name = 'initial'
+        form_match_lbd = '0'
         try:
             if record['lbd_present'] == '1':
                 try:
@@ -237,6 +238,7 @@ def check_redcap_event(
             return False
     elif options.lbd and options.fvp:
         event_name = 'follow'
+        form_match_lbd = '0'
         try:
             if record['fu_lbd_present'] == '1':
                 try:
@@ -256,6 +258,7 @@ def check_redcap_event(
             return False
     elif options.lbdsv and options.ivp:
         event_name = 'initial'
+        form_match_lbd = '0'
         try:
             if record['lbd_present'] == '1':
                 try:
@@ -275,6 +278,7 @@ def check_redcap_event(
             return False
     elif options.lbdsv and options.fvp:
         event_name = 'follow'
+        form_match_lbd = '0'
         try:
             if record['fu_lbd_present'] == '1':
                 try:
@@ -294,6 +298,7 @@ def check_redcap_event(
             return False
     elif options.ftld and options.ivp:
         event_name = 'initial'
+        form_match_ftld = '0'
         try:
             if record['ftld_present'] == '1':
                 try:
@@ -313,6 +318,7 @@ def check_redcap_event(
             return False
     elif options.ftld and options.fvp:
         event_name = 'follow'
+        form_match_ftld = '0'
         try:
             if record['fu_ftld_present'] == '1':
                 try:
